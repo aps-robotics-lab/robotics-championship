@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registration Successful</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+
+font-family:'Poppins',sans-serif;
+background:linear-gradient(135deg,#040816,#0b1d35);
+color:#fff;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+height:100vh;
+overflow:hidden;
+
+}
+
+.container{
+
+width:90%;
+max-width:700px;
+
+padding:50px;
+
+text-align:center;
+
+background:rgba(255,255,255,.05);
+
+backdrop-filter:blur(15px);
+
+border-radius:20px;
+
+border:1px solid rgba(255,255,255,.08);
+
+box-shadow:0 0 40px rgba(0,255,255,.3);
+
+animation:fade 1s;
+
+}
+
+.success{
+
+width:120px;
+height:120px;
+
+margin:auto;
+
+background:#00c853;
+
+border-radius:50%;
+
+display:flex;
+
+justify-content:center;
+align-items:center;
+
+font-size:60px;
+
+box-shadow:0 0 35px #00ff99;
+
+animation:pop 1s;
+
+}
+
+h1{
+
+margin:25px 0;
+
+font-family:'Orbitron';
+
+color:#00F2FF;
+
+}
+
+p{
+
+line-height:1.9;
+
+color:#ddd;
+
+margin-bottom:30px;
+
+}
+
+.info{
+
+background:#101820;
+
+padding:18px;
+
+border-radius:10px;
+
+margin-bottom:30px;
+
+}
+
+.btn{
+
+display:inline-block;
+
+padding:15px 35px;
+
+background:#00F2FF;
+
+color:#000;
+
+font-weight:bold;
+
+text-decoration:none;
+
+border-radius:40px;
+
+transition:.3s;
+
+}
+
+.btn:hover{
+
+transform:translateY(-5px);
+
+box-shadow:0 0 20px cyan;
+
+}
+
+.timer{
+
+margin-top:25px;
+
+color:#aaa;
+
+}
+
+.confetti{
+
+position:absolute;
+
+width:10px;
+height:10px;
+
+background:#00F2FF;
+
+animation:fall linear infinite;
+
+}
+
+@keyframes fall{
+
+0%{
+transform:translateY(-100vh) rotate(0);
+}
+
+100%{
+transform:translateY(110vh) rotate(720deg);
+}
+
+}
+
+@keyframes pop{
+
+0%{transform:scale(0);}
+100%{transform:scale(1);}
+
+}
+
+@keyframes fade{
+
+from{opacity:0;}
+to{opacity:1;}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="success">✓</div>
+
+<h1>Registration Successful!</h1>
+
+<p>
+
+Thank you for registering for the
+
+<strong>APS Robotics Championship 2026</strong>.
+
+Your registration has been submitted successfully.
+
+We look forward to welcoming you to the competition.
+
+</p>
+
+<div class="info">
+
+📅 Event:
+APS Robotics Championship 2026
+
+<br><br>
+
+🤖 Hosted by APS Tinkering Lab
+
+</div>
+
+<a href="index.html" class="btn">
+
+🏠 Back to Home
+
+</a>
+
+<p class="timer">
+
+Redirecting in
+
+<span id="count">10</span>
+
+seconds...
+
+</p>
+
+</div>
+
+<script>
+
+// Countdown
+
+let time=10;
+
+const counter=document.getElementById("count");
+
+setInterval(()=>{
+
+time--;
+
+counter.innerHTML=time;
+
+if(time==0){
+
+window.location="index.html";
+
+}
+
+},1000);
+
+
+// Confetti
+
+for(let i=0;i<70;i++){
+
+let c=document.createElement("div");
+
+c.className="confetti";
+
+c.style.left=Math.random()*100+"vw";
+
+c.style.animationDuration=(Math.random()*3+3)+"s";
+
+c.style.animationDelay=Math.random()*3+"s";
+
+c.style.background=`hsl(${Math.random()*360},100%,60%)`;
+
+document.body.appendChild(c);
+
+}
+
+</script>
+
+</body>
+</html>
