@@ -630,6 +630,63 @@ padding:30px;
 grid-column:1;
 
 }
+  .event-options{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:15px;
+margin-top:20px;
+}
+
+.event-options label{
+
+display:flex;
+align-items:center;
+gap:10px;
+
+padding:15px;
+
+background:#111;
+
+border:1px solid rgba(255,255,255,.08);
+
+border-radius:12px;
+
+cursor:pointer;
+
+transition:.3s;
+
+color:white;
+
+}
+
+.event-options label:hover{
+
+border-color:#00F2FF;
+
+box-shadow:0 0 15px cyan;
+
+transform:translateY(-3px);
+
+}
+
+.event-options input{
+
+width:18px;
+height:18px;
+
+accent-color:#00F2FF;
+
+}
+
+@media(max-width:768px){
+
+.event-options{
+
+grid-template-columns:1fr;
+
+}
+
+}
 
 }/* ================= REGISTRATION ================= */
 
@@ -794,7 +851,63 @@ padding:30px;
 grid-column:1;
 
 }
+.event-options{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:15px;
+margin-top:20px;
+}
 
+.event-options label{
+
+display:flex;
+align-items:center;
+gap:10px;
+
+padding:15px;
+
+background:#111;
+
+border:1px solid rgba(255,255,255,.08);
+
+border-radius:12px;
+
+cursor:pointer;
+
+transition:.3s;
+
+color:white;
+
+}
+
+.event-options label:hover{
+
+border-color:#00F2FF;
+
+box-shadow:0 0 15px cyan;
+
+transform:translateY(-3px);
+
+}
+
+.event-options input{
+
+width:18px;
+height:18px;
+
+accent-color:#00F2FF;
+
+}
+
+@media(max-width:768px){
+
+.event-options{
+
+grid-template-columns:1fr;
+
+}
+
+}
 }/* ================= EVENTS ================= */
 
 .events{
