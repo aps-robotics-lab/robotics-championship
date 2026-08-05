@@ -1188,7 +1188,7 @@ margin-bottom:30px;
 
 .teacher-message h3{
 
-font/* ================= CONTACT ================= */
+/* ================= CONTACT ================= */
 
 .contact{
 
@@ -1303,38 +1303,7 @@ color:#000;
 transform:translateY(-6px);
 
 }
-.contact{
-    text-align:center;
-    padding:50px 20px;
-}
 
-.contact h2{
-    font-size:50px;
-    color:#00e5ff;
-    text-shadow:0 0 15px #00e5ff;
-}
-
-.contact p{
-    color:#d12cff;
-    margin-bottom:30px;
-}
-
-.contact-info{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:25px;
-}
-
-.contact-info .item{
-    text-align:center;
-    color:white;
-}
-
-.contact-info .item i{
-    font-size:30px;
-    margin-bottom:10px;
-}
 footer{
 
 padding:35px;
