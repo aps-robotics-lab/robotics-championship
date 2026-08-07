@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>APS Robotics Championship 2026</title>
 
     <!-- Google Fonts -->
@@ -10,7 +12,7 @@
 
     <!-- Font Awesome -->
     <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <!-- CSS -->
     <link rel="stylesheet" href="style.css">
@@ -23,28 +25,17 @@
 <nav class="navbar">
 
     <div class="logo">
-
-        <img src="https://i.ibb.co/spL8t7cv/Army-Welfare-Education-Society-logo-1.png">
-
+        <img src="https://i.ibb.co/spL8t7cv/Army-Welfare-Education-Society-logo-1.png" alt="APS Logo">
         <span>APS TINKERING LAB</span>
-
     </div>
 
     <ul>
-
         <li><a href="#home">Home</a></li>
-
         <li><a href="#about">About</a></li>
-
         <li><a href="#registration">Registration</a></li>
-
         <li><a href="#events">Events</a></li>
-
         <li><a href="#message">Message</a></li>
-
         <li><a href="#contact">Contact</a></li>
-        
-
     </ul>
 
 </nav>
@@ -56,38 +47,27 @@
 <div class="hero-content">
 
 <img class="hero-logo"
-src="https://i.ibb.co/spL8t7cv/Army-Welfare-Education-Society-logo-1.png">
+src="https://i.ibb.co/spL8t7cv/Army-Welfare-Education-Society-logo-1.png" alt="APS Logo">
 
 <h1>
-
 APS ROBOTICS
-
 <span>CHAMPIONSHIP 2026</span>
-
 </h1>
 
 <p>
-
 Welcome to the Robotics Championship hosted by
-
 <strong>Army Public School, Lal Bahadur Shastri Marg</strong>.
-
-Challenge your engineering skills, creativity, teamwork, and innovation in an exciting day of robotics competitions.
-
+Challenge your engineering skills, creativity, teamwork and innovation.
 </p>
 
 <div class="hero-buttons">
 
 <a href="#registration" class="btn">
-
 Register Now
-
 </a>
 
 <a href="#events" class="btn btn-outline">
-
 View Events
-
 </a>
 
 </div>
@@ -95,35 +75,23 @@ View Events
 <div class="hero-cards">
 
 <div class="card">
-
 <i class="fa-solid fa-flag-checkered"></i>
-
 <h3>Robo Race</h3>
-
 </div>
 
 <div class="card">
-
 <i class="fa-solid fa-robot"></i>
-
 <h3>Robo War</h3>
-
 </div>
 
 <div class="card">
-
 <i class="fa-solid fa-people-arrows"></i>
-
 <h3>Robo Tug of War</h3>
-
 </div>
 
 <div class="card">
-
 <i class="fa-solid fa-futbol"></i>
-
 <h3>Robo Soccer</h3>
-
 </div>
 
 </div>
@@ -132,11 +100,7 @@ View Events
 
 </section>
 
-<script src="script.js"></script>
-
-</body>
-
-</html><!-- ================= ABOUT ================= -->
+<!-- ================= ABOUT ================= -->
 
 <section id="about" class="about">
 
@@ -209,8 +173,9 @@ View Events
         </a>
     </div>
 
-</section><!-- ================= REGISTRATION ================= -->
-
+</section>
+    <!-- ================= REGISTRATION ================= 
+    <!-- ================= REGISTRATION ================= -->
 <section id="registration" class="registration">
 
     <div class="section-title">
@@ -220,26 +185,22 @@ View Events
 
     <div class="register-container">
 
-        <form class="register-form" id="registerForm">
+        <form id="registerForm" class="register-form">
 
-
-
-    <input type="hidden" name="_next"
-value="https://aps-robotics-lab.github.io/robotics-championship/thankyou.html">
-
+            <!-- Team Leader -->
             <div class="input-box">
                 <i class="fa-solid fa-user"></i>
-                <input type="text" name="Studentname" placeholder="Student Name" required>
+                <input type="text" name="StudentName" placeholder="Team Leader Name" required>
             </div>
 
             <div class="input-box">
                 <i class="fa-solid fa-school"></i>
-                <input type="text" name="Studentclass" placeholder="Class" required>
+                <input type="text" name="Class" placeholder="Class" required>
             </div>
 
             <div class="input-box">
                 <i class="fa-solid fa-users"></i>
-                <input type="text" name="StudentSection" placeholder="Section" required>
+                <input type="text" name="Section" placeholder="Section" required>
             </div>
 
             <div class="input-box">
@@ -249,7 +210,7 @@ value="https://aps-robotics-lab.github.io/robotics-championship/thankyou.html">
 
             <div class="input-box">
                 <i class="fa-solid fa-envelope"></i>
-                <input type="email" name="EmailAddress" placeholder="Email Address">
+                <input type="email" name="EmailAddress" placeholder="Email Address" required>
             </div>
 
             <div class="input-box">
@@ -257,208 +218,57 @@ value="https://aps-robotics-lab.github.io/robotics-championship/thankyou.html">
                 <input type="text" name="TeamName" placeholder="Team Name">
             </div>
 
-            <div class="full">
+            <h3 style="color:#00F2FF;margin:20px 0 10px;">Select Event(s)</h3>
 
-    <h3 style="color:#00F2FF;margin-bottom:15px;">
-        Select Event(s)
-    </h3>
+            <div class="event-options">
 
-<div class="full">
+                <label class="event-card">
+                    <input type="checkbox" name="Events" value="Robo Race">
+                    <div>
+                        <h4>Robo Race</h4>
+                        <small>Speed Challenge</small>
+                    </div>
+                </label>
 
-    
-    <p class="event-subtitle">Choose one or more events to participate in.</p>
+                <label class="event-card">
+                    <input type="checkbox" name="Events" value="Robo War">
+                    <div>
+                        <h4>Robo War</h4>
+                        <small>Battle Arena</small>
+                    </div>
+                </label>
 
-    <div class="event-options">
+                <label class="event-card">
+                    <input type="checkbox" name="Events" value="Robo Tug of War">
+                    <div>
+                        <h4>Robo Tug of War</h4>
+                        <small>Power Contest</small>
+                    </div>
+                </label>
 
-        <label class="event-card">
-            <input type="checkbox" name="Events[]" value="Robo Race">
-
-
-            <div>
-                <h4>Robo Race</h4>
-                <small>Speed Challenge</small>
-            </div>
-        </label>
-
-        <label class="event-card">
-            <input type="checkbox" name="Events[]" value="Robo War">
-            
-            <div>
-                <h4>Robo War</h4>
-                <small>Battle Arena</small>
-            </div>
-        </label>
-
-        <label class="event-card">
-            <input type="checkbox" name="Events[]" value="Robo Tug of War">
-            
-            <div>
-                <h4>Robo Tug of War</h4>
-                <small>Power Contest</small>
-            </div>
-        </label>
-
-        <label class="event-card">
-            <input type="checkbox" name="Events[]" value="Robo Soccer">
-            
-            <div>
-                <h4>Robo Soccer</h4>
-                <small>Team Game</small>
-            </div>
-        </label>
-
-    </div>
-
-</div>
+                <label class="event-card">
+                    <input type="checkbox" name="Events" value="Robo Soccer">
+                    <div>
+                        <h4>Robo Soccer</h4>
+                        <small>Team Game</small>
+                    </div>
+                </label>
 
             </div>
-            
 
-    <label class="team-label">👥 Team Size</label>
+            <br>
 
-<div class="select-box">
-    <i class="fa-solid fa-users"></i>
+            <label class="team-label">👥 Team Size</label>
 
-    <select id="teamSize">
-    <option value="1">1 Member (Solo)</option>
-    <option value="2">2 Members</option>
-    <option value="3">3 Members</option>
-    <option value="4">4 Members</option>
-    <option value="5">5 Members</option>
-    </select>
-
-</div>
-            <div id="member2">
-
-<div class="input-box">
-<i class="fa-solid fa-user-group"></i>
-<input type="text" name="Team Member 2" placeholder="Team Member 2 Name">
-</div>
-
-<div class="input-box">
-<i class="fa-solid fa-school"></i>
-<input type="text" name="Member2 Class" placeholder="Class">
-</div>
-
-<div class="input-box">
-<i class="fa-solid fa-users"></i>
-<input type="text" name="Member2 Section" placeholder="Section">
-</div>
-
-            </div>
-<div id="member3">
-
-    <div class="input-box">
-        <i class="fa-solid fa-user-group"></i>
-        <input type="text" name="Team Member 3" placeholder="Team Member 3 Name">
-    </div>
-
-    <div class="input-box">
-        <i class="fa-solid fa-school"></i>
-        <input type="text" name="Member3 Class" placeholder="Class">
-    </div>
-
-    <div class="input-box">
-        <i class="fa-solid fa-users"></i>
-        <input type="text" name="Member3 Section" placeholder="Section">
-    </div>
-
-</div>
-
-<div id="member4">
-
-    <div class="input-box">
-        <i class="fa-solid fa-user-group"></i>
-        <input type="text" name="Team Member 4" placeholder="Team Member 4 Name">
-    </div>
-
-    <div class="input-box">
-        <i class="fa-solid fa-school"></i>
-        <input type="text" name="Member4 Class" placeholder="Class">
-    </div>
-
-    <div class="input-box">
-        <i class="fa-solid fa-users"></i>
-        <input type="text" name="Member4 Section" placeholder="Section">
-    </div>
-
-</div>
-
-<div id="member5">
-
-    <div class="input-box">
-        <i class="fa-solid fa-user-group"></i>
-        <input type="text" name="Team Member 5" placeholder="Team Member 5 Name">
-    </div>
-
-    <div class="input-box">
-        <i class="fa-solid fa-school"></i>
-        <input type="text" name="Member5 Class" placeholder="Class">
-    </div>
-
-    <div class="input-box">
-        <i class="fa-solid fa-users"></i>
-        <input type="text" name="Member5 Section" placeholder="Section">
-    </div>
-
-</div>
-        <script>
-    const teamSize = document.getElementById("teamSize");
-
-const member2 = document.getElementById("member2");
-const member3 = document.getElementById("member3");
-const member4 = document.getElementById("member4");
-
-function updateMembers() {
-
-    member2.style.display = "none";
-    member3.style.display = "none";
-    member4.style.display = "none";
-
-    if(teamSize.value == "2"){
-        member2.style.display = "block";
+            <div class="select-box">
+                <select id="teamSize" name="TeamSize">
+                    <option value="1">1 Member (Solo)</option>
+                    <option value="2">2 Members</option>
+                    <option value="3">3 Members</option>
+                    <option value="4">4 Members</option>
+                   
     }
-
-    if(teamSize.value == "3"){
-        member2.style.display = "block";
-        member3.style.display = "block";
-    }
-
-    if(teamSize.value == "4"){
-        member2.style.display = "block";
-        member3.style.display = "block";
-        member4.style.display = "block";
-    }
-}
-<select id="teamSize" name="Team Size">
-    <option value="1">1 Member (Solo)</option>
-    <option value="2">2 Members</option>
-    <option value="3">3 Members</option>
-    <option value="4">4 Members</option>
-</select>
-teamSize.addEventListener("change", updateMembers);
-
-updateMembers();
-    </script>
-
-            <div class="input-box full">
-            
-
-                <i class="fa-solid fa-message"></i>
-
-                <textarea placeholder="Any Remarks (Optional)"></textarea>
-
-            </div>
-
-            <button class="submit-btn">
-                Register Now
-            </button>
-
-        </form>
-
-    </div>
-
-</section><!-- ================= EVENTS ================= -->
+            <!-- ================= EVENTS ================= -->
 
 <section id="events" class="events">
 
@@ -719,3 +529,11 @@ form.addEventListener("submit", async (e) => {
     }
 });
 </script>
+<script src="script.js"></script>
+
+<script type="module">
+  // Firebase code
+</script>
+
+</body>
+            </html>
