@@ -313,66 +313,90 @@ value="https://aps-robotics-lab.github.io/robotics-championship/thankyou.html">
 
             </div>
             
-<label>Participation Type</label>
 
-<select id="teamType">
-    <option value="solo">Solo</option>
-    <option value="team">Team</option>
-</select>
-            <div id="teamMembers" style="display:none;">
-<div class="input-box">
-    <i class="fa-solid fa-user-group"></i>
-    <input type="text" name="Team Member 1" placeholder="Team Member 1 Name">
+    <label class="team-label">👥 Team Size</label>
+
+<div class="select-box">
+    <i class="fa-solid fa-users"></i>
+
+    <select id="teamSize" onchange="showMembers()">
+        <option value="1">1 Member (Solo)</option>
+        <option value="2">2 Members</option>
+        <option value="3">3 Members</option>
+        <option value="4">4 Members</option>
+        <option value="5">5 Members</option>
+    </select>
+
 </div>
-<div class="input-box">
-                <i class="fa-solid fa-school"></i>
-                <input type="text" name="member1Class" placeholder="Class">
-            </div>
+            <div id="member2">
 
-            <div class="input-box">
-                <i class="fa-solid fa-users"></i>
-                <input type="text" name="member1Section" placeholder="Section">
-            </div>
 <div class="input-box">
-    <i class="fa-solid fa-user-group"></i>
-    <input type="text" name="Team Member 2" placeholder="Team Member 2 Name">
+<i class="fa-solid fa-user-group"></i>
+<input type="text" name="Team Member 2" placeholder="Team Member 2 Name">
 </div>
-<div class="input-box">
-                <i class="fa-solid fa-school"></i>
-                <input type="text" name="member2Class" placeholder="Class"> 
-            
-            </div>
 
-            <div class="input-box">
-                <i class="fa-solid fa-users"></i>
-                <input type="text" name="member2section" placeholder="Section">
-            </div>
 <div class="input-box">
-    <i class="fa-solid fa-user-group"></i>
-    <input type="text" name="Team Member 3" placeholder="Team Member 3 Name">
-</div><div class="input-box">
-                <i class="fa-solid fa-school"></i>
-                <input type="text" name="member3Class" placeholder="Class">
-            </div>
-
-            <div class="input-box">
-                <i class="fa-solid fa-users"></i>
-                <input type="text" name="member3Section" placeholder="Section">
-            </div>
-            
-<div class="input-box">
-    <i class="fa-solid fa-user-group"></i>
-    <input type="text" name="Team Member 4" placeholder="Team Member 4 Name">
+<i class="fa-solid fa-school"></i>
+<input type="text" name="Member2 Class" placeholder="Class">
 </div>
-            <div class="input-box">
-                <i class="fa-solid fa-school"></i>
-                <input type="text" name="member4Class" placeholder="Class">
-            </div>
 
-            <div class="input-box">
-                <i class="fa-solid fa-users"></i>
-                <input type="text" name="member4Section" placeholder="Section">
+<div class="input-box">
+<i class="fa-solid fa-users"></i>
+<input type="text" name="Member2 Section" placeholder="Section">
+</div>
+
             </div>
+            <div id="member3">
+
+<div class="input-box">
+<i class="fa-solid fa-user-group"></i>
+<input type="text" name="Team Member 3" placeholder="Team Member 2 Name">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-school"></i>
+<input type="text" name="Member3 Class" placeholder="Class">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-users"></i>
+<input type="text" name="Member3 Section" placeholder="Section">
+</div>
+<div id="member4">
+
+<div class="input-box">
+<i class="fa-solid fa-user-group"></i>
+<input type="text" name="Team Member 4" placeholder="Team Member 2 Name">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-school"></i>
+<input type="text" name="Member4 Class" placeholder="Class">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-users"></i>
+<input type="text" name="Member4 Section" placeholder="Section">
+</div>
+
+</div><div id="member5">
+
+<div class="input-box">
+<i class="fa-solid fa-user-group"></i>
+<input type="text" name="Team Member 5" placeholder="Team Member 2 Name">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-school"></i>
+<input type="text" name="Member5 Class" placeholder="Class">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-users"></i>
+<input type="text" name="Member5 Section" placeholder="Section">
+</div>
+
+</div>
             </div>
             <script>
 const teamType = document.getElementById("teamType");
