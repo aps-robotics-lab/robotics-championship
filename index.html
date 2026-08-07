@@ -624,15 +624,14 @@ form.addEventListener("submit", async (e)=>{
 
     try{
 
-        await push(ref(database,"registrations"),data);
+        const newRegistration = await push(ref(database,"registrations"),data);
 
-        alert("Registration Successful!");
+localStorage.setItem(
+"registrationId",
+newRegistration.key
+);
 
-        form.reset();
-
-        updateMembers();
-
-        window.location.href="thankyou.html";
+window.location.href="thankyou.html";
 
     }catch(error){
 
