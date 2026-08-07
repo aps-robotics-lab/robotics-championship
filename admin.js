@@ -1,58 +1,71 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import { initializeApp } 
+from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 
-import { 
+
+import {
 getDatabase,
 ref,
 onValue
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+}
+from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 
-// Firebase Config
+
+// FIREBASE CONFIG
+
 
 const firebaseConfig = {
 
-apiKey: "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
 
-authDomain: "aps-robotics-championship.firebaseapp.com",
+apiKey:"YOUR_API_KEY",
+
+authDomain:
+"aps-robotics-championship.firebaseapp.com",
 
 databaseURL:
 "https://aps-robotics-championship-default-rtdb.firebaseio.com",
 
-projectId: "aps-robotics-championship",
+projectId:
+"aps-robotics-championship",
 
 storageBucket:
 "aps-robotics-championship.firebasestorage.app",
 
-messagingSenderId:"1063542904891",
+messagingSenderId:
+"1063542904891",
 
 appId:
-"1:1063542904891:web:82ff9bb3fba0b87384a41e"
+"YOUR_APP_ID"
 
 };
 
 
-// Initialize Firebase
 
 const app = initializeApp(firebaseConfig);
+
 
 const database = getDatabase(app);
 
 
 
 
+
 // LOGIN
 
-function login(){
 
-let user =
+window.login=function(){
+
+
+let username=
 document.getElementById("username").value;
 
-let pass =
+
+let password=
 document.getElementById("password").value;
 
 
 
-if(user==="admin" && pass==="aps2026"){
+if(username==="admin" && password==="aps2026"){
 
 
 localStorage.setItem(
@@ -65,7 +78,6 @@ document.querySelector(".login-box").style.display="none";
 
 
 document.getElementById("dashboard").style.display="block";
-
 
 
 loadData();
@@ -86,29 +98,28 @@ document.getElementById("error").innerHTML=
 }
 
 
-window.login=login;
 
 
 
 
+// AUTO LOGIN
 
-
-// CHECK LOGIN
 
 if(localStorage.getItem("adminLogin")==="true"){
 
+
 document.querySelector(".login-box").style.display="none";
+
 
 document.getElementById("dashboard").style.display="block";
 
+
 loadData();
+
 
 }
 
 
-<button onclick="login()">
-Login
-</button>
 
 
 
@@ -116,7 +127,7 @@ Login
 // LOGOUT
 
 
-function logout(){
+window.logout=function(){
 
 
 localStorage.removeItem("adminLogin");
@@ -128,26 +139,22 @@ location.reload();
 }
 
 
-window.logout=logout;
 
 
 
 
 
-
-
-// LOAD REGISTRATIONS
+// LOAD DATA
 
 
 function loadData(){
 
 
-const table =
+let table=
 document.getElementById("tableBody");
 
 
-
-const dbRef =
+let dbRef=
 ref(database,"registrations");
 
 
@@ -159,13 +166,9 @@ table.innerHTML="";
 
 
 let total=0;
-
 let race=0;
-
 let war=0;
-
 let tug=0;
-
 let soccer=0;
 
 
@@ -177,6 +180,7 @@ total++;
 
 
 let data=child.val();
+
 
 
 let events=data.Events || "";
@@ -191,7 +195,7 @@ if(events.includes("Robo War"))
 war++;
 
 
-if(events.includes("Robo Tug"))
+if(events.includes("Robo Tug of War"))
 tug++;
 
 
@@ -244,7 +248,6 @@ document.getElementById("soccer").innerHTML=soccer;
 });
 
 
-
 }
 
 
@@ -260,19 +263,16 @@ window.loadData=loadData;
 // SEARCH
 
 
-function searchRegistration(){
+window.searchRegistration=function(){
 
 
 let value=
 document.getElementById("search").value.toLowerCase();
 
 
-let rows=
-document.querySelectorAll("#tableBody tr");
 
-
-
-rows.forEach(row=>{
+document.querySelectorAll("#tableBody tr")
+.forEach(row=>{
 
 
 if(row.innerText.toLowerCase().includes(value))
@@ -292,18 +292,14 @@ row.style.display="none";
 
 
 
-window.searchRegistration=searchRegistration;
 
 
 
 
+// CSV DOWNLOAD
 
 
-
-// DOWNLOAD CSV
-
-
-function downloadCSV(){
+window.downloadCSV=function(){
 
 
 let rows=
@@ -336,9 +332,11 @@ csv.push(data.join(","));
 
 
 
-let file=
+let blob=
 new Blob([csv.join("\n")],
-{type:"text/csv"});
+{
+type:"text/csv"
+});
 
 
 
@@ -346,7 +344,7 @@ let link=document.createElement("a");
 
 
 link.href=
-URL.createObjectURL(file);
+URL.createObjectURL(blob);
 
 
 link.download=
@@ -357,7 +355,3 @@ link.click();
 
 
 }
-
-
-
-window.downloadCSV=downloadCSV;
