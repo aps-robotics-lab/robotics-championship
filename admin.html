@@ -1,122 +1,344 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>APS Robotics Championship 2026 | Admin Panel</title>
+<title>
+APS Robotics Championship 2026 | Admin Panel
+</title>
+
 
 <link rel="stylesheet" href="admin.css">
+
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
+
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
 
 </head>
 
+
 <body>
+
+
+<!-- LOGIN -->
 
 <div class="login-box">
 
-<h1>APS Robotics Championship</h1>
 
-<p>Admin Login</p>
+<h1>
+APS Robotics Championship
+</h1>
 
-<input type="text" id="username" placeholder="Username">
 
-<input type="password" id="password" placeholder="Password">
+<p>
+Admin Login
+</p>
 
-<button onclick="login()">Login</button>
+
+
+<label>
+Username
+</label>
+
+<input 
+type="text"
+id="username"
+placeholder="Enter Username"
+autocomplete="off"
+>
+
+
+
+<label>
+Password
+</label>
+
+
+<input
+type="password"
+id="password"
+placeholder="Enter Password"
+autocomplete="off"
+>
+
+
+
+<button onclick="login()">
+Login
+</button>
+
+
 
 <p id="error"></p>
 
+
 </div>
 
-<div id="dashboard" style="display:none;">
+
+
+
+
+<!-- DASHBOARD -->
+
+
+<div id="dashboard">
+
 
 <header>
 
-<h1>APS Robotics Championship 2026</h1>
 
-<p>Army Public School Lal Bahadur Shastri Marg</p>
+<h1>
+APS Robotics Championship 2026
+</h1>
+
+
+<p>
+Army Public School Lal Bahadur Shastri Marg
+</p>
+
+
+
+<button class="logout-btn" onclick="logout()">
+<i class="fa-solid fa-right-from-bracket"></i>
+Logout
+</button>
+
 
 </header>
 
+
+
+
+
+<!-- STATISTICS CARDS -->
+
+
 <div class="cards">
 
-<div class="card">
-<h2 id="total">0</h2>
-<p>Total Registrations</p>
-</div>
 
 <div class="card">
-<h2 id="race">0</h2>
-<p>🏁 Robo Race</p>
+
+<h2 id="total">
+0
+</h2>
+
+<p>
+Total Registrations
+</p>
+
 </div>
+
+
 
 <div class="card">
-<h2 id="war">0</h2>
-<p>⚔️ Robo War</p>
+
+<h2 id="race">
+0
+</h2>
+
+<p>
+🏁 Robo Race
+</p>
+
 </div>
+
+
+
 
 <div class="card">
-<h2 id="tug">0</h2>
-<p>🤝 Robo Tug of War</p>
+
+<h2 id="war">
+0
+</h2>
+
+<p>
+⚔️ Robo War
+</p>
+
 </div>
+
+
+
+
 
 <div class="card">
-<h2 id="soccer">0</h2>
-<p>⚽ Robo Soccer</p>
-</div>
+
+<h2 id="tug">
+0
+</h2>
+
+<p>
+🤝 Robo Tug of War
+</p>
 
 </div>
+
+
+
+
+
+<div class="card">
+
+<h2 id="soccer">
+0
+</h2>
+
+<p>
+⚽ Robo Soccer
+</p>
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+<!-- SEARCH -->
+
 
 <div class="search">
 
+
 <input
+
 type="text"
+
 id="search"
-placeholder="Search Registration ID / Name / Team">
+
+placeholder="Search Registration ID / Name / Team"
+
+>
+
 
 <button onclick="searchRegistration()">
+
+<i class="fa-solid fa-search"></i>
+
 Search
+
 </button>
 
+
 </div>
-  <button class="download-btn" onclick="downloadCSV()">
-📥 Download Registration List
-  </button>
+
+
+
+
+
+<!-- DOWNLOAD -->
+
+
+<button class="download-btn" onclick="downloadCSV()">
+
+<i class="fa-solid fa-download"></i>
+
+Download Registration List
+
+</button>
+
+
+
+
+
+
+
+<!-- TABLE -->
+
+
+<div class="table-container">
+
+
 <table>
+
 
 <thead>
 
+
 <tr>
 
-<th>Registration ID</th>
 
-<th>Student</th>
+<th>
+Registration ID
+</th>
 
-<th>Team</th>
 
-<th>Events</th>
+<th>
+Student
+</th>
 
-<th>Mobile</th>
+
+<th>
+Team
+</th>
+
+
+<th>
+Events
+</th>
+
+
+<th>
+Mobile
+</th>
+
 
 </tr>
 
+
 </thead>
+
+
+
 
 <tbody id="tableBody">
 
+
+<tr>
+
+<td colspan="5">
+
+Loading Registrations...
+
+</td>
+
+
+</tr>
+
+
+
 </tbody>
+
+
 
 </table>
 
+
+
 </div>
+
+
+
+
+</div>
+
+
+
+
 
 <script type="module" src="admin.js"></script>
 
+
 </body>
+
 </html>
