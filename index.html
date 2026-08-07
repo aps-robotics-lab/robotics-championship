@@ -668,25 +668,26 @@ updateMembers();
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
-getFirestore,
-collection,
-addDoc
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
 const firebaseConfig = {
-apiKey: "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
-authDomain: "aps-robotics-championship.firebaseapp.com",
-projectId: "aps-robotics-championship",
-storageBucket: "aps-robotics-championship.firebasestorage.app",
-messagingSenderId: "1063542904891",
-appId: "1:1063542904891:web:82ff9bb3fba0b87384a41e",
-measurementId: "G-MJSYYZS50Z"
+  apiKey: "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
+  authDomain: "aps-robotics-championship.firebaseapp.com",
+  databaseURL: "https://aps-robotics-championship-default-rtdb.firebaseio.com",
+  projectId: "aps-robotics-championship",
+  storageBucket: "aps-robotics-championship.firebasestorage.app",
+  messagingSenderId: "1063542904891",
+  appId: "1:1063542904891:web:82ff9bb3fba0b87384a41e",
+  measurementId: "G-MJSYYZS50Z"
 };
 
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
+
+// Form
 const form = document.getElementById("registerForm");
 
-form.addEventListener("submit", function(e) {
+form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const formData = new FormData(form);
@@ -703,12 +704,18 @@ form.addEventListener("submit", function(e) {
         }
     });
 
-    push(ref(database, "registrations"), data)
-        .then(() => {
-            alert("Registration Successful!");
-            form.reset();
-        })
-        .catch((error) => {
-            alert("Error: " + error.message);
-        });
-});</script>
+    try {
+        await push(ref(database, "registrations"), data);
+
+        alert("Registration Successful!");
+
+        form.reset();
+
+        window.location.href = "thankyou.html";
+
+    } catch (error) {
+        alert("Error: " + error.message);
+        console.error(error);
+    }
+});
+</script>
