@@ -303,3 +303,13 @@ link.click();
 
 
 };
+window.logout = function(){
+
+document.querySelector(".login-box").style.display="block";
+
+document.getElementById("dashboard").style.display="none";
+
+document.getElementById("username").value="";
+document.getElementById("password").value="";
+
+};
