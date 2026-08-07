@@ -319,12 +319,12 @@ value="https://aps-robotics-lab.github.io/robotics-championship/thankyou.html">
 <div class="select-box">
     <i class="fa-solid fa-users"></i>
 
-    <select id="teamSize" onchange="showMembers()">
-        <option value="1">1 Member (Solo)</option>
-        <option value="2">2 Members</option>
-        <option value="3">3 Members</option>
-        <option value="4">4 Members</option>
-        <option value="5">5 Members</option>
+    <select id="teamSize">
+    <option value="1">1 Member (Solo)</option>
+    <option value="2">2 Members</option>
+    <option value="3">3 Members</option>
+    <option value="4">4 Members</option>
+    <option value="5">5 Members</option>
     </select>
 
 </div>
@@ -381,7 +381,7 @@ value="https://aps-robotics-lab.github.io/robotics-championship/thankyou.html">
 <i class="fa-solid fa-users"></i>
 <input type="text" name="Member4 Section" placeholder="Section">
 </div>
-
+            </div>
 </div>
     </div>
 <div id="member5">
@@ -402,29 +402,29 @@ value="https://aps-robotics-lab.github.io/robotics-championship/thankyou.html">
 </div>
     
 </div>
-            <script>
+    <script>
+            const teamSize = document.getElementById("teamSize");
 
-function showMembers(){
+const member1 = document.getElementById("member1");
+const member2 = document.getElementById("member2");
+const member3 = document.getElementById("member3");
+const member4 = document.getElementById("member4");
 
-let size=document.getElementById("teamSize").value;
+function updateMembers() {
+    const size = parseInt(teamSize.value);
 
-document.getElementById("member2").style.display=
-size>=2?"block":"none";
-
-document.getElementById("member3").style.display=
-size>=3?"block":"none";
-
-document.getElementById("member4").style.display=
-size>=4?"block":"none";
-
-document.getElementById("member5").style.display=
-size>=5?"block":"none";
-
+    member1.style.display = size >= 2 ? "block" : "none";
+    member2.style.display = size >= 3 ? "block" : "none";
+    member3.style.display = size >= 4 ? "block" : "none";
+    member4.style.display = size >= 5 ? "block" : "none";
 }
 
-window.onload=showMembers;
+teamSize.addEventListener("change", updateMembers);
+updateMembers();
 
-            </script>
+window.onload=showMembers;
+    </script>
+
             <div class="input-box full">
             
 
