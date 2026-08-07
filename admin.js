@@ -1,46 +1,13 @@
- // ================= ADMIN LOGIN =================
-
-window.login = function(){
-
-    let user = document.getElementById("username").value.trim();
-    let pass = document.getElementById("password").value.trim();
-
-    if(user === "apsadmin" && pass === "APS2026@Lab"){
-
-        document.querySelector(".login-box").style.display = "none";
-
-        document.getElementById("dashboard").style.display = "block";
-
-        loadRegistrations();
-
-    }
-
-    else{
-
-        document.getElementById("error").innerHTML =
-        "❌ Invalid Login Details";
-
-    }
-
-};
-
-
-
-// ================= FIREBASE CONNECTION =================
-
-import { initializeApp } from 
-"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 
 import { 
-getFirestore,
-collection,
-getDocs
-}
-from
-"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+getDatabase,
+ref,
+onValue
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 
+// Firebase Config
 
 const firebaseConfig = {
 
@@ -48,73 +15,182 @@ apiKey: "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
 
 authDomain: "aps-robotics-championship.firebaseapp.com",
 
+databaseURL:
+"https://aps-robotics-championship-default-rtdb.firebaseio.com",
+
 projectId: "aps-robotics-championship",
 
-storageBucket: "aps-robotics-championship.firebasestorage.app",
+storageBucket:
+"aps-robotics-championship.firebasestorage.app",
 
-messagingSenderId: "1063542904891",
+messagingSenderId:"1063542904891",
 
-appId: "1:1063542904891:web:82ff9bb3fba0b87384a41e"
+appId:
+"1:1063542904891:web:82ff9bb3fba0b87384a41e"
 
 };
 
 
+// Initialize Firebase
 
 const app = initializeApp(firebaseConfig);
 
-const db = getFirestore(app);
+const database = getDatabase(app);
 
 
 
 
-// ================= LOAD REGISTRATIONS =================
+// LOGIN
+
+function login(){
+
+let user =
+document.getElementById("username").value;
+
+let pass =
+document.getElementById("password").value;
 
 
-async function loadRegistrations(){
 
-try{
+if(user==="admin" && pass==="aps2026"){
 
 
-const querySnapshot = await getDocs(
-collection(db,"registrations")
+localStorage.setItem(
+"adminLogin",
+"true"
 );
 
 
-
-let total = 0;
-let race = 0;
-let war = 0;
-let tug = 0;
-let soccer = 0;
+document.querySelector(".login-box").style.display="none";
 
 
-let table = "";
+document.getElementById("dashboard").style.display="block";
+
+
+loadData();
+
+
+}
+
+else{
+
+
+document.getElementById("error").innerHTML=
+"❌ Invalid Username or Password";
+
+
+}
+
+
+}
+
+
+window.login=login;
 
 
 
-querySnapshot.forEach((doc)=>{
 
 
-let data = doc.data();
+
+// CHECK LOGIN
+
+if(localStorage.getItem("adminLogin")==="true"){
+
+document.querySelector(".login-box").style.display="none";
+
+document.getElementById("dashboard").style.display="block";
+
+loadData();
+
+}
 
 
-let events = data.events || [];
 
+
+
+
+
+// LOGOUT
+
+
+function logout(){
+
+
+localStorage.removeItem("adminLogin");
+
+
+location.reload();
+
+
+}
+
+
+window.logout=logout;
+
+
+
+
+
+
+
+// LOAD REGISTRATIONS
+
+
+function loadData(){
+
+
+const table =
+document.getElementById("tableBody");
+
+
+
+const dbRef =
+ref(database,"registrations");
+
+
+
+onValue(dbRef,(snapshot)=>{
+
+
+table.innerHTML="";
+
+
+let total=0;
+
+let race=0;
+
+let war=0;
+
+let tug=0;
+
+let soccer=0;
+
+
+
+snapshot.forEach((child)=>{
 
 
 total++;
 
 
-// Count Events
+let data=child.val();
+
+
+let events=data.Events || "";
+
+
 
 if(events.includes("Robo Race"))
 race++;
 
+
 if(events.includes("Robo War"))
 war++;
 
-if(events.includes("Robo Tug of War"))
+
+if(events.includes("Robo Tug"))
 tug++;
+
 
 if(events.includes("Robo Soccer"))
 soccer++;
@@ -122,148 +198,130 @@ soccer++;
 
 
 
-// Create Table
 
-table += `
+let row=document.createElement("tr");
 
-<tr>
 
-<td>${data.registrationId || "-"}</td>
+row.innerHTML=`
 
-<td>${data.studentName || "-"}</td>
+<td>${child.key}</td>
 
-<td>${data.teamName || "-"}</td>
+<td>${data.StudentName || "-"}</td>
 
-<td>${events.join(", ")}</td>
+<td>${data.TeamName || "-"}</td>
 
-<td>${data.mobile || "-"}</td>
+<td>${events}</td>
 
-</tr>
+<td>${data.MobileNumber || "-"}</td>
 
 `;
 
 
 
+table.appendChild(row);
+
+
+
 });
 
 
 
+document.getElementById("total").innerHTML=total;
 
-// Update Dashboard
+document.getElementById("race").innerHTML=race;
 
-document.getElementById("total").innerHTML = total;
+document.getElementById("war").innerHTML=war;
 
-document.getElementById("race").innerHTML = race;
+document.getElementById("tug").innerHTML=tug;
 
-document.getElementById("war").innerHTML = war;
-
-document.getElementById("tug").innerHTML = tug;
-
-document.getElementById("soccer").innerHTML = soccer;
+document.getElementById("soccer").innerHTML=soccer;
 
 
-document.getElementById("tableBody").innerHTML = table;
+
+});
 
 
 
 }
 
-catch(error){
-
-console.log(error);
-
-alert("Error loading registrations");
-
-}
 
 
-}
-
-
-
-
-// Make function available globally
-
-window.loadRegistrations = loadRegistrations;
+window.loadData=loadData;
 
 
 
 
 
-// ================= SEARCH =================
 
 
-window.searchRegistration = function(){
+// SEARCH
 
 
-let value = document
-.getElementById("search")
-.value
-.toLowerCase();
+function searchRegistration(){
 
 
+let value=
+document.getElementById("search").value.toLowerCase();
 
-let rows = document
-.querySelectorAll("#tableBody tr");
+
+let rows=
+document.querySelectorAll("#tableBody tr");
 
 
 
 rows.forEach(row=>{
 
 
-let text = row.innerText.toLowerCase();
+if(row.innerText.toLowerCase().includes(value))
+
+row.style.display="";
 
 
+else
 
-if(text.includes(value)){
-
-row.style.display = "";
-
-}
-
-else{
-
-row.style.display = "none";
-
-}
+row.style.display="none";
 
 
 });
 
 
-};
+}
+
+
+
+window.searchRegistration=searchRegistration;
 
 
 
 
 
-// ================= DOWNLOAD CSV =================
 
 
-window.downloadCSV = function(){
+// DOWNLOAD CSV
 
 
-let csv = [];
+function downloadCSV(){
 
 
+let rows=
+document.querySelectorAll("table tr");
 
-let rows = document.querySelectorAll("table tr");
 
+let csv=[];
 
 
 rows.forEach(row=>{
 
 
-let cols = row.querySelectorAll("th,td");
+let cols=row.querySelectorAll("td,th");
 
-let data = [];
+
+let data=[];
 
 
 cols.forEach(col=>{
 
-data.push(
-`"${col.innerText}"`
-);
+data.push(col.innerText);
 
 });
 
@@ -275,41 +333,28 @@ csv.push(data.join(","));
 
 
 
-let csvFile = new Blob(
-
-[csv.join("\n")],
-
-{
-type:"text/csv"
-}
-
-);
+let file=
+new Blob([csv.join("\n")],
+{type:"text/csv"});
 
 
 
-let link = document.createElement("a");
+let link=document.createElement("a");
 
 
-link.href = URL.createObjectURL(csvFile);
+link.href=
+URL.createObjectURL(file);
 
 
-link.download =
-"APS_Robotics_Championship_2026_Registrations.csv";
-
+link.download=
+"APS_Robotics_Registrations.csv";
 
 
 link.click();
 
 
+}
 
-};
-window.logout = function(){
 
-document.querySelector(".login-box").style.display="block";
 
-document.getElementById("dashboard").style.display="none";
-
-document.getElementById("username").value="";
-document.getElementById("password").value="";
-
-};
+window.downloadCSV=downloadCSV;
