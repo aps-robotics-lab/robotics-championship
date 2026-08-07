@@ -65,7 +65,8 @@ document.querySelector(".login-box").style.display="none";
 
 
 document.getElementById("dashboard").style.display="block";
-
+document.getElementById("loginBtn")
+.addEventListener("click",login);
 
 loadData();
 
