@@ -153,3 +153,35 @@ document.getElementById("tableBody").innerHTML=table;
 
 
 }
+window.searchRegistration = function(){
+
+let value = document
+.getElementById("search")
+.value
+.toLowerCase();
+
+
+let rows = document
+.querySelectorAll("#tableBody tr");
+
+
+rows.forEach(row=>{
+
+let text=row.innerText.toLowerCase();
+
+
+if(text.includes(value)){
+
+row.style.display="";
+
+}
+
+else{
+
+row.style.display="none";
+
+}
+
+});
+
+}
