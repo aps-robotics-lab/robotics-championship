@@ -402,27 +402,43 @@ value="https://aps-robotics-lab.github.io/robotics-championship/thankyou.html">
 </div>
     
 </div>
-    <script>
-            const teamSize = document.getElementById("teamSize");
+        <script>
+    const teamSize = document.getElementById("teamSize");
 
-const member1 = document.getElementById("member1");
 const member2 = document.getElementById("member2");
 const member3 = document.getElementById("member3");
 const member4 = document.getElementById("member4");
 
 function updateMembers() {
-    const size = parseInt(teamSize.value);
 
-    member1.style.display = size >= 2 ? "block" : "none";
-    member2.style.display = size >= 3 ? "block" : "none";
-    member3.style.display = size >= 4 ? "block" : "none";
-    member4.style.display = size >= 5 ? "block" : "none";
+    member2.style.display = "none";
+    member3.style.display = "none";
+    member4.style.display = "none";
+
+    if(teamSize.value == "2"){
+        member2.style.display = "block";
+    }
+
+    if(teamSize.value == "3"){
+        member2.style.display = "block";
+        member3.style.display = "block";
+    }
+
+    if(teamSize.value == "4"){
+        member2.style.display = "block";
+        member3.style.display = "block";
+        member4.style.display = "block";
+    }
 }
-
+<select id="teamSize" name="Team Size">
+    <option value="1">1 Member (Solo)</option>
+    <option value="2">2 Members</option>
+    <option value="3">3 Members</option>
+    <option value="4">4 Members</option>
+</select>
 teamSize.addEventListener("change", updateMembers);
-updateMembers();
 
-window.onload=showMembers;
+updateMembers();
     </script>
 
             <div class="input-box full">
