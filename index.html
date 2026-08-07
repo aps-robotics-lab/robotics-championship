@@ -374,6 +374,20 @@ value="https://aps-robotics-lab.github.io/robotics-championship/thankyou.html">
                 <input type="text" name="member4Section" placeholder="Section">
             </div>
             </div>
+            <script>
+const teamType = document.getElementById("teamType");
+const teamMembers = document.getElementById("teamMembers");
+
+teamType.addEventListener("change", function () {
+
+    if (this.value === "team") {
+        teamMembers.style.display = "block";
+    } else {
+        teamMembers.style.display = "none";
+    }
+
+});
+            </script>
             <div class="input-box full">
             
 
