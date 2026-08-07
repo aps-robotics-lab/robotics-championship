@@ -281,6 +281,24 @@ document.body.appendChild(c);
 }
 
 </script>
+<div class="info">
 
+<h3>Your Registration Number</h3>
+
+<h2 id="regNo" style="color:#00F2FF;"></h2>
+
+</div>
+  <script>
+
+const regNo = localStorage.getItem("registrationId");
+
+if(regNo){
+    document.getElementById("regNo").innerHTML = regNo;
+}else{
+    document.getElementById("regNo").innerHTML = "Registration ID Not Found";
+}
+localStorage.removeItem("registrationId");
+  </script>
+  
 </body>
 </html>
