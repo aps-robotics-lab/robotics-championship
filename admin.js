@@ -185,3 +185,41 @@ row.style.display="none";
 });
 
 }
+window.downloadCSV = function(){
+
+let csv = [];
+
+let rows = document.querySelectorAll("table tr");
+
+rows.forEach(row => {
+
+let cols = row.querySelectorAll("th, td");
+
+let data = [];
+
+cols.forEach(col=>{
+    data.push(col.innerText);
+});
+
+csv.push(data.join(","));
+
+});
+
+
+let csvFile = new Blob(
+[csv.join("\n")],
+{type:"text/csv"}
+);
+
+
+let link = document.createElement("a");
+
+link.href = URL.createObjectURL(csvFile);
+
+link.download =
+"APS_Robotics_Championship_2026_Registrations.csv";
+
+
+link.click();
+
+}
