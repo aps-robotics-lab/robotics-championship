@@ -399,18 +399,27 @@ value="https://aps-robotics-lab.github.io/robotics-championship/thankyou.html">
 </div>
             </div>
             <script>
-const teamType = document.getElementById("teamType");
-const teamMembers = document.getElementById("teamMembers");
 
-teamType.addEventListener("change", function () {
+function showMembers(){
 
-    if (this.value === "team") {
-        teamMembers.style.display = "block";
-    } else {
-        teamMembers.style.display = "none";
-    }
+let size=document.getElementById("teamSize").value;
 
-});
+document.getElementById("member2").style.display=
+size>=2?"block":"none";
+
+document.getElementById("member3").style.display=
+size>=3?"block":"none";
+
+document.getElementById("member4").style.display=
+size>=4?"block":"none";
+
+document.getElementById("member5").style.display=
+size>=5?"block":"none";
+
+}
+
+window.onload=showMembers;
+
             </script>
             <div class="input-box full">
             
