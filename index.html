@@ -594,3 +594,30 @@ View Events
 <i class="fa-solid fa-arrow-up"></i>
 
 </a>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import {
+getFirestore,
+collection,
+addDoc
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
+authDomain: "aps-robotics-championship.firebaseapp.com",
+projectId: "aps-robotics-championship",
+storageBucket: "aps-robotics-championship.firebasestorage.app",
+messagingSenderId: "1063542904891",
+appId: "1:1063542904891:web:82ff9bb3fba0b87384a41e",
+measurementId: "G-MJSYYZS50Z"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.db = db;
+window.collection = collection;
+window.addDoc = addDoc;
+
+</script>
