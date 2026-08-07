@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Registration Successful</title>
+<title>Registration Successful | APS Robotics Championship 2026</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -23,13 +23,17 @@ box-sizing:border-box;
 body{
 
 font-family:'Poppins',sans-serif;
+
 background:linear-gradient(135deg,#040816,#0b1d35);
+
 color:white;
 
 height:100vh;
 
 display:flex;
+
 justify-content:center;
+
 align-items:center;
 
 overflow:hidden;
@@ -37,16 +41,19 @@ overflow:hidden;
 }
 
 
+/* Main Card */
+
 .container{
 
 width:90%;
+
 max-width:700px;
 
 padding:45px;
 
 text-align:center;
 
-background:rgba(255,255,255,.06);
+background:rgba(255,255,255,0.05);
 
 backdrop-filter:blur(15px);
 
@@ -54,7 +61,7 @@ border-radius:25px;
 
 border:1px solid rgba(255,255,255,.1);
 
-box-shadow:0 0 40px rgba(0,255,255,.3);
+box-shadow:0 0 40px rgba(0,242,255,.3);
 
 animation:fade 1s;
 
@@ -62,10 +69,13 @@ animation:fade 1s;
 
 
 
+/* Success Icon */
+
 .success{
 
-width:120px;
 height:120px;
+
+width:120px;
 
 margin:auto;
 
@@ -74,14 +84,16 @@ background:#00c853;
 border-radius:50%;
 
 display:flex;
-justify-content:center;
+
 align-items:center;
 
-font-size:60px;
+justify-content:center;
 
-box-shadow:0 0 40px #00ff99;
+font-size:65px;
 
-animation:pop .8s;
+box-shadow:0 0 35px #00ff99;
+
+animation:pop 1s;
 
 }
 
@@ -89,11 +101,11 @@ animation:pop .8s;
 
 h1{
 
-margin:25px 0;
-
 font-family:'Orbitron';
 
 color:#00F2FF;
+
+margin:25px 0;
 
 font-size:35px;
 
@@ -103,9 +115,9 @@ font-size:35px;
 
 p{
 
-line-height:1.8;
-
 color:#ddd;
+
+line-height:1.8;
 
 margin-bottom:25px;
 
@@ -123,18 +135,6 @@ border-radius:15px;
 
 margin:20px 0;
 
-border:1px solid rgba(0,255,255,.2);
-
-}
-
-
-
-.info h3{
-
-color:#fff;
-
-margin-bottom:10px;
-
 }
 
 
@@ -144,6 +144,10 @@ margin-bottom:10px;
 color:#00F2FF;
 
 font-family:'Orbitron';
+
+margin-top:10px;
+
+font-size:25px;
 
 }
 
@@ -159,11 +163,11 @@ background:#00F2FF;
 
 color:#000;
 
-font-weight:600;
-
 text-decoration:none;
 
 border-radius:40px;
+
+font-weight:bold;
 
 transition:.3s;
 
@@ -191,11 +195,14 @@ color:#aaa;
 
 
 
+/* Confetti */
+
 .confetti{
 
 position:absolute;
 
 width:10px;
+
 height:10px;
 
 animation:fall linear infinite;
@@ -203,13 +210,15 @@ animation:fall linear infinite;
 }
 
 
+
 @keyframes fall{
 
 0%{
 
-transform:translateY(-100vh) rotate(0);
+transform:translateY(-100vh) rotate(0deg);
 
 }
+
 
 100%{
 
@@ -228,6 +237,7 @@ transform:translateY(110vh) rotate(720deg);
 transform:scale(0);
 
 }
+
 
 100%{
 
@@ -265,18 +275,10 @@ padding:30px;
 
 }
 
+
 h1{
 
 font-size:25px;
-
-}
-
-.success{
-
-width:90px;
-height:90px;
-
-font-size:45px;
 
 }
 
@@ -291,6 +293,7 @@ font-size:45px;
 <body>
 
 
+
 <div class="container">
 
 
@@ -302,24 +305,22 @@ font-size:45px;
 
 
 <h1>
-
 Registration Successful!
-
 </h1>
 
 
 
 <p>
 
-Thank you for registering for the
+Thank you for registering for
 
 <strong>APS Robotics Championship 2026</strong>.
 
 <br>
 
-Your registration has been submitted successfully.
+Your team registration has been submitted successfully.
 
-We look forward to welcoming you to the competition.
+We are excited to see your innovation and creativity.
 
 </p>
 
@@ -327,28 +328,13 @@ We look forward to welcoming you to the competition.
 
 <div class="info">
 
-📅 Event:
 
-<br>
+<h3>
 
-<strong>
-APS Robotics Championship 2026
-</strong>
+Your Registration Number
 
-<br><br>
+</h3>
 
-
-🤖 Hosted by APS Tinkering Lab
-
-
-</div>
-
-
-
-
-<div class="info">
-
-<h3>Your Registration Number</h3>
 
 <h2 id="regNo">
 
@@ -361,10 +347,37 @@ Loading...
 
 
 
+<div class="info">
+
+
+📅 Event:
+
+<br>
+
+<strong>
+APS Robotics Championship 2026
+</strong>
+
+
+<br><br>
+
+
+🤖 Hosted By:
+
+<br>
+
+<strong>
+APS Tinkering Lab
+</strong>
+
+
+</div>
+
+
 
 <a href="index.html" class="btn">
 
-🏠 Back to Home
+🏠 Back To Home
 
 </a>
 
@@ -374,11 +387,14 @@ Loading...
 
 Redirecting in 
 
-<span id="count">10</span>
+<span id="count">
+10
+</span>
 
 seconds...
 
 </p>
+
 
 
 </div>
@@ -386,31 +402,33 @@ seconds...
 
 
 
+
 <script>
 
 
-// Registration Number
+// Get Registration ID
 
-const regNo = localStorage.getItem("registrationId");
+const registrationID = localStorage.getItem("registrationId");
 
 
-if(regNo){
+if(registrationID){
 
-document.getElementById("regNo").textContent = regNo;
+document.getElementById("regNo").innerHTML = registrationID;
 
 }
 
 else{
 
-document.getElementById("regNo").textContent = "Not Available";
+document.getElementById("regNo").innerHTML="Not Available";
 
 }
 
 
 
-// Remove saved ID
+// Remove stored ID
 
 localStorage.removeItem("registrationId");
+
 
 
 
@@ -419,20 +437,22 @@ localStorage.removeItem("registrationId");
 
 let time = 10;
 
-const counter = document.getElementById("count");
+
+const count = document.getElementById("count");
 
 
-const timer = setInterval(()=>{
+
+let timer = setInterval(()=>{
 
 
 time--;
 
 
-counter.textContent=time;
+count.innerHTML=time;
 
 
 
-if(time <= 0){
+if(time<=0){
 
 
 clearInterval(timer);
@@ -444,43 +464,50 @@ window.location.href="index.html";
 }
 
 
+
 },1000);
 
 
 
 
-// Confetti
+
+// Confetti Generator
 
 
 for(let i=0;i<70;i++){
 
 
-let c=document.createElement("div");
+let confetti=document.createElement("div");
 
 
-c.className="confetti";
+confetti.className="confetti";
 
 
-c.style.left=Math.random()*100+"vw";
+confetti.style.left=Math.random()*100+"vw";
 
 
-c.style.animationDuration=(Math.random()*3+3)+"s";
+confetti.style.background=
+`hsl(${Math.random()*360},100%,60%)`;
 
 
-c.style.animationDelay=Math.random()*3+"s";
+confetti.style.animationDuration=
+(Math.random()*3+3)+"s";
 
 
-c.style.background=`hsl(${Math.random()*360},100%,60%)`;
+confetti.style.animationDelay=
+Math.random()*3+"s";
 
 
 
-document.body.appendChild(c);
+document.body.appendChild(confetti);
 
 
 }
 
 
+
 </script>
+
 
 
 </body>
