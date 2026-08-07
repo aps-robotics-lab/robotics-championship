@@ -174,7 +174,6 @@ View Events
     </div>
 
 </section>
-    <!-- ================= REGISTRATION ================= 
     <!-- ================= REGISTRATION ================= -->
 <section id="registration" class="registration">
 
@@ -532,8 +531,89 @@ form.addEventListener("submit", async (e) => {
 <script src="script.js"></script>
 
 <script type="module">
-  // Firebase code
-</script>
+  <script>
+const teamSize = document.getElementById("teamSize");
 
+const member2 = document.getElementById("member2");
+const member3 = document.getElementById("member3");
+const member4 = document.getElementById("member4");
+const member5 = document.getElementById("member5");
+
+function updateMembers() {
+    member2.style.display = "none";
+    member3.style.display = "none";
+    member4.style.display = "none";
+    member5.style.display = "none";
+
+    const size = Number(teamSize.value);
+
+    if (size >= 2) member2.style.display = "block";
+    if (size >= 3) member3.style.display = "block";
+    if (size >= 4) member4.style.display = "block";
+    if (size >= 5) member5.style.display = "block";
+}
+
+teamSize.addEventListener("change", updateMembers);
+updateMembers();
+</script>
+                <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_PROJECT.firebasestorage.app",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+const form = document.getElementById("registerForm");
+
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const data = {};
+
+    formData.forEach((value, key) => {
+        if (data[key]) {
+            if (!Array.isArray(data[key])) data[key] = [data[key]];
+            data[key].push(value);
+        } else {
+            data[key] = value;
+        }
+    });
+
+    try {
+        await push(ref(database, "registrations"), data);
+
+        alert("Registration Successful!");
+
+        form.reset();
+        updateMembers();
+
+        window.location.href = "thankyou.html";
+
+    } catch (err) {
+        alert("Error: " + err.message);
+        console.error(err);
+    }
+});
+                </script>
+</script>
+            </div>
+    </div>
+</section>
+                </select>
+            </div>
+        </form>
+    </div>>
+</section>
 </body>
-            </html>
+</html>
