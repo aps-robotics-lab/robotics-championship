@@ -1,6 +1,6 @@
 // ADMIN LOGIN
 
-function login(){
+window.login = function(){
 
     let user = document.getElementById("username").value;
     let pass = document.getElementById("password").value;
@@ -22,7 +22,7 @@ function login(){
 
     }
 
-}
+};
 
 
 
