@@ -1,12 +1,7 @@
 /* =====================================================
    APS ROBOTICS CHAMPIONSHIP 2026
-   MAIN JAVASCRIPT
-   FIREBASE REGISTRATION SYSTEM
-===================================================== */
-
-
-/* =====================================================
-   FIREBASE IMPORTS
+   MAIN WEBSITE JAVASCRIPT
+   FIREBASE REALTIME DATABASE
 ===================================================== */
 
 import {
@@ -24,6 +19,108 @@ import {
 }
 from
 "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+
+
+
+/* =====================================================
+   PRELOADER
+===================================================== */
+
+(function () {
+
+    const preloader =
+        document.getElementById("preloader");
+
+
+    if (!preloader) {
+
+        document.body.classList.remove(
+            "preloader-active"
+        );
+
+        return;
+
+    }
+
+
+    let finished = false;
+
+
+    function hidePreloader() {
+
+        if (finished) {
+            return;
+        }
+
+
+        finished = true;
+
+
+        const status =
+            document.getElementById(
+                "loaderStatus"
+            );
+
+
+        if (status) {
+
+            status.textContent =
+                "SYSTEM READY";
+
+        }
+
+
+        preloader.classList.add(
+            "preloader-hidden"
+        );
+
+
+        document.body.classList.remove(
+            "preloader-active"
+        );
+
+
+        setTimeout(
+            () => {
+
+                if (
+                    preloader &&
+                    preloader.parentNode
+                ) {
+
+                    preloader.remove();
+
+                }
+
+            },
+            700
+        );
+
+    }
+
+
+    /*
+     * Normal preloader duration.
+     */
+
+    setTimeout(
+        hidePreloader,
+        1350
+    );
+
+
+    /*
+     * Absolute failsafe.
+     * The loader can NEVER remain
+     * longer than 2 seconds.
+     */
+
+    setTimeout(
+        hidePreloader,
+        2000
+    );
+
+})();
 
 
 
@@ -62,12 +159,33 @@ const firebaseConfig = {
    INITIALIZE FIREBASE
 ===================================================== */
 
-const app =
-    initializeApp(firebaseConfig);
+let app;
+
+let database;
 
 
-const database =
-    getDatabase(app);
+try {
+
+    app =
+        initializeApp(
+            firebaseConfig
+        );
+
+
+    database =
+        getDatabase(
+            app
+        );
+
+}
+catch (error) {
+
+    console.error(
+        "Firebase initialization failed:",
+        error
+    );
+
+}
 
 
 
@@ -75,201 +193,167 @@ const database =
    DOM
 ===================================================== */
 
-const preloader =
-    document.getElementById("preloader");
+const header =
+    document.getElementById(
+        "header"
+    );
 
 
-const loadingPercent =
-    document.getElementById("loadingPercent");
+const menuButton =
+    document.getElementById(
+        "menuButton"
+    );
 
 
-const menuToggle =
-    document.getElementById("menuToggle");
+const mainNav =
+    document.getElementById(
+        "mainNav"
+    );
 
 
-const navMenu =
-    document.getElementById("navMenu");
+const navLinks =
+    document.querySelectorAll(
+        ".nav-link"
+    );
 
 
 const registrationForm =
-    document.getElementById("registrationForm");
+    document.getElementById(
+        "registrationForm"
+    );
 
 
-const submitBtn =
-    document.getElementById("submitBtn");
-
-
-const submitNormal =
-    document.querySelector(".submit-normal");
-
-
-const submitLoading =
-    document.querySelector(".submit-loading");
+const submitButton =
+    document.getElementById(
+        "submitButton"
+    );
 
 
 const formMessage =
-    document.getElementById("formMessage");
+    document.getElementById(
+        "formMessage"
+    );
 
 
 const eventError =
-    document.getElementById("eventError");
+    document.getElementById(
+        "eventError"
+    );
 
 
-const toast =
-    document.getElementById("toast");
-
-
-const toastMessage =
-    document.getElementById("toastMessage");
-
-
-
-/* =====================================================
-   PRELOADER
-   AUTOMATICALLY CLOSES AFTER ~1.5 SECONDS
-===================================================== */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        if (!preloader) {
-            return;
-        }
-
-
-        let currentPercent = 0;
-
-
-        const percentTimer =
-            setInterval(
-                () => {
-
-                    currentPercent += 2;
-
-
-                    if (
-                        currentPercent >= 100
-                    ) {
-
-                        currentPercent = 100;
-
-                        clearInterval(
-                            percentTimer
-                        );
-
-                    }
-
-
-                    if (loadingPercent) {
-
-                        loadingPercent.textContent =
-                            currentPercent + "%";
-
-                    }
-
-                },
-                28
-            );
-
-
-        setTimeout(
-            () => {
-
-                preloader.classList.add(
-                    "preloader-hide"
-                );
-
-
-                setTimeout(
-                    () => {
-
-                        preloader.style.display =
-                            "none";
-
-                        document.body.classList.add(
-                            "page-ready"
-                        );
-
-                    },
-                    700
-                );
-
-            },
-            1500
-        );
-
-    }
-);
+const mobileInput =
+    document.getElementById(
+        "mobileNumber"
+    );
 
 
 
 /* =====================================================
-   MOBILE MENU
+   MOBILE NAVIGATION
 ===================================================== */
 
-if (menuToggle && navMenu) {
+if (
+    menuButton &&
+    mainNav
+) {
 
-    menuToggle.addEventListener(
+    menuButton.addEventListener(
         "click",
         () => {
 
-            navMenu.classList.toggle(
-                "open"
+            const isOpen =
+                mainNav.classList.toggle(
+                    "open"
+                );
+
+
+            menuButton.setAttribute(
+                "aria-expanded",
+                String(isOpen)
             );
 
 
-            const icon =
-                menuToggle.querySelector("i");
-
-
-            if (
-                navMenu.classList.contains("open")
-            ) {
-
-                icon.className =
-                    "fa-solid fa-xmark";
-
-            }
-            else {
-
-                icon.className =
-                    "fa-solid fa-bars";
-
-            }
+            menuButton.innerHTML =
+                isOpen
+                ? '<i class="fa-solid fa-xmark"></i>'
+                : '<i class="fa-solid fa-bars"></i>';
 
         }
     );
 
 
-    navMenu
-        .querySelectorAll(".nav-link")
-        .forEach(
-            link => {
+    navLinks.forEach(
+        link => {
 
-                link.addEventListener(
-                    "click",
-                    () => {
+            link.addEventListener(
+                "click",
+                () => {
 
-                        navMenu.classList.remove(
-                            "open"
-                        );
+                    mainNav.classList.remove(
+                        "open"
+                    );
 
 
-                        const icon =
-                            menuToggle.querySelector("i");
+                    menuButton.setAttribute(
+                        "aria-expanded",
+                        "false"
+                    );
 
 
-                        icon.className =
-                            "fa-solid fa-bars";
+                    menuButton.innerHTML =
+                        '<i class="fa-solid fa-bars"></i>';
 
-                    }
-                );
+                }
+            );
 
-            }
-        );
+        }
+    );
 
 }
+
+
+
+/* =====================================================
+   HEADER SCROLL
+===================================================== */
+
+function handleHeaderScroll() {
+
+    if (!header) {
+        return;
+    }
+
+
+    if (
+        window.scrollY > 40
+    ) {
+
+        header.classList.add(
+            "scrolled"
+        );
+
+    }
+    else {
+
+        header.classList.remove(
+            "scrolled"
+        );
+
+    }
+
+}
+
+
+window.addEventListener(
+    "scroll",
+    handleHeaderScroll,
+    {
+        passive: true
+    }
+);
+
+
+handleHeaderScroll();
 
 
 
@@ -283,167 +367,78 @@ const sections =
     );
 
 
-const navLinks =
-    document.querySelectorAll(
-        ".nav-link"
-    );
+function updateActiveNav() {
+
+    const scrollPosition =
+        window.scrollY + 150;
 
 
-const observer =
-    new IntersectionObserver(
-        entries => {
-
-            entries.forEach(
-                entry => {
-
-                    if (
-                        entry.isIntersecting
-                    ) {
-
-                        const id =
-                            entry.target.id;
+    let currentSection =
+        "home";
 
 
-                        navLinks.forEach(
-                            link => {
+    sections.forEach(
+        section => {
 
-                                link.classList.toggle(
-                                    "active",
-                                    link.getAttribute("href")
-                                    ===
-                                    "#" + id
-                                );
+            const top =
+                section.offsetTop;
 
-                            }
-                        );
+            const bottom =
+                top +
+                section.offsetHeight;
 
-                    }
 
-                }
-            );
+            if (
+                scrollPosition >= top &&
+                scrollPosition < bottom
+            ) {
 
-        },
-        {
-            threshold: .2,
-            rootMargin:
-                "-80px 0px -45% 0px"
+                currentSection =
+                    section.id;
+
+            }
+
         }
     );
 
 
-sections.forEach(
-    section => {
+    navLinks.forEach(
+        link => {
 
-        observer.observe(
-            section
-        );
-
-    }
-);
+            const href =
+                link.getAttribute(
+                    "href"
+                );
 
 
+            link.classList.toggle(
+                "active",
+                href ===
+                "#" + currentSection
+            );
 
-/* =====================================================
-   HEADER SCROLL EFFECT
-===================================================== */
-
-const siteHeader =
-    document.getElementById(
-        "siteHeader"
+        }
     );
+
+}
 
 
 window.addEventListener(
     "scroll",
-    () => {
-
-        if (!siteHeader) {
-            return;
-        }
-
-
-        if (window.scrollY > 30) {
-
-            siteHeader.style.background =
-                "rgba(2,8,16,.88)";
-
-        }
-        else {
-
-            siteHeader.style.background =
-                "rgba(2,8,16,.65)";
-
-        }
-
-    },
+    updateActiveNav,
     {
         passive: true
     }
 );
 
 
-
-/* =====================================================
-   EVENT SELECTION
-===================================================== */
-
-const eventCheckboxes =
-    document.querySelectorAll(
-        'input[name="Events"]'
-    );
-
-
-eventCheckboxes.forEach(
-    checkbox => {
-
-        checkbox.addEventListener(
-            "change",
-            () => {
-
-                const selected =
-                    getSelectedEvents();
-
-
-                if (selected.length > 0) {
-
-                    eventError.textContent =
-                        "";
-
-                }
-
-            }
-        );
-
-    }
-);
-
-
-
-function getSelectedEvents() {
-
-    return Array.from(
-        document.querySelectorAll(
-            'input[name="Events"]:checked'
-        )
-    )
-    .map(
-        checkbox =>
-            checkbox.value
-    );
-
-}
+updateActiveNav();
 
 
 
 /* =====================================================
    MOBILE NUMBER
 ===================================================== */
-
-const mobileInput =
-    document.getElementById(
-        "mobileNumber"
-    );
-
 
 if (mobileInput) {
 
@@ -453,453 +448,14 @@ if (mobileInput) {
 
             mobileInput.value =
                 mobileInput.value
-                .replace(/\D/g, "")
-                .slice(0, 10);
-
-        }
-    );
-
-}
-
-
-
-/* =====================================================
-   FORM SUBMISSION
-===================================================== */
-
-if (registrationForm) {
-
-    registrationForm.addEventListener(
-        "submit",
-        async event => {
-
-            event.preventDefault();
-
-
-            clearFormMessage();
-
-
-            const selectedEvents =
-                getSelectedEvents();
-
-
-            /* =========================================
-               EVENT VALIDATION
-            ========================================= */
-
-            if (
-                selectedEvents.length === 0
-            ) {
-
-                eventError.textContent =
-                    "Please select at least one event.";
-
-
-                document
-                    .getElementById(
-                        "eventSelection"
-                    )
-                    .scrollIntoView({
-                        behavior: "smooth",
-                        block: "center"
-                    });
-
-
-                return;
-
-            }
-
-
-            /* =========================================
-               FORM VALUES
-            ========================================= */
-
-            const studentName =
-                valueOf("studentName");
-
-
-            const teamName =
-                valueOf("teamName");
-
-
-            const className =
-                valueOf("className");
-
-
-            const section =
-                valueOf("section");
-
-
-            const mobileNumber =
-                valueOf("mobileNumber");
-
-
-            const emailAddress =
-                valueOf("emailAddress");
-
-
-            const remarks =
-                valueOf("remarks");
-
-
-            /* =========================================
-               MOBILE VALIDATION
-            ========================================= */
-
-            if (
-                !/^[0-9]{10}$/.test(
-                    mobileNumber
+                .replace(
+                    /\D/g,
+                    ""
                 )
-            ) {
-
-                showFormMessage(
-                    "Please enter a valid 10-digit mobile number.",
-                    "error"
+                .slice(
+                    0,
+                    10
                 );
-
-
-                mobileInput.focus();
-
-                return;
-
-            }
-
-
-            /* =========================================
-               TEAM MEMBERS
-            ========================================= */
-
-            const member2Name =
-                valueOf("member2Name");
-
-
-            const member2Class =
-                valueOf("member2Class");
-
-
-            const member2Section =
-                valueOf("member2Section");
-
-
-            const member3Name =
-                valueOf("member3Name");
-
-
-            const member3Class =
-                valueOf("member3Class");
-
-
-            const member3Section =
-                valueOf("member3Section");
-
-
-            const member4Name =
-                valueOf("member4Name");
-
-
-            const member4Class =
-                valueOf("member4Class");
-
-
-            const member4Section =
-                valueOf("member4Section");
-
-
-            const member5Name =
-                valueOf("member5Name");
-
-
-            const member5Class =
-                valueOf("member5Class");
-
-
-            const member5Section =
-                valueOf("member5Section");
-
-
-            /* =========================================
-               TEAM SIZE
-            ========================================= */
-
-            let teamSize = 1;
-
-
-            if (member2Name) {
-                teamSize++;
-            }
-
-
-            if (member3Name) {
-                teamSize++;
-            }
-
-
-            if (member4Name) {
-                teamSize++;
-            }
-
-
-            if (member5Name) {
-                teamSize++;
-            }
-
-
-
-            /* =========================================
-               REGISTRATION ID
-            ========================================= */
-
-            const registrationId =
-                createRegistrationId();
-
-
-
-            /* =========================================
-               REGISTRATION DATE
-            ========================================= */
-
-            const registrationDate =
-                new Date().toISOString();
-
-
-
-            /* =========================================
-               FIREBASE DATA
-            ========================================= */
-
-            const registrationData = {
-
-                registrationId:
-
-                    registrationId,
-
-
-                StudentName:
-
-                    studentName,
-
-
-                TeamName:
-
-                    teamName,
-
-
-                Class:
-
-                    className,
-
-
-                Section:
-
-                    section,
-
-
-                MobileNumber:
-
-                    mobileNumber,
-
-
-                EmailAddress:
-
-                    emailAddress,
-
-
-                TeamSize:
-
-                    teamSize,
-
-
-                Member2Name:
-
-                    member2Name,
-
-
-                Member2Class:
-
-                    member2Class,
-
-
-                Member2Section:
-
-                    member2Section,
-
-
-                Member3Name:
-
-                    member3Name,
-
-
-                Member3Class:
-
-                    member3Class,
-
-
-                Member3Section:
-
-                    member3Section,
-
-
-                Member4Name:
-
-                    member4Name,
-
-
-                Member4Class:
-
-                    member4Class,
-
-
-                Member4Section:
-
-                    member4Section,
-
-
-                Member5Name:
-
-                    member5Name,
-
-
-                Member5Class:
-
-                    member5Class,
-
-
-                Member5Section:
-
-                    member5Section,
-
-
-                Events:
-
-                    selectedEvents,
-
-
-                Remarks:
-
-                    remarks,
-
-
-                registrationDate:
-
-                    registrationDate
-
-            };
-
-
-
-            /* =========================================
-               BUTTON LOADING
-            ========================================= */
-
-            setSubmitLoading(true);
-
-
-
-            try {
-
-                /* =====================================
-                   CREATE FIREBASE RECORD
-                ===================================== */
-
-                const registrationsRef =
-                    ref(
-                        database,
-                        "registrations"
-                    );
-
-
-                const newRegistrationRef =
-                    push(
-                        registrationsRef
-                    );
-
-
-                await set(
-                    newRegistrationRef,
-                    registrationData
-                );
-
-
-
-                /* =====================================
-                   SAVE CONFIRMATION DATA
-                ===================================== */
-
-                const confirmationData = {
-
-                    ...registrationData,
-
-                    firebaseKey:
-                        newRegistrationRef.key
-
-                };
-
-
-                sessionStorage.setItem(
-                    "apsRegistration",
-                    JSON.stringify(
-                        confirmationData
-                    )
-                );
-
-
-
-                /* =====================================
-                   SUCCESS
-                ===================================== */
-
-                showFormMessage(
-                    "Registration successful. Redirecting...",
-                    "success"
-                );
-
-
-                showToast(
-                    "Registration submitted successfully.",
-                    "success"
-                );
-
-
-
-                /* =====================================
-                   REDIRECT
-                ===================================== */
-
-                setTimeout(
-                    () => {
-
-                        window.location.href =
-                            "thank.html";
-
-                    },
-                    700
-                );
-
-
-            }
-            catch (error) {
-
-                console.error(
-                    "Registration error:",
-                    error
-                );
-
-
-                showFormMessage(
-                    getFirebaseErrorMessage(error),
-                    "error"
-                );
-
-
-                showToast(
-                    "Registration could not be submitted.",
-                    "error"
-                );
-
-
-                setSubmitLoading(false);
-
-            }
 
         }
     );
@@ -909,87 +465,62 @@ if (registrationForm) {
 
 
 /* =====================================================
-   GET INPUT VALUE
+   EVENT CHECKBOXES
 ===================================================== */
 
-function valueOf(id) {
-
-    const element =
-        document.getElementById(id);
-
-
-    if (!element) {
-        return "";
-    }
+const eventCheckboxes =
+    document.querySelectorAll(
+        'input[name="Events"]'
+    );
 
 
-    return element.value.trim();
+function getSelectedEvents() {
+
+    return Array.from(
+        eventCheckboxes
+    )
+    .filter(
+        checkbox =>
+            checkbox.checked
+    )
+    .map(
+        checkbox =>
+            checkbox.value
+    );
 
 }
 
 
+eventCheckboxes.forEach(
+    checkbox => {
 
-/* =====================================================
-   CREATE REGISTRATION ID
-===================================================== */
+        checkbox.addEventListener(
+            "change",
+            () => {
 
-function createRegistrationId() {
+                if (
+                    getSelectedEvents()
+                    .length > 0
+                ) {
 
-    const now =
-        new Date();
+                    clearEventError();
 
+                }
 
-    const year =
-        now.getFullYear();
-
-
-    const random =
-        Math.floor(
-            1000 +
-            Math.random() * 9000
+            }
         );
 
-
-    return (
-        "APSRC-" +
-        year +
-        "-" +
-        random
-    );
-
-}
-
-
-
-/* =====================================================
-   SUBMIT BUTTON
-===================================================== */
-
-function setSubmitLoading(
-    loading
-) {
-
-    if (!submitBtn) {
-        return;
     }
+);
 
 
-    submitBtn.disabled =
-        loading;
 
+function clearEventError() {
 
-    if (submitNormal) {
+    if (eventError) {
 
-        submitNormal.hidden =
-            loading;
-
-    }
-
-
-    if (submitLoading) {
-
-        submitLoading.hidden =
-            !loading;
+        eventError.textContent =
+            "";
 
     }
 
@@ -1016,7 +547,7 @@ function showFormMessage(
 
 
     formMessage.className =
-        "form-message " +
+        "form-message show " +
         type;
 
 }
@@ -1032,6 +563,7 @@ function clearFormMessage() {
     formMessage.textContent =
         "";
 
+
     formMessage.className =
         "form-message";
 
@@ -1040,135 +572,735 @@ function clearFormMessage() {
 
 
 /* =====================================================
-   TOAST
+   GENERATE REGISTRATION ID
 ===================================================== */
 
-let toastTimer;
+function generateRegistrationId() {
+
+    const now =
+        new Date();
 
 
-function showToast(
-    message,
-    type = "success"
-) {
-
-    if (!toast) {
-        return;
-    }
+    const year =
+        now.getFullYear();
 
 
-    if (toastMessage) {
-
-        toastMessage.textContent =
-            message;
-
-    }
-
-
-    const icon =
-        toast.querySelector("i");
-
-
-    if (icon) {
-
-        icon.className =
-            type === "error"
-                ? "fa-solid fa-circle-exclamation"
-                : "fa-solid fa-circle-check";
-
-
-        icon.style.color =
-            type === "error"
-                ? "#ff5577"
-                : "#00ff9d";
-
-    }
-
-
-    toast.classList.add(
-        "show"
-    );
-
-
-    clearTimeout(
-        toastTimer
-    );
-
-
-    toastTimer =
-        setTimeout(
-            () => {
-
-                toast.classList.remove(
-                    "show"
-                );
-
-            },
-            3500
+    const month =
+        String(
+            now.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
         );
+
+
+    const day =
+        String(
+            now.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    const random =
+        Math.floor(
+            1000 +
+            Math.random() *
+            9000
+        );
+
+
+    return (
+        `APS-RBC-${year}` +
+        `-${month}${day}` +
+        `-${random}`
+    );
 
 }
 
 
 
 /* =====================================================
-   FIREBASE ERROR
+   GET VALUE
 ===================================================== */
 
-function getFirebaseErrorMessage(
-    error
+function getValue(
+    id
 ) {
 
-    if (!error) {
-
-        return (
-            "Something went wrong. Please try again."
+    const element =
+        document.getElementById(
+            id
         );
 
+
+    if (!element) {
+        return "";
     }
 
 
-    if (
-        error.code ===
-        "PERMISSION_DENIED"
-    ) {
+    return element.value.trim();
 
-        return (
-            "Registration is currently unavailable. Please check Firebase Database Rules."
-        );
-
-    }
+}
 
 
-    if (
-        error.code ===
-        "NETWORK_ERROR"
-    ) {
 
-        return (
-            "Network error. Please check your internet connection."
-        );
+/* =====================================================
+   VALIDATE MOBILE
+===================================================== */
 
-    }
+function isValidMobile(
+    mobile
+) {
 
-
-    if (
-        error.message &&
-        error.message.toLowerCase()
-            .includes("permission")
-    ) {
-
-        return (
-            "Database permission denied. Please contact the administrator."
-        );
-
-    }
-
-
-    return (
-        "Unable to submit registration. Please try again."
+    return /^[6-9]\d{9}$/.test(
+        mobile
     );
 
 }
+
+
+
+/* =====================================================
+   TEAM SIZE
+===================================================== */
+
+function calculateTeamSize(
+    members
+) {
+
+    let size = 1;
+
+
+    for (
+        let i = 2;
+        i <= 5;
+        i++
+    ) {
+
+        if (
+            members[
+                `Member${i}Name`
+            ]
+            .trim()
+        ) {
+
+            size++;
+
+        }
+
+    }
+
+
+    return size;
+
+}
+
+
+
+/* =====================================================
+   FORM SUBMIT
+===================================================== */
+
+if (registrationForm) {
+
+    registrationForm.addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+
+            clearFormMessage();
+
+            clearEventError();
+
+
+
+            /* -----------------------------------------
+               CHECK FIREBASE
+            ----------------------------------------- */
+
+            if (!database) {
+
+                showFormMessage(
+                    "Registration system is temporarily unavailable. Please try again.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+
+            /* -----------------------------------------
+               GET BASIC VALUES
+            ----------------------------------------- */
+
+            const teamName =
+                getValue(
+                    "teamName"
+                );
+
+
+            const studentName =
+                getValue(
+                    "studentName"
+                );
+
+
+            const className =
+                getValue(
+                    "className"
+                );
+
+
+            const section =
+                getValue(
+                    "sectionName"
+                );
+
+
+            const mobile =
+                getValue(
+                    "mobileNumber"
+                );
+
+
+            const email =
+                getValue(
+                    "emailAddress"
+                );
+
+
+            const remarks =
+                getValue(
+                    "remarks"
+                );
+
+
+
+            /* -----------------------------------------
+               EVENTS
+            ----------------------------------------- */
+
+            const events =
+                getSelectedEvents();
+
+
+            if (
+                events.length === 0
+            ) {
+
+                if (eventError) {
+
+                    eventError.textContent =
+                        "Please select at least one event.";
+
+                }
+
+
+                const eventBox =
+                    document.getElementById(
+                        "eventSelection"
+                    );
+
+
+                if (eventBox) {
+
+                    eventBox.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+
+                }
+
+                return;
+
+            }
+
+
+
+            /* -----------------------------------------
+               MOBILE VALIDATION
+            ----------------------------------------- */
+
+            if (
+                !isValidMobile(
+                    mobile
+                )
+            ) {
+
+                showFormMessage(
+                    "Please enter a valid 10-digit Indian mobile number.",
+                    "error"
+                );
+
+                document
+                    .getElementById(
+                        "mobileNumber"
+                    )
+                    ?.focus();
+
+                return;
+
+            }
+
+
+
+            /* -----------------------------------------
+               EMAIL VALIDATION
+            ----------------------------------------- */
+
+            if (
+                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                .test(email)
+            ) {
+
+                showFormMessage(
+                    "Please enter a valid email address.",
+                    "error"
+                );
+
+                document
+                    .getElementById(
+                        "emailAddress"
+                    )
+                    ?.focus();
+
+                return;
+
+            }
+
+
+
+            /* -----------------------------------------
+               TEAM MEMBERS
+            ----------------------------------------- */
+
+            const members = {
+
+                Member2Name:
+                    getValue(
+                        "member2Name"
+                    ),
+
+                Member2Class:
+                    getValue(
+                        "member2Class"
+                    ),
+
+                Member2Section:
+                    getValue(
+                        "member2Section"
+                    ),
+
+
+                Member3Name:
+                    getValue(
+                        "member3Name"
+                    ),
+
+                Member3Class:
+                    getValue(
+                        "member3Class"
+                    ),
+
+                Member3Section:
+                    getValue(
+                        "member3Section"
+                    ),
+
+
+                Member4Name:
+                    getValue(
+                        "member4Name"
+                    ),
+
+                Member4Class:
+                    getValue(
+                        "member4Class"
+                    ),
+
+                Member4Section:
+                    getValue(
+                        "member4Section"
+                    ),
+
+
+                Member5Name:
+                    getValue(
+                        "member5Name"
+                    ),
+
+                Member5Class:
+                    getValue(
+                        "member5Class"
+                    ),
+
+                Member5Section:
+                    getValue(
+                        "member5Section"
+                    )
+
+            };
+
+
+
+            /* -----------------------------------------
+               TEAM SIZE
+            ----------------------------------------- */
+
+            const teamSize =
+                calculateTeamSize(
+                    members
+                );
+
+
+
+            /* -----------------------------------------
+               REGISTRATION ID
+            ----------------------------------------- */
+
+            const registrationId =
+                generateRegistrationId();
+
+
+
+            /* -----------------------------------------
+               DATE
+            ----------------------------------------- */
+
+            const registrationDate =
+                new Date()
+                .toISOString();
+
+
+
+            /* -----------------------------------------
+               DATA
+            ----------------------------------------- */
+
+            const registrationData = {
+
+                registrationId,
+
+                StudentName:
+                    studentName,
+
+                TeamName:
+                    teamName,
+
+                Class:
+                    className,
+
+                Section:
+                    section,
+
+                MobileNumber:
+                    mobile,
+
+                EmailAddress:
+                    email,
+
+                Events:
+                    events,
+
+                TeamSize:
+                    teamSize,
+
+                Member2Name:
+                    members.Member2Name,
+
+                Member2Class:
+                    members.Member2Class,
+
+                Member2Section:
+                    members.Member2Section,
+
+
+                Member3Name:
+                    members.Member3Name,
+
+                Member3Class:
+                    members.Member3Class,
+
+                Member3Section:
+                    members.Member3Section,
+
+
+                Member4Name:
+                    members.Member4Name,
+
+                Member4Class:
+                    members.Member4Class,
+
+                Member4Section:
+                    members.Member4Section,
+
+
+                Member5Name:
+                    members.Member5Name,
+
+                Member5Class:
+                    members.Member5Class,
+
+                Member5Section:
+                    members.Member5Section,
+
+
+                Remarks:
+                    remarks,
+
+                registrationDate
+
+            };
+
+
+
+            /* -----------------------------------------
+               LOADING STATE
+            ----------------------------------------- */
+
+            if (submitButton) {
+
+                submitButton.disabled =
+                    true;
+
+                submitButton.classList.add(
+                    "loading"
+                );
+
+            }
+
+
+
+            try {
+
+
+                /* -------------------------------------
+                   CREATE DATABASE REFERENCE
+                ------------------------------------- */
+
+                const registrationsRef =
+                    ref(
+                        database,
+                        "registrations"
+                    );
+
+
+                const newRegistrationRef =
+                    push(
+                        registrationsRef
+                    );
+
+
+                const registrationKey =
+                    newRegistrationRef.key;
+
+
+
+                /* -------------------------------------
+                   SAVE TO FIREBASE
+                ------------------------------------- */
+
+                await set(
+                    newRegistrationRef,
+                    registrationData
+                );
+
+
+
+                /* -------------------------------------
+                   SAVE LOCAL COPY
+                ------------------------------------- */
+
+                try {
+
+                    sessionStorage.setItem(
+                        "apsLastRegistration",
+                        JSON.stringify({
+                            ...registrationData,
+                            databaseKey:
+                                registrationKey
+                        })
+                    );
+
+                }
+                catch (
+                    storageError
+                ) {
+
+                    console.warn(
+                        "Session storage unavailable:",
+                        storageError
+                    );
+
+                }
+
+
+
+                /* -------------------------------------
+                   SUCCESS
+                ------------------------------------- */
+
+                showFormMessage(
+                    "Registration successful. Redirecting...",
+                    "success"
+                );
+
+
+                /*
+                 * Give Firebase a moment to finish
+                 * before moving to thank.html.
+                 */
+
+                setTimeout(
+                    () => {
+
+                        window.location.href =
+                            "thank.html";
+
+                    },
+                    700
+                );
+
+            }
+            catch (error) {
+
+                console.error(
+                    "Registration failed:",
+                    error
+                );
+
+
+                let message =
+                    "Registration could not be completed. Please try again.";
+
+
+                if (
+                    error &&
+                    error.code ===
+                    "PERMISSION_DENIED"
+                ) {
+
+                    message =
+                        "Firebase permission denied. Please check your Realtime Database rules.";
+
+                }
+
+
+                showFormMessage(
+                    message,
+                    "error"
+                );
+
+
+                if (submitButton) {
+
+                    submitButton.disabled =
+                        false;
+
+                    submitButton.classList.remove(
+                        "loading"
+                    );
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+
+/* =====================================================
+   PREVENT DOUBLE SUBMISSION
+===================================================== */
+
+if (registrationForm) {
+
+    registrationForm.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Enter" &&
+                event.target.tagName !==
+                "TEXTAREA"
+            ) {
+
+                event.preventDefault();
+
+            }
+
+        }
+    );
+
+}
+
+
+
+/* =====================================================
+   SMOOTH INTERNAL LINKS
+===================================================== */
+
+document
+    .querySelectorAll(
+        'a[href^="#"]'
+    )
+    .forEach(
+        link => {
+
+            link.addEventListener(
+                "click",
+                event => {
+
+                    const targetId =
+                        link
+                        .getAttribute(
+                            "href"
+                        );
+
+
+                    if (
+                        !targetId ||
+                        targetId === "#"
+                    ) {
+                        return;
+                    }
+
+
+                    const target =
+                        document.querySelector(
+                            targetId
+                        );
+
+
+                    if (!target) {
+                        return;
+                    }
+
+
+                    event.preventDefault();
+
+
+                    target.scrollIntoView({
+                        behavior:
+                            "smooth",
+                        block:
+                            "start"
+                    });
+
+                }
+            );
+
+        }
+    );
 
 
 
@@ -1176,9 +1308,15 @@ function getFirebaseErrorMessage(
    BACK TO TOP
 ===================================================== */
 
-document
-    .querySelector(".back-top")
-    ?.addEventListener(
+const backTop =
+    document.querySelector(
+        ".back-top"
+    );
+
+
+if (backTop) {
+
+    backTop.addEventListener(
         "click",
         event => {
 
@@ -1189,24 +1327,82 @@ document
 
                 top: 0,
 
-                behavior: "smooth"
+                behavior:
+                    "smooth"
 
             });
 
         }
     );
 
+}
+
 
 
 /* =====================================================
-   PREVENT DOUBLE SUBMISSION
+   PAGE VISIBILITY
 ===================================================== */
 
-window.addEventListener(
-    "beforeunload",
+document.addEventListener(
+    "visibilitychange",
     () => {
 
-        /* Allows browser to finish normal navigation. */
+        if (
+            !document.hidden
+        ) {
+
+            updateActiveNav();
+
+            handleHeaderScroll();
+
+        }
 
     }
+);
+
+
+
+/* =====================================================
+   FINAL SAFETY
+===================================================== */
+
+/*
+ * If an unexpected JavaScript error happens later,
+ * make absolutely sure the preloader cannot remain.
+ */
+
+window.addEventListener(
+    "error",
+    () => {
+
+        const preloader =
+            document.getElementById(
+                "preloader"
+            );
+
+
+        if (
+            preloader &&
+            !preloader.classList.contains(
+                "preloader-hidden"
+            )
+        ) {
+
+            preloader.classList.add(
+                "preloader-hidden"
+            );
+
+
+            document.body.classList.remove(
+                "preloader-active"
+            );
+
+        }
+
+    }
+);
+
+
+console.log(
+    "APS Robotics Championship 2026 website initialized."
 );
