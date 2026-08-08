@@ -1,37 +1,28 @@
-/* ============================================================
+/* =====================================================
    APS ROBOTICS CHAMPIONSHIP 2026
    ADMIN PANEL
-   Firebase Authentication + Realtime Database
+   COMPLETE FIREBASE VERSION
 
-   VERSION: IMPROVED / STABLE
-
-   FEATURES
-   ------------------------------------------------------------
-   ✓ Firebase Email/Password Authentication
-   ✓ Realtime Database
-   ✓ Dashboard statistics
-   ✓ Registration management
-   ✓ Search
-   ✓ Event filter
-   ✓ Class filter
-   ✓ Section filter
-   ✓ View registration details
-   ✓ Edit registration
-   ✓ Delete registration
-   ✓ CSV export
-   ✓ Event statistics
-   ✓ Recent registrations
-   ✓ Responsive sidebar
-   ✓ Modal management
-   ✓ Toast notifications
-   ✓ Safe HTML rendering
-   ✓ Multiple Firebase data formats supported
-   ============================================================ */
+   FEATURES:
+   - Firebase Email/Password Authentication
+   - Realtime Database
+   - Dashboard
+   - Registration management
+   - Search
+   - Event/Class/Section filters
+   - View details
+   - Edit
+   - Delete
+   - CSV export
+   - Responsive sidebar
+   - Mobile navigation
+   - Toast notifications
+===================================================== */
 
 
-/* ============================================================
+/* =====================================================
    FIREBASE IMPORTS
-   ============================================================ */
+===================================================== */
 
 import {
     initializeApp
@@ -53,9 +44,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 
-/* ============================================================
+/* =====================================================
    FIREBASE CONFIG
-   ============================================================ */
+===================================================== */
 
 const firebaseConfig = {
 
@@ -79,12 +70,13 @@ const firebaseConfig = {
 
     appId:
         "1:1063542904891:web:82ff9bb3fba0b87384a41e"
+
 };
 
 
-/* ============================================================
-   INITIALIZE FIREBASE
-   ============================================================ */
+/* =====================================================
+   FIREBASE INITIALIZATION
+===================================================== */
 
 const app = initializeApp(firebaseConfig);
 
@@ -93,9 +85,9 @@ const auth = getAuth(app);
 const database = getDatabase(app);
 
 
-/* ============================================================
+/* =====================================================
    GLOBAL STATE
-   ============================================================ */
+===================================================== */
 
 let registrations = {};
 
@@ -108,131 +100,71 @@ let toastTimer = null;
 let isLoading = false;
 
 
-/* ============================================================
-   DOM REFERENCES
-   ============================================================ */
+/* =====================================================
+   DOM
+===================================================== */
 
-const loginScreen =
-    document.getElementById("loginScreen");
+const $ = id => document.getElementById(id);
 
-const adminApp =
-    document.getElementById("adminApp");
+const loginScreen = $("loginScreen");
+const adminApp = $("adminApp");
 
-const loginForm =
-    document.getElementById("loginForm");
+const loginForm = $("loginForm");
+const loginEmail = $("loginEmail");
+const loginPassword = $("loginPassword");
+const loginBtn = $("loginBtn");
+const loginError = $("loginError");
+const togglePassword = $("togglePassword");
 
-const loginEmail =
-    document.getElementById("loginEmail");
+const adminEmail = $("adminEmail");
+const logoutBtn = $("logoutBtn");
 
-const loginPassword =
-    document.getElementById("loginPassword");
+const sidebar = $("sidebar");
+const sidebarToggle = $("sidebarToggle");
+const sidebarOverlay = $("sidebarOverlay");
 
-const loginBtn =
-    document.getElementById("loginBtn");
+const tableBody = $("registrationTableBody");
+const tableEmpty = $("tableEmpty");
 
-const loginError =
-    document.getElementById("loginError");
+const resultCount = $("resultCount");
+const tableStatus = $("tableStatus");
 
-const togglePassword =
-    document.getElementById("togglePassword");
+const searchInput = $("searchInput");
+const eventFilter = $("eventFilter");
+const classFilter = $("classFilter");
+const sectionFilter = $("sectionFilter");
 
-const adminEmail =
-    document.getElementById("adminEmail");
+const clearFilters = $("clearFilters");
 
-const logoutBtn =
-    document.getElementById("logoutBtn");
+const detailsModal = $("detailsModal");
+const editModal = $("editModal");
 
-const sidebar =
-    document.getElementById("sidebar");
+const detailsContent = $("detailsContent");
+const modalDeleteBtn = $("modalDeleteBtn");
 
-const sidebarToggle =
-    document.getElementById("sidebarToggle");
+const editForm = $("editForm");
+const editKey = $("editKey");
 
-const tableBody =
-    document.getElementById("registrationTableBody");
+const editStudentName = $("editStudentName");
+const editTeamName = $("editTeamName");
+const editClass = $("editClass");
+const editSection = $("editSection");
+const editMobile = $("editMobile");
+const editEmail = $("editEmail");
+const editRemarks = $("editRemarks");
 
-const tableEmpty =
-    document.getElementById("tableEmpty");
+const toast = $("toast");
+const toastMessage = $("toastMessage");
 
-const resultCount =
-    document.getElementById("resultCount");
+const firebaseStatus = $("firebaseStatus");
 
-const tableStatus =
-    document.getElementById("tableStatus");
-
-const searchInput =
-    document.getElementById("searchInput");
-
-const eventFilter =
-    document.getElementById("eventFilter");
-
-const classFilter =
-    document.getElementById("classFilter");
-
-const sectionFilter =
-    document.getElementById("sectionFilter");
-
-const clearFilters =
-    document.getElementById("clearFilters");
-
-const detailsModal =
-    document.getElementById("detailsModal");
-
-const editModal =
-    document.getElementById("editModal");
-
-const detailsContent =
-    document.getElementById("detailsContent");
-
-const modalDeleteBtn =
-    document.getElementById("modalDeleteBtn");
-
-const editForm =
-    document.getElementById("editForm");
-
-const editKey =
-    document.getElementById("editKey");
-
-const editStudentName =
-    document.getElementById("editStudentName");
-
-const editTeamName =
-    document.getElementById("editTeamName");
-
-const editClass =
-    document.getElementById("editClass");
-
-const editSection =
-    document.getElementById("editSection");
-
-const editMobile =
-    document.getElementById("editMobile");
-
-const editEmail =
-    document.getElementById("editEmail");
-
-const editRemarks =
-    document.getElementById("editRemarks");
-
-const toast =
-    document.getElementById("toast");
-
-const toastMessage =
-    document.getElementById("toastMessage");
+const navRegistrationCount =
+    $("navRegistrationCount");
 
 
-/* ============================================================
-   SAFE ELEMENT CHECK
-   ============================================================ */
-
-function exists(element) {
-    return !!element;
-}
-
-
-/* ============================================================
+/* =====================================================
    AUTH STATE
-   ============================================================ */
+===================================================== */
 
 onAuthStateChanged(
     auth,
@@ -240,27 +172,32 @@ onAuthStateChanged(
 
         if (user) {
 
-            loginScreen?.classList.add("hidden");
+            loginScreen.classList.add("hidden");
 
-            adminApp?.classList.remove("hidden");
+            adminApp.classList.remove("hidden");
 
-            if (adminEmail) {
-                adminEmail.textContent =
-                    user.email ||
-                    "Authenticated Admin";
+            adminEmail.textContent =
+                user.email ||
+                "Authenticated Admin";
+
+            if (firebaseStatus) {
+                firebaseStatus.textContent =
+                    "Firebase Connected";
             }
 
             await loadRegistrations();
 
         } else {
 
-            loginScreen?.classList.remove("hidden");
+            loginScreen.classList.remove("hidden");
 
-            adminApp?.classList.add("hidden");
+            adminApp.classList.add("hidden");
 
             registrations = {};
 
             filteredRegistrations = {};
+
+            closeAllModals();
 
         }
 
@@ -268,9 +205,9 @@ onAuthStateChanged(
 );
 
 
-/* ============================================================
+/* =====================================================
    LOGIN
-   ============================================================ */
+===================================================== */
 
 if (loginForm) {
 
@@ -280,47 +217,48 @@ if (loginForm) {
 
             event.preventDefault();
 
-            if (!loginEmail || !loginPassword || !loginBtn) {
-                return;
-            }
+            const email =
+                loginEmail.value.trim();
+
+            const password =
+                loginPassword.value;
 
             loginError.textContent = "";
 
-            loginBtn.disabled = true;
+            if (!email || !password) {
 
-            loginBtn.innerHTML = `
-                <i class="fa-solid fa-spinner fa-spin"></i>
-                Signing In...
-            `;
+                loginError.textContent =
+                    "Please enter your email and password.";
+
+                return;
+
+            }
+
+            setLoginLoading(true);
 
             try {
 
                 await signInWithEmailAndPassword(
                     auth,
-                    loginEmail.value.trim(),
-                    loginPassword.value
+                    email,
+                    password
                 );
 
-                loginForm.reset();
+                loginPassword.value = "";
 
             } catch (error) {
 
                 console.error(
-                    "Firebase Login Error:",
+                    "Firebase login error:",
                     error
                 );
 
                 loginError.textContent =
-                    getAuthError(error.code);
+                    getAuthError(error);
 
             } finally {
 
-                loginBtn.disabled = false;
-
-                loginBtn.innerHTML = `
-                    <i class="fa-solid fa-right-to-bracket"></i>
-                    Login to Dashboard
-                `;
+                setLoginLoading(false);
 
             }
 
@@ -330,11 +268,39 @@ if (loginForm) {
 }
 
 
-/* ============================================================
-   FIREBASE AUTH ERROR
-   ============================================================ */
+/* =====================================================
+   LOGIN BUTTON STATE
+===================================================== */
 
-function getAuthError(code) {
+function setLoginLoading(loading) {
+
+    if (!loginBtn) return;
+
+    loginBtn.disabled = loading;
+
+    loginBtn.innerHTML = loading
+
+        ? `
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            <span>Signing In...</span>
+        `
+
+        : `
+            <i class="fa-solid fa-right-to-bracket"></i>
+            <span>Login to Dashboard</span>
+        `;
+
+}
+
+
+/* =====================================================
+   AUTH ERRORS
+===================================================== */
+
+function getAuthError(error) {
+
+    const code =
+        error?.code || "";
 
     switch (code) {
 
@@ -351,13 +317,16 @@ function getAuthError(code) {
             return "Please enter a valid email address.";
 
         case "auth/too-many-requests":
-            return "Too many login attempts. Please try again later.";
+            return "Too many attempts. Please try again later.";
 
         case "auth/network-request-failed":
-            return "Network error. Please check your internet connection.";
+            return "Network error. Check your internet connection.";
 
         case "auth/user-disabled":
-            return "This administrator account has been disabled.";
+            return "This admin account has been disabled.";
+
+        case "auth/operation-not-allowed":
+            return "Email/password authentication is disabled.";
 
         default:
             return "Login failed. Please check your credentials.";
@@ -367,34 +336,34 @@ function getAuthError(code) {
 }
 
 
-/* ============================================================
+/* =====================================================
    PASSWORD TOGGLE
-   ============================================================ */
+===================================================== */
 
-if (togglePassword && loginPassword) {
+if (togglePassword) {
 
     togglePassword.addEventListener(
         "click",
         () => {
 
-            const passwordVisible =
-                loginPassword.type === "text";
+            const show =
+                loginPassword.type === "password";
 
             loginPassword.type =
-                passwordVisible
-                    ? "password"
-                    : "text";
+                show
+                    ? "text"
+                    : "password";
 
             togglePassword.innerHTML =
-                passwordVisible
-                    ? '<i class="fa-solid fa-eye"></i>'
-                    : '<i class="fa-solid fa-eye-slash"></i>';
+                show
+                    ? '<i class="fa-solid fa-eye-slash"></i>'
+                    : '<i class="fa-solid fa-eye"></i>';
 
             togglePassword.setAttribute(
                 "aria-label",
-                passwordVisible
-                    ? "Show password"
-                    : "Hide password"
+                show
+                    ? "Hide password"
+                    : "Show password"
             );
 
         }
@@ -403,9 +372,9 @@ if (togglePassword && loginPassword) {
 }
 
 
-/* ============================================================
+/* =====================================================
    LOGOUT
-   ============================================================ */
+===================================================== */
 
 if (logoutBtn) {
 
@@ -425,12 +394,12 @@ if (logoutBtn) {
             } catch (error) {
 
                 console.error(
-                    "Logout Error:",
+                    "Logout error:",
                     error
                 );
 
                 showToast(
-                    "Unable to logout.",
+                    "Logout failed.",
                     "error"
                 );
 
@@ -442,9 +411,49 @@ if (logoutBtn) {
 }
 
 
-/* ============================================================
-   SIDEBAR NAVIGATION
-   ============================================================ */
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+if (sidebarToggle) {
+
+    sidebarToggle.addEventListener(
+        "click",
+        () => {
+
+            sidebar.classList.toggle("open");
+
+            sidebarOverlay.classList.toggle(
+                "show",
+                sidebar.classList.contains("open")
+            );
+
+        }
+    );
+
+}
+
+if (sidebarOverlay) {
+
+    sidebarOverlay.addEventListener(
+        "click",
+        closeSidebar
+    );
+
+}
+
+function closeSidebar() {
+
+    sidebar.classList.remove("open");
+
+    sidebarOverlay.classList.remove("show");
+
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
 
 document
     .querySelectorAll(".nav-item")
@@ -457,23 +466,15 @@ document
                 const page =
                     button.dataset.page;
 
-                if (!page) {
-                    return;
-                }
-
                 showPage(page);
 
-                sidebar?.classList.remove("open");
+                closeSidebar();
 
             }
         );
 
     });
 
-
-/* ============================================================
-   DASHBOARD "VIEW ALL"
-   ============================================================ */
 
 document
     .querySelectorAll("[data-page-target]")
@@ -483,22 +484,15 @@ document
             "click",
             () => {
 
-                const page =
-                    button.dataset.pageTarget;
-
-                if (page) {
-                    showPage(page);
-                }
+                showPage(
+                    button.dataset.pageTarget
+                );
 
             }
         );
 
     });
 
-
-/* ============================================================
-   PAGE NAVIGATION
-   ============================================================ */
 
 function showPage(pageName) {
 
@@ -514,10 +508,7 @@ function showPage(pageName) {
 
 
     const target =
-        document.getElementById(
-            `${pageName}Page`
-        );
-
+        $(`${pageName}Page`);
 
     if (target) {
 
@@ -555,8 +546,7 @@ function showPage(pageName) {
 
 
     const pageTitle =
-        document.getElementById("pageTitle");
-
+        $("pageTitle");
 
     if (pageTitle) {
 
@@ -583,43 +573,17 @@ function showPage(pageName) {
 }
 
 
-/* ============================================================
-   SIDEBAR TOGGLE
-   ============================================================ */
-
-if (sidebarToggle && sidebar) {
-
-    sidebarToggle.addEventListener(
-        "click",
-        () => {
-
-            sidebar.classList.toggle(
-                "open"
-            );
-
-        }
-    );
-
-}
-
-
-/* ============================================================
+/* =====================================================
    LOAD REGISTRATIONS
-   ============================================================ */
+===================================================== */
 
 async function loadRegistrations() {
 
-    if (isLoading) {
-        return;
-    }
+    if (isLoading) return;
 
     isLoading = true;
 
-    if (tableStatus) {
-        tableStatus.textContent =
-            "Connecting to database...";
-    }
-
+    setTableStatus("Loading...");
 
     try {
 
@@ -634,11 +598,14 @@ async function loadRegistrations() {
 
         if (snapshot.exists()) {
 
-            const value =
+            const data =
                 snapshot.val();
 
             registrations =
-                normalizeDatabase(value);
+                data &&
+                typeof data === "object"
+                    ? data
+                    : {};
 
         } else {
 
@@ -662,17 +629,17 @@ async function loadRegistrations() {
 
         updateEventPage();
 
+        updateNavigationCount();
 
-        if (tableStatus) {
-            tableStatus.textContent =
-                "Database synced";
-        }
+        setTableStatus(
+            "Database synced"
+        );
 
 
     } catch (error) {
 
         console.error(
-            "Database Load Error:",
+            "Database loading error:",
             error
         );
 
@@ -680,12 +647,17 @@ async function loadRegistrations() {
 
         filteredRegistrations = {};
 
-        if (tableStatus) {
-            tableStatus.textContent =
-                "Database error";
-        }
+        setTableStatus(
+            "Database error"
+        );
 
         renderTable();
+
+        updateDashboard();
+
+        renderRecent();
+
+        updateEventPage();
 
         showToast(
             getDatabaseError(error),
@@ -701,62 +673,41 @@ async function loadRegistrations() {
 }
 
 
-/* ============================================================
-   DATABASE NORMALIZATION
-   ============================================================ */
-
-function normalizeDatabase(value) {
-
-    if (
-        !value ||
-        typeof value !== "object" ||
-        Array.isArray(value)
-    ) {
-
-        return {};
-
-    }
-
-
-    return value;
-
-}
-
-
-/* ============================================================
+/* =====================================================
    DATABASE ERROR
-   ============================================================ */
+===================================================== */
 
 function getDatabaseError(error) {
 
     if (
-        error &&
-        error.code ===
+        error?.code ===
         "PERMISSION_DENIED"
     ) {
 
-        return "Database permission denied. Check Firebase Realtime Database rules.";
+        return (
+            "Database permission denied. " +
+            "Check Firebase Realtime Database rules."
+        );
 
     }
 
     if (
-        error &&
-        error.code ===
+        error?.code ===
         "NETWORK_ERROR"
     ) {
 
-        return "Network error while connecting to Firebase.";
+        return "Network error while loading database.";
 
     }
 
-    return "Unable to load registrations from Firebase.";
+    return "Unable to load registrations.";
 
 }
 
 
-/* ============================================================
-   NORMALIZE VALUE
-   ============================================================ */
+/* =====================================================
+   NORMALIZE
+===================================================== */
 
 function normalize(value) {
 
@@ -798,201 +749,129 @@ function normalize(value) {
 }
 
 
-/* ============================================================
-   GET FIELD
-   Supports several capitalization styles
-   ============================================================ */
-
-function getField(data, ...names) {
-
-    if (!data) {
-        return "";
-    }
-
-
-    for (const name of names) {
-
-        if (
-            data[name] !== undefined &&
-            data[name] !== null
-        ) {
-
-            const value =
-                normalize(data[name]).trim();
-
-            if (value) {
-                return value;
-            }
-
-        }
-
-    }
-
-
-    return "";
-
-}
-
-
-/* ============================================================
-   GET EVENTS
-   ============================================================ */
+/* =====================================================
+   EVENTS
+===================================================== */
 
 function getEvents(data) {
 
-    if (!data) {
-        return [];
-    }
+    if (!data) return [];
 
-
-    let events =
+    const possible =
         data.Events ??
         data.events ??
         data.Event ??
         data.event ??
-        "";
+        data.selectedEvents ??
+        data.SelectedEvents;
 
 
-    if (Array.isArray(events)) {
+    if (!possible) return [];
 
-        return events
-            .flatMap(event => {
 
-                return normalizeEventValue(
-                    event
-                );
+    if (Array.isArray(possible)) {
 
-            })
+        return possible
+            .flatMap(event =>
+                normalize(event)
+                    .split(/\s*(?:,|\||;)\s*/)
+            )
+            .map(cleanEventName)
             .filter(Boolean);
 
     }
 
 
     if (
-        typeof events === "object" &&
-        events !== null
+        typeof possible === "object"
     ) {
 
         return Object
-            .values(events)
-            .flatMap(event => {
-
-                return normalizeEventValue(
-                    event
-                );
-
-            })
+            .values(possible)
+            .flatMap(event =>
+                normalize(event)
+                    .split(/\s*(?:,|\||;)\s*/)
+            )
+            .map(cleanEventName)
             .filter(Boolean);
 
     }
 
 
-    return normalizeEventValue(events);
-
-}
-
-
-/* ============================================================
-   NORMALIZE EVENT VALUE
-   ============================================================ */
-
-function normalizeEventValue(value) {
-
-    const string =
-        normalize(value).trim();
-
-    if (!string) {
-        return [];
-    }
-
-
-    return string
-        .split(/\s*(?:,|\||;|\n)\s*/)
-        .map(event => event.trim())
+    return normalize(possible)
+        .split(/\s*(?:,|\||;)\s*/)
+        .map(cleanEventName)
         .filter(Boolean);
 
 }
 
 
-/* ============================================================
-   EVENT NORMALIZATION
-   ============================================================ */
+/* =====================================================
+   CLEAN EVENT NAME
+===================================================== */
 
-function canonicalEvent(event) {
+function cleanEventName(value) {
 
-    const clean =
-        normalize(event)
-            .trim()
-            .toLowerCase()
-            .replace(/\s+/g, " ");
+    const text =
+        normalize(value)
+            .trim();
 
+    if (!text) return "";
+
+    const lower =
+        text.toLowerCase();
+
+    if (lower.includes("tug")) {
+        return "Robo Tug of War";
+    }
+
+    if (lower.includes("soccer")) {
+        return "Robo Soccer";
+    }
 
     if (
-        clean === "robo race" ||
-        clean.includes("robo race")
+        lower.includes("race")
     ) {
         return "Robo Race";
     }
 
-
     if (
-        clean === "robo war" ||
-        clean.includes("robo war")
+        lower.includes("war")
     ) {
         return "Robo War";
     }
 
-
-    if (
-        clean === "robo tug of war" ||
-        clean.includes("robo tug")
-    ) {
-        return "Robo Tug of War";
-    }
-
-
-    if (
-        clean === "robo soccer" ||
-        clean.includes("robo soccer")
-    ) {
-        return "Robo Soccer";
-    }
-
-
-    return normalize(event).trim();
+    return text;
 
 }
 
 
-/* ============================================================
-   REGISTRATION EMAIL
-   ============================================================ */
+/* =====================================================
+   EMAIL
+===================================================== */
 
 function getRegistrationEmail(data) {
 
-    return getField(
-        data,
-        "EmailAddress",
-        "Email",
-        "email",
-        "emailAddress"
-    );
+    return normalize(
+        data?.EmailAddress ??
+        data?.emailAddress ??
+        data?.Email ??
+        data?.email
+    ).trim();
 
 }
 
 
-/* ============================================================
+/* =====================================================
    TEAM SIZE
-   ============================================================ */
+===================================================== */
 
 function getTeamSize(data) {
 
-    if (!data) {
-        return 0;
-    }
+    if (!data) return 0;
 
 
-    const explicitSize =
+    const teamSize =
         Number(
             data.TeamSize ??
             data.teamSize
@@ -1000,11 +879,11 @@ function getTeamSize(data) {
 
 
     if (
-        Number.isFinite(explicitSize) &&
-        explicitSize > 0
+        Number.isFinite(teamSize) &&
+        teamSize > 0
     ) {
 
-        return explicitSize;
+        return teamSize;
 
     }
 
@@ -1014,22 +893,22 @@ function getTeamSize(data) {
 
     for (
         let i = 2;
-        i <= 5;
+        i <= 10;
         i++
     ) {
 
-        const memberName =
-            getField(
-                data,
-                `Member${i}Name`,
-                `member${i}Name`,
-                `TeamMember${i}`,
-                `teamMember${i}`
-            );
+        const member =
+            data[`Member${i}Name`] ??
+            data[`member${i}Name`] ??
+            data[`TeamMember${i}`];
 
 
-        if (memberName) {
+        if (
+            normalize(member).trim()
+        ) {
+
             count++;
+
         }
 
     }
@@ -1040,127 +919,45 @@ function getTeamSize(data) {
 }
 
 
-/* ============================================================
-   GET REGISTRATION ID
-   ============================================================ */
+/* =====================================================
+   TEAM MEMBER FIELDS
+===================================================== */
 
-function getRegistrationId(key, data) {
+function getMemberName(data, number) {
 
-    return (
-        getField(
-            data,
-            "registrationId",
-            "RegistrationID",
-            "registrationID",
-            "id"
-        ) ||
-        key ||
-        "-"
-    );
+    return normalize(
+        data?.[`Member${number}Name`] ??
+        data?.[`member${number}Name`] ??
+        data?.[`TeamMember${number}Name`] ??
+        data?.[`TeamMember${number}`]
+    ).trim();
 
 }
 
 
-/* ============================================================
-   GET TEAM LEADER
-   ============================================================ */
+function getMemberClass(data, number) {
 
-function getTeamLeader(data) {
-
-    return (
-        getField(
-            data,
-            "StudentName",
-            "studentName",
-            "TeamLeader",
-            "teamLeader",
-            "LeaderName"
-        ) ||
-        "-"
-    );
+    return normalize(
+        data?.[`Member${number}Class`] ??
+        data?.[`member${number}Class`]
+    ).trim();
 
 }
 
 
-/* ============================================================
-   GET TEAM NAME
-   ============================================================ */
+function getMemberSection(data, number) {
 
-function getTeamName(data) {
-
-    return (
-        getField(
-            data,
-            "TeamName",
-            "teamName"
-        ) ||
-        "Unnamed Team"
-    );
+    return normalize(
+        data?.[`Member${number}Section`] ??
+        data?.[`member${number}Section`]
+    ).trim();
 
 }
 
 
-/* ============================================================
-   GET CLASS
-   ============================================================ */
-
-function getClassName(data) {
-
-    return (
-        getField(
-            data,
-            "Class",
-            "class",
-            "className"
-        ) ||
-        "-"
-    );
-
-}
-
-
-/* ============================================================
-   GET SECTION
-   ============================================================ */
-
-function getSectionName(data) {
-
-    return (
-        getField(
-            data,
-            "Section",
-            "section"
-        ) ||
-        "-"
-    );
-
-}
-
-
-/* ============================================================
-   GET MOBILE
-   ============================================================ */
-
-function getMobile(data) {
-
-    return (
-        getField(
-            data,
-            "MobileNumber",
-            "mobileNumber",
-            "Mobile",
-            "mobile",
-            "Phone"
-        ) ||
-        "-"
-    );
-
-}
-
-
-/* ============================================================
+/* =====================================================
    DASHBOARD
-   ============================================================ */
+===================================================== */
 
 function updateDashboard() {
 
@@ -1207,32 +1004,16 @@ function updateDashboard() {
     );
 
 
-    setText(
-        "eventRaceCount",
-        counts.race
-    );
+    updateEventPage();
 
-    setText(
-        "eventWarCount",
-        counts.war
-    );
-
-    setText(
-        "eventTugCount",
-        counts.tug
-    );
-
-    setText(
-        "eventSoccerCount",
-        counts.soccer
-    );
+    updateNavigationCount();
 
 }
 
 
-/* ============================================================
+/* =====================================================
    EVENT COUNTS
-   ============================================================ */
+===================================================== */
 
 function calculateEventCounts() {
 
@@ -1249,41 +1030,61 @@ function calculateEventCounts() {
     };
 
 
-    Object.values(
-        registrations
-    )
-    .forEach(data => {
+    Object
+        .values(registrations)
+        .forEach(data => {
 
-        const events =
             getEvents(data)
-                .map(canonicalEvent);
+                .forEach(event => {
+
+                    const clean =
+                        event
+                            .toLowerCase()
+                            .trim();
 
 
-        events.forEach(event => {
+                    if (
+                        clean ===
+                        "robo race"
+                    ) {
 
-            switch (event) {
+                        counts.race++;
 
-                case "Robo Race":
-                    counts.race++;
-                    break;
+                    }
 
-                case "Robo War":
-                    counts.war++;
-                    break;
 
-                case "Robo Tug of War":
-                    counts.tug++;
-                    break;
+                    if (
+                        clean ===
+                        "robo war"
+                    ) {
 
-                case "Robo Soccer":
-                    counts.soccer++;
-                    break;
+                        counts.war++;
 
-            }
+                    }
+
+
+                    if (
+                        clean ===
+                        "robo tug of war"
+                    ) {
+
+                        counts.tug++;
+
+                    }
+
+
+                    if (
+                        clean ===
+                        "robo soccer"
+                    ) {
+
+                        counts.soccer++;
+
+                    }
+
+                });
 
         });
-
-    });
 
 
     return counts;
@@ -1291,54 +1092,36 @@ function calculateEventCounts() {
 }
 
 
-/* ============================================================
-   RECENT REGISTRATIONS
-   ============================================================ */
+/* =====================================================
+   RECENT
+===================================================== */
 
 function renderRecent() {
 
     const container =
-        document.getElementById(
-            "recentRegistrations"
-        );
+        $("recentRegistrations");
 
-
-    if (!container) {
-        return;
-    }
+    if (!container) return;
 
 
     const entries =
-        Object.entries(
-            registrations
-        )
-        .sort(
-            ([, a], [, b]) => {
-
-                return (
+        Object
+            .entries(registrations)
+            .sort(
+                ([, a], [, b]) =>
                     getTimestamp(b) -
                     getTimestamp(a)
-                );
-
-            }
-        )
-        .slice(0, 6);
+            )
+            .slice(0, 6);
 
 
     if (!entries.length) {
 
         container.innerHTML = `
-
             <div class="empty-state">
-
                 <i class="fa-solid fa-folder-open"></i>
-
-                <span>
-                    No registrations found.
-                </span>
-
+                No registrations found.
             </div>
-
         `;
 
         return;
@@ -1351,17 +1134,30 @@ function renderRecent() {
             .map(
                 ([key, data]) => {
 
+                    const id =
+                        normalize(
+                            data.registrationId ??
+                            data.RegistrationId ??
+                            data.registrationID
+                        ) ||
+                        key;
+
+
                     const name =
-                        getTeamLeader(data);
+                        normalize(
+                            data.StudentName ??
+                            data.studentName ??
+                            data.TeamLeader
+                        ) ||
+                        "Unknown";
+
 
                     const team =
-                        getTeamName(data);
-
-                    const id =
-                        getRegistrationId(
-                            key,
-                            data
-                        );
+                        normalize(
+                            data.TeamName ??
+                            data.teamName
+                        ) ||
+                        "Unnamed Team";
 
 
                     return `
@@ -1369,11 +1165,8 @@ function renderRecent() {
                         <div class="recent-item">
 
                             <div class="recent-avatar">
-
                                 <i class="fa-solid fa-user"></i>
-
                             </div>
-
 
                             <div class="recent-details">
 
@@ -1391,16 +1184,13 @@ function renderRecent() {
 
                             </div>
 
-
                             <button
                                 type="button"
                                 class="action-btn view"
                                 data-view="${escapeAttr(key)}"
                                 title="View Details"
-                                aria-label="View registration details">
-
+                            >
                                 <i class="fa-solid fa-eye"></i>
-
                             </button>
 
                         </div>
@@ -1432,20 +1222,16 @@ function renderRecent() {
 }
 
 
-/* ============================================================
-   POPULATE CLASS / SECTION FILTERS
-   ============================================================ */
+/* =====================================================
+   FILTER OPTIONS
+===================================================== */
 
 function populateFilters() {
 
     if (
         !classFilter ||
         !sectionFilter
-    ) {
-
-        return;
-
-    }
+    ) return;
 
 
     const classes =
@@ -1455,48 +1241,39 @@ function populateFilters() {
         new Set();
 
 
-    Object.values(
-        registrations
-    )
-    .forEach(data => {
+    Object
+        .values(registrations)
+        .forEach(data => {
 
-        const className =
-            getClassName(data);
-
-        const section =
-            getSectionName(data);
-
-
-        if (
-            className &&
-            className !== "-"
-        ) {
-
-            classes.add(
-                className
-            );
-
-        }
+            const className =
+                normalize(
+                    data.Class ??
+                    data.class
+                ).trim();
 
 
-        if (
-            section &&
-            section !== "-"
-        ) {
-
-            sections.add(
-                section
-            );
-
-        }
-
-    });
+            const section =
+                normalize(
+                    data.Section ??
+                    data.section
+                ).trim();
 
 
-    const oldClass =
+            if (className) {
+                classes.add(className);
+            }
+
+            if (section) {
+                sections.add(section);
+            }
+
+        });
+
+
+    const previousClass =
         classFilter.value;
 
-    const oldSection =
+    const previousSection =
         sectionFilter.value;
 
 
@@ -1509,17 +1286,28 @@ function populateFilters() {
 
     [...classes]
         .sort(
-            naturalSort
+            (a, b) =>
+                a.localeCompare(
+                    b,
+                    undefined,
+                    {
+                        numeric: true
+                    }
+                )
         )
         .forEach(value => {
 
-            classFilter.insertAdjacentHTML(
-                "beforeend",
-                `
-                    <option value="${escapeAttr(value)}">
-                        ${escapeHTML(value)}
-                    </option>
-                `
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value = value;
+
+            option.textContent = value;
+
+            classFilter.appendChild(
+                option
             );
 
         });
@@ -1533,67 +1321,52 @@ function populateFilters() {
 
 
     [...sections]
-        .sort(
-            naturalSort
-        )
+        .sort()
         .forEach(value => {
 
-            sectionFilter.insertAdjacentHTML(
-                "beforeend",
-                `
-                    <option value="${escapeAttr(value)}">
-                        ${escapeHTML(value)}
-                    </option>
-                `
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value = value;
+
+            option.textContent = value;
+
+            sectionFilter.appendChild(
+                option
             );
 
         });
 
 
     if (
-        [...classes].includes(oldClass)
+        [...classes]
+            .includes(previousClass)
     ) {
 
         classFilter.value =
-            oldClass;
+            previousClass;
 
     }
 
 
     if (
-        [...sections].includes(oldSection)
+        [...sections]
+            .includes(previousSection)
     ) {
 
         sectionFilter.value =
-            oldSection;
+            previousSection;
 
     }
 
 }
 
 
-/* ============================================================
-   NATURAL SORT
-   ============================================================ */
-
-function naturalSort(a, b) {
-
-    return String(a)
-        .localeCompare(
-            String(b),
-            undefined,
-            {
-                numeric: true,
-                sensitivity: "base"
-            }
-        );
-
-}
-
-
-/* ============================================================
-   FILTER EVENTS
-   ============================================================ */
+/* =====================================================
+   FILTER LISTENERS
+===================================================== */
 
 if (searchInput) {
 
@@ -1638,21 +1411,16 @@ if (clearFilters) {
         "click",
         () => {
 
-            if (searchInput) {
-                searchInput.value = "";
-            }
+            searchInput.value = "";
 
-            if (eventFilter) {
-                eventFilter.value = "all";
-            }
+            eventFilter.value =
+                "all";
 
-            if (classFilter) {
-                classFilter.value = "all";
-            }
+            classFilter.value =
+                "all";
 
-            if (sectionFilter) {
-                sectionFilter.value = "all";
-            }
+            sectionFilter.value =
+                "all";
 
             applyFilters();
 
@@ -1662,139 +1430,134 @@ if (clearFilters) {
 }
 
 
-/* ============================================================
+/* =====================================================
    APPLY FILTERS
-   ============================================================ */
+===================================================== */
 
 function applyFilters() {
 
     const search =
-        searchInput
-            ? searchInput.value
-                .trim()
-                .toLowerCase()
-            : "";
+        normalize(
+            searchInput.value
+        )
+            .trim()
+            .toLowerCase();
 
 
     const selectedEvent =
-        eventFilter
-            ? eventFilter.value
-            : "all";
+        eventFilter.value;
 
 
     const selectedClass =
-        classFilter
-            ? classFilter.value
-            : "all";
+        classFilter.value;
 
 
     const selectedSection =
-        sectionFilter
-            ? sectionFilter.value
-            : "all";
+        sectionFilter.value;
 
 
     filteredRegistrations = {};
 
 
-    Object.entries(
-        registrations
-    )
-    .forEach(
-        ([key, data]) => {
+    Object
+        .entries(registrations)
+        .forEach(
+            ([key, data]) => {
 
-            const events =
-                getEvents(data)
-                    .map(canonicalEvent);
+                const events =
+                    getEvents(data);
 
 
-            const searchable = [
+                const searchable = [
 
-                getRegistrationId(
-                    key,
-                    data
-                ),
+                    data.registrationId,
 
-                getTeamLeader(data),
+                    data.RegistrationId,
 
-                getTeamName(data),
+                    data.StudentName,
 
-                getClassName(data),
+                    data.TeamLeader,
 
-                getSectionName(data),
+                    data.TeamName,
 
-                getMobile(data),
+                    data.Class,
 
-                getRegistrationEmail(data),
+                    data.Section,
 
-                events.join(" "),
+                    data.MobileNumber,
 
-                getField(
-                    data,
-                    "Member2Name"
-                ),
+                    data.Mobile,
 
-                getField(
-                    data,
-                    "Member3Name"
-                ),
+                    data.EmailAddress,
 
-                getField(
-                    data,
-                    "Member4Name"
-                ),
+                    data.Email,
 
-                getField(
-                    data,
-                    "Member5Name"
-                )
+                    ...events
 
-            ]
-                .map(normalize)
-                .join(" ")
-                .toLowerCase();
+                ]
+                    .map(normalize)
+                    .join(" ")
+                    .toLowerCase();
 
 
-            const matchesSearch =
-                !search ||
-                searchable.includes(search);
+                const matchesSearch =
+                    !search ||
+                    searchable.includes(
+                        search
+                    );
 
 
-            const matchesEvent =
-                selectedEvent === "all" ||
-                events.some(
-                    event =>
-                        event.toLowerCase() ===
-                        selectedEvent.toLowerCase()
-                );
+                const matchesEvent =
+                    selectedEvent === "all" ||
+                    events.some(
+                        event =>
+                            event
+                                .toLowerCase() ===
+                            selectedEvent
+                                .toLowerCase()
+                    );
 
 
-            const matchesClass =
-                selectedClass === "all" ||
-                getClassName(data) ===
-                selectedClass;
+                const classValue =
+                    normalize(
+                        data.Class ??
+                        data.class
+                    ).trim();
 
 
-            const matchesSection =
-                selectedSection === "all" ||
-                getSectionName(data) ===
-                selectedSection;
+                const sectionValue =
+                    normalize(
+                        data.Section ??
+                        data.section
+                    ).trim();
 
 
-            if (
-                matchesSearch &&
-                matchesEvent &&
-                matchesClass &&
-                matchesSection
-            ) {
+                const matchesClass =
+                    selectedClass === "all" ||
+                    classValue ===
+                    selectedClass;
 
-                filteredRegistrations[key] =
-                    data;
+
+                const matchesSection =
+                    selectedSection === "all" ||
+                    sectionValue ===
+                    selectedSection;
+
+
+                if (
+                    matchesSearch &&
+                    matchesEvent &&
+                    matchesClass &&
+                    matchesSection
+                ) {
+
+                    filteredRegistrations[key] =
+                        data;
+
+                }
 
             }
-
-        }
-    );
+        );
 
 
     renderTable();
@@ -1802,9 +1565,9 @@ function applyFilters() {
 }
 
 
-/* ============================================================
-   RENDER REGISTRATION TABLE
-   ============================================================ */
+/* =====================================================
+   RENDER TABLE
+===================================================== */
 
 function renderTable() {
 
@@ -1812,11 +1575,7 @@ function renderTable() {
         !tableBody ||
         !tableEmpty ||
         !resultCount
-    ) {
-
-        return;
-
-    }
+    ) return;
 
 
     const entries =
@@ -1842,11 +1601,6 @@ function renderTable() {
             "hidden"
         );
 
-        if (tableStatus) {
-            tableStatus.textContent =
-                "No matching records";
-        }
-
         return;
 
     }
@@ -1858,14 +1612,9 @@ function renderTable() {
 
 
     entries.sort(
-        ([, a], [, b]) => {
-
-            return (
-                getTimestamp(b) -
-                getTimestamp(a)
-            );
-
-        }
+        ([, a], [, b]) =>
+            getTimestamp(b) -
+            getTimestamp(a)
     );
 
 
@@ -1873,30 +1622,57 @@ function renderTable() {
         ([key, data]) => {
 
             const id =
-                getRegistrationId(
-                    key,
-                    data
-                );
+                normalize(
+                    data.registrationId ??
+                    data.RegistrationId
+                ) ||
+                key;
 
 
             const name =
-                getTeamLeader(data);
+                normalize(
+                    data.StudentName ??
+                    data.studentName ??
+                    data.TeamLeader
+                ) ||
+                "-";
 
 
             const team =
-                getTeamName(data);
+                normalize(
+                    data.TeamName ??
+                    data.teamName
+                ) ||
+                "Unnamed Team";
 
 
             const className =
-                getClassName(data);
+                normalize(
+                    data.Class ??
+                    data.class
+                ) ||
+                "-";
 
 
             const section =
-                getSectionName(data);
+                normalize(
+                    data.Section ??
+                    data.section
+                ) ||
+                "-";
 
 
             const mobile =
-                getMobile(data);
+                normalize(
+                    data.MobileNumber ??
+                    data.Mobile ??
+                    data.mobile
+                ) ||
+                "-";
+
+
+            const events =
+                getEvents(data);
 
 
             const teamSize =
@@ -1909,13 +1685,9 @@ function renderTable() {
                 );
 
 
-            const events =
-                getEvents(data)
-                    .map(canonicalEvent);
-
-
             const eventHTML =
                 events.length
+
                     ? events
                         .map(
                             event => `
@@ -1925,11 +1697,8 @@ function renderTable() {
                             `
                         )
                         .join("")
-                    : `
-                        <span class="muted-text">
-                            No event
-                        </span>
-                    `;
+
+                    : "-";
 
 
             const row =
@@ -1941,81 +1710,46 @@ function renderTable() {
             row.innerHTML = `
 
                 <td>
-
                     <span class="registration-id">
-
                         ${escapeHTML(id)}
-
                     </span>
-
                 </td>
 
-
                 <td>
-
                     <strong class="team-name">
-
                         ${escapeHTML(name)}
-
                     </strong>
-
                 </td>
 
-
                 <td>
-
                     ${escapeHTML(team)}
-
                 </td>
 
-
                 <td>
-
                     ${escapeHTML(className)}
-
                 </td>
 
-
                 <td>
-
                     ${escapeHTML(section)}
-
                 </td>
 
-
                 <td>
-
                     ${escapeHTML(mobile)}
-
                 </td>
 
-
                 <td>
-
                     <div class="event-tags">
-
                         ${eventHTML}
-
                     </div>
-
                 </td>
 
-
                 <td>
-
-                    <strong>
-                        ${teamSize}
-                    </strong>
-
+                    ${teamSize}
                 </td>
 
-
                 <td>
-
                     ${escapeHTML(date)}
-
                 </td>
-
 
                 <td>
 
@@ -2025,35 +1759,27 @@ function renderTable() {
                             type="button"
                             class="action-btn view"
                             title="View Details"
-                            aria-label="View Details"
-                            data-view="${escapeAttr(key)}">
-
+                            data-view="${escapeAttr(key)}"
+                        >
                             <i class="fa-solid fa-eye"></i>
-
                         </button>
-
 
                         <button
                             type="button"
                             class="action-btn edit"
                             title="Edit Registration"
-                            aria-label="Edit Registration"
-                            data-edit="${escapeAttr(key)}">
-
+                            data-edit="${escapeAttr(key)}"
+                        >
                             <i class="fa-solid fa-pen"></i>
-
                         </button>
-
 
                         <button
                             type="button"
                             class="action-btn delete"
                             title="Delete Registration"
-                            aria-label="Delete Registration"
-                            data-delete="${escapeAttr(key)}">
-
+                            data-delete="${escapeAttr(key)}"
+                        >
                             <i class="fa-solid fa-trash"></i>
-
                         </button>
 
                     </div>
@@ -2071,23 +1797,17 @@ function renderTable() {
 
     bindTableActions();
 
-
-    if (tableStatus) {
-        tableStatus.textContent =
-            "Database synced";
-    }
-
 }
 
 
-/* ============================================================
-   TABLE ACTION BUTTONS
-   ============================================================ */
+/* =====================================================
+   TABLE ACTIONS
+===================================================== */
 
 function bindTableActions() {
 
     tableBody
-        ?.querySelectorAll("[data-view]")
+        .querySelectorAll("[data-view]")
         .forEach(button => {
 
             button.addEventListener(
@@ -2105,7 +1825,7 @@ function bindTableActions() {
 
 
     tableBody
-        ?.querySelectorAll("[data-edit]")
+        .querySelectorAll("[data-edit]")
         .forEach(button => {
 
             button.addEventListener(
@@ -2123,7 +1843,7 @@ function bindTableActions() {
 
 
     tableBody
-        ?.querySelectorAll("[data-delete]")
+        .querySelectorAll("[data-delete]")
         .forEach(button => {
 
             button.addEventListener(
@@ -2142,9 +1862,9 @@ function bindTableActions() {
 }
 
 
-/* ============================================================
-   OPEN DETAILS MODAL
-   ============================================================ */
+/* =====================================================
+   DETAILS
+===================================================== */
 
 function openDetails(key) {
 
@@ -2169,15 +1889,15 @@ function openDetails(key) {
 
 
     const id =
-        getRegistrationId(
-            key,
-            data
-        );
+        normalize(
+            data.registrationId ??
+            data.RegistrationId
+        ) ||
+        key;
 
 
     const events =
-        getEvents(data)
-            .map(canonicalEvent);
+        getEvents(data);
 
 
     let membersHTML = "";
@@ -2185,36 +1905,31 @@ function openDetails(key) {
 
     for (
         let i = 2;
-        i <= 5;
+        i <= 10;
         i++
     ) {
 
-        const memberName =
-            getField(
+        const name =
+            getMemberName(
                 data,
-                `Member${i}Name`,
-                `member${i}Name`
+                i
             );
 
 
-        if (!memberName) {
-            continue;
-        }
+        if (!name) continue;
 
 
         const memberClass =
-            getField(
+            getMemberClass(
                 data,
-                `Member${i}Class`,
-                `member${i}Class`
+                i
             );
 
 
         const memberSection =
-            getField(
+            getMemberSection(
                 data,
-                `Member${i}Section`,
-                `member${i}Section`
+                i
             );
 
 
@@ -2226,27 +1941,21 @@ function openDetails(key) {
                     Team Member ${i}
                 </strong>
 
-
                 <div class="detail-grid">
 
                     <div class="detail-item">
 
-                        <label>
-                            Name
-                        </label>
+                        <label>Name</label>
 
                         <strong>
-                            ${escapeHTML(memberName)}
+                            ${escapeHTML(name)}
                         </strong>
 
                     </div>
 
-
                     <div class="detail-item">
 
-                        <label>
-                            Class
-                        </label>
+                        <label>Class</label>
 
                         <strong>
                             ${escapeHTML(
@@ -2256,12 +1965,9 @@ function openDetails(key) {
 
                     </div>
 
-
                     <div class="detail-item">
 
-                        <label>
-                            Section
-                        </label>
+                        <label>Section</label>
 
                         <strong>
                             ${escapeHTML(
@@ -2288,7 +1994,6 @@ function openDetails(key) {
                 Registration Information
             </h3>
 
-
             <div class="detail-grid">
 
                 <div class="detail-item">
@@ -2302,7 +2007,6 @@ function openDetails(key) {
                     </strong>
 
                 </div>
-
 
                 <div class="detail-item">
 
@@ -2331,7 +2035,6 @@ function openDetails(key) {
                 Team Information
             </h3>
 
-
             <div class="detail-grid">
 
                 <div class="detail-item">
@@ -2342,7 +2045,11 @@ function openDetails(key) {
 
                     <strong>
                         ${escapeHTML(
-                            getTeamLeader(data)
+                            normalize(
+                                data.StudentName ??
+                                data.studentName ??
+                                data.TeamLeader
+                            ) || "-"
                         )}
                     </strong>
 
@@ -2357,7 +2064,10 @@ function openDetails(key) {
 
                     <strong>
                         ${escapeHTML(
-                            getTeamName(data)
+                            normalize(
+                                data.TeamName ??
+                                data.teamName
+                            ) || "-"
                         )}
                     </strong>
 
@@ -2372,7 +2082,10 @@ function openDetails(key) {
 
                     <strong>
                         ${escapeHTML(
-                            getClassName(data)
+                            normalize(
+                                data.Class ??
+                                data.class
+                            ) || "-"
                         )}
                     </strong>
 
@@ -2387,7 +2100,10 @@ function openDetails(key) {
 
                     <strong>
                         ${escapeHTML(
-                            getSectionName(data)
+                            normalize(
+                                data.Section ??
+                                data.section
+                            ) || "-"
                         )}
                     </strong>
 
@@ -2402,7 +2118,11 @@ function openDetails(key) {
 
                     <strong>
                         ${escapeHTML(
-                            getMobile(data)
+                            normalize(
+                                data.MobileNumber ??
+                                data.Mobile ??
+                                data.mobile
+                            ) || "-"
                         )}
                     </strong>
 
@@ -2417,8 +2137,8 @@ function openDetails(key) {
 
                     <strong>
                         ${escapeHTML(
-                            getRegistrationEmail(data) ||
-                            "-"
+                            getRegistrationEmail(data)
+                            || "-"
                         )}
                     </strong>
 
@@ -2432,7 +2152,8 @@ function openDetails(key) {
                     </label>
 
                     <strong>
-                        ${getTeamSize(data)} Member(s)
+                        ${getTeamSize(data)}
+                        Member(s)
                     </strong>
 
                 </div>
@@ -2447,7 +2168,6 @@ function openDetails(key) {
             <h3>
                 Selected Events
             </h3>
-
 
             <div class="event-tags">
 
@@ -2465,7 +2185,7 @@ function openDetails(key) {
                             .join("")
 
                         : `
-                            <span class="muted-text">
+                            <span>
                                 No event selected
                             </span>
                         `
@@ -2501,15 +2221,13 @@ function openDetails(key) {
                 Remarks
             </h3>
 
-
             <div class="detail-item">
 
                 <strong>
                     ${escapeHTML(
-                        getField(
-                            data,
-                            "Remarks",
-                            "remarks"
+                        normalize(
+                            data.Remarks ??
+                            data.remarks
                         ) ||
                         "No remarks."
                     )}
@@ -2522,16 +2240,16 @@ function openDetails(key) {
     `;
 
 
-    detailsModal?.classList.remove(
+    detailsModal.classList.remove(
         "hidden"
     );
 
 }
 
 
-/* ============================================================
-   DELETE FROM DETAILS MODAL
-   ============================================================ */
+/* =====================================================
+   DETAILS DELETE
+===================================================== */
 
 if (modalDeleteBtn) {
 
@@ -2539,7 +2257,9 @@ if (modalDeleteBtn) {
         "click",
         () => {
 
-            if (currentRegistrationKey) {
+            if (
+                currentRegistrationKey
+            ) {
 
                 deleteRegistration(
                     currentRegistrationKey
@@ -2553,9 +2273,9 @@ if (modalDeleteBtn) {
 }
 
 
-/* ============================================================
-   OPEN EDIT MODAL
-   ============================================================ */
+/* =====================================================
+   OPEN EDIT
+===================================================== */
 
 function openEdit(key) {
 
@@ -2575,43 +2295,45 @@ function openEdit(key) {
     }
 
 
-    if (!editForm) {
-        return;
-    }
-
-
     editKey.value =
         key;
 
 
     editStudentName.value =
-        getTeamLeader(data) === "-"
-            ? ""
-            : getTeamLeader(data);
+        normalize(
+            data.StudentName ??
+            data.studentName ??
+            data.TeamLeader
+        );
 
 
     editTeamName.value =
-        getTeamName(data) === "Unnamed Team"
-            ? ""
-            : getTeamName(data);
+        normalize(
+            data.TeamName ??
+            data.teamName
+        );
 
 
     editClass.value =
-        getClassName(data) === "-"
-            ? ""
-            : getClassName(data);
+        normalize(
+            data.Class ??
+            data.class
+        );
 
 
     editSection.value =
-        getSectionName(data) === "-"
-            ? ""
-            : getSectionName(data);
+        normalize(
+            data.Section ??
+            data.section
+        );
 
 
     editMobile.value =
-        getMobile(data) === "-"
-            ? ""
-            : getMobile(data);
+        normalize(
+            data.MobileNumber ??
+            data.Mobile ??
+            data.mobile
+        );
 
 
     editEmail.value =
@@ -2619,23 +2341,22 @@ function openEdit(key) {
 
 
     editRemarks.value =
-        getField(
-            data,
-            "Remarks",
-            "remarks"
+        normalize(
+            data.Remarks ??
+            data.remarks
         );
 
 
-    editModal?.classList.remove(
+    editModal.classList.remove(
         "hidden"
     );
 
 }
 
 
-/* ============================================================
+/* =====================================================
    SAVE EDIT
-   ============================================================ */
+===================================================== */
 
 if (editForm) {
 
@@ -2653,7 +2374,7 @@ if (editForm) {
             if (!key) {
 
                 showToast(
-                    "Registration key is missing.",
+                    "Invalid registration.",
                     "error"
                 );
 
@@ -2663,21 +2384,17 @@ if (editForm) {
 
 
             const saveButton =
-                document.getElementById(
-                    "saveEditBtn"
-                );
+                $("saveEditBtn");
 
 
-            if (saveButton) {
+            saveButton.disabled =
+                true;
 
-                saveButton.disabled = true;
 
-                saveButton.innerHTML = `
-                    <i class="fa-solid fa-spinner fa-spin"></i>
-                    Saving...
-                `;
-
-            }
+            saveButton.innerHTML = `
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                Saving...
+            `;
 
 
             try {
@@ -2709,11 +2426,14 @@ if (editForm) {
 
 
                 await update(
+
                     ref(
                         database,
                         `registrations/${key}`
                     ),
+
                     updates
+
                 );
 
 
@@ -2728,16 +2448,15 @@ if (editForm) {
 
                 applyFilters();
 
-                populateFilters();
-
                 updateDashboard();
 
                 renderRecent();
 
                 updateEventPage();
 
+                populateFilters();
 
-                editModal?.classList.add(
+                editModal.classList.add(
                     "hidden"
                 );
 
@@ -2751,7 +2470,7 @@ if (editForm) {
             } catch (error) {
 
                 console.error(
-                    "Update Error:",
+                    "Update error:",
                     error
                 );
 
@@ -2761,19 +2480,16 @@ if (editForm) {
                     "error"
                 );
 
-
             } finally {
 
-                if (saveButton) {
+                saveButton.disabled =
+                    false;
 
-                    saveButton.disabled = false;
 
-                    saveButton.innerHTML = `
-                        <i class="fa-solid fa-floppy-disk"></i>
-                        Save Changes
-                    `;
-
-                }
+                saveButton.innerHTML = `
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Save Changes
+                `;
 
             }
 
@@ -2783,9 +2499,9 @@ if (editForm) {
 }
 
 
-/* ============================================================
-   DELETE REGISTRATION
-   ============================================================ */
+/* =====================================================
+   DELETE
+===================================================== */
 
 async function deleteRegistration(key) {
 
@@ -2806,7 +2522,12 @@ async function deleteRegistration(key) {
 
 
     const name =
-        getTeamLeader(data);
+        normalize(
+            data.StudentName ??
+            data.studentName ??
+            data.TeamLeader
+        ) ||
+        "this registration";
 
 
     const confirmed =
@@ -2815,9 +2536,7 @@ async function deleteRegistration(key) {
         );
 
 
-    if (!confirmed) {
-        return;
-    }
+    if (!confirmed) return;
 
 
     try {
@@ -2835,23 +2554,11 @@ async function deleteRegistration(key) {
         delete filteredRegistrations[key];
 
 
-        currentRegistrationKey =
-            null;
-
-
-        detailsModal?.classList.add(
-            "hidden"
-        );
-
-
-        editModal?.classList.add(
-            "hidden"
-        );
-
-
-        populateFilters();
+        closeAllModals();
 
         updateDashboard();
+
+        populateFilters();
 
         renderRecent();
 
@@ -2869,7 +2576,7 @@ async function deleteRegistration(key) {
     } catch (error) {
 
         console.error(
-            "Delete Error:",
+            "Delete error:",
             error
         );
 
@@ -2884,9 +2591,9 @@ async function deleteRegistration(key) {
 }
 
 
-/* ============================================================
+/* =====================================================
    EVENT PAGE
-   ============================================================ */
+===================================================== */
 
 function updateEventPage() {
 
@@ -2917,14 +2624,12 @@ function updateEventPage() {
 }
 
 
-/* ============================================================
+/* =====================================================
    REFRESH BUTTONS
-   ============================================================ */
+===================================================== */
 
 const dashboardRefresh =
-    document.getElementById(
-        "dashboardRefresh"
-    );
+    $("dashboardRefresh");
 
 if (dashboardRefresh) {
 
@@ -2946,9 +2651,7 @@ if (dashboardRefresh) {
 
 
 const refreshRegistrations =
-    document.getElementById(
-        "refreshRegistrations"
-    );
+    $("refreshRegistrations");
 
 if (refreshRegistrations) {
 
@@ -2969,14 +2672,12 @@ if (refreshRegistrations) {
 }
 
 
-/* ============================================================
+/* =====================================================
    EXPORT BUTTONS
-   ============================================================ */
+===================================================== */
 
 const exportCsv =
-    document.getElementById(
-        "exportCsv"
-    );
+    $("exportCsv");
 
 if (exportCsv) {
 
@@ -2995,9 +2696,7 @@ if (exportCsv) {
 
 
 const exportDashboard =
-    document.getElementById(
-        "exportDashboard"
-    );
+    $("exportDashboard");
 
 if (exportDashboard) {
 
@@ -3015,15 +2714,15 @@ if (exportDashboard) {
 }
 
 
-/* ============================================================
+/* =====================================================
    CSV EXPORT
-   ============================================================ */
+===================================================== */
 
 function exportCSV(dataObject) {
 
     const entries =
         Object.entries(
-            dataObject || {}
+            dataObject
         );
 
 
@@ -3084,57 +2783,57 @@ function exportCSV(dataObject) {
 
             rows.push([
 
-                getRegistrationId(
-                    key,
-                    data
+                normalize(
+                    data.registrationId ??
+                    data.RegistrationId
+                ) ||
+                key,
+
+                normalize(
+                    data.StudentName ??
+                    data.studentName ??
+                    data.TeamLeader
                 ),
 
-                getTeamLeader(data),
+                normalize(
+                    data.TeamName ??
+                    data.teamName
+                ),
 
-                getTeamName(data),
+                normalize(
+                    data.Class ??
+                    data.class
+                ),
 
-                getClassName(data),
+                normalize(
+                    data.Section ??
+                    data.section
+                ),
 
-                getSectionName(data),
-
-                getMobile(data),
+                normalize(
+                    data.MobileNumber ??
+                    data.Mobile ??
+                    data.mobile
+                ),
 
                 getRegistrationEmail(data),
 
                 getEvents(data)
-                    .map(canonicalEvent)
                     .join(" | "),
 
                 getTeamSize(data),
 
-                getField(
-                    data,
-                    "Member2Name",
-                    "member2Name"
-                ),
+                getMemberName(data, 2),
 
-                getField(
-                    data,
-                    "Member3Name",
-                    "member3Name"
-                ),
+                getMemberName(data, 3),
 
-                getField(
-                    data,
-                    "Member4Name",
-                    "member4Name"
-                ),
+                getMemberName(data, 4),
 
-                getField(
-                    data,
-                    "Member5Name",
-                    "member5Name"
-                ),
+                getMemberName(data, 5),
 
-                getField(
-                    data,
-                    "Remarks",
-                    "remarks"
+                normalize(
+                    data.Remarks ??
+                    data.remarks
                 ),
 
                 getRegistrationDate(data)
@@ -3153,7 +2852,7 @@ function exportCSV(dataObject) {
                         .map(csvEscape)
                         .join(",")
             )
-            .join("\r\n");
+            .join("\n");
 
 
     const blob =
@@ -3170,19 +2869,21 @@ function exportCSV(dataObject) {
 
 
     const url =
-        URL.createObjectURL(blob);
+        URL.createObjectURL(
+            blob
+        );
 
 
     const link =
-        document.createElement("a");
+        document.createElement(
+            "a"
+        );
 
 
-    link.href =
-        url;
-
+    link.href = url;
 
     link.download =
-        `APS_Robotics_Registrations_2026_${getFileDate()}.csv`;
+        "APS_Robotics_Registrations_2026.csv";
 
 
     document.body.appendChild(
@@ -3192,15 +2893,10 @@ function exportCSV(dataObject) {
 
     link.click();
 
-
     link.remove();
 
-
-    setTimeout(
-        () => {
-            URL.revokeObjectURL(url);
-        },
-        1000
+    URL.revokeObjectURL(
+        url
     );
 
 
@@ -3212,9 +2908,9 @@ function exportCSV(dataObject) {
 }
 
 
-/* ============================================================
+/* =====================================================
    CSV ESCAPE
-   ============================================================ */
+===================================================== */
 
 function csvEscape(value) {
 
@@ -3230,32 +2926,9 @@ function csvEscape(value) {
 }
 
 
-/* ============================================================
-   FILE DATE
-   ============================================================ */
-
-function getFileDate() {
-
-    const now =
-        new Date();
-
-
-    return [
-        now.getFullYear(),
-        String(
-            now.getMonth() + 1
-        ).padStart(2, "0"),
-        String(
-            now.getDate()
-        ).padStart(2, "0")
-    ].join("-");
-
-}
-
-
-/* ============================================================
-   MODAL CLOSE BUTTONS
-   ============================================================ */
+/* =====================================================
+   MODAL CLOSE
+===================================================== */
 
 document
     .querySelectorAll(
@@ -3271,30 +2944,6 @@ document
     });
 
 
-/* ============================================================
-   CLOSE MODALS
-   ============================================================ */
-
-function closeAllModals() {
-
-    detailsModal?.classList.add(
-        "hidden"
-    );
-
-    editModal?.classList.add(
-        "hidden"
-    );
-
-    currentRegistrationKey =
-        null;
-
-}
-
-
-/* ============================================================
-   MODAL BACKDROP
-   ============================================================ */
-
 if (detailsModal) {
 
     detailsModal.addEventListener(
@@ -3306,7 +2955,9 @@ if (detailsModal) {
                 detailsModal
             ) {
 
-                closeAllModals();
+                detailsModal.classList.add(
+                    "hidden"
+                );
 
             }
 
@@ -3327,7 +2978,9 @@ if (editModal) {
                 editModal
             ) {
 
-                closeAllModals();
+                editModal.classList.add(
+                    "hidden"
+                );
 
             }
 
@@ -3337,29 +2990,33 @@ if (editModal) {
 }
 
 
-/* ============================================================
-   KEYBOARD ESCAPE
-   ============================================================ */
+function closeAllModals() {
 
-document.addEventListener(
-    "keydown",
-    event => {
+    if (detailsModal) {
 
-        if (
-            event.key === "Escape"
-        ) {
-
-            closeAllModals();
-
-        }
+        detailsModal.classList.add(
+            "hidden"
+        );
 
     }
-);
+
+    if (editModal) {
+
+        editModal.classList.add(
+            "hidden"
+        );
+
+    }
+
+    currentRegistrationKey =
+        null;
+
+}
 
 
-/* ============================================================
+/* =====================================================
    TOAST
-   ============================================================ */
+===================================================== */
 
 function showToast(
     message,
@@ -3369,11 +3026,7 @@ function showToast(
     if (
         !toast ||
         !toastMessage
-    ) {
-
-        return;
-
-    }
+    ) return;
 
 
     toastMessage.textContent =
@@ -3386,30 +3039,14 @@ function showToast(
 
     if (icon) {
 
-        if (type === "error") {
+        icon.className =
+            type === "error"
 
-            icon.className =
-                "fa-solid fa-circle-exclamation";
+                ? "fa-solid fa-circle-exclamation"
 
-        } else {
-
-            icon.className =
-                "fa-solid fa-circle-check";
-
-        }
+                : "fa-solid fa-circle-check";
 
     }
-
-
-    toast.classList.remove(
-        "error",
-        "success"
-    );
-
-
-    toast.classList.add(
-        type
-    );
 
 
     toast.classList.add(
@@ -3431,46 +3068,32 @@ function showToast(
                 );
 
             },
-            3500
+            3200
         );
 
 }
 
 
-/* ============================================================
-   GET REGISTRATION DATE
-   Supports:
-   - ISO strings
-   - Firebase timestamp
-   - numeric timestamp
-   - registrationDate
-   - createdAt
-   - timestamp
-   ============================================================ */
+/* =====================================================
+   DATE FIELD
+===================================================== */
 
 function getRegistrationDate(data) {
 
-    if (!data) {
-        return "";
-    }
-
-
     return (
-        data.registrationDate ??
-        data.RegistrationDate ??
-        data.createdAt ??
-        data.created_at ??
-        data.timestamp ??
-        data.Timestamp ??
+        data?.registrationDate ??
+        data?.RegistrationDate ??
+        data?.registeredAt ??
+        data?.createdAt ??
         ""
     );
 
 }
 
 
-/* ============================================================
-   GET TIMESTAMP
-   ============================================================ */
+/* =====================================================
+   TIMESTAMP
+===================================================== */
 
 function getTimestamp(data) {
 
@@ -3478,35 +3101,14 @@ function getTimestamp(data) {
         getRegistrationDate(data);
 
 
-    if (!value) {
-        return 0;
-    }
+    if (!value) return 0;
 
 
     if (
         typeof value === "number"
     ) {
 
-        /*
-         * Firebase / JavaScript timestamps
-         * may be seconds or milliseconds.
-         */
-
-        return value < 10000000000
-            ? value * 1000
-            : value;
-
-    }
-
-
-    if (
-        typeof value === "object" &&
-        value.seconds !== undefined
-    ) {
-
-        return (
-            Number(value.seconds) * 1000
-        );
+        return value;
 
     }
 
@@ -3526,51 +3128,41 @@ function getTimestamp(data) {
 }
 
 
-/* ============================================================
-   FORMAT DATE
-   ============================================================ */
+/* =====================================================
+   DATE FORMAT
+===================================================== */
 
 function formatDate(value) {
 
-    if (!value) {
-        return "-";
-    }
-
-
-    let date;
+    if (!value) return "-";
 
 
     if (
         typeof value === "number"
     ) {
 
-        date =
-            new Date(
-                value < 10000000000
-                    ? value * 1000
-                    : value
-            );
-
-    }
-
-    else if (
-        typeof value === "object" &&
-        value.seconds !== undefined
-    ) {
-
-        date =
-            new Date(
-                Number(value.seconds) * 1000
-            );
-
-    }
-
-    else {
-
-        date =
+        const date =
             new Date(value);
 
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return String(value);
+
+        }
+
+        return formatDateObject(
+            date
+        );
+
     }
+
+
+    const date =
+        new Date(value);
 
 
     if (
@@ -3579,39 +3171,37 @@ function formatDate(value) {
         )
     ) {
 
-        return normalize(value);
+        return String(value);
 
     }
 
 
+    return formatDateObject(
+        date
+    );
+
+}
+
+
+function formatDateObject(date) {
+
     return date.toLocaleString(
         "en-IN",
         {
-
-            day:
-                "2-digit",
-
-            month:
-                "short",
-
-            year:
-                "numeric",
-
-            hour:
-                "2-digit",
-
-            minute:
-                "2-digit"
-
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
         }
     );
 
 }
 
 
-/* ============================================================
+/* =====================================================
    SET TEXT
-   ============================================================ */
+===================================================== */
 
 function setText(
     id,
@@ -3619,7 +3209,7 @@ function setText(
 ) {
 
     const element =
-        document.getElementById(id);
+        $(id);
 
 
     if (element) {
@@ -3632,9 +3222,47 @@ function setText(
 }
 
 
-/* ============================================================
-   HTML ESCAPE
-   ============================================================ */
+/* =====================================================
+   NAV COUNT
+===================================================== */
+
+function updateNavigationCount() {
+
+    if (
+        navRegistrationCount
+    ) {
+
+        navRegistrationCount.textContent =
+            Object.keys(
+                registrations
+            ).length;
+
+    }
+
+}
+
+
+/* =====================================================
+   TABLE STATUS
+===================================================== */
+
+function setTableStatus(
+    message
+) {
+
+    if (tableStatus) {
+
+        tableStatus.textContent =
+            message;
+
+    }
+
+}
+
+
+/* =====================================================
+   HTML SECURITY
+===================================================== */
 
 function escapeHTML(value) {
 
@@ -3645,38 +3273,28 @@ function escapeHTML(value) {
 
                 const entities = {
 
-                    "&":
-                        "&amp;",
+                    "&": "&amp;",
 
-                    "<":
-                        "&lt;",
+                    "<": "&lt;",
 
-                    ">":
-                        "&gt;",
+                    ">": "&gt;",
 
-                    '"':
-                        "&quot;",
+                    '"': "&quot;",
 
-                    "'":
-                        "&#039;"
+                    "'": "&#039;"
 
                 };
 
 
-                return (
-                    entities[character]
-                    || character
-                );
+                return entities[
+                    character
+                ];
 
             }
         );
 
 }
 
-
-/* ============================================================
-   ATTRIBUTE ESCAPE
-   ============================================================ */
 
 function escapeAttr(value) {
 
@@ -3685,32 +3303,87 @@ function escapeAttr(value) {
 }
 
 
-/* ============================================================
-   INITIAL STATE
-   ============================================================ */
+/* =====================================================
+   KEYBOARD
+===================================================== */
 
-registrations = {};
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key ===
+            "Escape"
+        ) {
+
+            closeAllModals();
+
+            closeSidebar();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   INITIAL STATE
+===================================================== */
 
 filteredRegistrations = {};
 
 
-/* ============================================================
-   INITIAL PAGE
-   ============================================================ */
+/* =====================================================
+   PREVENT BODY SCROLL WHEN MODAL OPEN
+===================================================== */
 
-showPage("dashboard");
+const modalObserver =
+    new MutationObserver(
+        () => {
+
+            const modalOpen =
+                !detailsModal.classList.contains(
+                    "hidden"
+                ) ||
+                !editModal.classList.contains(
+                    "hidden"
+                );
 
 
-/* ============================================================
-   CONSOLE STATUS
-   ============================================================ */
+            document.body.style.overflow =
+                modalOpen
+                    ? "hidden"
+                    : "";
 
-console.log(
-    "%cAPS Robotics Championship 2026 Admin Panel",
-    "font-size:16px;font-weight:bold;"
-);
+        }
+    );
 
-console.log(
-    "%cFirebase Admin Panel initialized.",
-    "font-size:13px;"
-);
+
+if (detailsModal) {
+
+    modalObserver.observe(
+        detailsModal,
+        {
+            attributes: true,
+            attributeFilter: [
+                "class"
+            ]
+        }
+    );
+
+}
+
+
+if (editModal) {
+
+    modalObserver.observe(
+        editModal,
+        {
+            attributes: true,
+            attributeFilter: [
+                "class"
+            ]
+        }
+    );
+
+}
