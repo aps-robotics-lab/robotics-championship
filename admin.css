@@ -1,22 +1,544 @@
-@media(max-width:600px){
+/* =====================================================
+   RESET
+===================================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+
+/* =====================================================
+   BODY
+===================================================== */
+
+body{
+
+    font-family:'Poppins',sans-serif;
+
+    background:
+    linear-gradient(
+        135deg,
+        #020617,
+        #0b1f3a
+    );
+
+    color:white;
+
+    min-height:100vh;
+
+}
+
+
+/* =====================================================
+   LOGIN BOX
+===================================================== */
 
 .login-box{
-width:90%;
-margin:50px auto;
+
+    width:90%;
+
+    max-width:420px;
+
+    margin:100px auto;
+
+    padding:35px;
+
+    background:
+    rgba(255,255,255,.08);
+
+    backdrop-filter:blur(15px);
+
+    border-radius:20px;
+
+    border:
+    1px solid
+    rgba(255,255,255,.2);
+
+    text-align:center;
+
+    box-shadow:
+    0 0 30px
+    rgba(0,242,255,.3);
+
+}
+
+
+.login-box h1{
+
+    font-family:'Orbitron',sans-serif;
+
+    color:#00F2FF;
+
+    font-size:26px;
+
+}
+
+
+.login-box p{
+
+    margin:15px 0;
+
+}
+
+
+.login-box label{
+
+    display:block;
+
+    text-align:left;
+
+    margin-top:10px;
+
+    font-size:14px;
+
+}
+
+
+.login-box input{
+
+    width:100%;
+
+    padding:14px;
+
+    margin:8px 0;
+
+    border:none;
+
+    outline:none;
+
+    border-radius:10px;
+
+    background:#111827;
+
+    color:white;
+
+    font-family:'Poppins',sans-serif;
+
+}
+
+
+.login-box input:focus{
+
+    box-shadow:
+    0 0 10px
+    rgba(0,242,255,.4);
+
+}
+
+
+.login-box button{
+
+    width:100%;
+
+    padding:14px;
+
+    margin-top:10px;
+
+    border:none;
+
+    border-radius:30px;
+
+    background:#00F2FF;
+
+    color:#020617;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+
+.login-box button:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:
+    0 0 20px
+    #00F2FF;
+
+}
+
+
+#error{
+
+    color:#ff5555;
+
+    font-size:14px;
+
+    min-height:20px;
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+#dashboard{
+
+    display:none;
+
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+header{
+
+    position:relative;
+
+    text-align:center;
+
+    padding:35px 20px;
+
+}
+
+
+.header-content{
+
+    max-width:900px;
+
+    margin:auto;
+
 }
 
 
 header h1{
-font-size:22px;
+
+    font-family:'Orbitron',sans-serif;
+
+    color:#00F2FF;
+
+    font-size:30px;
+
+}
+
+
+header p{
+
+    margin-top:10px;
+
+    color:#cbd5e1;
+
+}
+
+
+.logout-btn{
+
+    position:absolute;
+
+    right:30px;
+
+    top:30px;
+
+    width:auto;
+
+    padding:10px 20px;
+
+    background:#ff4757;
+
+    color:white;
+
+}
+
+
+.logout-btn:hover{
+
+    box-shadow:
+    0 0 20px
+    #ff4757;
+
+}
+
+
+/* =====================================================
+   STATISTICS CARDS
+===================================================== */
+
+.cards{
+
+    width:90%;
+
+    max-width:1400px;
+
+    margin:auto;
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(
+        auto-fit,
+        minmax(200px,1fr)
+    );
+
+    gap:20px;
+
+}
+
+
+.card{
+
+    padding:25px;
+
+    text-align:center;
+
+    background:
+    rgba(255,255,255,.08);
+
+    backdrop-filter:blur(10px);
+
+    border-radius:20px;
+
+    border:
+    1px solid
+    rgba(255,255,255,.15);
+
+    transition:.3s;
+
+}
+
+
+.card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:
+    0 0 25px
+    rgba(0,242,255,.3);
+
+}
+
+
+.card-icon{
+
+    font-size:25px;
+
+    color:#00F2FF;
+
+    margin-bottom:10px;
+
 }
 
 
 .card h2{
-font-size:32px;
+
+    font-size:42px;
+
+    color:#00F2FF;
+
 }
 
 
+.card p{
+
+    color:#cbd5e1;
+
+    margin-top:5px;
+
 }
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+.search{
+
+    width:90%;
+
+    max-width:1400px;
+
+    margin:30px auto;
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+
+.search input{
+
+    flex:1;
+
+    padding:15px;
+
+    border-radius:10px;
+
+    border:none;
+
+    outline:none;
+
+    background:white;
+
+    color:#020617;
+
+    font-family:'Poppins',sans-serif;
+
+}
+
+
+.search button{
+
+    width:150px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#00F2FF;
+
+    color:#020617;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+}
+
+
+.search button:hover{
+
+    box-shadow:
+    0 0 20px
+    #00F2FF;
+
+}
+
+
+/* =====================================================
+   DOWNLOAD BUTTON
+===================================================== */
+
+.download-btn{
+
+    display:block;
+
+    width:90%;
+
+    max-width:350px;
+
+    margin:20px auto;
+
+    padding:14px;
+
+    border:none;
+
+    border-radius:30px;
+
+    background:#22c55e;
+
+    color:white;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+}
+
+
+.download-btn:hover{
+
+    box-shadow:
+    0 0 20px
+    #22c55e;
+
+}
+
+
+/* =====================================================
+   TABLE
+===================================================== */
+
+.table-container{
+
+    width:90%;
+
+    max-width:1400px;
+
+    margin:30px auto;
+
+    overflow-x:auto;
+
+    border-radius:15px;
+
+}
+
+
+table{
+
+    width:100%;
+
+    min-width:900px;
+
+    border-collapse:collapse;
+
+    background:
+    rgba(255,255,255,.08);
+
+    border-radius:15px;
+
+    overflow:hidden;
+
+}
+
+
+th,
+td{
+
+    padding:15px;
+
+    text-align:center;
+
+    border-bottom:
+    1px solid
+    #334155;
+
+}
+
+
+th{
+
+    color:#00F2FF;
+
+    font-family:'Orbitron',sans-serif;
+
+    font-size:13px;
+
+    white-space:nowrap;
+
+}
+
+
+td{
+
+    color:#e2e8f0;
+
+}
+
+
+tbody tr{
+
+    transition:.2s;
+
+}
+
+
+tbody tr:hover{
+
+    background:
+    rgba(0,242,255,.1);
+
+}
+
+
 /* =====================================================
    TABLE ACTION BUTTONS
 ===================================================== */
@@ -37,9 +559,17 @@ font-size:32px;
 
     margin:3px;
 
+    border:none;
+
     border-radius:8px;
 
     font-size:13px;
+
+    font-family:'Poppins',sans-serif;
+
+    font-weight:600;
+
+    cursor:pointer;
 
 }
 
@@ -64,7 +594,9 @@ font-size:32px;
 
 .edit-btn:hover{
 
-    box-shadow:0 0 15px #00F2FF;
+    box-shadow:
+    0 0 15px
+    #00F2FF;
 
     transform:translateY(-2px);
 
@@ -73,7 +605,9 @@ font-size:32px;
 
 .delete-btn:hover{
 
-    box-shadow:0 0 15px #ff4757;
+    box-shadow:
+    0 0 15px
+    #ff4757;
 
     transform:translateY(-2px);
 
@@ -90,7 +624,8 @@ font-size:32px;
 
     inset:0;
 
-    background:rgba(0,0,0,.75);
+    background:
+    rgba(0,0,0,.75);
 
     backdrop-filter:blur(8px);
 
@@ -114,6 +649,10 @@ font-size:32px;
 }
 
 
+/* =====================================================
+   EDIT BOX
+===================================================== */
+
 .edit-box{
 
     width:100%;
@@ -133,7 +672,8 @@ font-size:32px;
         #0b2440
     );
 
-    border:1px solid
+    border:
+    1px solid
     rgba(0,242,255,.35);
 
     border-radius:20px;
@@ -142,8 +682,40 @@ font-size:32px;
     0 0 40px
     rgba(0,242,255,.25);
 
+    animation:
+    modalOpen .25s ease;
+
 }
 
+
+@keyframes modalOpen{
+
+    from{
+
+        opacity:0;
+
+        transform:
+        scale(.92)
+        translateY(20px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+        scale(1)
+        translateY(0);
+
+    }
+
+}
+
+
+/* =====================================================
+   EDIT HEADER
+===================================================== */
 
 .edit-header{
 
@@ -169,6 +741,25 @@ font-size:32px;
 }
 
 
+.modal-label{
+
+    display:block;
+
+    color:#64748b;
+
+    font-size:10px;
+
+    letter-spacing:2px;
+
+    margin-bottom:5px;
+
+}
+
+
+/* =====================================================
+   CLOSE BUTTON
+===================================================== */
+
 .close-btn{
 
     width:40px;
@@ -177,11 +768,15 @@ font-size:32px;
 
     padding:0;
 
+    border:none;
+
     border-radius:50%;
 
     background:#ff4757;
 
     color:white;
+
+    cursor:pointer;
 
 }
 
@@ -189,10 +784,17 @@ font-size:32px;
 .close-btn:hover{
 
     box-shadow:
-    0 0 15px #ff4757;
+    0 0 15px
+    #ff4757;
+
+    transform:rotate(90deg);
 
 }
 
+
+/* =====================================================
+   EDIT FORM
+===================================================== */
 
 .edit-box label{
 
@@ -228,8 +830,18 @@ font-size:32px;
 
     font-family:'Poppins',sans-serif;
 
-    border:1px solid
+    border:
+    1px solid
     rgba(255,255,255,.1);
+
+}
+
+
+.edit-box textarea{
+
+    resize:vertical;
+
+    min-height:80px;
 
 }
 
@@ -255,6 +867,10 @@ font-size:32px;
 }
 
 
+/* =====================================================
+   CLASS + SECTION
+===================================================== */
+
 .edit-row{
 
     display:grid;
@@ -266,6 +882,10 @@ font-size:32px;
 
 }
 
+
+/* =====================================================
+   EDIT ACTIONS
+===================================================== */
 
 .edit-actions{
 
@@ -282,6 +902,18 @@ font-size:32px;
 
     flex:1;
 
+    padding:13px;
+
+    border:none;
+
+    border-radius:10px;
+
+    font-family:'Poppins',sans-serif;
+
+    font-weight:600;
+
+    cursor:pointer;
+
 }
 
 
@@ -290,6 +922,13 @@ font-size:32px;
     background:#475569;
 
     color:white;
+
+}
+
+
+.cancel-btn:hover{
+
+    background:#64748b;
 
 }
 
@@ -306,7 +945,46 @@ font-size:32px;
 .save-btn:hover{
 
     box-shadow:
-    0 0 20px #22c55e;
+    0 0 20px
+    #22c55e;
+
+}
+
+
+.save-btn:disabled{
+
+    opacity:.6;
+
+    cursor:not-allowed;
+
+    transform:none;
+
+}
+
+
+/* =====================================================
+   SCROLLBAR
+===================================================== */
+
+.edit-box::-webkit-scrollbar{
+
+    width:6px;
+
+}
+
+
+.edit-box::-webkit-scrollbar-track{
+
+    background:#020617;
+
+}
+
+
+.edit-box::-webkit-scrollbar-thumb{
+
+    background:#00F2FF;
+
+    border-radius:10px;
 
 }
 
@@ -317,9 +995,178 @@ font-size:32px;
 
 @media(max-width:600px){
 
+    .login-box{
+
+        width:90%;
+
+        margin:50px auto;
+
+        padding:25px;
+
+    }
+
+
+    header{
+
+        padding:25px 15px;
+
+    }
+
+
+    header h1{
+
+        font-size:22px;
+
+        padding:0 10px;
+
+    }
+
+
+    header p{
+
+        font-size:13px;
+
+    }
+
+
+    .logout-btn{
+
+        position:static;
+
+        margin-top:20px;
+
+    }
+
+
+    .cards{
+
+        width:95%;
+
+        grid-template-columns:
+        repeat(2,1fr);
+
+        gap:12px;
+
+    }
+
+
+    .card{
+
+        padding:18px 10px;
+
+    }
+
+
+    .card-icon{
+
+        font-size:20px;
+
+    }
+
+
+    .card h2{
+
+        font-size:32px;
+
+    }
+
+
+    .card p{
+
+        font-size:12px;
+
+    }
+
+
+    .search{
+
+        width:95%;
+
+        flex-direction:column;
+
+    }
+
+
+    .search button{
+
+        width:100%;
+
+        padding:13px;
+
+    }
+
+
+    .download-btn{
+
+        width:90%;
+
+    }
+
+
+    .table-container{
+
+        width:95%;
+
+    }
+
+
+    table{
+
+        min-width:900px;
+
+    }
+
+
+    th,
+    td{
+
+        padding:10px;
+
+        font-size:12px;
+
+    }
+
+
+    .action-buttons{
+
+        display:flex;
+
+        flex-direction:column;
+
+    }
+
+
+    .edit-btn,
+    .delete-btn{
+
+        width:100%;
+
+        margin:3px 0;
+
+    }
+
+
+    .edit-modal{
+
+        padding:12px;
+
+    }
+
+
     .edit-box{
 
+        max-height:94vh;
+
         padding:20px;
+
+        border-radius:16px;
+
+    }
+
+
+    .edit-header h2{
+
+        font-size:18px;
 
     }
 
@@ -346,23 +1193,33 @@ font-size:32px;
 
     }
 
-
-    .action-buttons{
-
-        display:flex;
-
-        flex-direction:column;
-
-    }
-
-
-    .edit-btn,
-    .delete-btn{
-
-        width:100%;
-
-        margin:3px 0;
-
-    }
-
 }
+
+
+/* =====================================================
+   VERY SMALL DEVICES
+===================================================== */
+
+@media(max-width:380px){
+
+    .cards{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+    .login-box h1{
+
+        font-size:21px;
+
+    }
+
+
+    .edit-box{
+
+        padding:16px;
+
+    }
+
+   }
