@@ -1,956 +1,1034 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
 
-<head>
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
 
-<meta charset="UTF-8">
+<meta
+    name="theme-color"
+    content="#020711">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
-<meta name="theme-color"
-      content="#020711">
+<meta
+    name="description"
+    content="Registration successful for APS Robotics Championship 2026">
 
 <title>
-Registration Successful | APS Robotics Championship 2026
+    Registration Successful | APS Robotics Championship 2026
 </title>
 
-<link rel="preconnect"
-      href="https://fonts.googleapis.com">
 
-<link rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin>
+<!-- GOOGLE FONTS -->
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet">
+<link
+    rel="preconnect"
+    href="https://fonts.googleapis.com">
 
-<link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- FONT AWESOME -->
+
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 
 <style>
 
-*,
-*::before,
-*::after {
-
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-
-}
-
-
-html,
-body {
-
-    min-height:100%;
-
-}
-
-
-body {
-
-    min-height:100vh;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    padding:25px;
-
-    overflow-x:hidden;
-
-    background:
-        #020711;
-
-    color:#e9f7ff;
-
-    font-family:
-        "Poppins",
-        sans-serif;
-
-}
-
-
-body::before {
-
-    content:"";
-
-    position:fixed;
-
-    inset:0;
-
-    pointer-events:none;
-
-    opacity:.18;
-
-    background-image:
-
-        linear-gradient(
-            rgba(0,229,255,.08) 1px,
-            transparent 1px
-        ),
-
-        linear-gradient(
-            90deg,
-            rgba(0,229,255,.08) 1px,
-            transparent 1px
-        );
-
-    background-size:
-        50px 50px;
-
-}
-
-
-.glow {
-
-    position:fixed;
-
-    width:500px;
-    height:500px;
-
-    border-radius:50%;
-
-    background:
-        rgba(0,229,255,.07);
-
-    filter:
-        blur(100px);
-
-    pointer-events:none;
-
-}
-
-
-.glow.one {
-
-    top:-250px;
-    left:-250px;
-
-}
-
-
-.glow.two {
-
-    bottom:-300px;
-    right:-250px;
-
-}
-
-
-.success-card {
-
-    position:relative;
-
-    width:
-        min(680px, 100%);
-
-    padding:
-        45px;
-
-    border:
-        1px solid rgba(0,229,255,.2);
-
-    border-radius:
-        25px;
-
-    background:
-        rgba(4,15,27,.9);
-
-    box-shadow:
-        0 30px 100px rgba(0,0,0,.45);
-
-    text-align:center;
-
-    animation:
-        cardIn .8s ease;
-
-}
-
-
-@keyframes cardIn {
-
-    from {
-
-        opacity:0;
-
-        transform:
-            translateY(25px)
-            scale(.98);
-
+    /* =====================================================
+       RESET
+    ===================================================== */
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
     }
 
-    to {
 
-        opacity:1;
-
-        transform:
-            translateY(0)
-            scale(1);
-
+    html {
+        scroll-behavior: smooth;
     }
 
-}
-
-
-.logo {
-
-    width:72px;
-    height:72px;
-
-    margin:
-        0 auto 22px;
-
-    padding:5px;
-
-    display:flex;
-
-    align-items:center;
-    justify-content:center;
-
-    border-radius:
-        16px;
-
-    background:#fff;
-
-}
-
-
-.logo img {
-
-    width:100%;
-    height:100%;
-
-    object-fit:contain;
-
-}
-
-
-.status-icon {
-
-    width:82px;
-    height:82px;
-
-    margin:
-        0 auto 25px;
-
-    display:flex;
-
-    align-items:center;
-    justify-content:center;
-
-    border:
-        1px solid rgba(0,255,157,.4);
-
-    border-radius:50%;
-
-    color:
-        #00ff9d;
-
-    font-size:35px;
-
-    box-shadow:
-        0 0 35px rgba(0,255,157,.15);
-
-}
-
-
-.status-label {
-
-    color:
-        #00ff9d;
-
-    font-family:
-        "Orbitron",
-        sans-serif;
-
-    font-size:
-        9px;
-
-    letter-spacing:
-        .25em;
-
-}
-
-
-h1 {
-
-    margin-top:
-        13px;
-
-    font-family:
-        "Orbitron",
-        sans-serif;
-
-    font-size:
-        clamp(27px, 6vw, 45px);
-
-    color:
-        #f4fbff;
-
-}
-
-
-.subtitle {
-
-    margin-top:
-        12px;
-
-    color:
-        #829aaa;
-
-    line-height:
-        1.7;
-
-    font-size:
-        13px;
-
-}
-
-
-.registration-box {
-
-    margin-top:
-        28px;
-
-    padding:
-        20px;
-
-    border:
-        1px solid rgba(0,229,255,.2);
-
-    border-radius:
-        15px;
-
-    background:
-        rgba(0,229,255,.035);
-
-}
-
-
-.registration-label {
-
-    color:
-        #637e8d;
-
-    font-family:
-        "Orbitron",
-        sans-serif;
-
-    font-size:
-        8px;
-
-    letter-spacing:
-        .2em;
-
-}
-
-
-.registration-id {
-
-    display:block;
-
-    margin-top:
-        8px;
-
-    color:
-        #00e5ff;
-
-    font-family:
-        "Orbitron",
-        sans-serif;
-
-    font-size:
-        clamp(18px, 5vw, 28px);
-
-    letter-spacing:
-        .08em;
-
-    word-break:
-        break-word;
-
-}
-
-
-.details {
-
-    margin-top:
-        25px;
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(2,1fr);
-
-    gap:10px;
-
-}
-
-
-.detail {
-
-    padding:
-        13px;
-
-    border:
-        1px solid rgba(255,255,255,.05);
-
-    border-radius:
-        10px;
-
-    text-align:left;
-
-}
-
-
-.detail span {
-
-    display:block;
-
-    color:
-        #587280;
-
-    font-size:
-        8px;
-
-    text-transform:
-        uppercase;
-
-    letter-spacing:
-        .12em;
-
-}
-
-
-.detail strong {
-
-    display:block;
-
-    margin-top:
-        5px;
-
-    color:
-        #d9edf6;
-
-    font-size:
-        11px;
-
-    word-break:
-        break-word;
-
-}
-
-
-.message {
-
-    margin-top:
-        22px;
-
-    color:
-        #6f8897;
-
-    font-size:
-        11px;
-
-    line-height:
-        1.7;
-
-}
-
-
-.buttons {
-
-    display:flex;
-
-    justify-content:center;
-
-    gap:10px;
-
-    margin-top:
-        28px;
-
-}
-
-
-.btn {
-
-    min-height:
-        48px;
-
-    padding:
-        0 20px;
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:10px;
-
-    border-radius:
-        10px;
-
-    font-family:
-        "Orbitron",
-        sans-serif;
-
-    font-size:
-        9px;
-
-    font-weight:
-        700;
-
-    letter-spacing:
-        .08em;
-
-    text-decoration:none;
-
-}
-
-
-.btn-primary {
-
-    color:
-        #001018;
-
-    background:
-        #00e5ff;
-
-}
-
-
-.btn-secondary {
-
-    color:
-        #dcecf4;
-
-    border:
-        1px solid rgba(0,229,255,.2);
-
-    background:
-        rgba(0,229,255,.03);
-
-}
-
-
-.footer {
-
-    margin-top:
-        28px;
-
-    padding-top:
-        18px;
-
-    border-top:
-        1px solid rgba(255,255,255,.05);
-
-    color:
-        #405865;
-
-    font-size:
-        8px;
-
-    line-height:
-        1.7;
-
-}
-
-
-@media(max-width:550px) {
 
     body {
 
-        padding:
-            15px;
+        min-height: 100vh;
 
-        align-items:
-            flex-start;
+        font-family: "Poppins", sans-serif;
 
-        padding-top:
-            25px;
+        color: #ffffff;
 
+        background:
+            radial-gradient(
+                circle at 20% 20%,
+                rgba(0, 153, 255, 0.16),
+                transparent 32%
+            ),
+            radial-gradient(
+                circle at 80% 80%,
+                rgba(123, 63, 255, 0.16),
+                transparent 32%
+            ),
+            linear-gradient(
+                135deg,
+                #020711,
+                #071326,
+                #020711
+            );
+
+        overflow-x: hidden;
     }
 
+
+    /* =====================================================
+       BACKGROUND
+    ===================================================== */
+
+    .background {
+
+        position: fixed;
+
+        inset: 0;
+
+        z-index: -5;
+
+        overflow: hidden;
+    }
+
+
+    .grid {
+
+        position: absolute;
+
+        inset: -50%;
+
+        width: 200%;
+        height: 200%;
+
+        background-image:
+            linear-gradient(
+                rgba(0, 174, 255, 0.055) 1px,
+                transparent 1px
+            ),
+            linear-gradient(
+                90deg,
+                rgba(0, 174, 255, 0.055) 1px,
+                transparent 1px
+            );
+
+        background-size: 45px 45px;
+
+        transform:
+            perspective(500px)
+            rotateX(60deg)
+            translateY(10%);
+
+        animation: gridMove 16s linear infinite;
+    }
+
+
+    @keyframes gridMove {
+
+        from {
+            transform:
+                perspective(500px)
+                rotateX(60deg)
+                translateY(0);
+        }
+
+        to {
+            transform:
+                perspective(500px)
+                rotateX(60deg)
+                translateY(45px);
+        }
+    }
+
+
+    .glow {
+
+        position: absolute;
+
+        width: 420px;
+        height: 420px;
+
+        border-radius: 50%;
+
+        filter: blur(100px);
+
+        opacity: .25;
+    }
+
+
+    .glow-one {
+
+        top: -150px;
+        left: -100px;
+
+        background: #008cff;
+    }
+
+
+    .glow-two {
+
+        right: -150px;
+        bottom: -150px;
+
+        background: #713cff;
+    }
+
+
+    /* =====================================================
+       PAGE
+    ===================================================== */
+
+    .page {
+
+        min-height: 100vh;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        padding: 30px 18px;
+    }
+
+
+    /* =====================================================
+       CARD
+    ===================================================== */
 
     .success-card {
 
-        padding:
-            30px 18px;
+        width: min(680px, 100%);
 
+        padding: 48px 35px;
+
+        text-align: center;
+
+        background:
+            linear-gradient(
+                145deg,
+                rgba(10, 25, 49, 0.94),
+                rgba(3, 10, 23, 0.94)
+            );
+
+        border: 1px solid rgba(0, 174, 255, .22);
+
+        border-radius: 28px;
+
+        box-shadow:
+            0 30px 80px rgba(0, 0, 0, .55),
+            0 0 70px rgba(0, 153, 255, .08);
+
+        backdrop-filter: blur(20px);
+
+        animation: cardEnter .8s ease forwards;
+
+        position: relative;
+
+        overflow: hidden;
     }
 
 
-    .details {
+    .success-card::before {
 
-        grid-template-columns:
-            1fr;
+        content: "";
 
+        position: absolute;
+
+        top: 0;
+        left: 0;
+
+        width: 100%;
+        height: 2px;
+
+        background:
+            linear-gradient(
+                90deg,
+                transparent,
+                #00b7ff,
+                #7a4dff,
+                transparent
+            );
     }
 
 
-    .buttons {
+    @keyframes cardEnter {
 
-        flex-direction:
-            column;
+        from {
 
+            opacity: 0;
+
+            transform:
+                translateY(30px)
+                scale(.96);
+        }
+
+        to {
+
+            opacity: 1;
+
+            transform:
+                translateY(0)
+                scale(1);
+        }
+    }
+
+
+    /* =====================================================
+       LOGO
+    ===================================================== */
+
+    .logo-wrapper {
+
+        width: 92px;
+        height: 92px;
+
+        margin: 0 auto 22px;
+
+        padding: 8px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background:
+            rgba(255,255,255,.04);
+
+        border:
+            1px solid rgba(0,174,255,.25);
+
+        box-shadow:
+            0 0 35px rgba(0,174,255,.16);
+    }
+
+
+    .logo-wrapper img {
+
+        width: 100%;
+        height: 100%;
+
+        object-fit: contain;
+    }
+
+
+    /* =====================================================
+       SUCCESS ICON
+    ===================================================== */
+
+    .success-icon {
+
+        width: 94px;
+        height: 94px;
+
+        margin: 0 auto 25px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background:
+            rgba(0, 220, 140, .08);
+
+        border:
+            2px solid rgba(0, 230, 150, .5);
+
+        box-shadow:
+            0 0 40px rgba(0, 230, 150, .16);
+
+        animation: successPulse 2s infinite;
+    }
+
+
+    .success-icon i {
+
+        font-size: 43px;
+
+        color: #00e69a;
+    }
+
+
+    @keyframes successPulse {
+
+        0%,
+        100% {
+            transform: scale(1);
+            box-shadow:
+                0 0 35px rgba(0, 230, 150, .12);
+        }
+
+        50% {
+            transform: scale(1.05);
+            box-shadow:
+                0 0 55px rgba(0, 230, 150, .28);
+        }
+    }
+
+
+    /* =====================================================
+       TEXT
+    ===================================================== */
+
+    .badge {
+
+        display: inline-flex;
+
+        align-items: center;
+        gap: 8px;
+
+        padding: 7px 14px;
+
+        margin-bottom: 15px;
+
+        border-radius: 30px;
+
+        font-family: "Orbitron", sans-serif;
+
+        font-size: 10px;
+
+        letter-spacing: 1.5px;
+
+        color: #00c8ff;
+
+        background:
+            rgba(0, 174, 255, .08);
+
+        border:
+            1px solid rgba(0, 174, 255, .2);
+    }
+
+
+    h1 {
+
+        font-family: "Orbitron", sans-serif;
+
+        font-size: clamp(28px, 6vw, 46px);
+
+        line-height: 1.15;
+
+        margin-bottom: 10px;
+
+        letter-spacing: 1px;
+
+        background:
+            linear-gradient(
+                90deg,
+                #ffffff,
+                #7ddfff
+            );
+
+        -webkit-background-clip: text;
+        background-clip: text;
+
+        color: transparent;
+    }
+
+
+    .championship {
+
+        font-family: "Orbitron", sans-serif;
+
+        font-size: clamp(15px, 3vw, 21px);
+
+        font-weight: 700;
+
+        letter-spacing: 2px;
+
+        color: #7d8cff;
+
+        margin-bottom: 20px;
+    }
+
+
+    .message {
+
+        max-width: 520px;
+
+        margin: 0 auto 30px;
+
+        color: #aebbd0;
+
+        font-size: 15px;
+
+        line-height: 1.8;
+    }
+
+
+    .message strong {
+
+        color: #ffffff;
+    }
+
+
+    /* =====================================================
+       REGISTRATION INFO
+    ===================================================== */
+
+    .info-box {
+
+        margin: 25px 0;
+
+        padding: 20px;
+
+        border-radius: 17px;
+
+        text-align: left;
+
+        background:
+            rgba(255,255,255,.025);
+
+        border:
+            1px solid rgba(255,255,255,.08);
+    }
+
+
+    .info-row {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 15px;
+
+        padding: 11px 0;
+
+        border-bottom:
+            1px solid rgba(255,255,255,.06);
+    }
+
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+
+    .info-label {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+
+        color: #8d9bb0;
+
+        font-size: 13px;
+    }
+
+
+    .info-label i {
+
+        width: 25px;
+
+        color: #00bfff;
+
+        text-align: center;
+    }
+
+
+    .info-value {
+
+        color: #ffffff;
+
+        font-size: 13px;
+
+        font-weight: 600;
+
+        text-align: right;
+    }
+
+
+    /* =====================================================
+       BUTTONS
+    ===================================================== */
+
+    .actions {
+
+        display: flex;
+
+        justify-content: center;
+
+        gap: 12px;
+
+        flex-wrap: wrap;
+
+        margin-top: 28px;
     }
 
 
     .btn {
 
-        width:100%;
+        min-width: 190px;
 
+        min-height: 50px;
+
+        padding: 13px 20px;
+
+        border-radius: 12px;
+
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 9px;
+
+        text-decoration: none;
+
+        font-family: "Poppins", sans-serif;
+
+        font-size: 13px;
+
+        font-weight: 600;
+
+        cursor: pointer;
+
+        transition:
+            transform .25s ease,
+            box-shadow .25s ease,
+            background .25s ease;
     }
 
-}
+
+    .btn:hover {
+
+        transform: translateY(-3px);
+    }
+
+
+    .primary-btn {
+
+        color: #ffffff;
+
+        background:
+            linear-gradient(
+                135deg,
+                #008cff,
+                #5d43ff
+            );
+
+        border: 1px solid rgba(255,255,255,.08);
+
+        box-shadow:
+            0 10px 30px rgba(0, 123, 255, .18);
+    }
+
+
+    .primary-btn:hover {
+
+        box-shadow:
+            0 15px 40px rgba(0, 123, 255, .3);
+    }
+
+
+    .secondary-btn {
+
+        color: #cbd7e8;
+
+        background:
+            rgba(255,255,255,.04);
+
+        border:
+            1px solid rgba(255,255,255,.1);
+    }
+
+
+    .secondary-btn:hover {
+
+        background:
+            rgba(255,255,255,.08);
+    }
+
+
+    /* =====================================================
+       FOOTER
+    ===================================================== */
+
+    .footer {
+
+        margin-top: 30px;
+
+        padding-top: 20px;
+
+        border-top:
+            1px solid rgba(255,255,255,.07);
+
+        color: #66758b;
+
+        font-size: 11px;
+
+        line-height: 1.7;
+    }
+
+
+    .footer strong {
+
+        color: #8998ad;
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+    ===================================================== */
+
+    @media (max-width: 600px) {
+
+        .page {
+            padding: 18px 12px;
+        }
+
+
+        .success-card {
+
+            padding: 38px 20px;
+
+            border-radius: 22px;
+        }
+
+
+        .logo-wrapper {
+
+            width: 75px;
+            height: 75px;
+        }
+
+
+        .success-icon {
+
+            width: 80px;
+            height: 80px;
+        }
+
+
+        .success-icon i {
+
+            font-size: 35px;
+        }
+
+
+        .message {
+
+            font-size: 13px;
+        }
+
+
+        .info-row {
+
+            align-items: flex-start;
+
+            flex-direction: column;
+
+            gap: 4px;
+        }
+
+
+        .info-value {
+
+            text-align: left;
+
+            padding-left: 35px;
+        }
+
+
+        .btn {
+
+            width: 100%;
+        }
+    }
+
+
+    @media (prefers-reduced-motion: reduce) {
+
+        *,
+        *::before,
+        *::after {
+
+            animation-duration: .01ms !important;
+
+            animation-iteration-count: 1 !important;
+
+            scroll-behavior: auto !important;
+
+            transition-duration: .01ms !important;
+        }
+    }
 
 </style>
 
-</head>
+</head><body><!-- =====================================================
+     BACKGROUND
+===================================================== -->
 
+<div class="background">
 
-<body>
+    <div class="grid"></div>
 
-<div class="glow one"></div>
-<div class="glow two"></div>
+    <div class="glow glow-one"></div>
 
-
-<div class="success-card">
-
-
-    <div class="logo">
-
-        <img
-            src="https://i.ibb.co/spL8t7cv/Army-Welfare-Education-Society-logo-1.png"
-            alt="APS Logo">
-
-    </div>
-
-
-    <div class="status-icon">
-
-        <i class="fa-solid fa-check"></i>
-
-    </div>
-
-
-    <div class="status-label">
-        REGISTRATION COMPLETE
-    </div>
-
-
-    <h1>
-        You're In!
-    </h1>
-
-
-    <p class="subtitle">
-
-        Your registration for
-        <strong>
-            APS Robotics Championship 2026
-        </strong>
-        has been successfully submitted.
-
-    </p>
-
-
-    <div class="registration-box">
-
-        <span class="registration-label">
-            REGISTRATION ID
-        </span>
-
-        <strong
-            id="registrationId"
-            class="registration-id">
-
-            --
-
-        </strong>
-
-    </div>
-
-
-    <div class="details">
-
-        <div class="detail">
-
-            <span>
-                Team Leader
-            </span>
-
-            <strong id="studentName">
-                --
-            </strong>
-
-        </div>
-
-
-        <div class="detail">
-
-            <span>
-                Team Name
-            </span>
-
-            <strong id="teamName">
-                --
-            </strong>
-
-        </div>
-
-
-        <div class="detail">
-
-            <span>
-                Class
-            </span>
-
-            <strong id="className">
-                --
-            </strong>
-
-        </div>
-
-
-        <div class="detail">
-
-            <span>
-                Events
-            </span>
-
-            <strong id="events">
-                --
-            </strong>
-
-        </div>
-
-    </div>
-
-
-    <p class="message">
-
-        Please save your Registration ID for future
-        communication regarding the championship.
-
-    </p>
-
-
-    <div class="buttons">
-
-        <a
-            href="index.html"
-            class="btn btn-primary">
-
-            <i class="fa-solid fa-house"></i>
-
-            BACK TO HOME
-
-        </a>
-
-
-        <button
-            type="button"
-            id="copyId"
-            class="btn btn-secondary">
-
-            <i class="fa-solid fa-copy"></i>
-
-            COPY ID
-
-        </button>
-
-    </div>
-
-
-    <div class="footer">
-
-        APS Tinkering Lab<br>
-
-        Army Public School,
-        Lal Bahadur Shastri Marg,
-        Lucknow, Uttar Pradesh
-
-    </div>
+    <div class="glow glow-two"></div>
 
 </div>
 
 
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="page">
+
+    <section class="success-card">
+
+
+        <!-- APS LOGO -->
+
+        <div class="logo-wrapper">
+
+            <img
+                src="https://i.ibb.co/spL8t7cv/Army-Welfare-Education-Society-logo-1.png"
+                alt="Army Welfare Education Society Logo">
+
+        </div>
+
+
+        <!-- SUCCESS -->
+
+        <div class="success-icon">
+
+            <i class="fa-solid fa-check"></i>
+
+        </div>
+
+
+        <!-- TITLE -->
+
+        <span class="badge">
+
+            <i class="fa-solid fa-circle-check"></i>
+
+            REGISTRATION CONFIRMED
+
+        </span>
+
+
+        <h1>
+            You're Registered!
+        </h1>
+
+
+        <div class="championship">
+            APS ROBOTICS CHAMPIONSHIP 2026
+        </div>
+
+
+        <p class="message">
+
+            Congratulations! Your registration has been
+            <strong>successfully submitted</strong>.
+
+            Your team details have been received and recorded
+            for the APS Robotics Championship 2026.
+
+        </p>
+
+
+        <!-- INFORMATION -->
+
+        <div class="info-box">
+
+
+            <div class="info-row">
+
+                <div class="info-label">
+
+                    <i class="fa-solid fa-robot"></i>
+
+                    Event
+
+                </div>
+
+                <div class="info-value">
+                    APS Robotics Championship 2026
+                </div>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <div class="info-label">
+
+                    <i class="fa-solid fa-calendar-days"></i>
+
+                    Status
+
+                </div>
+
+                <div class="info-value">
+                    Registration Confirmed
+                </div>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <div class="info-label">
+
+                    <i class="fa-solid fa-school"></i>
+
+                    Venue
+
+                </div>
+
+                <div class="info-value">
+                    APS Lal Bahadur Shastri Marg
+                </div>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <div class="info-label">
+
+                    <i class="fa-solid fa-location-dot"></i>
+
+                    City
+
+                </div>
+
+                <div class="info-value">
+                    Lucknow, Uttar Pradesh
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="actions">
+
+            <a
+                href="index.html"
+                class="btn primary-btn">
+
+                <i class="fa-solid fa-house"></i>
+
+                Back to Homepage
+
+            </a>
+
+
+            <a
+                href="rules.html"
+                class="btn secondary-btn">
+
+                <i class="fa-solid fa-book-open"></i>
+
+                View Rules & Details
+
+            </a>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <div class="footer">
+
+            <strong>
+                APS Tinkering Lab
+            </strong>
+
+            <br>
+
+            Army Public School, Lal Bahadur Shastri Marg,
+            Lucknow, Uttar Pradesh
+
+            <br><br>
+
+            Please keep your registration information for
+            future communication.
+
+        </div>
+
+
+    </section>
+
+</main>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
 <script>
 
-const registrationId =
-    document.getElementById(
-        "registrationId"
-    );
+    document.addEventListener(
+        "DOMContentLoaded",
+        () => {
 
-const studentName =
-    document.getElementById(
-        "studentName"
-    );
+            /*
+             * Prevent accidental duplicate form submissions
+             * when the user navigates back.
+             */
 
-const teamName =
-    document.getElementById(
-        "teamName"
-    );
+            if (window.history.replaceState) {
 
-const className =
-    document.getElementById(
-        "className"
-    );
+                window.history.replaceState(
+                    null,
+                    "",
+                    window.location.href
+                );
 
-const events =
-    document.getElementById(
-        "events"
-    );
-
-const copyId =
-    document.getElementById(
-        "copyId"
-    );
+            }
 
 
-let data = null;
+            /*
+             * Small keyboard accessibility improvement.
+             */
 
+            document.addEventListener(
+                "keydown",
+                (event) => {
 
-try {
+                    if (event.key === "Escape") {
 
-    const stored =
-        sessionStorage.getItem(
-            "apsRegistration"
-        );
+                        window.location.href =
+                            "index.html";
 
+                    }
 
-    if(stored){
-
-        data =
-            JSON.parse(
-                stored
+                }
             );
 
-    }
-
-}
-catch(error){
-
-    console.error(
-        "Unable to read registration:",
-        error
+        }
     );
-
-}
-
-
-if(data){
-
-    registrationId.textContent =
-        data.registrationId || "--";
-
-
-    studentName.textContent =
-        data.StudentName || "--";
-
-
-    teamName.textContent =
-        data.TeamName || "--";
-
-
-    className.textContent =
-        data.Class
-        ? `${data.Class} - ${data.Section || ""}`
-        : "--";
-
-
-    events.textContent =
-        Array.isArray(data.Events)
-        ? data.Events.join(", ")
-        : data.Events || "--";
-
-}
-else{
-
-    registrationId.textContent =
-        "REGISTRATION SAVED";
-
-
-    studentName.textContent =
-        "--";
-
-
-    teamName.textContent =
-        "--";
-
-
-    className.textContent =
-        "--";
-
-
-    events.textContent =
-        "--";
-
-}
-
-
-copyId.addEventListener(
-    "click",
-    async () => {
-
-        const id =
-            registrationId.textContent;
-
-
-        if(
-            !id ||
-            id === "--"
-        ){
-            return;
-        }
-
-
-        try{
-
-            await navigator.clipboard.writeText(
-                id
-            );
-
-
-            copyId.innerHTML = `
-
-                <i class="fa-solid fa-check"></i>
-
-                COPIED
-
-            `;
-
-
-            setTimeout(() => {
-
-                copyId.innerHTML = `
-
-                    <i class="fa-solid fa-copy"></i>
-
-                    COPY ID
-
-                `;
-
-            }, 1800);
-
-        }
-        catch(error){
-
-            console.error(error);
-
-        }
-
-    }
-);
 
 </script>
 
-</body>
-</html>
+</body></html>
