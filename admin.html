@@ -37,8 +37,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         <div class="login-logo">
 
             <img
-            src="https://i.ibb.co/spL8t7cv/Army-Welfare-Education-Society-logo-1.png"
-            alt="APS Logo">
+            src="https://i.ibb.co/spL8t7cv/Army-Welfare-Education-SOCIETY-logo-1.png"
+            alt="Army Welfare Education Society Logo">
 
         </div>
 
@@ -53,6 +53,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         <p class="login-subtitle">
             APS Robotics Championship 2026
         </p>
+
 
         <form id="loginForm">
 
@@ -69,6 +70,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
             </div>
 
+
             <div class="login-input">
 
                 <i class="fa-solid fa-lock"></i>
@@ -83,13 +85,15 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                 <button
                 type="button"
                 id="togglePassword"
-                class="password-toggle">
+                class="password-toggle"
+                aria-label="Show or hide password">
 
                     <i class="fa-solid fa-eye"></i>
 
                 </button>
 
             </div>
+
 
             <button
             type="submit"
@@ -102,12 +106,14 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
             </button>
 
+
             <p
             id="loginError"
             class="login-error">
             </p>
 
         </form>
+
 
         <div class="secure-login">
 
@@ -122,1174 +128,930 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 </div>
 
 
+
 <!-- =====================================================
      ADMIN APP
 ===================================================== -->
 
-<div id="adminApp" class="admin-app hidden">
+<div
+id="adminApp"
+class="admin-app hidden">
 
 
-<!-- =====================================================
-     SIDEBAR
-===================================================== -->
+    <!-- =================================================
+         SIDEBAR
+    ================================================== -->
 
-<aside class="sidebar" id="sidebar">
-
-    <div class="sidebar-brand">
-
-        <img
-        src="https://i.ibb.co/spL8t7cv/Army-Welfare-Education-SOCIETY-logo-1.png"
-        alt="APS Logo"
-        onerror="this.src='https://i.ibb.co/spL8t7cv/Army-Welfare-Education-SOCIETY-logo-1.png';">
-
-        <div>
-
-            <h2>APS ROBOTICS</h2>
-
-            <span>ADMIN PANEL</span>
-
-        </div>
-
-    </div>
+    <aside
+    class="sidebar"
+    id="sidebar">
 
 
-    <nav class="sidebar-nav">
+        <!-- SIDEBAR BRAND -->
 
-        <button
-        class="nav-item active"
-        data-page="dashboard">
+        <div class="sidebar-brand">
 
-            <i class="fa-solid fa-chart-line"></i>
+            <img
+            src="https://i.ibb.co/spL8t7cv/Army-Welfare-Education-SOCIETY-logo-1.png"
+            alt="APS Logo">
 
-            <span>Dashboard</span>
+            <div>
 
-        </button>
+                <h2>
+                    APS ROBOTICS
+                </h2>
 
+                <span>
+                    ADMIN PANEL
+                </span>
 
-        <button
-        class="nav-item"
-        data-page="registrations">
-
-            <i class="fa-solid fa-users"></i>
-
-            <span>Registrations</span>
-
-        </button>
-
-
-        <button
-        class="nav-item"
-        data-page="events">
-
-            <i class="fa-solid fa-trophy"></i>
-
-            <span>Events</span>
-
-        </button>
-
-    </nav>
-<button
-class="nav-item"
-data-page="emails">
-
-    <i class="fa-solid fa-envelope"></i>
-
-    <span>Email Center</span>
-
-</button>
-
-    <div class="sidebar-bottom">
-
-        <a
-        href="index.html"
-        class="sidebar-home">
-
-            <i class="fa-solid fa-house"></i>
-
-            <span>View Website</span>
-
-        </a>
-
-        <button
-        id="logoutBtn"
-        class="logout-btn">
-
-            <i class="fa-solid fa-right-from-bracket"></i>
-
-            <span>Logout</span>
-
-        </button>
-
-    </div>
-
-</aside>
-
-
-<!-- =====================================================
-     MAIN
-===================================================== -->
-
-<main class="main-content">
-
-
-<!-- TOPBAR -->
-
-<header class="topbar">
-
-    <button
-    id="sidebarToggle"
-    class="sidebar-toggle">
-
-        <i class="fa-solid fa-bars"></i>
-
-    </button>
-
-
-    <div class="topbar-title">
-
-        <h1 id="pageTitle">
-            Dashboard
-        </h1>
-
-        <p>
-            APS Robotics Championship 2026
-        </p>
-
-    </div>
-
-
-    <div class="admin-profile">
-
-        <div class="admin-avatar">
-
-            <i class="fa-solid fa-user-shield"></i>
+            </div>
 
         </div>
 
-        <div class="admin-info">
 
-            <strong>Administrator</strong>
+        <!-- SIDEBAR NAVIGATION -->
 
-            <span id="adminEmail">
-                Admin
-            </span>
-
-        </div>
-
-    </div>
-
-</header>
+        <nav class="sidebar-nav">
 
 
-<!-- =====================================================
-     DASHBOARD PAGE
-===================================================== -->
+            <button
+            class="nav-item active"
+            data-page="dashboard">
 
-<section
-id="dashboardPage"
-class="page active-page">
+                <i class="fa-solid fa-chart-line"></i>
 
+                <span>
+                    Dashboard
+                </span>
 
-    <div class="page-heading">
-
-        <div>
-
-            <span class="eyebrow">
-                CONTROL CENTER
-            </span>
-
-            <h2>
-                Dashboard Overview
-            </h2>
-
-            <p>
-                Monitor APS Robotics Championship registrations.
-            </p>
-
-        </div>
-
-        <button
-        class="refresh-btn"
-        id="dashboardRefresh">
-
-            <i class="fa-solid fa-arrows-rotate"></i>
-
-            Refresh
-
-        </button>
-
-    </div>
+            </button>
 
 
-    <!-- STAT CARDS -->
-
-    <div class="stats-grid">
-
-
-        <div class="stat-card">
-
-            <div class="stat-icon cyan">
+            <button
+            class="nav-item"
+            data-page="registrations">
 
                 <i class="fa-solid fa-users"></i>
 
-            </div>
-
-            <div>
-
-                <span>Total Registrations</span>
-
-                <strong id="totalRegistrations">
-                    0
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <div class="stat-card">
-
-            <div class="stat-icon purple">
-
-                <i class="fa-solid fa-people-group"></i>
-
-            </div>
-
-            <div>
-
-                <span>Total Teams</span>
-
-                <strong id="totalTeams">
-                    0
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <div class="stat-card">
-
-            <div class="stat-icon green">
-
-                <i class="fa-solid fa-flag-checkered"></i>
-
-            </div>
-
-            <div>
-
-                <span>Robo Race</span>
-
-                <strong id="raceCount">
-                    0
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <div class="stat-card">
-
-            <div class="stat-icon red">
-
-                <i class="fa-solid fa-shield-halved"></i>
-
-            </div>
-
-            <div>
-
-                <span>Robo War</span>
-
-                <strong id="warCount">
-                    0
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <div class="stat-card">
-
-            <div class="stat-icon orange">
-
-                <i class="fa-solid fa-people-pulling"></i>
-
-            </div>
-
-            <div>
-
-                <span>Robo Tug of War</span>
-
-                <strong id="tugCount">
-                    0
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <div class="stat-card">
-
-            <div class="stat-icon blue">
-
-                <i class="fa-solid fa-futbol"></i>
-
-            </div>
-
-            <div>
-
-                <span>Robo Soccer</span>
-
-                <strong id="soccerCount">
-                    0
-                </strong>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- RECENT -->
-
-    <div class="dashboard-grid">
-
-
-        <div class="panel">
-
-            <div class="panel-header">
-
-                <div>
-
-                    <span class="eyebrow">
-                        LATEST
-                    </span>
-
-                    <h3>
-                        Recent Registrations
-                    </h3>
-
-                </div>
-
-                <button
-                class="text-btn"
-                data-page-target="registrations">
-
-                    View All
-
-                    <i class="fa-solid fa-arrow-right"></i>
-
-                </button>
-
-            </div>
-
-
-            <div
-            id="recentRegistrations"
-            class="recent-list">
-
-                <div class="empty-state">
-
-                    <i class="fa-solid fa-spinner fa-spin"></i>
-
-                    Loading registrations...
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="panel quick-panel">
-
-            <div class="panel-header">
-
-                <div>
-
-                    <span class="eyebrow">
-                        QUICK ACTIONS
-                    </span>
-
-                    <h3>
-                        Management
-                    </h3>
-
-                </div>
-
-            </div>
-
-
-            <button
-            class="quick-action"
-            data-page-target="registrations">
-
-                <i class="fa-solid fa-list"></i>
-
                 <span>
-                    View All Registrations
+                    Registrations
                 </span>
-
-                <i class="fa-solid fa-chevron-right"></i>
 
             </button>
 
 
             <button
-            class="quick-action"
-            id="exportDashboard">
+            class="nav-item"
+            data-page="events">
 
-                <i class="fa-solid fa-file-csv"></i>
+                <i class="fa-solid fa-trophy"></i>
 
                 <span>
-                    Export Registration CSV
+                    Events
                 </span>
 
-                <i class="fa-solid fa-chevron-right"></i>
-
             </button>
+
+        </nav>
+
+
+        <!-- SIDEBAR BOTTOM -->
+
+        <div class="sidebar-bottom">
 
 
             <a
             href="index.html"
-            class="quick-action">
+            class="sidebar-home">
 
-                <i class="fa-solid fa-globe"></i>
+                <i class="fa-solid fa-house"></i>
 
                 <span>
-                    Open Public Website
+                    View Website
                 </span>
-
-                <i class="fa-solid fa-chevron-right"></i>
 
             </a>
 
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     REGISTRATIONS PAGE
-===================================================== -->
-
-<section
-id="registrationsPage"
-class="page">
-
-
-    <div class="page-heading">
-
-        <div>
-
-            <span class="eyebrow">
-                DATABASE
-            </span>
-
-            <h2>
-                Registration Management
-            </h2>
-
-            <p>
-                View and manage all team registrations.
-            </p>
-
-        </div>
-
-
-        <div class="heading-actions">
 
             <button
-            class="refresh-btn"
-            id="refreshRegistrations">
+            id="logoutBtn"
+            class="logout-btn">
 
-                <i class="fa-solid fa-arrows-rotate"></i>
-
-                Refresh
-
-            </button>
-
-
-            <button
-            class="export-btn"
-            id="exportCsv">
-
-                <i class="fa-solid fa-download"></i>
-
-                Export CSV
-
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <!-- FILTERS -->
-
-    <div class="filter-panel">
-
-        <div class="search-box">
-
-            <i class="fa-solid fa-magnifying-glass"></i>
-
-            <input
-            type="search"
-            id="searchInput"
-            placeholder="Search name, team, registration ID, mobile...">
-
-        </div>
-
-
-        <select id="eventFilter">
-
-            <option value="all">
-                All Events
-            </option>
-
-            <option value="Robo Race">
-                Robo Race
-            </option>
-
-            <option value="Robo War">
-                Robo War
-            </option>
-
-            <option value="Robo Tug of War">
-                Robo Tug of War
-            </option>
-
-            <option value="Robo Soccer">
-                Robo Soccer
-            </option>
-
-        </select>
-
-
-        <select id="classFilter">
-
-            <option value="all">
-                All Classes
-            </option>
-
-        </select>
-
-
-        <select id="sectionFilter">
-
-            <option value="all">
-                All Sections
-            </option>
-
-        </select>
-
-
-        <button
-        class="clear-filter"
-        id="clearFilters">
-
-            <i class="fa-solid fa-filter-circle-xmark"></i>
-
-            Clear
-
-        </button>
-
-    </div>
-
-
-    <!-- TABLE -->
-
-    <div class="table-panel">
-
-        <div class="table-top">
-
-            <div>
-
-                <strong id="resultCount">
-                    0 registrations
-                </strong>
+                <i class="fa-solid fa-right-from-bracket"></i>
 
                 <span>
-                    displayed
+                    Logout
                 </span>
 
+            </button>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =================================================
+         MAIN CONTENT
+    ================================================== -->
+
+    <main class="main-content">
+
+
+        <!-- =================================================
+             TOPBAR
+        ================================================== -->
+
+        <header class="topbar">
+
+
+            <button
+            id="sidebarToggle"
+            class="sidebar-toggle"
+            aria-label="Open sidebar">
+
+                <i class="fa-solid fa-bars"></i>
+
+            </button>
+
+
+            <div class="topbar-title">
+
+                <h1 id="pageTitle">
+                    Dashboard
+                </h1>
+
+                <p>
+                    APS Robotics Championship 2026
+                </p>
+
             </div>
 
-            <div
-            id="tableStatus"
-            class="table-status">
 
-                Ready
+            <div class="admin-profile">
 
-            </div>
+                <div class="admin-avatar">
 
-        </div>
-
-
-        <div class="table-wrapper">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>Registration ID</th>
-
-                        <th>Team Leader</th>
-
-                        <th>Team Name</th>
-
-                        <th>Class</th>
-
-                        <th>Section</th>
-
-                        <th>Mobile</th>
-
-                        <th>Events</th>
-
-                        <th>Team Size</th>
-
-                        <th>Date</th>
-
-                        <th>Actions</th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody
-                id="registrationTableBody">
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-
-        <div
-        id="tableEmpty"
-        class="empty-table hidden">
-
-            <i class="fa-solid fa-folder-open"></i>
-
-            <h3>
-                No registrations found
-            </h3>
-
-            <p>
-                Try changing your search or filters.
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     EVENTS PAGE
-===================================================== -->
-
-<section
-id="eventsPage"
-class="page">
-
-<!-- =====================================================
-     EMAIL CENTER PAGE
-===================================================== -->
-
-<section
-id="emailsPage"
-class="page">
-
-    <div class="page-heading">
-
-        <div>
-
-            <span class="eyebrow">
-                COMMUNICATION
-            </span>
-
-            <h2>
-                Email Center
-            </h2>
-
-            <p>
-                Send registration confirmation emails.
-            </p>
-
-        </div>
-
-        <button
-        class="refresh-btn"
-        id="refreshEmails">
-
-            <i class="fa-solid fa-arrows-rotate"></i>
-
-            Refresh
-
-        </button>
-
-    </div>
-
-
-    <div class="email-center-grid">
-
-
-        <!-- RECIPIENT -->
-
-        <div class="panel email-selection-panel">
-
-            <div class="panel-header">
-
-                <div>
-
-                    <span class="eyebrow">
-                        RECIPIENT
-                    </span>
-
-                    <h3>
-                        Select Registration
-                    </h3>
+                    <i class="fa-solid fa-user-shield"></i>
 
                 </div>
 
-            </div>
 
+                <div class="admin-info">
 
-            <div class="form-field">
-
-                <label>
-                    Registered Team
-                </label>
-
-                <select id="emailRegistrationSelect">
-
-                    <option value="">
-                        Select a registration
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div
-            id="emailRecipientInfo"
-            class="email-recipient-info hidden">
-
-                <div class="recipient-icon">
-
-                    <i class="fa-solid fa-user"></i>
-
-                </div>
-
-                <div>
-
-                    <strong id="emailRecipientName">
-                        -
+                    <strong>
+                        Administrator
                     </strong>
 
-                    <span id="emailRecipientEmail">
-                        -
+                    <span id="adminEmail">
+                        Admin
                     </span>
 
                 </div>
 
             </div>
 
-        </div>
+        </header>
 
 
-        <!-- PREVIEW -->
 
-        <div class="panel email-preview-panel">
+        <!-- =================================================
+             DASHBOARD PAGE
+        ================================================== -->
 
-            <div class="panel-header">
+        <section
+        id="dashboardPage"
+        class="page active-page">
+
+
+            <div class="page-heading">
 
                 <div>
 
                     <span class="eyebrow">
-                        PREVIEW
+                        CONTROL CENTER
                     </span>
 
-                    <h3>
-                        Registration Confirmation
-                    </h3>
-
-                </div>
-
-                <span
-                id="emailStatus"
-                class="email-status">
-
-                    Draft
-
-                </span>
-
-            </div>
-
-
-            <div class="email-preview">
-
-                <div class="email-preview-header">
-
-                    <div class="email-brand">
-
-                        <img
-                        src="https://i.ibb.co/spL8t7cv/Army-Welfare-Education-SOCIETY-logo-1.png"
-                        alt="APS Logo">
-
-                        <div>
-
-                            <strong>
-                                APS Robotics Championship 2026
-                            </strong>
-
-                            <span>
-                                Army Public School Lal Bahadur Shastri Marg
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="email-preview-body">
-
-                    <h3>
-                        Registration Confirmed! 🎉
-                    </h3>
+                    <h2>
+                        Dashboard Overview
+                    </h2>
 
                     <p>
-                        Dear
-                        <strong id="previewStudentName">
-                            Participant
-                        </strong>,
-                    </p>
-
-                    <p>
-                        Your registration for the
-                        <strong>
-                            APS Robotics Championship 2026
-                        </strong>
-                        has been successfully received.
-                    </p>
-
-
-                    <div class="email-registration-card">
-
-                        <div class="email-detail">
-
-                            <span>
-                                Registration ID
-                            </span>
-
-                            <strong id="previewRegistrationID">
-                                -
-                            </strong>
-
-                        </div>
-
-
-                        <div class="email-detail">
-
-                            <span>
-                                Team Name
-                            </span>
-
-                            <strong id="previewTeamName">
-                                -
-                            </strong>
-
-                        </div>
-
-
-                        <div class="email-detail">
-
-                            <span>
-                                Class
-                            </span>
-
-                            <strong id="previewClass">
-                                -
-                            </strong>
-
-                        </div>
-
-
-                        <div class="email-detail">
-
-                            <span>
-                                Section
-                            </span>
-
-                            <strong id="previewSection">
-                                -
-                            </strong>
-
-                        </div>
-
-
-                        <div class="email-detail full">
-
-                            <span>
-                                Events
-                            </span>
-
-                            <strong id="previewEvents">
-                                -
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <p>
-                        Please keep your Registration ID safely
-                        for future communication.
-                    </p>
-
-                    <p>
-                        We look forward to seeing you at the
-                        championship.
-                    </p>
-
-                    <p>
-                        Regards,<br>
-
-                        <strong>
-                            APS Tinkering Lab
-                        </strong><br>
-
-                        Army Public School Lal Bahadur Shastri Marg
+                        Monitor APS Robotics Championship registrations.
                     </p>
 
                 </div>
 
-            </div>
-
-
-            <div class="email-actions">
 
                 <button
-                type="button"
-                class="send-email-btn"
-                id="sendEmailBtn">
+                class="refresh-btn"
+                id="dashboardRefresh">
 
-                    <i class="fa-solid fa-paper-plane"></i>
+                    <i class="fa-solid fa-arrows-rotate"></i>
 
-                    Send Confirmation Email
+                    Refresh
 
                 </button>
 
             </div>
 
-        </div>
-
-    </div>
 
 
-    <!-- EMAIL HISTORY -->
+            <!-- STAT CARDS -->
 
-    <div class="panel email-history-panel">
+            <div class="stats-grid">
 
-        <div class="panel-header">
 
-            <div>
+                <!-- TOTAL REGISTRATIONS -->
 
-                <span class="eyebrow">
-                    HISTORY
-                </span>
+                <div class="stat-card">
 
-                <h3>
-                    Email History
-                </h3>
+                    <div class="stat-icon cyan">
+
+                        <i class="fa-solid fa-users"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Total Registrations
+                        </span>
+
+                        <strong id="totalRegistrations">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TOTAL TEAMS -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon purple">
+
+                        <i class="fa-solid fa-people-group"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Total Teams
+                        </span>
+
+                        <strong id="totalTeams">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ROBO RACE -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon green">
+
+                        <i class="fa-solid fa-flag-checkered"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Robo Race
+                        </span>
+
+                        <strong id="raceCount">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ROBO WAR -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon red">
+
+                        <i class="fa-solid fa-shield-halved"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Robo War
+                        </span>
+
+                        <strong id="warCount">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ROBO TUG -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon orange">
+
+                        <i class="fa-solid fa-people-pulling"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Robo Tug of War
+                        </span>
+
+                        <strong id="tugCount">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ROBO SOCCER -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon blue">
+
+                        <i class="fa-solid fa-futbol"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Robo Soccer
+                        </span>
+
+                        <strong id="soccerCount">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
 
             </div>
 
-        </div>
 
 
-        <div class="table-wrapper">
+            <!-- DASHBOARD LOWER GRID -->
 
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>Registration ID</th>
-
-                        <th>Recipient</th>
-
-                        <th>Email</th>
-
-                        <th>Status</th>
-
-                        <th>Sent At</th>
-
-                    </tr>
-
-                </thead>
+            <div class="dashboard-grid">
 
 
-                <tbody id="emailHistoryBody">
+                <!-- RECENT REGISTRATIONS -->
 
-                    <tr>
+                <div class="panel">
 
-                        <td colspan="5">
-                            No emails sent yet.
-                        </td>
+                    <div class="panel-header">
 
-                    </tr>
+                        <div>
 
-                </tbody>
+                            <span class="eyebrow">
+                                LATEST
+                            </span>
 
-            </table>
+                            <h3>
+                                Recent Registrations
+                            </h3>
 
-        </div>
-
-    </div>
-
-</section>
-      
-    <div class="page-heading">
-
-        <div>
-
-            <span class="eyebrow">
-                COMPETITIONS
-            </span>
-
-            <h2>
-                Championship Events
-            </h2>
-
-            <p>
-                Event-wise registration overview.
-            </p>
-
-        </div>
-
-    </div>
+                        </div>
 
 
-    <div class="event-admin-grid">
+                        <button
+                        class="text-btn"
+                        data-page-target="registrations">
+
+                            View All
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </button>
+
+                    </div>
 
 
-        <div class="event-admin-card">
+                    <div
+                    id="recentRegistrations"
+                    class="recent-list">
 
-            <div class="event-admin-icon">
+                        <div class="empty-state">
 
-                <i class="fa-solid fa-flag-checkered"></i>
+                            <i class="fa-solid fa-spinner fa-spin"></i>
 
-            </div>
+                            Loading registrations...
 
-            <h3>
-                Robo Race
-            </h3>
+                        </div>
 
-            <strong id="eventRaceCount">
-                0
-            </strong>
+                    </div>
 
-            <span>
-                Registrations
-            </span>
-
-        </div>
+                </div>
 
 
-        <div class="event-admin-card">
 
-            <div class="event-admin-icon">
+                <!-- QUICK ACTIONS -->
 
-                <i class="fa-solid fa-shield-halved"></i>
+                <div class="panel quick-panel">
 
-            </div>
+                    <div class="panel-header">
 
-            <h3>
-                Robo War
-            </h3>
+                        <div>
 
-            <strong id="eventWarCount">
-                0
-            </strong>
+                            <span class="eyebrow">
+                                QUICK ACTIONS
+                            </span>
 
-            <span>
-                Registrations
-            </span>
+                            <h3>
+                                Management
+                            </h3>
 
-        </div>
+                        </div>
 
-
-        <div class="event-admin-card">
-
-            <div class="event-admin-icon">
-
-                <i class="fa-solid fa-people-pulling"></i>
-
-            </div>
-
-            <h3>
-                Robo Tug of War
-            </h3>
-
-            <strong id="eventTugCount">
-                0
-            </strong>
-
-            <span>
-                Registrations
-            </span>
-
-        </div>
+                    </div>
 
 
-        <div class="event-admin-card">
+                    <button
+                    class="quick-action"
+                    data-page-target="registrations">
 
-            <div class="event-admin-icon">
+                        <i class="fa-solid fa-list"></i>
 
-                <i class="fa-solid fa-futbol"></i>
+                        <span>
+                            View All Registrations
+                        </span>
+
+                        <i class="fa-solid fa-chevron-right"></i>
+
+                    </button>
+
+
+                    <button
+                    class="quick-action"
+                    id="exportDashboard">
+
+                        <i class="fa-solid fa-file-csv"></i>
+
+                        <span>
+                            Export Registration CSV
+                        </span>
+
+                        <i class="fa-solid fa-chevron-right"></i>
+
+                    </button>
+
+
+                    <a
+                    href="index.html"
+                    class="quick-action">
+
+                        <i class="fa-solid fa-globe"></i>
+
+                        <span>
+                            Open Public Website
+                        </span>
+
+                        <i class="fa-solid fa-chevron-right"></i>
+
+                    </a>
+
+                </div>
 
             </div>
 
-            <h3>
-                Robo Soccer
-            </h3>
-
-            <strong id="eventSoccerCount">
-                0
-            </strong>
-
-            <span>
-                Registrations
-            </span>
-
-        </div>
-
-    </div>
-
-</section>
+        </section>
 
 
-</main>
+
+        <!-- =================================================
+             REGISTRATIONS PAGE
+        ================================================== -->
+
+        <section
+        id="registrationsPage"
+        class="page">
+
+
+            <div class="page-heading">
+
+                <div>
+
+                    <span class="eyebrow">
+                        DATABASE
+                    </span>
+
+                    <h2>
+                        Registration Management
+                    </h2>
+
+                    <p>
+                        View and manage all team registrations.
+                    </p>
+
+                </div>
+
+
+                <div class="heading-actions">
+
+
+                    <button
+                    class="refresh-btn"
+                    id="refreshRegistrations">
+
+                        <i class="fa-solid fa-arrows-rotate"></i>
+
+                        Refresh
+
+                    </button>
+
+
+                    <button
+                    class="export-btn"
+                    id="exportCsv">
+
+                        <i class="fa-solid fa-download"></i>
+
+                        Export CSV
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- FILTER PANEL -->
+
+            <div class="filter-panel">
+
+
+                <!-- SEARCH -->
+
+                <div class="search-box">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                    <input
+                    type="search"
+                    id="searchInput"
+                    placeholder="Search name, team, registration ID, mobile...">
+
+                </div>
+
+
+                <!-- EVENT FILTER -->
+
+                <select id="eventFilter">
+
+                    <option value="all">
+                        All Events
+                    </option>
+
+                    <option value="Robo Race">
+                        Robo Race
+                    </option>
+
+                    <option value="Robo War">
+                        Robo War
+                    </option>
+
+                    <option value="Robo Tug of War">
+                        Robo Tug of War
+                    </option>
+
+                    <option value="Robo Soccer">
+                        Robo Soccer
+                    </option>
+
+                </select>
+
+
+                <!-- CLASS FILTER -->
+
+                <select id="classFilter">
+
+                    <option value="all">
+                        All Classes
+                    </option>
+
+                </select>
+
+
+                <!-- SECTION FILTER -->
+
+                <select id="sectionFilter">
+
+                    <option value="all">
+                        All Sections
+                    </option>
+
+                </select>
+
+
+                <!-- CLEAR -->
+
+                <button
+                class="clear-filter"
+                id="clearFilters">
+
+                    <i class="fa-solid fa-filter-circle-xmark"></i>
+
+                    Clear
+
+                </button>
+
+            </div>
+
+
+
+            <!-- TABLE PANEL -->
+
+            <div class="table-panel">
+
+
+                <div class="table-top">
+
+                    <div>
+
+                        <strong id="resultCount">
+                            0 registrations
+                        </strong>
+
+                        <span>
+                            displayed
+                        </span>
+
+                    </div>
+
+
+                    <div
+                    id="tableStatus"
+                    class="table-status">
+
+                        Ready
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Registration ID
+                                </th>
+
+                                <th>
+                                    Team Leader
+                                </th>
+
+                                <th>
+                                    Team Name
+                                </th>
+
+                                <th>
+                                    Class
+                                </th>
+
+                                <th>
+                                    Section
+                                </th>
+
+                                <th>
+                                    Mobile
+                                </th>
+
+                                <th>
+                                    Events
+                                </th>
+
+                                <th>
+                                    Team Size
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody
+                        id="registrationTableBody">
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+
+                <!-- EMPTY TABLE -->
+
+                <div
+                id="tableEmpty"
+                class="empty-table hidden">
+
+                    <i class="fa-solid fa-folder-open"></i>
+
+                    <h3>
+                        No registrations found
+                    </h3>
+
+                    <p>
+                        Try changing your search or filters.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             EVENTS PAGE
+        ================================================== -->
+
+        <section
+        id="eventsPage"
+        class="page">
+
+
+            <div class="page-heading">
+
+                <div>
+
+                    <span class="eyebrow">
+                        COMPETITIONS
+                    </span>
+
+                    <h2>
+                        Championship Events
+                    </h2>
+
+                    <p>
+                        Event-wise registration overview.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- EVENT CARDS -->
+
+            <div class="event-admin-grid">
+
+
+                <!-- ROBO RACE -->
+
+                <div class="event-admin-card">
+
+                    <div class="event-admin-icon">
+
+                        <i class="fa-solid fa-flag-checkered"></i>
+
+                    </div>
+
+                    <h3>
+                        Robo Race
+                    </h3>
+
+                    <strong id="eventRaceCount">
+                        0
+                    </strong>
+
+                    <span>
+                        Registrations
+                    </span>
+
+                </div>
+
+
+
+                <!-- ROBO WAR -->
+
+                <div class="event-admin-card">
+
+                    <div class="event-admin-icon">
+
+                        <i class="fa-solid fa-shield-halved"></i>
+
+                    </div>
+
+                    <h3>
+                        Robo War
+                    </h3>
+
+                    <strong id="eventWarCount">
+                        0
+                    </strong>
+
+                    <span>
+                        Registrations
+                    </span>
+
+                </div>
+
+
+
+                <!-- ROBO TUG -->
+
+                <div class="event-admin-card">
+
+                    <div class="event-admin-icon">
+
+                        <i class="fa-solid fa-people-pulling"></i>
+
+                    </div>
+
+                    <h3>
+                        Robo Tug of War
+                    </h3>
+
+                    <strong id="eventTugCount">
+                        0
+                    </strong>
+
+                    <span>
+                        Registrations
+                    </span>
+
+                </div>
+
+
+
+                <!-- ROBO SOCCER -->
+
+                <div class="event-admin-card">
+
+                    <div class="event-admin-icon">
+
+                        <i class="fa-solid fa-futbol"></i>
+
+                    </div>
+
+                    <h3>
+                        Robo Soccer
+                    </h3>
+
+                    <strong id="eventSoccerCount">
+                        0
+                    </strong>
+
+                    <span>
+                        Registrations
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
 
 </div>
+
 
 
 <!-- =====================================================
@@ -1300,7 +1062,11 @@ class="page">
 id="detailsModal"
 class="modal-overlay hidden">
 
+
     <div class="details-modal">
+
+
+        <!-- HEADER -->
 
         <div class="modal-header">
 
@@ -1316,9 +1082,11 @@ class="modal-overlay hidden">
 
             </div>
 
+
             <button
             class="modal-close"
-            data-close-modal>
+            data-close-modal
+            aria-label="Close">
 
                 <i class="fa-solid fa-xmark"></i>
 
@@ -1327,14 +1095,20 @@ class="modal-overlay hidden">
         </div>
 
 
+
+        <!-- DETAILS -->
+
         <div
         id="detailsContent"
         class="details-content">
-
         </div>
 
 
+
+        <!-- FOOTER -->
+
         <div class="modal-footer">
+
 
             <button
             class="modal-secondary"
@@ -1343,6 +1117,7 @@ class="modal-overlay hidden">
                 Close
 
             </button>
+
 
             <button
             id="modalDeleteBtn"
@@ -1361,6 +1136,7 @@ class="modal-overlay hidden">
 </div>
 
 
+
 <!-- =====================================================
      EDIT MODAL
 ===================================================== -->
@@ -1369,7 +1145,11 @@ class="modal-overlay hidden">
 id="editModal"
 class="modal-overlay hidden">
 
+
     <div class="details-modal edit-modal">
+
+
+        <!-- HEADER -->
 
         <div class="modal-header">
 
@@ -1385,9 +1165,11 @@ class="modal-overlay hidden">
 
             </div>
 
+
             <button
             class="modal-close"
-            data-close-modal>
+            data-close-modal
+            aria-label="Close">
 
                 <i class="fa-solid fa-xmark"></i>
 
@@ -1396,14 +1178,22 @@ class="modal-overlay hidden">
         </div>
 
 
+
+        <!-- EDIT FORM -->
+
         <form id="editForm">
+
 
             <input
             type="hidden"
             id="editKey">
 
 
+
             <div class="edit-grid">
+
+
+                <!-- TEAM LEADER -->
 
                 <div class="form-field">
 
@@ -1419,6 +1209,9 @@ class="modal-overlay hidden">
                 </div>
 
 
+
+                <!-- TEAM NAME -->
+
                 <div class="form-field">
 
                     <label>
@@ -1431,6 +1224,9 @@ class="modal-overlay hidden">
 
                 </div>
 
+
+
+                <!-- CLASS -->
 
                 <div class="form-field">
 
@@ -1446,6 +1242,9 @@ class="modal-overlay hidden">
                 </div>
 
 
+
+                <!-- SECTION -->
+
                 <div class="form-field">
 
                     <label>
@@ -1459,6 +1258,9 @@ class="modal-overlay hidden">
 
                 </div>
 
+
+
+                <!-- MOBILE -->
 
                 <div class="form-field">
 
@@ -1474,6 +1276,9 @@ class="modal-overlay hidden">
                 </div>
 
 
+
+                <!-- EMAIL -->
+
                 <div class="form-field">
 
                     <label>
@@ -1487,6 +1292,9 @@ class="modal-overlay hidden">
 
                 </div>
 
+
+
+                <!-- REMARKS -->
 
                 <div class="form-field full">
 
@@ -1503,7 +1311,11 @@ class="modal-overlay hidden">
             </div>
 
 
+
+            <!-- EDIT ACTIONS -->
+
             <div class="edit-actions">
+
 
                 <button
                 type="button"
@@ -1513,6 +1325,7 @@ class="modal-overlay hidden">
                     Cancel
 
                 </button>
+
 
                 <button
                 type="submit"
@@ -1534,6 +1347,7 @@ class="modal-overlay hidden">
 </div>
 
 
+
 <!-- =====================================================
      TOAST
 ===================================================== -->
@@ -1551,8 +1365,17 @@ class="toast">
 </div>
 
 
-<script type="module" src="admin.js"></script>
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script
+type="module"
+src="admin.js">
+</script>
+
 
 </body>
 
-      </html>
+</html>
