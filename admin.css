@@ -2021,3 +2021,285 @@ footer i{
     }
 
         }
+/* =====================================================
+   TEAM MEMBERS IN ADMIN TABLE
+===================================================== */
+
+.team-info{
+    min-width:260px;
+    text-align:left;
+}
+
+.team-info > strong{
+    display:block;
+    font-size:15px;
+    margin-bottom:5px;
+}
+
+.team-info > span{
+    display:inline-block;
+    font-size:11px;
+    opacity:.7;
+    margin-bottom:10px;
+}
+
+
+.team-members{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+    margin-top:8px;
+}
+
+
+.member-row{
+    display:flex;
+    align-items:flex-start;
+    gap:9px;
+
+    padding:8px 10px;
+
+    background:rgba(0,242,255,.05);
+
+    border:1px solid rgba(0,242,255,.12);
+
+    border-radius:9px;
+}
+
+
+.member-row.leader{
+    border-color:rgba(0,242,255,.35);
+}
+
+
+.member-row > strong{
+    min-width:24px;
+
+    height:24px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:6px;
+
+    background:rgba(0,242,255,.12);
+
+    color:#00f2ff;
+
+    font-size:10px;
+}
+
+
+.member-row b{
+    display:block;
+
+    font-size:12px;
+
+    color:#fff;
+
+    margin-bottom:2px;
+}
+
+
+.member-row small{
+    display:block;
+
+    font-size:10px;
+
+    color:#94a3b8;
+
+    line-height:1.5;
+}
+
+
+/* =====================================================
+   LEADER
+===================================================== */
+
+.leader-info{
+    min-width:160px;
+    text-align:left;
+}
+
+
+.leader-info strong{
+    display:block;
+    color:#fff;
+    font-size:13px;
+}
+
+
+.leader-info small{
+    display:block;
+    margin-top:4px;
+    color:#94a3b8;
+    font-size:10px;
+}
+
+
+/* =====================================================
+   EVENT TAGS
+===================================================== */
+
+.events-list{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    min-width:120px;
+}
+
+
+.event-tag{
+    display:inline-block;
+
+    padding:6px 9px;
+
+    border-radius:7px;
+
+    background:rgba(0,242,255,.08);
+
+    border:1px solid rgba(0,242,255,.15);
+
+    color:#00f2ff;
+
+    font-size:10px;
+
+    white-space:nowrap;
+}
+
+
+/* =====================================================
+   CONTACT
+===================================================== */
+
+.contact-info{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+
+.contact-info a{
+    color:#cbd5e1;
+
+    text-decoration:none;
+
+    font-size:11px;
+
+    white-space:nowrap;
+}
+
+
+.contact-info a:hover{
+    color:#00f2ff;
+}
+
+
+.contact-info i{
+    color:#00f2ff;
+    width:16px;
+}
+
+
+/* =====================================================
+   ACTION BUTTONS
+===================================================== */
+
+.action-buttons{
+    display:flex;
+    gap:6px;
+    justify-content:center;
+}
+
+
+.edit-btn,
+.delete-btn{
+
+    width:38px !important;
+    height:38px;
+
+    padding:0 !important;
+
+    border-radius:9px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:#fff;
+
+    border:none;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+
+.edit-btn{
+    background:rgba(0,242,255,.12);
+    color:#00f2ff;
+}
+
+
+.delete-btn{
+    background:rgba(239,68,68,.12);
+    color:#ff6b6b;
+}
+
+
+.edit-btn:hover{
+    background:#00f2ff;
+    color:#020617;
+    box-shadow:0 0 15px rgba(0,242,255,.4);
+}
+
+
+.delete-btn:hover{
+    background:#ef4444;
+    color:#fff;
+    box-shadow:0 0 15px rgba(239,68,68,.4);
+}
+
+
+/* =====================================================
+   TABLE
+===================================================== */
+
+.table-wrapper{
+    width:100%;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+}
+
+
+table{
+    min-width:1150px;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:700px){
+
+    .team-info{
+        min-width:230px;
+    }
+
+    .member-row{
+        padding:7px;
+    }
+
+    .member-row b{
+        font-size:11px;
+    }
+
+    .member-row small{
+        font-size:9px;
+    }
+
+}
