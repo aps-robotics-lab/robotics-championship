@@ -57,6 +57,14 @@ const database = getDatabase(app);
 
 
 /* =========================================================
+   ADMIN LOGIN DETAILS
+========================================================= */
+
+const ADMIN_USERNAME = "admin";
+const ADMIN_PASSWORD = "APS2026";
+
+
+/* =========================================================
    ELEMENTS
 ========================================================= */
 
@@ -96,18 +104,12 @@ const tugElement =
 const soccerElement =
     document.getElementById("soccer");
 
-
-/* =========================================================
-   ADMIN LOGIN
-========================================================= */
-
-const ADMIN_USERNAME = "admin";
-
-const ADMIN_PASSWORD = "APS2026";
+const editModal =
+    document.getElementById("editModal");
 
 
 /* =========================================================
-   REGISTRATION STORAGE
+   DATA
 ========================================================= */
 
 let registrations = {};
@@ -118,20 +120,68 @@ let firebaseListenerStarted = false;
 
 
 /* =========================================================
-   CHECK LOGIN
+   INITIAL PAGE
 ========================================================= */
 
-if (
-    sessionStorage.getItem(
-        "apsAdminLoggedIn"
-    ) === "true"
-) {
+document.addEventListener("DOMContentLoaded", () => {
 
-    showDashboard();
+    if (
+        sessionStorage.getItem(
+            "apsAdminLoggedIn"
+        ) === "true"
+    ) {
 
-} else {
+        showDashboard();
 
-    showLogin();
+    } else {
+
+        showLogin();
+
+    }
+
+});
+
+
+/* =========================================================
+   SHOW LOGIN
+========================================================= */
+
+function showLogin() {
+
+    if (loginScreen) {
+
+        loginScreen.style.display = "flex";
+
+    }
+
+    if (dashboard) {
+
+        dashboard.style.display = "none";
+
+    }
+
+}
+
+
+/* =========================================================
+   SHOW DASHBOARD
+========================================================= */
+
+function showDashboard() {
+
+    if (loginScreen) {
+
+        loginScreen.style.display = "none";
+
+    }
+
+    if (dashboard) {
+
+        dashboard.style.display = "block";
+
+    }
+
+    loadRegistrations();
 
 }
 
@@ -172,6 +222,12 @@ window.login = function () {
             "true"
         );
 
+
+        usernameInput.value = "";
+
+        passwordInput.value = "";
+
+
         showDashboard();
 
     } else {
@@ -187,34 +243,6 @@ window.login = function () {
 
 
 /* =========================================================
-   SHOW DASHBOARD
-========================================================= */
-
-function showDashboard() {
-
-    loginScreen.style.display = "none";
-
-    dashboard.style.display = "block";
-
-    loadRegistrations();
-
-}
-
-
-/* =========================================================
-   SHOW LOGIN
-========================================================= */
-
-function showLogin() {
-
-    loginScreen.style.display = "flex";
-
-    dashboard.style.display = "none";
-
-}
-
-
-/* =========================================================
    LOGOUT
 ========================================================= */
 
@@ -223,6 +251,35 @@ window.logout = function () {
     sessionStorage.removeItem(
         "apsAdminLoggedIn"
     );
+
+
+    registrations = {};
+
+
+    if (tableBody) {
+
+        tableBody.innerHTML = `
+
+            <tr>
+
+                <td colspan="6">
+
+                    <div class="loading">
+
+                        <i class="fa-solid fa-lock"></i>
+
+                        Please login to continue.
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
 
     showLogin();
 
@@ -297,25 +354,29 @@ function loadRegistrations() {
             );
 
 
-            tableBody.innerHTML = `
+            if (tableBody) {
 
-                <tr>
+                tableBody.innerHTML = `
 
-                    <td colspan="6">
+                    <tr>
 
-                        <div class="loading">
+                        <td colspan="6">
 
-                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <div class="loading">
 
-                            Unable to load registrations.
+                                <i class="fa-solid fa-triangle-exclamation"></i>
 
-                        </div>
+                                Unable to load registrations.
 
-                    </td>
+                            </div>
 
-                </tr>
+                        </td>
 
-            `;
+                    </tr>
+
+                `;
+
+            }
 
         }
 
@@ -334,10 +395,6 @@ function updateStatistics() {
         Object.values(
             registrations
         );
-
-
-    totalElement.textContent =
-        list.length;
 
 
     let race = 0;
@@ -374,7 +431,7 @@ function updateStatistics() {
             }
 
 
-            if (
+            else if (
                 normalized === "robo war"
             ) {
 
@@ -383,8 +440,9 @@ function updateStatistics() {
             }
 
 
-            if (
-                normalized === "robo tug of war"
+            else if (
+                normalized ===
+                "robo tug of war"
             ) {
 
                 tug++;
@@ -392,8 +450,9 @@ function updateStatistics() {
             }
 
 
-            if (
-                normalized === "robo soccer"
+            else if (
+                normalized ===
+                "robo soccer"
             ) {
 
                 soccer++;
@@ -405,17 +464,44 @@ function updateStatistics() {
     });
 
 
-    raceElement.textContent =
-        race;
+    if (totalElement) {
 
-    warElement.textContent =
-        war;
+        totalElement.textContent =
+            list.length;
 
-    tugElement.textContent =
-        tug;
+    }
 
-    soccerElement.textContent =
-        soccer;
+
+    if (raceElement) {
+
+        raceElement.textContent =
+            race;
+
+    }
+
+
+    if (warElement) {
+
+        warElement.textContent =
+            war;
+
+    }
+
+
+    if (tugElement) {
+
+        tugElement.textContent =
+            tug;
+
+    }
+
+
+    if (soccerElement) {
+
+        soccerElement.textContent =
+            soccer;
+
+    }
 
 }
 
@@ -450,6 +536,51 @@ function getEventsArray(events) {
 
 
     return [events];
+
+}
+
+
+/* =========================================================
+   REGISTRATION ID
+========================================================= */
+
+function getRegistrationID(
+    data,
+    firebaseKey
+) {
+
+    if (
+        data.RegistrationID
+    ) {
+
+        return data.RegistrationID;
+
+    }
+
+
+    if (
+        data.registrationID
+    ) {
+
+        return data.registrationID;
+
+    }
+
+
+    if (
+        data.registrationId
+    ) {
+
+        return data.registrationId;
+
+    }
+
+
+    /*
+       Firebase key fallback
+    */
+
+    return firebaseKey;
 
 }
 
@@ -537,58 +668,17 @@ function escapeJS(value) {
 
 
 /* =========================================================
-   GET REGISTRATION ID
-========================================================= */
-
-function getRegistrationID(
-    data,
-    firebaseKey
-) {
-
-    /*
-       Preferred:
-
-       RegistrationID
-
-       Older records:
-
-       registrationID
-
-       Final fallback:
-
-       Firebase key
-    */
-
-    if (
-        data &&
-        data.RegistrationID
-    ) {
-
-        return data.RegistrationID;
-
-    }
-
-
-    if (
-        data &&
-        data.registrationID
-    ) {
-
-        return data.registrationID;
-
-    }
-
-
-    return firebaseKey;
-
-}
-
-
-/* =========================================================
    RENDER TABLE
 ========================================================= */
 
 function renderTable(entries) {
+
+    if (!tableBody) {
+
+        return;
+
+    }
+
 
     if (!entries.length) {
 
@@ -618,10 +708,7 @@ function renderTable(entries) {
 
 
     /*
-       Sort newest first.
-
-       Do NOT mutate the original
-       Firebase entries array.
+       Newest first
     */
 
     entries = [...entries].reverse();
@@ -655,6 +742,7 @@ function renderTable(entries) {
             const mobile =
                 data.MobileNumber ||
                 data.mobile ||
+                data.Mobile ||
                 "-";
 
 
@@ -676,7 +764,9 @@ function renderTable(entries) {
 
                             <span class="event-tag">
 
-                                ${escapeHTML(event)}
+                                ${escapeHTML(
+                                    event
+                                )}
 
                             </span>
 
@@ -753,27 +843,43 @@ function renderTable(entries) {
                     <div class="action-buttons">
 
                         <button
+
+                            type="button"
+
                             class="edit-btn"
-                            onclick="openEditModal('${escapeJS(firebaseKey)}')"
+
+                            onclick="openEditModal('${escapeJS(
+                                firebaseKey
+                            )}')"
+
                             title="Edit Registration"
+
                         >
 
                             <i class="fa-solid fa-pen"></i>
 
-                            <span>Edit</span>
+                            Edit
 
                         </button>
 
 
                         <button
+
+                            type="button"
+
                             class="delete-btn"
-                            onclick="deleteRegistration('${escapeJS(firebaseKey)}')"
+
+                            onclick="deleteRegistration('${escapeJS(
+                                firebaseKey
+                            )}')"
+
                             title="Delete Registration"
+
                         >
 
                             <i class="fa-solid fa-trash"></i>
 
-                            <span>Delete</span>
+                            Delete
 
                         </button>
 
@@ -801,9 +907,11 @@ window.searchRegistration =
 function () {
 
     const query =
-        searchInput.value
-            .trim()
-            .toLowerCase();
+        searchInput
+            ? searchInput.value
+                .trim()
+                .toLowerCase()
+            : "";
 
 
     const entries =
@@ -872,27 +980,39 @@ function () {
                     ).join(" ");
 
 
-                const searchable = [
+                const searchable = (
 
-                    registrationID,
+                    registrationID +
 
-                    student,
+                    " " +
 
-                    team,
+                    student +
 
-                    mobile,
+                    " " +
 
-                    email,
+                    team +
 
-                    className,
+                    " " +
 
-                    section,
+                    mobile +
+
+                    " " +
+
+                    email +
+
+                    " " +
+
+                    className +
+
+                    " " +
+
+                    section +
+
+                    " " +
 
                     events
 
-                ]
-                .join(" ")
-                .toLowerCase();
+                ).toLowerCase();
 
 
                 return searchable.includes(
@@ -900,6 +1020,7 @@ function () {
                 );
 
             }
+
         );
 
 
@@ -916,9 +1037,7 @@ window.openEditModal =
 function (firebaseKey) {
 
     const data =
-        registrations[
-            firebaseKey
-        ];
+        registrations[firebaseKey];
 
 
     if (!data) {
@@ -1003,11 +1122,13 @@ function (firebaseKey) {
         ).join(", ");
 
 
-    document.getElementById(
-        "editModal"
-    ).classList.add(
-        "active"
-    );
+    if (editModal) {
+
+        editModal.classList.add(
+            "active"
+        );
+
+    }
 
 };
 
@@ -1019,23 +1140,16 @@ function (firebaseKey) {
 window.closeEditModal =
 function () {
 
-    const modal =
-        document.getElementById(
-            "editModal"
-        );
+    if (editModal) {
 
-
-    if (modal) {
-
-        modal.classList.remove(
+        editModal.classList.remove(
             "active"
         );
 
     }
 
 
-    editingFirebaseKey =
-        null;
+    editingFirebaseKey = null;
 
 };
 
@@ -1048,6 +1162,10 @@ window.saveEdit =
 async function () {
 
     if (!editingFirebaseKey) {
+
+        alert(
+            "No registration selected."
+        );
 
         return;
 
@@ -1114,24 +1232,29 @@ async function () {
         [];
 
 
-    const oldData =
-        registrations[
-            editingFirebaseKey
-        ] || {};
+    if (!studentName) {
+
+        alert(
+            "Please enter student name."
+        );
+
+        return;
+
+    }
+
+
+    if (!events.length) {
+
+        alert(
+            "Please enter at least one event."
+        );
+
+        return;
+
+    }
 
 
     const changes = {
-
-        /*
-           Preserve the existing
-           registration ID.
-        */
-
-        RegistrationID:
-            getRegistrationID(
-                oldData,
-                editingFirebaseKey
-            ),
 
         StudentName:
             studentName,
@@ -1207,9 +1330,7 @@ window.deleteRegistration =
 async function (firebaseKey) {
 
     const data =
-        registrations[
-            firebaseKey
-        ];
+        registrations[firebaseKey];
 
 
     if (!data) {
@@ -1233,7 +1354,7 @@ async function (firebaseKey) {
     const student =
         data.StudentName ||
         data.studentName ||
-        "Unknown";
+        "Unknown Student";
 
 
     const confirmed =
@@ -1247,9 +1368,7 @@ async function (firebaseKey) {
             "\nStudent: " +
             student +
 
-            "\n\n" +
-
-            "This action cannot be undone."
+            "\n\nThis action cannot be undone."
 
         );
 
@@ -1299,24 +1418,17 @@ async function (firebaseKey) {
 
 
 /* =========================================================
-   CLOSE MODAL OUTSIDE CLICK
+   CLOSE MODAL BY CLICKING OUTSIDE
 ========================================================= */
-
-const editModal =
-    document.getElementById(
-        "editModal"
-    );
-
 
 if (editModal) {
 
     editModal.addEventListener(
         "click",
-        function(event) {
+        event => {
 
             if (
-                event.target ===
-                editModal
+                event.target === editModal
             ) {
 
                 closeEditModal();
@@ -1335,7 +1447,7 @@ if (editModal) {
 
 document.addEventListener(
     "keydown",
-    function(event) {
+    event => {
 
         if (
             event.key === "Escape"
@@ -1357,7 +1469,7 @@ if (passwordInput) {
 
     passwordInput.addEventListener(
         "keydown",
-        function(event) {
+        event => {
 
             if (
                 event.key === "Enter"
@@ -1417,30 +1529,6 @@ function () {
 
         "Team Size",
 
-        "Member 2 Name",
-
-        "Member 2 Class",
-
-        "Member 2 Section",
-
-        "Member 3 Name",
-
-        "Member 3 Class",
-
-        "Member 3 Section",
-
-        "Member 4 Name",
-
-        "Member 4 Class",
-
-        "Member 4 Section",
-
-        "Member 5 Name",
-
-        "Member 5 Class",
-
-        "Member 5 Section",
-
         "Remarks",
 
         "Registration Date"
@@ -1475,49 +1563,38 @@ function () {
 
                 registrationID,
 
-                data.StudentName || "",
+                data.StudentName ||
+                data.studentName ||
+                "",
 
-                data.Class || "",
+                data.Class ||
+                "",
 
-                data.Section || "",
+                data.Section ||
+                "",
 
-                data.TeamName || "",
+                data.TeamName ||
+                data.teamName ||
+                "",
 
-                data.MobileNumber || "",
+                data.MobileNumber ||
+                data.mobile ||
+                "",
 
-                data.EmailAddress || "",
+                data.EmailAddress ||
+                data.email ||
+                "",
 
                 events,
 
-                data.TeamSize || "",
+                data.TeamSize ||
+                "",
 
-                data.Member2Name || "",
+                data.Remarks ||
+                "",
 
-                data.Member2Class || "",
-
-                data.Member2Section || "",
-
-                data.Member3Name || "",
-
-                data.Member3Class || "",
-
-                data.Member3Section || "",
-
-                data.Member4Name || "",
-
-                data.Member4Class || "",
-
-                data.Member4Section || "",
-
-                data.Member5Name || "",
-
-                data.Member5Class || "",
-
-                data.Member5Section || "",
-
-                data.Remarks || "",
-
-                data.registrationDate || ""
+                data.registrationDate ||
+                ""
 
             ]);
 
@@ -1527,43 +1604,35 @@ function () {
 
 
     const csv =
+        rows.map(row => {
 
-        rows
+            return row.map(value => {
 
-            .map(row => {
-
-                return row
-
-                    .map(value => {
-
-                        const text =
-                            String(
-                                value ?? ""
-                            )
-                            .replace(
-                                /"/g,
-                                '""'
-                            );
+                const text =
+                    String(value)
+                        .replace(
+                            /"/g,
+                            '""'
+                        );
 
 
-                        return `"${text}"`;
+                return `"${text}"`;
 
-                    })
+            }).join(",");
 
-                    .join(",");
-
-            })
-
-            .join("\n");
+        }).join("\n");
 
 
     const blob =
         new Blob(
+
             [csv],
+
             {
                 type:
                     "text/csv;charset=utf-8;"
             }
+
         );
 
 
@@ -1579,8 +1648,7 @@ function () {
         );
 
 
-    link.href =
-        url;
+    link.href = url;
 
 
     link.download =
@@ -1608,20 +1676,9 @@ function () {
 
 
 /* =========================================================
-   INITIAL STATE
+   FINISHED
 ========================================================= */
 
-if (
-    sessionStorage.getItem(
-        "apsAdminLoggedIn"
-    ) === "true"
-) {
-
-    showDashboard();
-
-}
-else {
-
-    showLogin();
-
-       }
+console.log(
+    "APS Robotics Admin Panel loaded successfully."
+);
