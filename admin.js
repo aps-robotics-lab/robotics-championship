@@ -1,12 +1,12 @@
-/* =====================================================
-   FIREBASE IMPORTS
-===================================================== */
+/* =========================================================
+   APS ROBOTICS CHAMPIONSHIP 2026
+   ADMIN CONTROL PANEL
+   admin.js
+========================================================= */
 
 import {
     initializeApp
-}
-from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 
 import {
     getDatabase,
@@ -14,14 +14,12 @@ import {
     onValue,
     update,
     remove
-}
-from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 
-
-/* =====================================================
+/* =========================================================
    FIREBASE CONFIG
-===================================================== */
+========================================================= */
 
 const firebaseConfig = {
 
@@ -45,429 +43,246 @@ const firebaseConfig = {
 
     appId:
         "1:1063542904891:web:82ff9bb3fba0b87384a41e"
-
 };
 
 
-
-/* =====================================================
+/* =========================================================
    INITIALIZE FIREBASE
-===================================================== */
+========================================================= */
 
-const app =
-    initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-
-const database =
-    getDatabase(app);
+const database = getDatabase(app);
 
 
+/* =========================================================
+   ELEMENTS
+========================================================= */
 
-/* =====================================================
-   VARIABLES
-===================================================== */
+const loginScreen =
+    document.getElementById("loginScreen");
 
-let registrations = {};
+const dashboard =
+    document.getElementById("dashboard");
 
-let dataLoaded = false;
+const usernameInput =
+    document.getElementById("username");
 
+const passwordInput =
+    document.getElementById("password");
 
+const errorBox =
+    document.getElementById("error");
 
-/* =====================================================
-   LOGIN
-===================================================== */
+const tableBody =
+    document.getElementById("tableBody");
 
-window.login = function(){
+const searchInput =
+    document.getElementById("search");
 
-    const username =
-        document
-        .getElementById("username")
-        .value
-        .trim();
+const totalElement =
+    document.getElementById("total");
 
+const raceElement =
+    document.getElementById("race");
 
-    const password =
-        document
-        .getElementById("password")
-        .value;
+const warElement =
+    document.getElementById("war");
 
+const tugElement =
+    document.getElementById("tug");
 
-    const error =
-        document
-        .getElementById("error");
-
-
-    if(
-        username === "admin" &&
-        password === "aps2026"
-    ){
-
-        localStorage.setItem(
-            "adminLogin",
-            "true"
-        );
+const soccerElement =
+    document.getElementById("soccer");
 
 
-        document
-            .getElementById("loginScreen")
-            .style.display = "none";
+/* =========================================================
+   ADMIN LOGIN
+========================================================= */
+
+/*
+   CHANGE THESE VALUES.
+
+   IMPORTANT:
+   This is only a frontend login.
+   For real security use Firebase Authentication.
+*/
+
+const ADMIN_USERNAME = "admin";
+
+const ADMIN_PASSWORD = "APS2026";
 
 
-        document
-            .getElementById("dashboard")
-            .style.display = "block";
+/* =========================================================
+   CHECK EXISTING LOGIN
+========================================================= */
 
+if (
+    sessionStorage.getItem("apsAdminLoggedIn") === "true"
+) {
 
-        error.textContent = "";
+    showDashboard();
 
+} else {
 
-        loadData();
-
-
-    }else{
-
-        error.textContent =
-            "❌ Invalid Username or Password";
-
-    }
-
-};
-
-
-
-/* =====================================================
-   AUTO LOGIN
-===================================================== */
-
-if(
-    localStorage.getItem("adminLogin")
-    === "true"
-){
-
-    document
-        .getElementById("loginScreen")
-        .style.display = "none";
-
-
-    document
-        .getElementById("dashboard")
-        .style.display = "block";
-
-
-    loadData();
+    showLogin();
 
 }
 
 
+/* =========================================================
+   LOGIN FUNCTION
+========================================================= */
 
-/* =====================================================
-   LOGOUT
-===================================================== */
+window.login = function () {
 
-window.logout = function(){
+    const username =
+        usernameInput.value.trim();
 
-    localStorage.removeItem(
-        "adminLogin"
-    );
+    const password =
+        passwordInput.value;
 
 
-    location.reload();
+    errorBox.textContent = "";
+
+
+    if (!username || !password) {
+
+        errorBox.textContent =
+            "Please enter username and password.";
+
+        return;
+
+    }
+
+
+    if (
+        username === ADMIN_USERNAME &&
+        password === ADMIN_PASSWORD
+    ) {
+
+        sessionStorage.setItem(
+            "apsAdminLoggedIn",
+            "true"
+        );
+
+        showDashboard();
+
+    } else {
+
+        errorBox.textContent =
+            "Invalid username or password.";
+
+        passwordInput.value = "";
+
+    }
 
 };
 
 
+/* =========================================================
+   SHOW DASHBOARD
+========================================================= */
 
-/* =====================================================
+function showDashboard() {
+
+    loginScreen.style.display = "none";
+
+    dashboard.style.display = "block";
+
+    loadRegistrations();
+
+}
+
+
+/* =========================================================
+   SHOW LOGIN
+========================================================= */
+
+function showLogin() {
+
+    loginScreen.style.display = "flex";
+
+    dashboard.style.display = "none";
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+window.logout = function () {
+
+    sessionStorage.removeItem(
+        "apsAdminLoggedIn"
+    );
+
+    showLogin();
+
+};
+
+
+/* =========================================================
+   REGISTRATION DATA
+========================================================= */
+
+let registrations = {};
+
+
+/* =========================================================
    LOAD REGISTRATIONS
-===================================================== */
+========================================================= */
 
-function loadData(){
+function loadRegistrations() {
 
-    if(dataLoaded){
-        return;
-    }
-
-
-    dataLoaded = true;
-
-
-    const databaseRef =
-        ref(
-            database,
-            "registrations"
-        );
+    const registrationsRef =
+        ref(database, "registrations");
 
 
     onValue(
-        databaseRef,
-        function(snapshot){
+        registrationsRef,
+        snapshot => {
 
-            registrations = {};
+            registrations =
+                snapshot.val() || {};
 
 
-            const table =
-                document
-                .getElementById("tableBody");
+            updateStatistics();
 
+            renderTable(
+                Object.entries(registrations)
+            );
 
-            table.innerHTML = "";
+        },
 
+        error => {
 
-            let total = 0;
-
-            let race = 0;
-
-            let war = 0;
-
-            let tug = 0;
-
-            let soccer = 0;
-
-
-
-            /* =================================================
-               NO DATA
-            ================================================= */
-
-            if(!snapshot.exists()){
-
-                table.innerHTML = `
-
-                    <tr>
-
-                        <td colspan="6">
-
-                            <div class="loading">
-
-                                <i class="fa-solid fa-database"></i>
-
-                                No registrations found.
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-                `;
-
-
-                updateStatistics(
-                    0,
-                    0,
-                    0,
-                    0,
-                    0
-                );
-
-
-                return;
-
-            }
-
-
-
-            /* =================================================
-               LOOP DATA
-            ================================================= */
-
-            snapshot.forEach(
-                function(child){
-
-                    const id =
-                        child.key;
-
-
-                    const data =
-                        child.val() || {};
-
-
-                    registrations[id] =
-                        data;
-
-
-                    total++;
-
-
-                    const events =
-                        String(
-                            data.Events || ""
-                        );
-
-
-                    const eventText =
-                        events.toLowerCase();
-
-
-
-                    /* EVENT COUNTS */
-
-                    if(
-                        eventText.includes(
-                            "robo race"
-                        )
-                    ){
-
-                        race++;
-
-                    }
-
-
-                    if(
-                        eventText.includes(
-                            "robo war"
-                        )
-                    ){
-
-                        war++;
-
-                    }
-
-
-                    if(
-                        eventText.includes(
-                            "robo tug"
-                        )
-                    ){
-
-                        tug++;
-
-                    }
-
-
-                    if(
-                        eventText.includes(
-                            "robo soccer"
-                        )
-                    ){
-
-                        soccer++;
-
-                    }
-
-
-
-                    /* =================================================
-                       CREATE ROW
-                    ================================================= */
-
-                    const row =
-                        document
-                        .createElement("tr");
-
-
-                    row.dataset.id =
-                        id;
-
-
-                    row.innerHTML = `
-
-                        <td>
-
-                            <strong>
-                                ${escapeHTML(id)}
-                            </strong>
-
-                        </td>
-
-
-                        <td>
-
-                            ${escapeHTML(
-                                data.StudentName || "-"
-                            )}
-
-                        </td>
-
-
-                        <td>
-
-                            ${escapeHTML(
-                                data.TeamName || "-"
-                            )}
-
-                        </td>
-
-
-                        <td>
-
-                            ${escapeHTML(
-                                events || "-"
-                            )}
-
-                        </td>
-
-
-                        <td>
-
-                            ${escapeHTML(
-                                data.MobileNumber || "-"
-                            )}
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="action-buttons">
-
-
-                                <button
-                                    class="edit-btn"
-                                    onclick="editRegistration('${escapeJS(id)}')"
-                                >
-
-                                    <i class="fa-solid fa-pen"></i>
-
-                                    Edit
-
-                                </button>
-
-
-                                <button
-                                    class="delete-btn"
-                                    onclick="deleteRegistration('${escapeJS(id)}')"
-                                >
-
-                                    <i class="fa-solid fa-trash"></i>
-
-                                    Delete
-
-                                </button>
-
-
-                            </div>
-
-                        </td>
-
-                    `;
-
-
-                    table.appendChild(row);
-
-                }
+            console.error(
+                "Firebase error:",
+                error
             );
 
 
+            tableBody.innerHTML = `
 
-            /* =================================================
-               UPDATE STATISTICS
-            ================================================= */
+                <tr>
 
-            updateStatistics(
-                total,
-                race,
-                war,
-                tug,
-                soccer
-            );
+                    <td colspan="6">
 
+                        <div class="loading">
 
-            /* =================================================
-               REAPPLY SEARCH
-            ================================================= */
+                            <i class="fa-solid fa-triangle-exclamation"></i>
 
-            searchRegistration();
+                            Unable to load registrations.
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            `;
 
         }
     );
@@ -475,170 +290,536 @@ function loadData(){
 }
 
 
-
-/* =====================================================
+/* =========================================================
    UPDATE STATISTICS
-===================================================== */
+========================================================= */
 
-function updateStatistics(
-    total,
-    race,
-    war,
-    tug,
-    soccer
-){
+function updateStatistics() {
 
-    document
-        .getElementById("total")
-        .textContent = total;
+    const list =
+        Object.values(registrations);
 
 
-    document
-        .getElementById("race")
-        .textContent = race;
+    totalElement.textContent =
+        list.length;
 
 
-    document
-        .getElementById("war")
-        .textContent = war;
+    let race = 0;
+
+    let war = 0;
+
+    let tug = 0;
+
+    let soccer = 0;
 
 
-    document
-        .getElementById("tug")
-        .textContent = tug;
+    list.forEach(data => {
+
+        const events =
+            getEventsArray(data.Events);
 
 
-    document
-        .getElementById("soccer")
-        .textContent = soccer;
+        events.forEach(event => {
+
+            const normalized =
+                event.toLowerCase().trim();
+
+
+            if (
+                normalized === "robo race"
+            ) {
+
+                race++;
+
+            }
+
+
+            if (
+                normalized === "robo war"
+            ) {
+
+                war++;
+
+            }
+
+
+            if (
+                normalized === "robo tug of war"
+            ) {
+
+                tug++;
+
+            }
+
+
+            if (
+                normalized === "robo soccer"
+            ) {
+
+                soccer++;
+
+            }
+
+        });
+
+    });
+
+
+    raceElement.textContent = race;
+
+    warElement.textContent = war;
+
+    tugElement.textContent = tug;
+
+    soccerElement.textContent = soccer;
 
 }
 
 
+/* =========================================================
+   CONVERT EVENTS TO ARRAY
+========================================================= */
 
-/* =====================================================
-   EDIT REGISTRATION
-===================================================== */
+function getEventsArray(events) {
 
-window.editRegistration =
-function(registrationID){
+    if (!events) {
 
-    const data =
-        registrations[registrationID];
+        return [];
+
+    }
 
 
-    if(!data){
+    if (Array.isArray(events)) {
 
-        alert(
-            "❌ Registration not found."
-        );
+        return events;
+
+    }
+
+
+    return [events];
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "";
+
+    }
+
+
+    return String(value)
+
+        .replace(/&/g, "&amp;")
+
+        .replace(/</g, "&lt;")
+
+        .replace(/>/g, "&gt;")
+
+        .replace(/"/g, "&quot;")
+
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* =========================================================
+   GET REGISTRATION ID
+========================================================= */
+
+function getRegistrationID(
+    data,
+    firebaseKey
+) {
+
+    /*
+       New registrations should contain
+       RegistrationID.
+
+       Older registrations may not have it,
+       so Firebase key is used as fallback.
+    */
+
+    if (data.RegistrationID) {
+
+        return data.RegistrationID;
+
+    }
+
+
+    if (data.registrationID) {
+
+        return data.registrationID;
+
+    }
+
+
+    return firebaseKey;
+
+}
+
+
+/* =========================================================
+   RENDER TABLE
+========================================================= */
+
+function renderTable(entries) {
+
+    if (!entries.length) {
+
+        tableBody.innerHTML = `
+
+            <tr>
+
+                <td colspan="6">
+
+                    <div class="loading">
+
+                        <i class="fa-solid fa-folder-open"></i>
+
+                        No registrations found.
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+        `;
 
         return;
 
     }
 
 
-
-    /* REGISTRATION ID */
-
-    document
-        .getElementById("editID")
-        .textContent =
-        registrationID;
+    tableBody.innerHTML = "";
 
 
+    /*
+       Newest registrations first
+    */
 
-    /* STUDENT */
-
-    document
-        .getElementById("editStudentName")
-        .value =
-        data.StudentName || "";
+    entries.reverse();
 
 
+    entries.forEach(
+        ([firebaseKey, data]) => {
 
-    /* TEAM */
-
-    document
-        .getElementById("editTeamName")
-        .value =
-        data.TeamName || "";
-
-
-
-    /* CLASS */
-
-    document
-        .getElementById("editClass")
-        .value =
-        data.Class || "";
+            const registrationID =
+                getRegistrationID(
+                    data,
+                    firebaseKey
+                );
 
 
-
-    /* SECTION */
-
-    document
-        .getElementById("editSection")
-        .value =
-        data.Section || "";
+            const student =
+                data.StudentName ||
+                data.studentName ||
+                "-";
 
 
-
-    /* MOBILE */
-
-    document
-        .getElementById("editMobile")
-        .value =
-        data.MobileNumber || "";
+            const team =
+                data.TeamName ||
+                data.teamName ||
+                "-";
 
 
-
-    /* EMAIL */
-
-    document
-        .getElementById("editEmail")
-        .value =
-        data.Email || "";
+            const mobile =
+                data.MobileNumber ||
+                data.mobile ||
+                "-";
 
 
-
-    /* EVENTS */
-
-    document
-        .getElementById("editEvents")
-        .value =
-        data.Events || "";
+            const events =
+                getEventsArray(
+                    data.Events
+                );
 
 
+            const eventHTML =
+                events.length
 
-    /* OPEN MODAL */
+                ?
 
-    document
-        .getElementById("editModal")
-        .classList
-        .add("active");
+                events.map(event => {
+
+                    return `
+
+                        <span class="event-tag">
+
+                            ${escapeHTML(event)}
+
+                        </span>
+
+                    `;
+
+                }).join("")
+
+                :
+
+                "-";
+
+
+            const row =
+                document.createElement("tr");
+
+
+            row.dataset.firebaseKey =
+                firebaseKey;
+
+
+            row.innerHTML = `
+
+                <td>
+
+                    <strong class="registration-id">
+
+                        ${escapeHTML(
+                            registrationID
+                        )}
+
+                    </strong>
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHTML(student)}
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHTML(team)}
+
+                </td>
+
+
+                <td>
+
+                    <div class="event-tags">
+
+                        ${eventHTML}
+
+                    </div>
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHTML(mobile)}
+
+                </td>
+
+
+                <td>
+
+                    <div class="action-buttons">
+
+
+                        <button
+
+                            class="edit-btn"
+
+                            onclick="openEditModal('${escapeJS(firebaseKey)}')"
+
+                            title="Edit Registration"
+
+                        >
+
+                            <i class="fa-solid fa-pen"></i>
+
+                            Edit
+
+                        </button>
+
+
+                        <button
+
+                            class="delete-btn"
+
+                            onclick="deleteRegistration('${escapeJS(firebaseKey)}')"
+
+                            title="Delete Registration"
+
+                        >
+
+                            <i class="fa-solid fa-trash"></i>
+
+                            Delete
+
+                        </button>
+
+
+                    </div>
+
+                </td>
+
+            `;
+
+
+            tableBody.appendChild(row);
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ESCAPE JAVASCRIPT VALUE
+========================================================= */
+
+function escapeJS(value) {
+
+    return String(value)
+
+        .replace(/\\/g, "\\\\")
+
+        .replace(/'/g, "\\'")
+
+        .replace(/"/g, '\\"')
+
+        .replace(/\n/g, "\\n")
+
+        .replace(/\r/g, "\\r");
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+window.searchRegistration =
+function () {
+
+    const query =
+        searchInput.value
+        .trim()
+        .toLowerCase();
+
+
+    const entries =
+        Object.entries(registrations);
+
+
+    if (!query) {
+
+        renderTable(entries);
+
+        return;
+
+    }
+
+
+    const filtered =
+        entries.filter(
+            ([firebaseKey, data]) => {
+
+                const registrationID =
+                    getRegistrationID(
+                        data,
+                        firebaseKey
+                    );
+
+
+                const student =
+                    data.StudentName || "";
+
+
+                const team =
+                    data.TeamName || "";
+
+
+                const mobile =
+                    data.MobileNumber || "";
+
+
+                const email =
+                    data.EmailAddress || "";
+
+
+                const events =
+                    getEventsArray(
+                        data.Events
+                    ).join(" ");
+
+
+                const searchable = (
+
+                    registrationID +
+
+                    " " +
+
+                    student +
+
+                    " " +
+
+                    team +
+
+                    " " +
+
+                    mobile +
+
+                    " " +
+
+                    email +
+
+                    " " +
+
+                    events
+
+                ).toLowerCase();
+
+
+                return searchable.includes(
+                    query
+                );
+
+            }
+        );
+
+
+    renderTable(filtered);
 
 };
 
 
+/* =========================================================
+   EDIT MODAL
+========================================================= */
 
-/* =====================================================
-   SAVE EDIT
-===================================================== */
-
-window.saveEdit = function(){
-
-    const registrationID =
-        document
-        .getElementById("editID")
-        .textContent
-        .trim();
+let editingFirebaseKey = null;
 
 
-    if(!registrationID){
+/* =========================================================
+   OPEN EDIT MODAL
+========================================================= */
+
+window.openEditModal =
+function (firebaseKey) {
+
+    const data =
+        registrations[firebaseKey];
+
+
+    if (!data) {
 
         alert(
-            "❌ Registration ID is missing."
+            "Registration not found."
         );
 
         return;
@@ -646,265 +827,333 @@ window.saveEdit = function(){
     }
 
 
+    editingFirebaseKey =
+        firebaseKey;
 
-    const updatedData = {
+
+    const registrationID =
+        getRegistrationID(
+            data,
+            firebaseKey
+        );
+
+
+    document.getElementById(
+        "editID"
+    ).textContent =
+        registrationID;
+
+
+    document.getElementById(
+        "editStudentName"
+    ).value =
+        data.StudentName || "";
+
+
+    document.getElementById(
+        "editTeamName"
+    ).value =
+        data.TeamName || "";
+
+
+    document.getElementById(
+        "editClass"
+    ).value =
+        data.Class || "";
+
+
+    document.getElementById(
+        "editSection"
+    ).value =
+        data.Section || "";
+
+
+    document.getElementById(
+        "editMobile"
+    ).value =
+        data.MobileNumber || "";
+
+
+    document.getElementById(
+        "editEmail"
+    ).value =
+        data.EmailAddress || "";
+
+
+    document.getElementById(
+        "editEvents"
+    ).value =
+        getEventsArray(
+            data.Events
+        ).join(", ");
+
+
+    document.getElementById(
+        "editModal"
+    ).classList.add("active");
+
+};
+
+
+/* =========================================================
+   CLOSE EDIT MODAL
+========================================================= */
+
+window.closeEditModal =
+function () {
+
+    document.getElementById(
+        "editModal"
+    ).classList.remove("active");
+
+
+    editingFirebaseKey = null;
+
+};
+
+
+/* =========================================================
+   SAVE EDIT
+========================================================= */
+
+window.saveEdit =
+async function () {
+
+    if (!editingFirebaseKey) {
+
+        return;
+
+    }
+
+
+    const studentName =
+        document.getElementById(
+            "editStudentName"
+        ).value.trim();
+
+
+    const teamName =
+        document.getElementById(
+            "editTeamName"
+        ).value.trim();
+
+
+    const className =
+        document.getElementById(
+            "editClass"
+        ).value.trim();
+
+
+    const section =
+        document.getElementById(
+            "editSection"
+        ).value.trim();
+
+
+    const mobile =
+        document.getElementById(
+            "editMobile"
+        ).value.trim();
+
+
+    const email =
+        document.getElementById(
+            "editEmail"
+        ).value.trim();
+
+
+    const eventsText =
+        document.getElementById(
+            "editEvents"
+        ).value.trim();
+
+
+    const events =
+        eventsText
+
+        ?
+
+        eventsText
+            .split(",")
+            .map(event => event.trim())
+            .filter(Boolean)
+
+        :
+
+        [];
+
+
+    const changes = {
 
         StudentName:
-            document
-            .getElementById(
-                "editStudentName"
-            )
-            .value
-            .trim(),
-
+            studentName,
 
         TeamName:
-            document
-            .getElementById(
-                "editTeamName"
-            )
-            .value
-            .trim(),
-
+            teamName,
 
         Class:
-            document
-            .getElementById(
-                "editClass"
-            )
-            .value
-            .trim(),
-
+            className,
 
         Section:
-            document
-            .getElementById(
-                "editSection"
-            )
-            .value
-            .trim(),
-
+            section,
 
         MobileNumber:
-            document
-            .getElementById(
-                "editMobile"
-            )
-            .value
-            .trim(),
+            mobile,
 
-
-        Email:
-            document
-            .getElementById(
-                "editEmail"
-            )
-            .value
-            .trim(),
-
+        EmailAddress:
+            email,
 
         Events:
-            document
-            .getElementById(
-                "editEvents"
-            )
-            .value
-            .trim()
+            events
 
     };
 
 
+    try {
 
-    const registrationRef =
-        ref(
-            database,
-            "registrations/" +
-            registrationID
+        await update(
+
+            ref(
+                database,
+                "registrations/" +
+                editingFirebaseKey
+            ),
+
+            changes
+
         );
 
-
-
-    /* DISABLE SAVE BUTTON */
-
-    const saveButton =
-        document.querySelector(
-            ".save-button"
-        );
-
-
-    const originalText =
-        saveButton.innerHTML;
-
-
-    saveButton.disabled = true;
-
-
-    saveButton.innerHTML = `
-
-        <i class="fa-solid fa-spinner fa-spin"></i>
-
-        Saving...
-
-    `;
-
-
-
-    /* UPDATE FIREBASE */
-
-    update(
-        registrationRef,
-        updatedData
-    )
-
-    .then(function(){
 
         alert(
-            "✅ Registration updated successfully."
+            "Registration updated successfully."
         );
 
 
         closeEditModal();
 
-    })
 
-
-    .catch(function(error){
+    }
+    catch(error) {
 
         console.error(error);
 
 
         alert(
-            "❌ Could not update registration.\n\n" +
+            "Unable to update registration.\n\n" +
             error.message
         );
 
-    })
-
-
-    .finally(function(){
-
-        saveButton.disabled = false;
-
-        saveButton.innerHTML =
-            originalText;
-
-    });
+    }
 
 };
 
 
-
-/* =====================================================
+/* =========================================================
    DELETE REGISTRATION
-===================================================== */
+========================================================= */
 
 window.deleteRegistration =
-function(registrationID){
+async function (firebaseKey) {
 
     const data =
-        registrations[registrationID];
+        registrations[firebaseKey];
 
 
-    const studentName =
-        data &&
-        data.StudentName
-            ? data.StudentName
-            : "this student";
+    if (!data) {
+
+        return;
+
+    }
 
 
-    const confirmation =
+    const registrationID =
+        getRegistrationID(
+            data,
+            firebaseKey
+        );
+
+
+    const student =
+        data.StudentName ||
+        "this registration";
+
+
+    const confirmed =
         confirm(
 
-            "⚠️ DELETE REGISTRATION?\n\n" +
+            "Delete registration?\n\n" +
 
-            "Registration ID: " +
+            "Registration: " +
             registrationID +
 
             "\nStudent: " +
-            studentName +
+            student +
 
             "\n\nThis action cannot be undone."
 
         );
 
 
-    if(!confirmation){
+    if (!confirmed) {
 
         return;
 
     }
 
 
+    try {
 
-    const registrationRef =
-        ref(
-            database,
-            "registrations/" +
-            registrationID
+        await remove(
+
+            ref(
+                database,
+                "registrations/" +
+                firebaseKey
+            )
+
         );
 
-
-
-    remove(registrationRef)
-
-    .then(function(){
 
         alert(
-            "🗑️ Registration deleted successfully."
+            "Registration deleted successfully."
         );
 
-    })
 
-
-    .catch(function(error){
+    }
+    catch(error) {
 
         console.error(error);
 
 
         alert(
-
-            "❌ Could not delete registration.\n\n" +
-
+            "Unable to delete registration.\n\n" +
             error.message
-
         );
 
-    });
+    }
 
 };
 
 
-
-/* =====================================================
-   CLOSE EDIT MODAL
-===================================================== */
-
-window.closeEditModal =
-function(){
-
-    document
-        .getElementById("editModal")
-        .classList
-        .remove("active");
-
-};
-
-
-
-/* =====================================================
+/* =========================================================
    CLOSE MODAL WHEN CLICKING OUTSIDE
-===================================================== */
+========================================================= */
 
-document
-    .getElementById("editModal")
-    .addEventListener(
+const editModal =
+    document.getElementById(
+        "editModal"
+    );
+
+
+if (editModal) {
+
+    editModal.addEventListener(
         "click",
-        function(event){
+        function(event) {
 
-            if(
-                event.target ===
-                this
-            ){
+            if (
+                event.target === editModal
+            ) {
 
                 closeEditModal();
 
@@ -913,19 +1162,20 @@ document
         }
     );
 
+}
 
 
-/* =====================================================
+/* =========================================================
    ESC KEY CLOSE MODAL
-===================================================== */
+========================================================= */
 
 document.addEventListener(
     "keydown",
-    function(event){
+    function(event) {
 
-        if(
+        if (
             event.key === "Escape"
-        ){
+        ) {
 
             closeEditModal();
 
@@ -935,217 +1185,148 @@ document.addEventListener(
 );
 
 
+/* =========================================================
+   ENTER KEY LOGIN
+========================================================= */
 
-/* =====================================================
-   SEARCH
-===================================================== */
+if (passwordInput) {
 
-window.searchRegistration =
-function(){
+    passwordInput.addEventListener(
+        "keydown",
+        function(event) {
 
-    const value =
-        document
-        .getElementById("search")
-        .value
-        .toLowerCase()
-        .trim();
+            if (
+                event.key === "Enter"
+            ) {
 
-
-    const rows =
-        document
-        .querySelectorAll(
-            "#tableBody tr"
-        );
-
-
-    let visibleRows = 0;
-
-
-    rows.forEach(
-        function(row){
-
-            const text =
-                row.innerText
-                    .toLowerCase();
-
-
-            if(
-                text.includes(value)
-            ){
-
-                row.style.display = "";
-
-                visibleRows++;
-
-            }else{
-
-                row.style.display = "none";
+                window.login();
 
             }
 
         }
     );
 
-
-    /* NO SEARCH RESULT */
-
-    const existing =
-        document.getElementById(
-            "noSearchResult"
-        );
+}
 
 
-    if(existing){
-
-        existing.remove();
-
-    }
-
-
-    if(
-        value &&
-        visibleRows === 0
-    ){
-
-        const table =
-            document.getElementById(
-                "tableBody"
-            );
-
-
-        const row =
-            document.createElement("tr");
-
-
-        row.id =
-            "noSearchResult";
-
-
-        row.innerHTML = `
-
-            <td colspan="6">
-
-                <div class="loading">
-
-                    <i class="fa-solid fa-magnifying-glass"></i>
-
-                    No registration found for
-                    "<strong>${escapeHTML(value)}</strong>"
-
-                </div>
-
-            </td>
-
-        `;
-
-
-        table.appendChild(row);
-
-    }
-
-};
-
-
-
-/* =====================================================
-   CSV DOWNLOAD
-===================================================== */
+/* =========================================================
+   CSV EXPORT
+========================================================= */
 
 window.downloadCSV =
-function(){
+function () {
 
-    const rows =
-        document.querySelectorAll(
-            "#tableBody tr"
+    const entries =
+        Object.entries(registrations);
+
+
+    if (!entries.length) {
+
+        alert(
+            "There are no registrations to export."
         );
 
+        return;
 
-    const csv = [];
-
-
-    /* HEADER */
-
-    csv.push(
-
-        [
-
-            "Registration ID",
-            "Student Name",
-            "Team Name",
-            "Events",
-            "Mobile Number"
-
-        ]
-
-        .map(csvEscape)
-
-        .join(",")
-
-    );
+    }
 
 
+    const headers = [
 
-    /* DATA */
+        "Registration ID",
 
-    rows.forEach(
-        function(row){
+        "Student Name",
 
-            if(
-                row.style.display ===
-                "none"
-            ){
+        "Class",
 
-                return;
+        "Section",
 
-            }
+        "Team Name",
+
+        "Mobile Number",
+
+        "Email",
+
+        "Events",
+
+        "Team Size",
+
+        "Remarks"
+
+    ];
 
 
-            const cells =
-                row.querySelectorAll(
-                    "td"
+    const rows = [
+
+        headers
+
+    ];
+
+
+    entries.forEach(
+        ([firebaseKey, data]) => {
+
+            const registrationID =
+                getRegistrationID(
+                    data,
+                    firebaseKey
                 );
 
 
-            if(
-                cells.length < 5
-            ){
-
-                return;
-
-            }
+            const events =
+                getEventsArray(
+                    data.Events
+                ).join(" | ");
 
 
-            const values = [
+            rows.push([
 
-                cells[0].innerText,
-                cells[1].innerText,
-                cells[2].innerText,
-                cells[3].innerText,
-                cells[4].innerText
+                registrationID,
 
-            ];
+                data.StudentName || "",
 
+                data.Class || "",
 
-            csv.push(
+                data.Section || "",
 
-                values
-                    .map(csvEscape)
-                    .join(",")
+                data.TeamName || "",
 
-            );
+                data.MobileNumber || "",
+
+                data.EmailAddress || "",
+
+                events,
+
+                data.TeamSize || "",
+
+                data.Remarks || ""
+
+            ]);
 
         }
     );
 
 
+    const csv =
+        rows.map(row => {
 
-    /* CREATE FILE */
+            return row.map(value => {
+
+                const text =
+                    String(value)
+                    .replace(/"/g, '""');
+
+
+                return `"${text}"`;
+
+            }).join(",");
+
+        }).join("\n");
+
 
     const blob =
         new Blob(
-            [
-                csv.join("\n")
-            ],
+            [csv],
             {
                 type:
                     "text/csv;charset=utf-8;"
@@ -1165,7 +1346,7 @@ function(){
 
 
     link.download =
-        "APS_Robotics_Registrations.csv";
+        "APS_Robotics_Registrations_2026.csv";
 
 
     document.body.appendChild(link);
@@ -1182,92 +1363,16 @@ function(){
 };
 
 
+/* =========================================================
+   INITIAL TABLE STATE
+========================================================= */
 
-/* =====================================================
-   CSV ESCAPE
-===================================================== */
+if (
+    sessionStorage.getItem(
+        "apsAdminLoggedIn"
+    ) === "true"
+) {
 
-function csvEscape(value){
+    loadRegistrations();
 
-    return '"' +
-
-        String(value)
-            .replace(/"/g, '""')
-
-        + '"';
-
-}
-
-
-
-/* =====================================================
-   HTML ESCAPE
-===================================================== */
-
-function escapeHTML(value){
-
-    return String(value)
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
-
-
-
-/* =====================================================
-   JAVASCRIPT ESCAPE
-===================================================== */
-
-function escapeJS(value){
-
-    return String(value)
-
-        .replace(
-            /\\/g,
-            "\\\\"
-        )
-
-        .replace(
-            /'/g,
-            "\\'"
-        )
-
-        .replace(
-            /"/g,
-            '\\"'
-        )
-
-        .replace(
-            /\n/g,
-            "\\n"
-        )
-
-        .replace(
-            /\r/g,
-            "\\r"
-        );
-
-        }
+   }
