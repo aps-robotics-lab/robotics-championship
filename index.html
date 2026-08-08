@@ -11,13 +11,13 @@
     >
 
     <meta
-        name="description"
-        content="APS Robotics Championship 2026 - Army Public School Lal Bahadur Shastri Marg Tinkering Lab"
+        name="theme-color"
+        content="#020810"
     >
 
     <meta
-        name="theme-color"
-        content="#020812"
+        name="description"
+        content="APS Robotics Championship 2026 - Army Public School Lal Bahadur Shastri Marg Tinkering Lab"
     >
 
     <title>
@@ -25,7 +25,9 @@
     </title>
 
 
-    <!-- FONTS -->
+    <!-- =====================================================
+         GOOGLE FONTS
+    ====================================================== -->
 
     <link
         rel="preconnect"
@@ -39,12 +41,14 @@
     >
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet"
     >
 
 
-    <!-- FONT AWESOME -->
+    <!-- =====================================================
+         FONT AWESOME
+    ====================================================== -->
 
     <link
         rel="stylesheet"
@@ -52,7 +56,9 @@
     >
 
 
-    <!-- CSS -->
+    <!-- =====================================================
+         CSS
+    ====================================================== -->
 
     <link
         rel="stylesheet"
@@ -67,48 +73,74 @@
 
 <!-- =====================================================
      PRELOADER
-===================================================== -->
+====================================================== -->
 
 <div
     id="preloader"
     class="preloader"
 >
 
-    <div class="loader-system">
-
-        <div class="loader-orbit orbit-one"></div>
-
-        <div class="loader-orbit orbit-two"></div>
-
-        <div class="loader-orbit orbit-three"></div>
+    <div class="preloader-grid"></div>
 
 
-        <div class="loader-core">
+    <div class="preloader-content">
 
-            <i class="fa-solid fa-microchip"></i>
+
+        <div class="robot-core">
+
+            <div class="core-ring ring-1"></div>
+
+            <div class="core-ring ring-2"></div>
+
+            <div class="core-ring ring-3"></div>
+
+
+            <div class="core-icon">
+
+                <i class="fa-solid fa-microchip"></i>
+
+            </div>
 
         </div>
 
-    </div>
+
+        <div class="loading-text">
+
+            <div class="loading-title">
+                INITIALIZING
+            </div>
+
+            <div class="loading-subtitle">
+                ROBOTICS SYSTEM
+            </div>
+
+        </div>
 
 
-    <div class="loader-title">
+        <div class="loading-status">
 
-        INITIALIZING ROBOTICS SYSTEM
+            <span class="status-line"></span>
 
-    </div>
+            <span class="status-text">
+                SYSTEM ONLINE
+            </span>
 
-
-    <div class="loader-progress">
-
-        <span></span>
-
-    </div>
+        </div>
 
 
-    <div class="loader-status">
+        <div class="loading-bar">
 
-        SYSTEM ONLINE
+            <div class="loading-progress"></div>
+
+        </div>
+
+
+        <div
+            class="loading-percent"
+            id="loadingPercent"
+        >
+            0%
+        </div>
 
     </div>
 
@@ -117,27 +149,15 @@
 
 
 <!-- =====================================================
-     BACKGROUND
-===================================================== -->
-
-<div class="background-grid"></div>
-
-<div class="background-glow glow-one"></div>
-
-<div class="background-glow glow-two"></div>
-
-
-
-<!-- =====================================================
-     NAVBAR
-===================================================== -->
+     NAVIGATION
+====================================================== -->
 
 <header
-    id="navbar"
-    class="navbar"
+    class="site-header"
+    id="siteHeader"
 >
 
-    <div class="nav-container">
+    <nav class="navbar container">
 
 
         <a
@@ -149,7 +169,7 @@
 
                 <img
                     src="https://i.ibb.co/spL8t7cv/Army-Welfare-Education-Society-logo-1.png"
-                    alt="APS Logo"
+                    alt="Army Welfare Education Society Logo"
                 >
 
             </div>
@@ -162,7 +182,7 @@
                 </strong>
 
                 <span>
-                    TINKERING LAB
+                    ROBOTICS
                 </span>
 
             </div>
@@ -171,7 +191,22 @@
 
 
 
-        <nav class="nav-menu">
+        <button
+            class="menu-toggle"
+            id="menuToggle"
+            aria-label="Open navigation"
+        >
+
+            <i class="fa-solid fa-bars"></i>
+
+        </button>
+
+
+
+        <div
+            class="nav-menu"
+            id="navMenu"
+        >
 
             <a
                 href="#home"
@@ -188,17 +223,24 @@
             </a>
 
             <a
-                href="#registration"
-                class="nav-link"
-            >
-                Registration
-            </a>
-
-            <a
                 href="#events"
                 class="nav-link"
             >
                 Events
+            </a>
+
+            <a
+                href="#rules"
+                class="nav-link"
+            >
+                Rules
+            </a>
+
+            <a
+                href="#schedule"
+                class="nav-link"
+            >
+                Schedule
             </a>
 
             <a
@@ -209,216 +251,259 @@
             </a>
 
             <a
+                href="#registration"
+                class="nav-link nav-register"
+            >
+                Register
+            </a>
+
+            <a
                 href="#contact"
                 class="nav-link"
             >
                 Contact
             </a>
 
-        </nav>
+        </div>
 
-
-
-        <a
-            href="#registration"
-            class="nav-register"
-        >
-
-            <i class="fa-solid fa-rocket"></i>
-
-            Register
-
-        </a>
-
-
-
-        <button
-            id="menuToggle"
-            class="menu-toggle"
-            aria-label="Open menu"
-        >
-
-            <i class="fa-solid fa-bars"></i>
-
-        </button>
-
-    </div>
+    </nav>
 
 </header>
 
 
 
 <!-- =====================================================
-     MOBILE MENU
-===================================================== -->
-
-<div
-    id="mobileMenu"
-    class="mobile-menu"
->
-
-    <a href="#home">
-        <i class="fa-solid fa-house"></i>
-        Home
-    </a>
-
-    <a href="#about">
-        <i class="fa-solid fa-atom"></i>
-        About
-    </a>
-
-    <a href="#registration">
-        <i class="fa-solid fa-pen-to-square"></i>
-        Registration
-    </a>
-
-    <a href="#events">
-        <i class="fa-solid fa-robot"></i>
-        Events
-    </a>
-
-    <a href="#message">
-        <i class="fa-solid fa-message"></i>
-        Message
-    </a>
-
-    <a href="#contact">
-        <i class="fa-solid fa-envelope"></i>
-        Contact
-    </a>
-
-</div>
-
-
-
-<!-- =====================================================
-     HOME
-===================================================== -->
+     HERO
+====================================================== -->
 
 <main>
 
 
 <section
+    class="hero"
     id="home"
-    class="hero section"
 >
 
-    <div class="hero-content">
+    <div class="hero-grid"></div>
+
+    <div class="hero-glow glow-one"></div>
+
+    <div class="hero-glow glow-two"></div>
 
 
-        <div class="hero-label">
-
-            <span class="pulse-dot"></span>
-
-            APS TINKERING LAB PRESENTS
-
-        </div>
+    <div class="hero-container container">
 
 
-        <h1>
-
-            APS
-
-            <span>
-                ROBOTICS
-            </span>
-
-            CHAMPIONSHIP
-
-            <small>
-                2026
-            </small>
-
-        </h1>
+        <div class="hero-content">
 
 
-        <p class="hero-description">
+            <div class="status-badge">
 
-            Engineer the future.
-            Build your machine.
-            Challenge your limits.
-
-            <br>
-
-            A futuristic robotics competition celebrating
-            <strong>
-                innovation, engineering, creativity and teamwork.
-            </strong>
-
-        </p>
-
-
-        <div class="hero-buttons">
-
-            <a
-                href="#registration"
-                class="btn btn-primary"
-            >
-
-                <i class="fa-solid fa-rocket"></i>
-
-                Register Your Team
-
-            </a>
-
-
-            <a
-                href="#events"
-                class="btn btn-secondary"
-            >
-
-                <i class="fa-solid fa-robot"></i>
-
-                Explore Events
-
-            </a>
-
-        </div>
-
-
-        <div class="hero-stats">
-
-            <div class="hero-stat">
-
-                <strong>
-                    04
-                </strong>
+                <span class="status-dot"></span>
 
                 <span>
-                    EVENTS
+                    APS TINKERING LAB PRESENTS
                 </span>
 
             </div>
 
 
-            <div class="stat-line"></div>
+            <p class="hero-kicker">
+                THE FUTURE OF ROBOTICS STARTS HERE
+            </p>
 
 
-            <div class="hero-stat">
+            <h1>
 
-                <strong>
-                    05
-                </strong>
+                APS
 
                 <span>
-                    MAX MEMBERS
+                    ROBOTICS
                 </span>
 
-            </div>
+                CHAMPIONSHIP
 
-
-            <div class="stat-line"></div>
-
-
-            <div class="hero-stat">
-
-                <strong>
+                <small>
                     2026
-                </strong>
+                </small>
 
-                <span>
-                    CHAMPIONSHIP
-                </span>
+            </h1>
+
+
+            <p class="hero-description">
+
+                A futuristic robotics competition where
+                creativity, engineering, coding and teamwork
+                come together to build the machines of tomorrow.
+
+            </p>
+
+
+            <div class="hero-actions">
+
+                <a
+                    href="#registration"
+                    class="btn btn-primary"
+                >
+
+                    <i class="fa-solid fa-robot"></i>
+
+                    Register Your Team
+
+                </a>
+
+
+                <a
+                    href="#events"
+                    class="btn btn-outline"
+                >
+
+                    <i class="fa-solid fa-crosshairs"></i>
+
+                    Explore Events
+
+                </a>
+
+            </div>
+
+
+            <div class="hero-info">
+
+
+                <div class="hero-info-item">
+
+                    <i class="fa-solid fa-location-dot"></i>
+
+                    <div>
+
+                        <span>
+                            VENUE
+                        </span>
+
+                        <strong>
+                            APS LBS Marg
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="hero-info-item">
+
+                    <i class="fa-solid fa-microchip"></i>
+
+                    <div>
+
+                        <span>
+                            ORGANIZED BY
+                        </span>
+
+                        <strong>
+                            APS Tinkering Lab
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="hero-info-item">
+
+                    <i class="fa-solid fa-calendar-days"></i>
+
+                    <div>
+
+                        <span>
+                            CHAMPIONSHIP
+                        </span>
+
+                        <strong>
+                            2026
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- HERO ROBOT VISUAL -->
+
+        <div class="hero-visual">
+
+
+            <div class="robot-orbit orbit-a"></div>
+
+            <div class="robot-orbit orbit-b"></div>
+
+            <div class="robot-orbit orbit-c"></div>
+
+
+            <div class="robot-display">
+
+
+                <div class="robot-display-top">
+
+                    <span>
+                        ROBOTICS CORE
+                    </span>
+
+                    <span class="online">
+                        ONLINE
+                    </span>
+
+                </div>
+
+
+                <div class="robot-face">
+
+                    <div class="robot-eye eye-left"></div>
+
+                    <div class="robot-eye eye-right"></div>
+
+
+                    <div class="robot-mouth">
+
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="robot-stats">
+
+                    <div>
+                        <span>
+                            POWER
+                        </span>
+
+                        <strong>
+                            98%
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>
+                            CORE
+                        </span>
+
+                        <strong>
+                            ACTIVE
+                        </strong>
+                    </div>
+
+                </div>
 
             </div>
 
@@ -427,40 +512,171 @@
     </div>
 
 
+    <div class="scroll-indicator">
 
-    <div class="hero-visual">
+        <span>
+            SCROLL TO EXPLORE
+        </span>
 
-        <div class="robot-ring ring-one"></div>
+        <i class="fa-solid fa-chevron-down"></i>
 
-        <div class="robot-ring ring-two"></div>
+    </div>
 
-        <div class="robot-ring ring-three"></div>
+</section>
 
 
-        <div class="robot-center">
 
-            <i class="fa-solid fa-robot"></i>
+<!-- =====================================================
+     ABOUT
+====================================================== -->
+
+<section
+    class="section about-section"
+    id="about"
+>
+
+    <div class="container">
+
+
+        <div class="section-heading">
+
+            <span class="section-label">
+                01 / ABOUT
+            </span>
+
+            <h2>
+                BUILD.
+                <span>
+                    CREATE.
+                </span>
+                INNOVATE.
+            </h2>
+
+            <p>
+                Discover the vision behind APS Robotics Championship 2026.
+            </p>
 
         </div>
 
 
-        <div class="floating-chip chip-one">
-
-            <i class="fa-solid fa-microchip"></i>
-
-        </div>
+        <div class="about-grid">
 
 
-        <div class="floating-chip chip-two">
+            <div class="about-main glass-card">
 
-            <i class="fa-solid fa-bolt"></i>
+                <div class="card-icon">
 
-        </div>
+                    <i class="fa-solid fa-microchip"></i>
+
+                </div>
 
 
-        <div class="floating-chip chip-three">
+                <h3>
+                    APS Tinkering Lab
+                </h3>
 
-            <i class="fa-solid fa-gears"></i>
+
+                <p>
+
+                    The APS Tinkering Lab provides students with
+                    an environment to explore technology, engineering,
+                    electronics, programming and creative problem
+                    solving.
+
+                </p>
+
+
+                <p>
+
+                    APS Robotics Championship 2026 brings that
+                    spirit into a competitive arena where students
+                    can transform their ideas into working robotic
+                    machines.
+
+                </p>
+
+            </div>
+
+
+            <div class="about-features">
+
+
+                <div class="feature-card">
+
+                    <div class="feature-number">
+                        01
+                    </div>
+
+                    <i class="fa-solid fa-code"></i>
+
+                    <h3>
+                        Engineering
+                    </h3>
+
+                    <p>
+                        Design and develop functional robotic systems.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-number">
+                        02
+                    </div>
+
+                    <i class="fa-solid fa-terminal"></i>
+
+                    <h3>
+                        Programming
+                    </h3>
+
+                    <p>
+                        Combine logic, control and automation.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-number">
+                        03
+                    </div>
+
+                    <i class="fa-solid fa-people-group"></i>
+
+                    <h3>
+                        Teamwork
+                    </h3>
+
+                    <p>
+                        Collaborate and solve challenges together.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-number">
+                        04
+                    </div>
+
+                    <i class="fa-solid fa-lightbulb"></i>
+
+                    <h3>
+                        Innovation
+                    </h3>
+
+                    <p>
+                        Turn imagination into real-world solutions.
+                    </p>
+
+                </div>
+
+            </div>
 
         </div>
 
@@ -471,108 +687,344 @@
 
 
 <!-- =====================================================
-     ABOUT
-===================================================== -->
+     EVENTS
+====================================================== -->
 
 <section
-    id="about"
-    class="section"
+    class="section events-section"
+    id="events"
 >
 
-    <div class="section-heading">
+    <div class="container">
 
-        <span>
-            01 / ABOUT
-        </span>
 
-        <h2>
-            ENGINEERING
-            <strong>THE FUTURE</strong>
-        </h2>
+        <div class="section-heading center">
 
-        <p>
-            Where imagination becomes a machine.
-        </p>
+            <span class="section-label">
+                02 / CHALLENGES
+            </span>
+
+            <h2>
+                ENTER THE
+                <span>
+                    ARENA
+                </span>
+            </h2>
+
+            <p>
+                Choose your challenge and prepare your machine.
+            </p>
+
+        </div>
+
+
+        <div class="events-grid">
+
+
+            <article class="event-card">
+
+                <div class="event-number">
+                    01
+                </div>
+
+                <div class="event-icon">
+                    <i class="fa-solid fa-flag-checkered"></i>
+                </div>
+
+                <h3>
+                    Robo Race
+                </h3>
+
+                <p>
+                    Speed, precision and control combine in
+                    a race against the clock.
+                </p>
+
+                <span class="event-tag">
+                    SPEED
+                </span>
+
+            </article>
+
+
+            <article class="event-card">
+
+                <div class="event-number">
+                    02
+                </div>
+
+                <div class="event-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+
+                <h3>
+                    Robo War
+                </h3>
+
+                <p>
+                    Strategy and engineering meet in an
+                    intense robotic battle.
+                </p>
+
+                <span class="event-tag">
+                    COMBAT
+                </span>
+
+            </article>
+
+
+            <article class="event-card">
+
+                <div class="event-number">
+                    03
+                </div>
+
+                <div class="event-icon">
+                    <i class="fa-solid fa-arrows-left-right"></i>
+                </div>
+
+                <h3>
+                    Robo Tug of War
+                </h3>
+
+                <p>
+                    Build for traction, torque and raw
+                    mechanical strength.
+                </p>
+
+                <span class="event-tag">
+                    POWER
+                </span>
+
+            </article>
+
+
+            <article class="event-card">
+
+                <div class="event-number">
+                    04
+                </div>
+
+                <div class="event-icon">
+                    <i class="fa-solid fa-futbol"></i>
+                </div>
+
+                <h3>
+                    Robo Soccer
+                </h3>
+
+                <p>
+                    Control, teamwork and robotics come
+                    together on the field.
+                </p>
+
+                <span class="event-tag">
+                    CONTROL
+                </span>
+
+            </article>
+
+        </div>
 
     </div>
 
+</section>
 
-    <div class="about-grid">
 
 
-        <div class="about-main glass-card">
+<!-- =====================================================
+     RULES
+====================================================== -->
 
-            <div class="card-icon">
+<section
+    class="section rules-section"
+    id="rules"
+>
 
-                <i class="fa-solid fa-atom"></i>
+    <div class="container">
+
+
+        <div class="section-heading">
+
+            <span class="section-label">
+                03 / PROTOCOL
+            </span>
+
+            <h2>
+                COMPETITION
+                <span>
+                    RULES
+                </span>
+            </h2>
+
+        </div>
+
+
+        <div class="rules-grid">
+
+
+            <div class="rule-card">
+
+                <span>
+                    01
+                </span>
+
+                <i class="fa-solid fa-user-group"></i>
+
+                <h3>
+                    Team
+                </h3>
+
+                <p>
+                    Teams must provide accurate participant
+                    information during registration.
+                </p>
 
             </div>
 
 
-            <h3>
-                APS Robotics Championship 2026
-            </h3>
-
-
-            <p>
-
-                The APS Robotics Championship is an exciting
-                robotics competition presented by the
-                Army Public School Lal Bahadur Shastri Marg
-                Tinkering Lab.
-
-            </p>
-
-
-            <p>
-
-                Participants will design, build and operate
-                robots while competing in challenges that
-                test speed, precision, power, strategy,
-                creativity and teamwork.
-
-            </p>
-
-
-            <div class="about-tags">
+            <div class="rule-card">
 
                 <span>
-                    Innovation
+                    02
                 </span>
 
-                <span>
-                    Engineering
-                </span>
+                <i class="fa-solid fa-helmet-safety"></i>
+
+                <h3>
+                    Safety
+                </h3>
+
+                <p>
+                    Participants must follow all safety
+                    instructions during the competition.
+                </p>
+
+            </div>
+
+
+            <div class="rule-card">
 
                 <span>
-                    Teamwork
+                    03
                 </span>
 
+                <i class="fa-solid fa-gears"></i>
+
+                <h3>
+                    Robot
+                </h3>
+
+                <p>
+                    Robots must comply with the technical
+                    requirements announced by the organizers.
+                </p>
+
+            </div>
+
+
+            <div class="rule-card">
+
                 <span>
-                    Excellence
+                    04
                 </span>
+
+                <i class="fa-solid fa-gavel"></i>
+
+                <h3>
+                    Decisions
+                </h3>
+
+                <p>
+                    Decisions of the event officials will be
+                    treated as final during the competition.
+                </p>
 
             </div>
 
         </div>
 
 
+        <div class="notice-box">
 
-        <div class="about-features">
+            <i class="fa-solid fa-circle-info"></i>
+
+            <div>
+
+                <strong>
+                    Important Notice
+                </strong>
+
+                <p>
+                    Detailed technical rules and event-specific
+                    instructions will be communicated by the
+                    organizers.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
 
 
-            <div class="feature-card">
 
-                <i class="fa-solid fa-lightbulb"></i>
+<!-- =====================================================
+     SCHEDULE
+====================================================== -->
 
-                <div>
+<section
+    class="section schedule-section"
+    id="schedule"
+>
+
+    <div class="container">
+
+
+        <div class="section-heading center">
+
+            <span class="section-label">
+                04 / PROTOCOL
+            </span>
+
+            <h2>
+                EVENT
+                <span>
+                    FLOW
+                </span>
+            </h2>
+
+            <p>
+                Follow the championship journey.
+            </p>
+
+        </div>
+
+
+        <div class="timeline">
+
+
+            <div class="timeline-item">
+
+                <div class="timeline-marker">
+                    01
+                </div>
+
+                <div class="timeline-content">
+
+                    <span>
+                        PHASE 01
+                    </span>
 
                     <h3>
-                        Innovation
+                        Registration
                     </h3>
 
                     <p>
-                        Turn creative ideas into working machines.
+                        Register your team and provide
+                        participant information.
                     </p>
 
                 </div>
@@ -580,18 +1032,25 @@
             </div>
 
 
-            <div class="feature-card">
+            <div class="timeline-item">
 
-                <i class="fa-solid fa-screwdriver-wrench"></i>
+                <div class="timeline-marker">
+                    02
+                </div>
 
-                <div>
+                <div class="timeline-content">
+
+                    <span>
+                        PHASE 02
+                    </span>
 
                     <h3>
-                        Engineering
+                        Verification
                     </h3>
 
                     <p>
-                        Design and build robots for real challenges.
+                        Participant and team information
+                        will be verified by the organizers.
                     </p>
 
                 </div>
@@ -599,18 +1058,25 @@
             </div>
 
 
-            <div class="feature-card">
+            <div class="timeline-item">
 
-                <i class="fa-solid fa-people-group"></i>
+                <div class="timeline-marker">
+                    03
+                </div>
 
-                <div>
+                <div class="timeline-content">
+
+                    <span>
+                        PHASE 03
+                    </span>
 
                     <h3>
-                        Teamwork
+                        Technical Check
                     </h3>
 
                     <p>
-                        Collaborate, strategize and compete together.
+                        Robots are prepared and checked
+                        before entering the arena.
                     </p>
 
                 </div>
@@ -618,21 +1084,98 @@
             </div>
 
 
-            <div class="feature-card">
+            <div class="timeline-item">
 
-                <i class="fa-solid fa-brain"></i>
+                <div class="timeline-marker">
+                    04
+                </div>
 
-                <div>
+                <div class="timeline-content">
+
+                    <span>
+                        PHASE 04
+                    </span>
 
                     <h3>
-                        Problem Solving
+                        Championship
                     </h3>
 
                     <p>
-                        Think fast and solve engineering problems.
+                        Teams compete in their selected
+                        robotics challenges.
                     </p>
 
                 </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     MESSAGE
+====================================================== -->
+
+<section
+    class="section message-section"
+    id="message"
+>
+
+    <div class="container">
+
+
+        <div class="message-box glass-card">
+
+
+            <div class="message-icon">
+
+                <i class="fa-solid fa-quote-left"></i>
+
+            </div>
+
+
+            <div class="message-content">
+
+                <span class="section-label">
+                    05 / MESSAGE
+                </span>
+
+
+                <h2>
+                    FROM THE
+                    <span>
+                        APS TINKERING LAB
+                    </span>
+                </h2>
+
+
+                <p>
+
+                    Robotics is more than building machines.
+                    It is about curiosity, experimentation,
+                    problem-solving and the courage to turn
+                    an idea into reality.
+
+                </p>
+
+
+                <p>
+
+                    APS Robotics Championship 2026 provides
+                    students with an opportunity to learn,
+                    compete, collaborate and innovate.
+
+                </p>
+
+
+                <strong>
+                    — APS Tinkering Lab
+                </strong>
 
             </div>
 
@@ -646,848 +1189,898 @@
 
 <!-- =====================================================
      REGISTRATION
-===================================================== -->
+====================================================== -->
 
 <section
-    id="registration"
     class="section registration-section"
+    id="registration"
 >
 
-    <div class="section-heading">
+    <div class="container">
 
-        <span>
-            02 / REGISTRATION
-        </span>
 
-        <h2>
-            JOIN THE
-            <strong>CHAMPIONSHIP</strong>
-        </h2>
+        <div class="section-heading center">
 
-        <p>
-            Register your team and enter the arena.
-        </p>
-
-    </div>
-
-
-
-    <form
-        id="registrationForm"
-        class="registration-form glass-card"
-    >
-
-        <div class="form-top">
-
-            <div>
-
-                <span class="form-number">
-                    REGISTRATION
-                </span>
-
-                <h3>
-                    Team Registration
-                </h3>
-
-                <p>
-                    Enter your details carefully before submitting.
-                </p>
-
-            </div>
-
-
-            <div class="secure-badge">
-
-                <i class="fa-solid fa-shield-halved"></i>
-
-                Secure Registration
-
-            </div>
-
-        </div>
-
-
-
-        <!-- BASIC INFORMATION -->
-
-        <div class="form-section">
-
-            <div class="form-section-title">
-
-                <span>
-                    01
-                </span>
-
-                <div>
-
-                    <h4>
-                        Team Leader
-                    </h4>
-
-                    <p>
-                        Primary participant information
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="form-grid">
-
-
-                <div class="input-group">
-
-                    <label for="studentName">
-                        Team Leader Name
-                        <span>*</span>
-                    </label>
-
-                    <div class="input-box">
-
-                        <i class="fa-solid fa-user"></i>
-
-                        <input
-                            type="text"
-                            id="studentName"
-                            name="StudentName"
-                            placeholder="Enter team leader name"
-                            required
-                        >
-
-                    </div>
-
-                </div>
-
-
-
-                <div class="input-group">
-
-                    <label for="teamName">
-                        Team Name
-                        <span>*</span>
-                    </label>
-
-                    <div class="input-box">
-
-                        <i class="fa-solid fa-users"></i>
-
-                        <input
-                            type="text"
-                            id="teamName"
-                            name="TeamName"
-                            placeholder="Enter your team name"
-                            required
-                        >
-
-                    </div>
-
-                </div>
-
-
-
-                <div class="input-group">
-
-                    <label for="class">
-                        Class
-                        <span>*</span>
-                    </label>
-
-                    <div class="input-box">
-
-                        <i class="fa-solid fa-graduation-cap"></i>
-
-                        <input
-                            type="text"
-                            id="class"
-                            name="Class"
-                            placeholder="Example: IX"
-                            required
-                        >
-
-                    </div>
-
-                </div>
-
-
-
-                <div class="input-group">
-
-                    <label for="section">
-                        Section
-                        <span>*</span>
-                    </label>
-
-                    <div class="input-box">
-
-                        <i class="fa-solid fa-layer-group"></i>
-
-                        <input
-                            type="text"
-                            id="section"
-                            name="Section"
-                            placeholder="Example: A"
-                            required
-                        >
-
-                    </div>
-
-                </div>
-
-
-
-                <div class="input-group">
-
-                    <label for="mobile">
-                        Mobile Number
-                        <span>*</span>
-                    </label>
-
-                    <div class="input-box">
-
-                        <i class="fa-solid fa-phone"></i>
-
-                        <input
-                            type="tel"
-                            id="mobile"
-                            name="MobileNumber"
-                            placeholder="Enter mobile number"
-                            inputmode="numeric"
-                            required
-                        >
-
-                    </div>
-
-                </div>
-
-
-
-                <div class="input-group">
-
-                    <label for="email">
-                        Email Address
-                        <span>*</span>
-                    </label>
-
-                    <div class="input-box">
-
-                        <i class="fa-solid fa-envelope"></i>
-
-                        <input
-                            type="email"
-                            id="email"
-                            name="EmailAddress"
-                            placeholder="Enter email address"
-                            required
-                        >
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- EVENTS -->
-
-        <div class="form-section">
-
-            <div class="form-section-title">
-
-                <span>
-                    02
-                </span>
-
-                <div>
-
-                    <h4>
-                        Select Event(s)
-                    </h4>
-
-                    <p>
-                        You can participate in one or more competitions.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="eventSelection"
-                class="event-selection"
-            >
-
-
-                <label class="event-option">
-
-                    <input
-                        type="checkbox"
-                        name="Events"
-                        value="Robo Race"
-                    >
-
-                    <span class="event-box">
-
-                        <span class="event-icon">
-                            <i class="fa-solid fa-flag-checkered"></i>
-                        </span>
-
-                        <span>
-
-                            <strong>
-                                Robo Race
-                            </strong>
-
-                            <small>
-                                Speed Challenge
-                            </small>
-
-                        </span>
-
-                        <i class="fa-solid fa-check event-check"></i>
-
-                    </span>
-
-                </label>
-
-
-
-                <label class="event-option">
-
-                    <input
-                        type="checkbox"
-                        name="Events"
-                        value="Robo War"
-                    >
-
-                    <span class="event-box">
-
-                        <span class="event-icon">
-                            <i class="fa-solid fa-shield-halved"></i>
-                        </span>
-
-                        <span>
-
-                            <strong>
-                                Robo War
-                            </strong>
-
-                            <small>
-                                Battle Arena
-                            </small>
-
-                        </span>
-
-                        <i class="fa-solid fa-check event-check"></i>
-
-                    </span>
-
-                </label>
-
-
-
-                <label class="event-option">
-
-                    <input
-                        type="checkbox"
-                        name="Events"
-                        value="Robo Tug of War"
-                    >
-
-                    <span class="event-box">
-
-                        <span class="event-icon">
-                            <i class="fa-solid fa-arrows-left-right"></i>
-                        </span>
-
-                        <span>
-
-                            <strong>
-                                Robo Tug of War
-                            </strong>
-
-                            <small>
-                                Power Contest
-                            </small>
-
-                        </span>
-
-                        <i class="fa-solid fa-check event-check"></i>
-
-                    </span>
-
-                </label>
-
-
-
-                <label class="event-option">
-
-                    <input
-                        type="checkbox"
-                        name="Events"
-                        value="Robo Soccer"
-                    >
-
-                    <span class="event-box">
-
-                        <span class="event-icon">
-                            <i class="fa-solid fa-futbol"></i>
-                        </span>
-
-                        <span>
-
-                            <strong>
-                                Robo Soccer
-                            </strong>
-
-                            <small>
-                                Team Game
-                            </small>
-
-                        </span>
-
-                        <i class="fa-solid fa-check event-check"></i>
-
-                    </span>
-
-                </label>
-
-            </div>
-
-
-            <p
-                id="eventError"
-                class="form-error"
-            ></p>
-
-        </div>
-
-
-
-        <!-- TEAM SIZE -->
-
-        <div class="form-section">
-
-            <div class="form-section-title">
-
-                <span>
-                    03
-                </span>
-
-                <div>
-
-                    <h4>
-                        Team Details
-                    </h4>
-
-                    <p>
-                        Add your team members.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="input-group team-size-group">
-
-                <label for="teamSize">
-                    Select Team Size
-                    <span>*</span>
-                </label>
-
-                <div class="input-box">
-
-                    <i class="fa-solid fa-people-group"></i>
-
-                    <select
-                        id="teamSize"
-                        name="TeamSize"
-                        required
-                    >
-
-                        <option value="">
-                            Select team size
-                        </option>
-
-                        <option value="1">
-                            1 Member
-                        </option>
-
-                        <option value="2">
-                            2 Members
-                        </option>
-
-                        <option value="3">
-                            3 Members
-                        </option>
-
-                        <option value="4">
-                            4 Members
-                        </option>
-
-                        <option value="5">
-                            5 Members
-                        </option>
-
-                    </select>
-
-                </div>
-
-            </div>
-
-
-
-            <div
-                id="membersContainer"
-                class="members-container"
-            ></div>
-
-        </div>
-
-
-
-        <!-- SUBMIT -->
-
-        <div class="form-submit-area">
-
-            <button
-                type="submit"
-                id="submitRegistration"
-                class="btn btn-primary submit-btn"
-            >
-
-                <i class="fa-solid fa-rocket"></i>
-
-                <span>
-                    Register My Team
-                </span>
-
-            </button>
-
-
-            <p>
-
-                <i class="fa-solid fa-lock"></i>
-
-                Your registration information is securely stored.
-
-            </p>
-
-        </div>
-
-
-        <div
-            id="formMessage"
-            class="form-message"
-        ></div>
-
-    </form>
-
-</section>
-
-
-
-<!-- =====================================================
-     EVENTS
-===================================================== -->
-
-<section
-    id="events"
-    class="section"
->
-
-    <div class="section-heading">
-
-        <span>
-            03 / EVENTS
-        </span>
-
-        <h2>
-            CHOOSE YOUR
-            <strong>ARENA</strong>
-        </h2>
-
-        <p>
-            Four challenges. One championship.
-        </p>
-
-    </div>
-
-
-    <div class="events-grid">
-
-
-        <article class="competition-card">
-
-            <div class="competition-number">
-                01
-            </div>
-
-            <div class="competition-icon">
-                <i class="fa-solid fa-flag-checkered"></i>
-            </div>
-
-            <h3>
-                Robo Race
-            </h3>
-
-            <span>
-                SPEED CHALLENGE
+            <span class="section-label">
+                06 / REGISTRATION
             </span>
-
-            <p>
-                Build a fast and precise robot capable
-                of completing the challenging race track.
-            </p>
-
-
-            <ul>
-
-                <li>
-                    Robot must complete the track
-                </li>
-
-                <li>
-                    Maximum size: 30 × 30 cm
-                </li>
-
-                <li>
-                    No manual control after start
-                </li>
-
-                <li>
-                    Fastest robot wins
-                </li>
-
-            </ul>
-
-        </article>
-
-
-
-        <article class="competition-card">
-
-            <div class="competition-number">
-                02
-            </div>
-
-            <div class="competition-icon">
-                <i class="fa-solid fa-shield-halved"></i>
-            </div>
-
-            <h3>
-                Robo War
-            </h3>
-
-            <span>
-                BATTLE ARENA
-            </span>
-
-            <p>
-                Test your robot's strength, strategy
-                and control inside the battle arena.
-            </p>
-
-
-            <ul>
-
-                <li>
-                    Robot must stay within weight limit
-                </li>
-
-                <li>
-                    No flame or liquid weapons
-                </li>
-
-                <li>
-                    Push opponent outside arena
-                </li>
-
-                <li>
-                    Judges' decision is final
-                </li>
-
-            </ul>
-
-        </article>
-
-
-
-        <article class="competition-card">
-
-            <div class="competition-number">
-                03
-            </div>
-
-            <div class="competition-icon">
-                <i class="fa-solid fa-arrows-left-right"></i>
-            </div>
-
-            <h3>
-                Robo Tug of War
-            </h3>
-
-            <span>
-                POWER CONTEST
-            </span>
-
-            <p>
-                Test motor power, traction and engineering
-                against another powerful robot.
-            </p>
-
-
-            <ul>
-
-                <li>
-                    Robot must pull opponent
-                </li>
-
-                <li>
-                    No external support
-                </li>
-
-                <li>
-                    Wired or wireless control allowed
-                </li>
-
-                <li>
-                    Engineering strength matters
-                </li>
-
-            </ul>
-
-        </article>
-
-
-
-        <article class="competition-card">
-
-            <div class="competition-number">
-                04
-            </div>
-
-            <div class="competition-icon">
-                <i class="fa-solid fa-futbol"></i>
-            </div>
-
-            <h3>
-                Robo Soccer
-            </h3>
-
-            <span>
-                TEAM GAME
-            </span>
-
-            <p>
-                Control your robot, score goals and
-                demonstrate teamwork on the field.
-            </p>
-
-
-            <ul>
-
-                <li>
-                    Score maximum goals
-                </li>
-
-                <li>
-                    No external support
-                </li>
-
-                <li>
-                    Team coordination required
-                </li>
-
-                <li>
-                    Fair play is compulsory
-                </li>
-
-            </ul>
-
-        </article>
-
-    </div>
-
-</section>
-
-
-
-<!-- =====================================================
-     MESSAGE
-===================================================== -->
-
-<section
-    id="message"
-    class="section message-section"
->
-
-    <div class="message-card glass-card">
-
-
-        <div class="message-image">
-
-            <img
-                src="https://i.ibb.co/spL8t7cv/Army-Welfare-Education-Society-logo-1.png"
-                alt="APS"
-            >
-
-        </div>
-
-
-        <div class="message-content">
-
-            <span>
-                04 / MESSAGE
-            </span>
-
 
             <h2>
-                INSPIRING
-                <strong>YOUNG INNOVATORS</strong>
+                REGISTER YOUR
+                <span>
+                    TEAM
+                </span>
             </h2>
 
-
             <p>
-
-                Welcome to APS Robotics Championship 2026.
-
-                Robotics is about creativity, teamwork,
-                innovation and problem solving.
-
+                Enter your details carefully before submitting.
             </p>
 
-
-            <p>
-
-                I encourage every participant to compete
-                with confidence, respect and determination.
-
-                Let your ideas inspire the future.
-
-            </p>
+        </div>
 
 
-            <div class="teacher">
+        <div class="registration-wrapper">
 
-                <strong>
-                    Ms. Akansha Rani
-                </strong>
 
-                <span>
-                    Tinkering Lab Incharge
-                </span>
+            <div class="registration-side">
 
-                <small>
-                    Army Public School, Lal Bahadur Shastri Marg
-                </small>
+
+                <div class="register-intro">
+
+                    <div class="register-icon">
+
+                        <i class="fa-solid fa-robot"></i>
+
+                    </div>
+
+
+                    <h3>
+                        Ready to enter the arena?
+                    </h3>
+
+
+                    <p>
+                        Complete the registration form to
+                        participate in APS Robotics Championship 2026.
+                    </p>
+
+                </div>
+
+
+                <div class="register-points">
+
+                    <div>
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        <span>
+                            Enter accurate team information
+                        </span>
+
+                    </div>
+
+
+                    <div>
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        <span>
+                            Select one or more events
+                        </span>
+
+                    </div>
+
+
+                    <div>
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        <span>
+                            Add your team members
+                        </span>
+
+                    </div>
+
+
+                    <div>
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        <span>
+                            Keep your Registration ID
+                        </span>
+
+                    </div>
+
+                </div>
 
             </div>
+
+
+
+            <!-- FORM -->
+
+            <form
+                id="registrationForm"
+                class="registration-form"
+                autocomplete="on"
+            >
+
+
+                <div class="form-section-title">
+
+                    <span>
+                        01
+                    </span>
+
+                    <div>
+
+                        <h3>
+                            Team Information
+                        </h3>
+
+                        <p>
+                            Enter the team leader details.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+                        <label for="studentName">
+                            Team Leader Name
+                            <span>*</span>
+                        </label>
+
+                        <div class="input-box">
+
+                            <i class="fa-solid fa-user"></i>
+
+                            <input
+                                type="text"
+                                id="studentName"
+                                name="StudentName"
+                                placeholder="Enter student name"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="teamName">
+                            Team Name
+                            <span>*</span>
+                        </label>
+
+                        <div class="input-box">
+
+                            <i class="fa-solid fa-users"></i>
+
+                            <input
+                                type="text"
+                                id="teamName"
+                                name="TeamName"
+                                placeholder="Enter team name"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="className">
+                            Class
+                            <span>*</span>
+                        </label>
+
+                        <div class="input-box">
+
+                            <i class="fa-solid fa-school"></i>
+
+                            <input
+                                type="text"
+                                id="className"
+                                name="Class"
+                                placeholder="Example: IX"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="section">
+                            Section
+                            <span>*</span>
+                        </label>
+
+                        <div class="input-box">
+
+                            <i class="fa-solid fa-layer-group"></i>
+
+                            <input
+                                type="text"
+                                id="section"
+                                name="Section"
+                                placeholder="Example: A"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="mobileNumber">
+                            Mobile Number
+                            <span>*</span>
+                        </label>
+
+                        <div class="input-box">
+
+                            <i class="fa-solid fa-phone"></i>
+
+                            <input
+                                type="tel"
+                                id="mobileNumber"
+                                name="MobileNumber"
+                                placeholder="Enter mobile number"
+                                inputmode="numeric"
+                                maxlength="10"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="emailAddress">
+                            Email Address
+                            <span>*</span>
+                        </label>
+
+                        <div class="input-box">
+
+                            <i class="fa-solid fa-envelope"></i>
+
+                            <input
+                                type="email"
+                                id="emailAddress"
+                                name="EmailAddress"
+                                placeholder="Enter email address"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- EVENTS -->
+
+                <div class="form-section-title">
+
+                    <span>
+                        02
+                    </span>
+
+                    <div>
+
+                        <h3>
+                            Select Event(s)
+                        </h3>
+
+                        <p>
+                            You can select more than one event.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="event-selection"
+                    id="eventSelection"
+                >
+
+
+                    <label class="event-option">
+
+                        <input
+                            type="checkbox"
+                            name="Events"
+                            value="Robo Race"
+                        >
+
+                        <span class="event-option-box">
+
+                            <i class="fa-solid fa-flag-checkered"></i>
+
+                            <span>
+                                Robo Race
+                            </span>
+
+                        </span>
+
+                    </label>
+
+
+                    <label class="event-option">
+
+                        <input
+                            type="checkbox"
+                            name="Events"
+                            value="Robo War"
+                        >
+
+                        <span class="event-option-box">
+
+                            <i class="fa-solid fa-shield-halved"></i>
+
+                            <span>
+                                Robo War
+                            </span>
+
+                        </span>
+
+                    </label>
+
+
+                    <label class="event-option">
+
+                        <input
+                            type="checkbox"
+                            name="Events"
+                            value="Robo Tug of War"
+                        >
+
+                        <span class="event-option-box">
+
+                            <i class="fa-solid fa-arrows-left-right"></i>
+
+                            <span>
+                                Robo Tug of War
+                            </span>
+
+                        </span>
+
+                    </label>
+
+
+                    <label class="event-option">
+
+                        <input
+                            type="checkbox"
+                            name="Events"
+                            value="Robo Soccer"
+                        >
+
+                        <span class="event-option-box">
+
+                            <i class="fa-solid fa-futbol"></i>
+
+                            <span>
+                                Robo Soccer
+                            </span>
+
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <p
+                    class="form-error"
+                    id="eventError"
+                ></p>
+
+
+
+                <!-- TEAM MEMBERS -->
+
+                <div class="form-section-title">
+
+                    <span>
+                        03
+                    </span>
+
+                    <div>
+
+                        <h3>
+                            Team Members
+                        </h3>
+
+                        <p>
+                            Add additional members if applicable.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="members-container">
+
+
+                    <div class="member-card">
+
+                        <div class="member-heading">
+
+                            <span>
+                                MEMBER 2
+                            </span>
+
+                            <small>
+                                Optional
+                            </small>
+
+                        </div>
+
+
+                        <div class="form-grid">
+
+                            <div class="form-group">
+
+                                <label for="member2Name">
+                                    Name
+                                </label>
+
+                                <div class="input-box">
+
+                                    <i class="fa-solid fa-user"></i>
+
+                                    <input
+                                        type="text"
+                                        id="member2Name"
+                                        name="Member2Name"
+                                        placeholder="Member 2 name"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="member2Class">
+                                    Class
+                                </label>
+
+                                <div class="input-box">
+
+                                    <i class="fa-solid fa-school"></i>
+
+                                    <input
+                                        type="text"
+                                        id="member2Class"
+                                        name="Member2Class"
+                                        placeholder="Class"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="member2Section">
+                                    Section
+                                </label>
+
+                                <div class="input-box">
+
+                                    <i class="fa-solid fa-layer-group"></i>
+
+                                    <input
+                                        type="text"
+                                        id="member2Section"
+                                        name="Member2Section"
+                                        placeholder="Section"
+                                    >
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="member-card">
+
+                        <div class="member-heading">
+
+                            <span>
+                                MEMBER 3
+                            </span>
+
+                            <small>
+                                Optional
+                            </small>
+
+                        </div>
+
+
+                        <div class="form-grid">
+
+                            <div class="form-group">
+
+                                <label for="member3Name">
+                                    Name
+                                </label>
+
+                                <div class="input-box">
+
+                                    <i class="fa-solid fa-user"></i>
+
+                                    <input
+                                        type="text"
+                                        id="member3Name"
+                                        name="Member3Name"
+                                        placeholder="Member 3 name"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="member3Class">
+                                    Class
+                                </label>
+
+                                <div class="input-box">
+
+                                    <i class="fa-solid fa-school"></i>
+
+                                    <input
+                                        type="text"
+                                        id="member3Class"
+                                        name="Member3Class"
+                                        placeholder="Class"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="member3Section">
+                                    Section
+                                </label>
+
+                                <div class="input-box">
+
+                                    <i class="fa-solid fa-layer-group"></i>
+
+                                    <input
+                                        type="text"
+                                        id="member3Section"
+                                        name="Member3Section"
+                                        placeholder="Section"
+                                    >
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="member-card">
+
+                        <div class="member-heading">
+
+                            <span>
+                                MEMBER 4
+                            </span>
+
+                            <small>
+                                Optional
+                            </small>
+
+                        </div>
+
+
+                        <div class="form-grid">
+
+                            <div class="form-group">
+
+                                <label for="member4Name">
+                                    Name
+                                </label>
+
+                                <div class="input-box">
+
+                                    <i class="fa-solid fa-user"></i>
+
+                                    <input
+                                        type="text"
+                                        id="member4Name"
+                                        name="Member4Name"
+                                        placeholder="Member 4 name"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="member4Class">
+                                    Class
+                                </label>
+
+                                <div class="input-box">
+
+                                    <i class="fa-solid fa-school"></i>
+
+                                    <input
+                                        type="text"
+                                        id="member4Class"
+                                        name="Member4Class"
+                                        placeholder="Class"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="member4Section">
+                                    Section
+                                </label>
+
+                                <div class="input-box">
+
+                                    <i class="fa-solid fa-layer-group"></i>
+
+                                    <input
+                                        type="text"
+                                        id="member4Section"
+                                        name="Member4Section"
+                                        placeholder="Section"
+                                    >
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="member-card">
+
+                        <div class="member-heading">
+
+                            <span>
+                                MEMBER 5
+                            </span>
+
+                            <small>
+                                Optional
+                            </small>
+
+                        </div>
+
+
+                        <div class="form-grid">
+
+                            <div class="form-group">
+
+                                <label for="member5Name">
+                                    Name
+                                </label>
+
+                                <div class="input-box">
+
+                                    <i class="fa-solid fa-user"></i>
+
+                                    <input
+                                        type="text"
+                                        id="member5Name"
+                                        name="Member5Name"
+                                        placeholder="Member 5 name"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="member5Class">
+                                    Class
+                                </label>
+
+                                <div class="input-box">
+
+                                    <i class="fa-solid fa-school"></i>
+
+                                    <input
+                                        type="text"
+                                        id="member5Class"
+                                        name="Member5Class"
+                                        placeholder="Class"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="member5Section">
+                                    Section
+                                </label>
+
+                                <div class="input-box">
+
+                                    <i class="fa-solid fa-layer-group"></i>
+
+                                    <input
+                                        type="text"
+                                        id="member5Section"
+                                        name="Member5Section"
+                                        placeholder="Section"
+                                    >
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- REMARKS -->
+
+                <div class="form-section-title">
+
+                    <span>
+                        04
+                    </span>
+
+                    <div>
+
+                        <h3>
+                            Additional Information
+                        </h3>
+
+                        <p>
+                            Add any optional remarks.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="remarks">
+                        Remarks
+                    </label>
+
+                    <div class="input-box textarea-box">
+
+                        <i class="fa-solid fa-message"></i>
+
+                        <textarea
+                            id="remarks"
+                            name="Remarks"
+                            rows="4"
+                            placeholder="Enter any additional information..."
+                        ></textarea>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- SUBMIT -->
+
+                <div class="submit-area">
+
+                    <div class="secure-note">
+
+                        <i class="fa-solid fa-shield-halved"></i>
+
+                        <span>
+                            Your registration is securely
+                            submitted to the APS Robotics system.
+                        </span>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary submit-btn"
+                        id="submitBtn"
+                    >
+
+                        <span class="submit-normal">
+
+                            <i class="fa-solid fa-paper-plane"></i>
+
+                            Submit Registration
+
+                        </span>
+
+
+                        <span
+                            class="submit-loading"
+                            hidden
+                        >
+
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+
+                            Submitting...
+
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+                <p
+                    id="formMessage"
+                    class="form-message"
+                ></p>
+
+            </form>
 
         </div>
 
@@ -1499,104 +2092,106 @@
 
 <!-- =====================================================
      CONTACT
-===================================================== -->
+====================================================== -->
 
 <section
-    id="contact"
     class="section contact-section"
+    id="contact"
 >
 
-    <div class="section-heading">
-
-        <span>
-            05 / CONTACT
-        </span>
-
-        <h2>
-            GET IN
-            <strong>TOUCH</strong>
-        </h2>
-
-        <p>
-            Connect with APS Tinkering Lab.
-        </p>
-
-    </div>
+    <div class="container">
 
 
-    <div class="contact-grid">
+        <div class="section-heading center">
 
-
-        <div class="contact-card glass-card">
-
-            <div class="contact-icon">
-
-                <i class="fa-solid fa-location-dot"></i>
-
-            </div>
-
-            <span>
-                ADDRESS
+            <span class="section-label">
+                07 / CONTACT
             </span>
 
-            <h3>
-                Army Public School
-            </h3>
+            <h2>
+                GET IN
+                <span>
+                    TOUCH
+                </span>
+            </h2>
 
             <p>
-                Lal Bahadur Shastri Marg
-                <br>
-                Lucknow, Uttar Pradesh
+                Contact the APS Tinkering Lab for championship information.
             </p>
 
         </div>
 
 
-
-        <div class="contact-card glass-card">
-
-            <div class="contact-icon">
-
-                <i class="fa-solid fa-phone"></i>
-
-            </div>
-
-            <span>
-                PHONE
-            </span>
-
-            <h3>
-                +91 82670 15188
-            </h3>
-
-            <p>
-                Contact the APS Tinkering Lab
-                for championship information.
-            </p>
-
-        </div>
+        <div class="contact-grid">
 
 
+            <div class="contact-card">
 
-        <div class="contact-card glass-card">
+                <div class="contact-icon">
 
-            <div class="contact-icon">
+                    <i class="fa-solid fa-location-dot"></i>
 
-                <i class="fa-solid fa-envelope"></i>
+                </div>
+
+                <span>
+                    ADDRESS
+                </span>
+
+                <h3>
+                    APS Lal Bahadur Shastri Marg
+                </h3>
+
+                <p>
+                    Lucknow, Uttar Pradesh
+                </p>
 
             </div>
 
-            <span>
-                EMAIL
-            </span>
 
-            <h3>
-                Email Support
-            </h3>
+            <div class="contact-card">
 
-            <p>
-                aayushksingh3746@gmail.com
-            </p>
+                <div class="contact-icon">
+
+                    <i class="fa-solid fa-envelope"></i>
+
+                </div>
+
+                <span>
+                    EMAIL
+                </span>
+
+                <h3>
+                    tinkeringlab@aps.edu.in
+                </h3>
+
+                <p>
+                    APS Tinkering Lab
+                </p>
+
+            </div>
+
+
+            <div class="contact-card">
+
+                <div class="contact-icon">
+
+                    <i class="fa-solid fa-microchip"></i>
+
+                </div>
+
+                <span>
+                    ORGANIZATION
+                </span>
+
+                <h3>
+                    APS Tinkering Lab
+                </h3>
+
+                <p>
+                    APS Robotics Championship 2026
+                </p>
+
+            </div>
 
         </div>
 
@@ -1610,28 +2205,33 @@
 
 <!-- =====================================================
      FOOTER
-===================================================== -->
+====================================================== -->
 
 <footer class="footer">
 
-    <div class="footer-inner">
+    <div class="container footer-inner">
 
 
         <div class="footer-brand">
 
-            <img
-                src="https://i.ibb.co/spL8t7cv/Army-Welfare-Education-Society-logo-1.png"
-                alt="APS Logo"
-            >
+            <div class="footer-logo">
+
+                <img
+                    src="https://i.ibb.co/spL8t7cv/Army-Welfare-Education-Society-logo-1.png"
+                    alt="APS Logo"
+                >
+
+            </div>
+
 
             <div>
 
                 <strong>
-                    APS TINKERING LAB
+                    APS ROBOTICS CHAMPIONSHIP
                 </strong>
 
                 <span>
-                    ROBOTICS CHAMPIONSHIP 2026
+                    2026
                 </span>
 
             </div>
@@ -1639,25 +2239,18 @@
         </div>
 
 
-        <div class="footer-line"></div>
-
-
         <p>
-
-            © 2026 Army Public School,
-            Lal Bahadur Shastri Marg
-
+            © 2026 APS Tinkering Lab. All rights reserved.
         </p>
 
 
         <a
-            href="admin.html"
-            class="admin-link"
+            href="#home"
+            class="back-top"
+            aria-label="Back to top"
         >
 
-            <i class="fa-solid fa-lock"></i>
-
-            Admin
+            <i class="fa-solid fa-arrow-up"></i>
 
         </a>
 
@@ -1669,24 +2262,26 @@
 
 <!-- =====================================================
      TOAST
-===================================================== -->
+====================================================== -->
 
 <div
-    id="toast"
     class="toast"
+    id="toast"
 >
 
     <i class="fa-solid fa-circle-check"></i>
 
     <span id="toastMessage">
-        Registration successful.
+        Registration submitted.
     </span>
 
 </div>
 
 
 
-<!-- JAVASCRIPT -->
+<!-- =====================================================
+     JAVASCRIPT
+====================================================== -->
 
 <script
     type="module"
