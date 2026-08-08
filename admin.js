@@ -1,35 +1,36 @@
-// =====================================================
-// FIREBASE IMPORTS
-// =====================================================
+/* =====================================================
+   APS ROBOTICS CHAMPIONSHIP 2026
+   ADMIN CONTROL PANEL
+   FIREBASE REALTIME DATABASE
+===================================================== */
 
 import {
     initializeApp
-}
-from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 
 import {
-    getFirestore,
-    collection,
-    getDocs,
-    doc,
-    updateDoc,
-    deleteDoc
-}
-from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+    getDatabase,
+    ref,
+    get,
+    update,
+    remove
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 
-
-// =====================================================
-// FIREBASE CONFIG
-// =====================================================
+/* =====================================================
+   FIREBASE CONFIG
+===================================================== */
 
 const firebaseConfig = {
 
-    apiKey: "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
+    apiKey:
+        "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
 
     authDomain:
         "aps-robotics-championship.firebaseapp.com",
+
+    databaseURL:
+        "https://aps-robotics-championship-default-rtdb.firebaseio.com",
 
     projectId:
         "aps-robotics-championship",
@@ -46,647 +47,174 @@ const firebaseConfig = {
 };
 
 
+/* =====================================================
+   INITIALIZE FIREBASE
+===================================================== */
 
 const app =
     initializeApp(firebaseConfig);
 
-
-const db =
-    getFirestore(app);
-
+const database =
+    getDatabase(app);
 
 
-// =====================================================
-// LOGIN
-// =====================================================
+/* =====================================================
+   ADMIN LOGIN
+===================================================== */
 
-window.login = function(){
+window.login = function () {
 
     const username =
         document.getElementById("username").value.trim();
 
     const password =
-        document.getElementById("password").value.trim();
+        document.getElementById("password").value;
 
 
-    const error =
-        document.getElementById("error");
-
-
-    if(
+    if (
         username === "apsadmin" &&
         password === "APS2026@Lab"
-    ){
+    ) {
 
-        document.getElementById("loginScreen")
-            .style.display = "none";
+        document.getElementById("loginScreen").style.display =
+            "none";
 
-
-        document.getElementById("dashboard")
-            .style.display = "block";
-
-
-        error.innerHTML = "";
-
+        document.getElementById("dashboard").style.display =
+            "block";
 
         loadRegistrations();
 
     }
+    else {
 
-    else{
+        const error =
+            document.getElementById("error");
 
         error.innerHTML =
-            "❌ Invalid username or password";
+            "❌ Invalid Login Details";
 
     }
 
 };
 
 
+/* =====================================================
+   LOGOUT
+===================================================== */
 
-// =====================================================
-// LOGOUT
-// =====================================================
+window.logout = function () {
 
-window.logout = function(){
+    document.getElementById("dashboard").style.display =
+        "none";
 
-    document.getElementById("dashboard")
-        .style.display = "none";
-
-
-    document.getElementById("loginScreen")
-        .style.display = "flex";
-
+    document.getElementById("loginScreen").style.display =
+        "flex";
 
     document.getElementById("username").value = "";
 
     document.getElementById("password").value = "";
-
 
     document.getElementById("error").innerHTML = "";
 
 };
 
 
+/* =====================================================
+   ESCAPE HTML
+   Prevents Firebase data from breaking the table
+===================================================== */
 
-// =====================================================
-// LOAD REGISTRATIONS
-// =====================================================
+function escapeHTML(value) {
 
-async function loadRegistrations(){
+    if (
+        value === null ||
+        value === undefined
+    ) {
 
-    const tableBody =
-        document.getElementById("tableBody");
+        return "-";
 
-
-    tableBody.innerHTML = `
-
-        <tr>
-
-            <td colspan="22">
-
-                <div class="loading">
-
-                    <i class="fa-solid fa-spinner fa-spin"></i>
-
-                    Loading registrations...
-
-                </div>
-
-            </td>
-
-        </tr>
-
-    `;
+    }
 
 
-    try{
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* =====================================================
+   GET EVENTS
+===================================================== */
+
+function getEvents(data) {
+
+    if (!data.Events) {
+
+        return [];
+
+    }
+
+
+    if (Array.isArray(data.Events)) {
+
+        return data.Events;
+
+    }
+
+
+    return [data.Events];
+
+}
+
+
+/* =====================================================
+   LOAD REGISTRATIONS
+===================================================== */
+
+async function loadRegistrations() {
+
+    try {
+
+        const registrationsRef =
+            ref(
+                database,
+                "registrations"
+            );
+
 
         const snapshot =
-            await getDocs(
-                collection(db, "registrations")
-            );
+            await get(registrationsRef);
 
 
         let total = 0;
 
         let race = 0;
+
         let war = 0;
+
         let tug = 0;
+
         let soccer = 0;
 
 
-        let rows = "";
+        let table = "";
 
 
-        snapshot.forEach((firebaseDoc) => {
+        if (!snapshot.exists()) {
 
-            const data =
-                firebaseDoc.data();
-
-
-            const firebaseId =
-                firebaseDoc.id;
-
-
-            total++;
-
-
-
-            // =========================================
-            // EVENTS
-            // =========================================
-
-            let events = [];
-
-
-            if(Array.isArray(data.events)){
-
-                events = data.events;
-
-            }
-
-            else if(typeof data.events === "string"){
-
-                events =
-                    data.events
-                    .split(",")
-                    .map(e => e.trim())
-                    .filter(Boolean);
-
-            }
-
-
-            const eventText =
-                events.length
-                ? events.join(", ")
-                : "-";
-
-
-            const eventHTML =
-                events.length
-                ? events.join("<br>")
-                : "-";
-
-
-
-            // =========================================
-            // EVENT COUNTERS
-            // =========================================
-
-            events.forEach(event => {
-
-                const e =
-                    event.toLowerCase();
-
-
-                if(e.includes("robo race"))
-                    race++;
-
-
-                if(e.includes("robo war"))
-                    war++;
-
-
-                if(e.includes("tug of war"))
-                    tug++;
-
-
-                if(e.includes("robo soccer"))
-                    soccer++;
-
-            });
-
-
-
-            // =========================================
-            // TEAM DETAILS
-            // =========================================
-
-            const teamName =
-                data.teamName || "-";
-
-
-            const teamSize =
-                data.teamSize ||
-                data.selectTeamSize ||
-                "-";
-
-
-
-            // =========================================
-            // TEAM LEADER
-            // =========================================
-
-            const leaderName =
-                data.teamLeaderName ||
-                data.studentName ||
-                "-";
-
-
-            const leaderClass =
-                data.teamLeaderClass ||
-                data.class ||
-                data.studentClass ||
-                "-";
-
-
-            const leaderSection =
-                data.teamLeaderSection ||
-                data.section ||
-                "-";
-
-
-
-            // =========================================
-            // MEMBER 2
-            // =========================================
-
-            const member2Name =
-                data.member2Name || "-";
-
-
-            const member2Class =
-                data.member2Class || "-";
-
-
-            const member2Section =
-                data.member2Section || "-";
-
-
-
-            // =========================================
-            // MEMBER 3
-            // =========================================
-
-            const member3Name =
-                data.member3Name || "-";
-
-
-            const member3Class =
-                data.member3Class || "-";
-
-
-            const member3Section =
-                data.member3Section || "-";
-
-
-
-            // =========================================
-            // MEMBER 4
-            // =========================================
-
-            const member4Name =
-                data.member4Name || "-";
-
-
-            const member4Class =
-                data.member4Class || "-";
-
-
-            const member4Section =
-                data.member4Section || "-";
-
-
-
-            // =========================================
-            // MEMBER 5
-            // =========================================
-
-            const member5Name =
-                data.member5Name || "-";
-
-
-            const member5Class =
-                data.member5Class || "-";
-
-
-            const member5Section =
-                data.member5Section || "-";
-
-
-
-            // =========================================
-            // CONTACT
-            // =========================================
-
-            const mobile =
-                data.mobile ||
-                data.mobileNumber ||
-                "-";
-
-
-            const email =
-                data.email ||
-                "-";
-
-
-
-            // =========================================
-            // ESCAPE HTML
-            // =========================================
-
-            const safe = (value) => {
-
-                return String(value)
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;")
-                    .replace(/"/g, "&quot;")
-                    .replace(/'/g, "&#039;");
-
-            };
-
-
-
-            // =========================================
-            // CREATE ROW
-            // =========================================
-
-            rows += `
-
-                <tr
-                    data-search="
-                        ${safe(
-                            data.registrationId || ""
-                        )}
-                        ${safe(leaderName)}
-                        ${safe(teamName)}
-                        ${safe(member2Name)}
-                        ${safe(member3Name)}
-                        ${safe(member4Name)}
-                        ${safe(member5Name)}
-                        ${safe(mobile)}
-                        ${safe(email)}
-                    "
-                >
-
-
-                    <td class="registration-id">
-
-                        ${safe(
-                            data.registrationId ||
-                            firebaseId
-                        )}
-
-                    </td>
-
-
-
-                    <td class="team-name">
-
-                        ${safe(teamName)}
-
-                    </td>
-
-
-
-                    <td>
-
-                        <span class="team-size">
-
-                            ${safe(teamSize)}
-
-                        </span>
-
-                    </td>
-
-
-
-                    <!-- LEADER -->
-
-                    <td class="member-name leader">
-
-                        <i class="fa-solid fa-crown"></i>
-
-                        ${safe(leaderName)}
-
-                    </td>
-
-
-                    <td>
-
-                        ${safe(leaderClass)}
-
-                    </td>
-
-
-                    <td>
-
-                        ${safe(leaderSection)}
-
-                    </td>
-
-
-
-                    <!-- MEMBER 2 -->
-
-                    <td class="member-name">
-
-                        ${safe(member2Name)}
-
-                    </td>
-
-
-                    <td>
-
-                        ${safe(member2Class)}
-
-                    </td>
-
-
-                    <td>
-
-                        ${safe(member2Section)}
-
-                    </td>
-
-
-
-                    <!-- MEMBER 3 -->
-
-                    <td class="member-name">
-
-                        ${safe(member3Name)}
-
-                    </td>
-
-
-                    <td>
-
-                        ${safe(member3Class)}
-
-                    </td>
-
-
-                    <td>
-
-                        ${safe(member3Section)}
-
-                    </td>
-
-
-
-                    <!-- MEMBER 4 -->
-
-                    <td class="member-name">
-
-                        ${safe(member4Name)}
-
-                    </td>
-
-
-                    <td>
-
-                        ${safe(member4Class)}
-
-                    </td>
-
-
-                    <td>
-
-                        ${safe(member4Section)}
-
-                    </td>
-
-
-
-                    <!-- MEMBER 5 -->
-
-                    <td class="member-name">
-
-                        ${safe(member5Name)}
-
-                    </td>
-
-
-                    <td>
-
-                        ${safe(member5Class)}
-
-                    </td>
-
-
-                    <td>
-
-                        ${safe(member5Section)}
-
-                    </td>
-
-
-
-                    <!-- EVENTS -->
-
-                    <td class="events-cell">
-
-                        ${eventHTML}
-
-                    </td>
-
-
-
-                    <!-- MOBILE -->
-
-                    <td>
-
-                        ${safe(mobile)}
-
-                    </td>
-
-
-
-                    <!-- EMAIL -->
-
-                    <td class="email-cell">
-
-                        ${safe(email)}
-
-                    </td>
-
-
-
-                    <!-- ACTION -->
-
-                    <td class="action-buttons">
-
-                        <button
-                            class="edit-btn"
-                            onclick="openEditModal('${firebaseId}')"
-                        >
-
-                            <i class="fa-solid fa-pen"></i>
-
-                        </button>
-
-
-                        <button
-                            class="delete-btn"
-                            onclick="deleteRegistration('${firebaseId}')"
-                        >
-
-                            <i class="fa-solid fa-trash"></i>
-
-                        </button>
-
-                    </td>
-
-
-                </tr>
-
-            `;
-
-        });
-
-
-
-        // =========================================
-        // COUNTERS
-        // =========================================
-
-        document.getElementById("total").textContent =
-            total;
-
-
-        document.getElementById("race").textContent =
-            race;
-
-
-        document.getElementById("war").textContent =
-            war;
-
-
-        document.getElementById("tug").textContent =
-            tug;
-
-
-        document.getElementById("soccer").textContent =
-            soccer;
-
-
-
-        // =========================================
-        // TABLE
-        // =========================================
-
-        if(rows){
-
-            tableBody.innerHTML = rows;
-
-        }
-
-        else{
-
-            tableBody.innerHTML = `
+            document.getElementById("tableBody").innerHTML = `
 
                 <tr>
 
-                    <td colspan="22">
+                    <td colspan="6">
 
-                        <div class="empty-state">
+                        <div class="loading">
 
-                            <i class="fa-solid fa-folder-open"></i>
-
-                            <p>No registrations found</p>
+                            No registrations found.
 
                         </div>
 
@@ -696,33 +224,458 @@ async function loadRegistrations(){
 
             `;
 
+
+            updateStatistics(
+                0,
+                0,
+                0,
+                0,
+                0
+            );
+
+            return;
+
         }
+
+
+        const registrations =
+            snapshot.val();
+
+
+        Object.entries(registrations)
+            .forEach(
+                ([firebaseKey, data]) => {
+
+
+                    total++;
+
+
+                    const events =
+                        getEvents(data);
+
+
+                    if (
+                        events.includes(
+                            "Robo Race"
+                        )
+                    ) {
+
+                        race++;
+
+                    }
+
+
+                    if (
+                        events.includes(
+                            "Robo War"
+                        )
+                    ) {
+
+                        war++;
+
+                    }
+
+
+                    if (
+                        events.includes(
+                            "Robo Tug of War"
+                        )
+                    ) {
+
+                        tug++;
+
+                    }
+
+
+                    if (
+                        events.includes(
+                            "Robo Soccer"
+                        )
+                    ) {
+
+                        soccer++;
+
+                    }
+
+
+                    /* =================================
+                       MEMBER DETAILS
+                    ================================= */
+
+
+                    const member2 =
+                        data.Member2Name
+                            ? `
+                                <div class="member-row">
+                                    <strong>02</strong>
+                                    <div>
+                                        <b>
+                                            ${escapeHTML(
+                                                data.Member2Name
+                                            )}
+                                        </b>
+                                        <small>
+                                            Class:
+                                            ${escapeHTML(
+                                                data.Member2Class || "-"
+                                            )}
+                                            &nbsp; | &nbsp;
+                                            Section:
+                                            ${escapeHTML(
+                                                data.Member2Section || "-"
+                                            )}
+                                        </small>
+                                    </div>
+                                </div>
+                            `
+                            : "";
+
+
+                    const member3 =
+                        data.Member3Name
+                            ? `
+                                <div class="member-row">
+                                    <strong>03</strong>
+                                    <div>
+                                        <b>
+                                            ${escapeHTML(
+                                                data.Member3Name
+                                            )}
+                                        </b>
+                                        <small>
+                                            Class:
+                                            ${escapeHTML(
+                                                data.Member3Class || "-"
+                                            )}
+                                            &nbsp; | &nbsp;
+                                            Section:
+                                            ${escapeHTML(
+                                                data.Member3Section || "-"
+                                            )}
+                                        </small>
+                                    </div>
+                                </div>
+                            `
+                            : "";
+
+
+                    const member4 =
+                        data.Member4Name
+                            ? `
+                                <div class="member-row">
+                                    <strong>04</strong>
+                                    <div>
+                                        <b>
+                                            ${escapeHTML(
+                                                data.Member4Name
+                                            )}
+                                        </b>
+                                        <small>
+                                            Class:
+                                            ${escapeHTML(
+                                                data.Member4Class || "-"
+                                            )}
+                                            &nbsp; | &nbsp;
+                                            Section:
+                                            ${escapeHTML(
+                                                data.Member4Section || "-"
+                                            )}
+                                        </small>
+                                    </div>
+                                </div>
+                            `
+                            : "";
+
+
+                    const member5 =
+                        data.Member5Name
+                            ? `
+                                <div class="member-row">
+                                    <strong>05</strong>
+                                    <div>
+                                        <b>
+                                            ${escapeHTML(
+                                                data.Member5Name
+                                            )}
+                                        </b>
+                                        <small>
+                                            Class:
+                                            ${escapeHTML(
+                                                data.Member5Class || "-"
+                                            )}
+                                            &nbsp; | &nbsp;
+                                            Section:
+                                            ${escapeHTML(
+                                                data.Member5Section || "-"
+                                            )}
+                                        </small>
+                                    </div>
+                                </div>
+                            `
+                            : "";
+
+
+                    const membersHTML = `
+
+                        <div class="team-members">
+
+                            <div class="member-row leader">
+
+                                <strong>01</strong>
+
+                                <div>
+
+                                    <b>
+                                        ${escapeHTML(
+                                            data.StudentName
+                                        )}
+                                    </b>
+
+                                    <small>
+
+                                        Team Leader
+
+                                        • Class:
+                                        ${escapeHTML(
+                                            data.Class || "-"
+                                        )}
+
+                                        • Section:
+                                        ${escapeHTML(
+                                            data.Section || "-"
+                                        )}
+
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                            ${member2}
+
+                            ${member3}
+
+                            ${member4}
+
+                            ${member5}
+
+                        </div>
+
+                    `;
+
+
+                    const eventsHTML =
+                        events.length
+                            ? events.map(
+                                event => `
+                                    <span class="event-tag">
+                                        ${escapeHTML(event)}
+                                    </span>
+                                `
+                            ).join("")
+                            : "-";
+
+
+                    table += `
+
+                        <tr data-id="${escapeHTML(firebaseKey)}">
+
+                            <td>
+
+                                <div class="registration-id">
+
+                                    <strong>
+                                        ${escapeHTML(
+                                            data.registrationId || "-"
+                                        )}
+                                    </strong>
+
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="leader-info">
+
+                                    <strong>
+                                        ${escapeHTML(
+                                            data.StudentName || "-"
+                                        )}
+                                    </strong>
+
+                                    <small>
+
+                                        Class:
+                                        ${escapeHTML(
+                                            data.Class || "-"
+                                        )}
+
+                                        &nbsp; | &nbsp;
+
+                                        Section:
+                                        ${escapeHTML(
+                                            data.Section || "-"
+                                        )}
+
+                                    </small>
+
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="team-info">
+
+                                    <strong>
+
+                                        ${escapeHTML(
+                                            data.TeamName ||
+                                            "Individual"
+                                        )}
+
+                                    </strong>
+
+
+                                    <span>
+
+                                        Team Size:
+                                        ${escapeHTML(
+                                            data.TeamSize || "1"
+                                        )}
+
+                                    </span>
+
+
+                                    ${membersHTML}
+
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="events-list">
+
+                                    ${eventsHTML}
+
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="contact-info">
+
+                                    <a href="tel:${escapeHTML(
+                                        data.MobileNumber || ""
+                                    )}">
+
+                                        <i class="fa-solid fa-phone"></i>
+
+                                        ${escapeHTML(
+                                            data.MobileNumber || "-"
+                                        )}
+
+                                    </a>
+
+
+                                    <a href="mailto:${escapeHTML(
+                                        data.EmailAddress || ""
+                                    )}">
+
+                                        <i class="fa-solid fa-envelope"></i>
+
+                                        ${escapeHTML(
+                                            data.EmailAddress || "-"
+                                        )}
+
+                                    </a>
+
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="action-buttons">
+
+                                    <button
+                                        class="edit-btn"
+                                        onclick="editRegistration('${firebaseKey}')"
+                                    >
+
+                                        <i class="fa-solid fa-pen"></i>
+
+                                    </button>
+
+
+                                    <button
+                                        class="delete-btn"
+                                        onclick="deleteRegistration('${firebaseKey}')"
+                                    >
+
+                                        <i class="fa-solid fa-trash"></i>
+
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    `;
+
+                }
+            );
+
+
+        updateStatistics(
+            total,
+            race,
+            war,
+            tug,
+            soccer
+        );
+
+
+        document.getElementById("tableBody").innerHTML =
+            table;
 
     }
 
 
-    catch(error){
+    catch (error) {
 
-        console.error(error);
+        console.error(
+            "Firebase Error:",
+            error
+        );
 
 
-        tableBody.innerHTML = `
+        document.getElementById("tableBody").innerHTML = `
 
             <tr>
 
-                <td colspan="22">
+                <td colspan="6">
 
-                    <div class="error-state">
+                    <div class="loading">
 
-                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        ❌ Failed to load registrations.
 
-                        <p>
-                            Failed to load registrations
-                        </p>
+                        <br><br>
 
-                        <small>
-                            ${error.message}
-                        </small>
+                        ${escapeHTML(
+                            error.message
+                        )}
 
                     </div>
 
@@ -737,19 +690,47 @@ async function loadRegistrations(){
 }
 
 
+/* =====================================================
+   STATISTICS
+===================================================== */
 
-// =====================================================
-// SEARCH
-// =====================================================
+function updateStatistics(
+    total,
+    race,
+    war,
+    tug,
+    soccer
+) {
 
-window.searchRegistration = function(){
+    document.getElementById("total").innerText =
+        total;
+
+    document.getElementById("race").innerText =
+        race;
+
+    document.getElementById("war").innerText =
+        war;
+
+    document.getElementById("tug").innerText =
+        tug;
+
+    document.getElementById("soccer").innerText =
+        soccer;
+
+}
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+window.searchRegistration = function () {
+
+    const input =
+        document.getElementById("search");
 
     const value =
-        document
-        .getElementById("search")
-        .value
-        .toLowerCase()
-        .trim();
+        input.value.toLowerCase().trim();
 
 
     const rows =
@@ -761,19 +742,17 @@ window.searchRegistration = function(){
     rows.forEach(row => {
 
         const text =
-            (
-                row.getAttribute("data-search") ||
-                row.innerText
-            ).toLowerCase();
+            row.innerText.toLowerCase();
 
 
-        if(text.includes(value)){
+        if (
+            text.includes(value)
+        ) {
 
             row.style.display = "";
 
         }
-
-        else{
+        else {
 
             row.style.display = "none";
 
@@ -784,410 +763,300 @@ window.searchRegistration = function(){
 };
 
 
+/* =====================================================
+   DELETE REGISTRATION
+===================================================== */
 
-// =====================================================
-// EDIT MODAL
-// =====================================================
+window.deleteRegistration = async function (
+    firebaseKey
+) {
 
-let currentEditId = null;
+    const confirmDelete =
+        confirm(
+            "Are you sure you want to delete this registration?"
+        );
 
 
-window.openEditModal = async function(firebaseId){
+    if (!confirmDelete) {
 
-    try{
+        return;
+
+    }
+
+
+    try {
+
+        await remove(
+            ref(
+                database,
+                "registrations/" + firebaseKey
+            )
+        );
+
+
+        alert(
+            "Registration deleted successfully."
+        );
+
+
+        loadRegistrations();
+
+    }
+
+
+    catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Delete failed: " +
+            error.message
+        );
+
+    }
+
+};
+
+
+/* =====================================================
+   EDIT REGISTRATION
+===================================================== */
+
+let currentEditKey = null;
+
+
+window.editRegistration = async function (
+    firebaseKey
+) {
+
+    currentEditKey =
+        firebaseKey;
+
+
+    try {
 
         const snapshot =
-            await getDocs(
-                collection(db, "registrations")
+            await get(
+                ref(
+                    database,
+                    "registrations/" +
+                    firebaseKey
+                )
             );
 
 
-        let selectedData = null;
+        if (!snapshot.exists()) {
 
-
-        snapshot.forEach(firebaseDoc => {
-
-            if(firebaseDoc.id === firebaseId){
-
-                selectedData =
-                    firebaseDoc.data();
-
-            }
-
-        });
-
-
-        if(!selectedData){
-
-            alert("Registration not found.");
+            alert(
+                "Registration not found."
+            );
 
             return;
 
         }
 
 
-        currentEditId =
-            firebaseId;
+        const data =
+            snapshot.val();
 
 
-
-        document.getElementById("editID").textContent =
-            selectedData.registrationId ||
-            firebaseId;
-
-
-
-        document.getElementById("editTeamLeaderName").value =
-            selectedData.teamLeaderName ||
-            selectedData.studentName ||
-            "";
+        document.getElementById(
+            "editID"
+        ).innerText =
+            data.registrationId || "-";
 
 
-        document.getElementById("editTeamLeaderClass").value =
-            selectedData.teamLeaderClass ||
-            selectedData.class ||
-            "";
+        document.getElementById(
+            "editStudentName"
+        ).value =
+            data.StudentName || "";
 
 
-        document.getElementById("editTeamLeaderSection").value =
-            selectedData.teamLeaderSection ||
-            selectedData.section ||
-            "";
+        document.getElementById(
+            "editTeamName"
+        ).value =
+            data.TeamName || "";
 
 
-
-        document.getElementById("editTeamName").value =
-            selectedData.teamName ||
-            "";
-
-
-        document.getElementById("editTeamSize").value =
-            selectedData.teamSize ||
-            "";
+        document.getElementById(
+            "editClass"
+        ).value =
+            data.Class || "";
 
 
-
-        document.getElementById("editMember2Name").value =
-            selectedData.member2Name ||
-            "";
-
-
-        document.getElementById("editMember2Class").value =
-            selectedData.member2Class ||
-            "";
+        document.getElementById(
+            "editSection"
+        ).value =
+            data.Section || "";
 
 
-        document.getElementById("editMember2Section").value =
-            selectedData.member2Section ||
-            "";
+        document.getElementById(
+            "editMobile"
+        ).value =
+            data.MobileNumber || "";
 
 
-
-        document.getElementById("editMember3Name").value =
-            selectedData.member3Name ||
-            "";
-
-
-        document.getElementById("editMember3Class").value =
-            selectedData.member3Class ||
-            "";
-
-
-        document.getElementById("editMember3Section").value =
-            selectedData.member3Section ||
-            "";
-
-
-
-        document.getElementById("editMember4Name").value =
-            selectedData.member4Name ||
-            "";
-
-
-        document.getElementById("editMember4Class").value =
-            selectedData.member4Class ||
-            "";
-
-
-        document.getElementById("editMember4Section").value =
-            selectedData.member4Section ||
-            "";
-
-
-
-        document.getElementById("editMember5Name").value =
-            selectedData.member5Name ||
-            "";
-
-
-        document.getElementById("editMember5Class").value =
-            selectedData.member5Class ||
-            "";
-
-
-        document.getElementById("editMember5Section").value =
-            selectedData.member5Section ||
-            "";
-
-
-
-        document.getElementById("editMobile").value =
-            selectedData.mobile ||
-            selectedData.mobileNumber ||
-            "";
-
-
-        document.getElementById("editEmail").value =
-            selectedData.email ||
-            "";
-
+        document.getElementById(
+            "editEmail"
+        ).value =
+            data.EmailAddress || "";
 
 
         const events =
-            Array.isArray(selectedData.events)
-            ? selectedData.events
-            : [selectedData.events || ""];
+            getEvents(data);
 
 
-        document.getElementById("editEvents").value =
-            events.filter(Boolean).join(", ");
+        document.getElementById(
+            "editEvents"
+        ).value =
+            events.join(", ");
 
 
-
-        document.getElementById("editModal")
-            .classList.add("active");
+        document.getElementById(
+            "editModal"
+        ).classList.add(
+            "active"
+        );
 
     }
 
-    catch(error){
+
+    catch (error) {
 
         console.error(error);
 
-        alert("Unable to open registration.");
+        alert(
+            "Unable to open registration."
+        );
 
     }
 
 };
 
 
+/* =====================================================
+   CLOSE EDIT MODAL
+===================================================== */
 
-// =====================================================
-// CLOSE MODAL
-// =====================================================
+window.closeEditModal = function () {
 
-window.closeEditModal = function(){
+    document.getElementById(
+        "editModal"
+    ).classList.remove(
+        "active"
+    );
 
-    document.getElementById("editModal")
-        .classList.remove("active");
 
-
-    currentEditId = null;
+    currentEditKey =
+        null;
 
 };
 
 
+/* =====================================================
+   SAVE EDIT
+===================================================== */
 
-// =====================================================
-// SAVE EDIT
-// =====================================================
+window.saveEdit = async function () {
 
-window.saveEdit = async function(){
-
-    if(!currentEditId){
+    if (!currentEditKey) {
 
         return;
 
     }
 
 
-    try{
+    try {
 
-        const registrationRef =
-            doc(
-                db,
-                "registrations",
-                currentEditId
-            );
+        const eventsText =
+            document.getElementById(
+                "editEvents"
+            ).value;
 
 
         const events =
-            document
-            .getElementById("editEvents")
-            .value
-            .split(",")
-            .map(event => event.trim())
-            .filter(Boolean);
+            eventsText
+                .split(",")
+                .map(
+                    event =>
+                        event.trim()
+                )
+                .filter(
+                    event =>
+                        event.length > 0
+                );
 
 
+        const changes = {
 
-        await updateDoc(
-            registrationRef,
-            {
+            StudentName:
+                document.getElementById(
+                    "editStudentName"
+                ).value.trim(),
 
-                teamLeaderName:
-                    document
-                    .getElementById(
-                        "editTeamLeaderName"
-                    ).value.trim(),
+            TeamName:
+                document.getElementById(
+                    "editTeamName"
+                ).value.trim(),
 
+            Class:
+                document.getElementById(
+                    "editClass"
+                ).value.trim(),
 
-                teamLeaderClass:
-                    document
-                    .getElementById(
-                        "editTeamLeaderClass"
-                    ).value.trim(),
+            Section:
+                document.getElementById(
+                    "editSection"
+                ).value.trim(),
 
+            MobileNumber:
+                document.getElementById(
+                    "editMobile"
+                ).value.trim(),
 
-                teamLeaderSection:
-                    document
-                    .getElementById(
-                        "editTeamLeaderSection"
-                    ).value.trim(),
+            EmailAddress:
+                document.getElementById(
+                    "editEmail"
+                ).value.trim(),
 
+            Events:
+                events
 
-                teamName:
-                    document
-                    .getElementById(
-                        "editTeamName"
-                    ).value.trim(),
-
-
-                teamSize:
-                    document
-                    .getElementById(
-                        "editTeamSize"
-                    ).value.trim(),
+        };
 
 
+        await update(
 
-                member2Name:
-                    document
-                    .getElementById(
-                        "editMember2Name"
-                    ).value.trim(),
+            ref(
+                database,
+                "registrations/" +
+                currentEditKey
+            ),
 
-
-                member2Class:
-                    document
-                    .getElementById(
-                        "editMember2Class"
-                    ).value.trim(),
-
-
-                member2Section:
-                    document
-                    .getElementById(
-                        "editMember2Section"
-                    ).value.trim(),
-
-
-
-                member3Name:
-                    document
-                    .getElementById(
-                        "editMember3Name"
-                    ).value.trim(),
-
-
-                member3Class:
-                    document
-                    .getElementById(
-                        "editMember3Class"
-                    ).value.trim(),
-
-
-                member3Section:
-                    document
-                    .getElementById(
-                        "editMember3Section"
-                    ).value.trim(),
-
-
-
-                member4Name:
-                    document
-                    .getElementById(
-                        "editMember4Name"
-                    ).value.trim(),
-
-
-                member4Class:
-                    document
-                    .getElementById(
-                        "editMember4Class"
-                    ).value.trim(),
-
-
-                member4Section:
-                    document
-                    .getElementById(
-                        "editMember4Section"
-                    ).value.trim(),
-
-
-
-                member5Name:
-                    document
-                    .getElementById(
-                        "editMember5Name"
-                    ).value.trim(),
-
-
-                member5Class:
-                    document
-                    .getElementById(
-                        "editMember5Class"
-                    ).value.trim(),
-
-
-                member5Section:
-                    document
-                    .getElementById(
-                        "editMember5Section"
-                    ).value.trim(),
-
-
-
-                mobile:
-                    document
-                    .getElementById(
-                        "editMobile"
-                    ).value.trim(),
-
-
-                email:
-                    document
-                    .getElementById(
-                        "editEmail"
-                    ).value.trim(),
-
-
-                events:
-                    events
-
-            }
+            changes
 
         );
 
 
         alert(
-            "✅ Registration updated successfully!"
+            "Registration updated successfully."
         );
 
 
         closeEditModal();
 
-
         loadRegistrations();
 
     }
 
-    catch(error){
+
+    catch (error) {
 
         console.error(error);
 
         alert(
-            "❌ Failed to update registration."
+            "Update failed: " +
+            error.message
         );
 
     }
@@ -1195,171 +1064,267 @@ window.saveEdit = async function(){
 };
 
 
+/* =====================================================
+   DOWNLOAD CSV
+===================================================== */
 
-// =====================================================
-// DELETE REGISTRATION
-// =====================================================
+window.downloadCSV = async function () {
 
-window.deleteRegistration = async function(firebaseId){
+    try {
 
-    const confirmDelete =
-        confirm(
-            "Are you sure you want to permanently delete this registration?"
-        );
-
-
-    if(!confirmDelete){
-
-        return;
-
-    }
-
-
-    try{
-
-        await deleteDoc(
-            doc(
-                db,
-                "registrations",
-                firebaseId
-            )
-        );
-
-
-        alert(
-            "✅ Registration deleted successfully."
-        );
-
-
-        loadRegistrations();
-
-    }
-
-    catch(error){
-
-        console.error(error);
-
-        alert(
-            "❌ Unable to delete registration."
-        );
-
-    }
-
-};
-
-
-
-// =====================================================
-// DOWNLOAD CSV
-// =====================================================
-
-window.downloadCSV = function(){
-
-    const table =
-        document.getElementById(
-            "registrationTable"
-        );
-
-
-    const rows =
-        table.querySelectorAll("tr");
-
-
-    let csv = [];
-
-
-    rows.forEach(row => {
-
-        const cols =
-            row.querySelectorAll(
-                "th, td"
+        const snapshot =
+            await get(
+                ref(
+                    database,
+                    "registrations"
+                )
             );
 
 
-        let rowData = [];
+        if (!snapshot.exists()) {
+
+            alert(
+                "No registrations available."
+            );
+
+            return;
+
+        }
 
 
-        cols.forEach(col => {
-
-            let text =
-                col.innerText
-                .replace(/\n/g, " ")
-                .replace(/"/g, '""')
-                .trim();
+        const registrations =
+            snapshot.val();
 
 
-            rowData.push(
-                `"${text}"`
+        const headers = [
+
+            "Registration ID",
+
+            "Team Leader",
+
+            "Leader Class",
+
+            "Leader Section",
+
+            "Team Name",
+
+            "Team Size",
+
+            "Member 2 Name",
+
+            "Member 2 Class",
+
+            "Member 2 Section",
+
+            "Member 3 Name",
+
+            "Member 3 Class",
+
+            "Member 3 Section",
+
+            "Member 4 Name",
+
+            "Member 4 Class",
+
+            "Member 4 Section",
+
+            "Member 5 Name",
+
+            "Member 5 Class",
+
+            "Member 5 Section",
+
+            "Events",
+
+            "Mobile",
+
+            "Email",
+
+            "Registration Date"
+
+        ];
+
+
+        let csv = [];
+
+
+        csv.push(
+            headers.map(
+                csvEscape
+            ).join(",")
+        );
+
+
+        Object.values(
+            registrations
+        ).forEach(data => {
+
+            const events =
+                getEvents(data);
+
+
+            const row = [
+
+                data.registrationId || "",
+
+                data.StudentName || "",
+
+                data.Class || "",
+
+                data.Section || "",
+
+                data.TeamName || "",
+
+                data.TeamSize || "",
+
+                data.Member2Name || "",
+
+                data.Member2Class || "",
+
+                data.Member2Section || "",
+
+                data.Member3Name || "",
+
+                data.Member3Class || "",
+
+                data.Member3Section || "",
+
+                data.Member4Name || "",
+
+                data.Member4Class || "",
+
+                data.Member4Section || "",
+
+                data.Member5Name || "",
+
+                data.Member5Class || "",
+
+                data.Member5Section || "",
+
+                events.join(" | "),
+
+                data.MobileNumber || "",
+
+                data.EmailAddress || "",
+
+                data.registrationDate || ""
+
+            ];
+
+
+            csv.push(
+                row.map(
+                    csvEscape
+                ).join(",")
             );
 
         });
 
 
-        csv.push(
-            rowData.join(",")
+        const csvFile =
+            new Blob(
+                [csv.join("\n")],
+                {
+                    type:
+                        "text/csv;charset=utf-8;"
+                }
+            );
+
+
+        const link =
+            document.createElement("a");
+
+
+        link.href =
+            URL.createObjectURL(
+                csvFile
+            );
+
+
+        link.download =
+            "APS_Robotics_Championship_2026_Registrations.csv";
+
+
+        document.body.appendChild(
+            link
         );
 
-    });
+
+        link.click();
 
 
-    const blob =
-        new Blob(
-            [csv.join("\n")],
-            {
-                type:"text/csv;charset=utf-8;"
-            }
+        document.body.removeChild(
+            link
         );
 
 
-    const url =
-        URL.createObjectURL(blob);
+    }
 
 
-    const link =
-        document.createElement("a");
+    catch (error) {
 
+        console.error(error);
 
-    link.href = url;
+        alert(
+            "Could not export registrations."
+        );
 
-
-    link.download =
-        "APS_Robotics_Championship_2026_Registrations.csv";
-
-
-    document.body.appendChild(link);
-
-
-    link.click();
-
-
-    document.body.removeChild(link);
-
-
-    URL.revokeObjectURL(url);
+    }
 
 };
 
 
+/* =====================================================
+   CSV ESCAPE
+===================================================== */
 
-// =====================================================
-// CLOSE MODAL WHEN CLICKING OUTSIDE
-// =====================================================
+function csvEscape(value) {
+
+    const text =
+        String(
+            value ?? ""
+        );
+
+
+    if (
+        text.includes(",") ||
+        text.includes('"') ||
+        text.includes("\n")
+    ) {
+
+        return '"' +
+            text.replace(
+                /"/g,
+                '""'
+            ) +
+            '"';
+
+    }
+
+
+    return text;
+
+}
+
+
+/* =====================================================
+   INITIAL STATE
+===================================================== */
 
 document.addEventListener(
-    "click",
-    function(event){
+    "DOMContentLoaded",
+    function () {
 
-        const modal =
+        const dashboard =
             document.getElementById(
-                "editModal"
+                "dashboard"
             );
 
 
-        if(
-            event.target === modal
-        ){
+        if (dashboard) {
 
-            closeEditModal();
+            dashboard.style.display =
+                "none";
 
         }
 
