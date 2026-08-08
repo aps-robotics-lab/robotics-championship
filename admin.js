@@ -43,6 +43,7 @@ const firebaseConfig = {
 
     appId:
         "1:1063542904891:web:82ff9bb3fba0b87384a41e"
+
 };
 
 
@@ -100,25 +101,30 @@ const soccerElement =
    ADMIN LOGIN
 ========================================================= */
 
-/*
-   CHANGE THESE VALUES.
-
-   IMPORTANT:
-   This is only a frontend login.
-   For real security use Firebase Authentication.
-*/
-
 const ADMIN_USERNAME = "admin";
 
 const ADMIN_PASSWORD = "APS2026";
 
 
 /* =========================================================
-   CHECK EXISTING LOGIN
+   REGISTRATION STORAGE
+========================================================= */
+
+let registrations = {};
+
+let editingFirebaseKey = null;
+
+let firebaseListenerStarted = false;
+
+
+/* =========================================================
+   CHECK LOGIN
 ========================================================= */
 
 if (
-    sessionStorage.getItem("apsAdminLoggedIn") === "true"
+    sessionStorage.getItem(
+        "apsAdminLoggedIn"
+    ) === "true"
 ) {
 
     showDashboard();
@@ -131,7 +137,7 @@ if (
 
 
 /* =========================================================
-   LOGIN FUNCTION
+   LOGIN
 ========================================================= */
 
 window.login = function () {
@@ -224,24 +230,32 @@ window.logout = function () {
 
 
 /* =========================================================
-   REGISTRATION DATA
-========================================================= */
-
-let registrations = {};
-
-
-/* =========================================================
    LOAD REGISTRATIONS
 ========================================================= */
 
 function loadRegistrations() {
 
+    if (firebaseListenerStarted) {
+
+        return;
+
+    }
+
+
+    firebaseListenerStarted = true;
+
+
     const registrationsRef =
-        ref(database, "registrations");
+        ref(
+            database,
+            "registrations"
+        );
 
 
     onValue(
+
         registrationsRef,
+
         snapshot => {
 
             registrations =
@@ -250,9 +264,28 @@ function loadRegistrations() {
 
             updateStatistics();
 
-            renderTable(
-                Object.entries(registrations)
-            );
+
+            const entries =
+                Object.entries(
+                    registrations
+                );
+
+
+            const currentSearch =
+                searchInput
+                    ? searchInput.value.trim()
+                    : "";
+
+
+            if (currentSearch) {
+
+                searchRegistration();
+
+            } else {
+
+                renderTable(entries);
+
+            }
 
         },
 
@@ -285,6 +318,7 @@ function loadRegistrations() {
             `;
 
         }
+
     );
 
 }
@@ -297,7 +331,9 @@ function loadRegistrations() {
 function updateStatistics() {
 
     const list =
-        Object.values(registrations);
+        Object.values(
+            registrations
+        );
 
 
     totalElement.textContent =
@@ -316,13 +352,17 @@ function updateStatistics() {
     list.forEach(data => {
 
         const events =
-            getEventsArray(data.Events);
+            getEventsArray(
+                data.Events
+            );
 
 
         events.forEach(event => {
 
             const normalized =
-                event.toLowerCase().trim();
+                String(event)
+                    .toLowerCase()
+                    .trim();
 
 
             if (
@@ -365,19 +405,23 @@ function updateStatistics() {
     });
 
 
-    raceElement.textContent = race;
+    raceElement.textContent =
+        race;
 
-    warElement.textContent = war;
+    warElement.textContent =
+        war;
 
-    tugElement.textContent = tug;
+    tugElement.textContent =
+        tug;
 
-    soccerElement.textContent = soccer;
+    soccerElement.textContent =
+        soccer;
 
 }
 
 
 /* =========================================================
-   CONVERT EVENTS TO ARRAY
+   EVENTS ARRAY
 ========================================================= */
 
 function getEventsArray(events) {
@@ -392,6 +436,15 @@ function getEventsArray(events) {
     if (Array.isArray(events)) {
 
         return events;
+
+    }
+
+
+    if (
+        typeof events === "object"
+    ) {
+
+        return Object.values(events);
 
     }
 
@@ -419,15 +472,66 @@ function escapeHTML(value) {
 
     return String(value)
 
-        .replace(/&/g, "&amp;")
+        .replace(
+            /&/g,
+            "&amp;"
+        )
 
-        .replace(/</g, "&lt;")
+        .replace(
+            /</g,
+            "&lt;"
+        )
 
-        .replace(/>/g, "&gt;")
+        .replace(
+            />/g,
+            "&gt;"
+        )
 
-        .replace(/"/g, "&quot;")
+        .replace(
+            /"/g,
+            "&quot;"
+        )
 
-        .replace(/'/g, "&#039;");
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================================
+   ESCAPE JAVASCRIPT
+========================================================= */
+
+function escapeJS(value) {
+
+    return String(value)
+
+        .replace(
+            /\\/g,
+            "\\\\"
+        )
+
+        .replace(
+            /'/g,
+            "\\'"
+        )
+
+        .replace(
+            /"/g,
+            '\\"'
+        )
+
+        .replace(
+            /\n/g,
+            "\\n"
+        )
+
+        .replace(
+            /\r/g,
+            "\\r"
+        );
 
 }
 
@@ -442,21 +546,33 @@ function getRegistrationID(
 ) {
 
     /*
-       New registrations should contain
-       RegistrationID.
+       Preferred:
 
-       Older registrations may not have it,
-       so Firebase key is used as fallback.
+       RegistrationID
+
+       Older records:
+
+       registrationID
+
+       Final fallback:
+
+       Firebase key
     */
 
-    if (data.RegistrationID) {
+    if (
+        data &&
+        data.RegistrationID
+    ) {
 
         return data.RegistrationID;
 
     }
 
 
-    if (data.registrationID) {
+    if (
+        data &&
+        data.registrationID
+    ) {
 
         return data.registrationID;
 
@@ -501,14 +617,17 @@ function renderTable(entries) {
     }
 
 
-    tableBody.innerHTML = "";
-
-
     /*
-       Newest registrations first
+       Sort newest first.
+
+       Do NOT mutate the original
+       Firebase entries array.
     */
 
-    entries.reverse();
+    entries = [...entries].reverse();
+
+
+    tableBody.innerHTML = "";
 
 
     entries.forEach(
@@ -545,28 +664,27 @@ function renderTable(entries) {
                 );
 
 
-            const eventHTML =
-                events.length
+            let eventHTML = "-";
 
-                ?
 
-                events.map(event => {
+            if (events.length) {
 
-                    return `
+                eventHTML =
+                    events.map(event => {
 
-                        <span class="event-tag">
+                        return `
 
-                            ${escapeHTML(event)}
+                            <span class="event-tag">
 
-                        </span>
+                                ${escapeHTML(event)}
 
-                    `;
+                            </span>
 
-                }).join("")
+                        `;
 
-                :
+                    }).join("");
 
-                "-";
+            }
 
 
             const row =
@@ -594,14 +712,18 @@ function renderTable(entries) {
 
                 <td>
 
-                    ${escapeHTML(student)}
+                    ${escapeHTML(
+                        student
+                    )}
 
                 </td>
 
 
                 <td>
 
-                    ${escapeHTML(team)}
+                    ${escapeHTML(
+                        team
+                    )}
 
                 </td>
 
@@ -619,7 +741,9 @@ function renderTable(entries) {
 
                 <td>
 
-                    ${escapeHTML(mobile)}
+                    ${escapeHTML(
+                        mobile
+                    )}
 
                 </td>
 
@@ -628,40 +752,30 @@ function renderTable(entries) {
 
                     <div class="action-buttons">
 
-
                         <button
-
                             class="edit-btn"
-
                             onclick="openEditModal('${escapeJS(firebaseKey)}')"
-
                             title="Edit Registration"
-
                         >
 
                             <i class="fa-solid fa-pen"></i>
 
-                            Edit
+                            <span>Edit</span>
 
                         </button>
 
 
                         <button
-
                             class="delete-btn"
-
                             onclick="deleteRegistration('${escapeJS(firebaseKey)}')"
-
                             title="Delete Registration"
-
                         >
 
                             <i class="fa-solid fa-trash"></i>
 
-                            Delete
+                            <span>Delete</span>
 
                         </button>
-
 
                     </div>
 
@@ -673,28 +787,8 @@ function renderTable(entries) {
             tableBody.appendChild(row);
 
         }
+
     );
-
-}
-
-
-/* =========================================================
-   ESCAPE JAVASCRIPT VALUE
-========================================================= */
-
-function escapeJS(value) {
-
-    return String(value)
-
-        .replace(/\\/g, "\\\\")
-
-        .replace(/'/g, "\\'")
-
-        .replace(/"/g, '\\"')
-
-        .replace(/\n/g, "\\n")
-
-        .replace(/\r/g, "\\r");
 
 }
 
@@ -708,12 +802,14 @@ function () {
 
     const query =
         searchInput.value
-        .trim()
-        .toLowerCase();
+            .trim()
+            .toLowerCase();
 
 
     const entries =
-        Object.entries(registrations);
+        Object.entries(
+            registrations
+        );
 
 
     if (!query) {
@@ -737,19 +833,37 @@ function () {
 
 
                 const student =
-                    data.StudentName || "";
+                    data.StudentName ||
+                    data.studentName ||
+                    "";
 
 
                 const team =
-                    data.TeamName || "";
+                    data.TeamName ||
+                    data.teamName ||
+                    "";
 
 
                 const mobile =
-                    data.MobileNumber || "";
+                    data.MobileNumber ||
+                    data.mobile ||
+                    "";
 
 
                 const email =
-                    data.EmailAddress || "";
+                    data.EmailAddress ||
+                    data.email ||
+                    "";
+
+
+                const className =
+                    data.Class ||
+                    "";
+
+
+                const section =
+                    data.Section ||
+                    "";
 
 
                 const events =
@@ -758,31 +872,27 @@ function () {
                     ).join(" ");
 
 
-                const searchable = (
+                const searchable = [
 
-                    registrationID +
+                    registrationID,
 
-                    " " +
+                    student,
 
-                    student +
+                    team,
 
-                    " " +
+                    mobile,
 
-                    team +
+                    email,
 
-                    " " +
+                    className,
 
-                    mobile +
-
-                    " " +
-
-                    email +
-
-                    " " +
+                    section,
 
                     events
 
-                ).toLowerCase();
+                ]
+                .join(" ")
+                .toLowerCase();
 
 
                 return searchable.includes(
@@ -799,13 +909,6 @@ function () {
 
 
 /* =========================================================
-   EDIT MODAL
-========================================================= */
-
-let editingFirebaseKey = null;
-
-
-/* =========================================================
    OPEN EDIT MODAL
 ========================================================= */
 
@@ -813,7 +916,9 @@ window.openEditModal =
 function (firebaseKey) {
 
     const data =
-        registrations[firebaseKey];
+        registrations[
+            firebaseKey
+        ];
 
 
     if (!data) {
@@ -847,37 +952,47 @@ function (firebaseKey) {
     document.getElementById(
         "editStudentName"
     ).value =
-        data.StudentName || "";
+        data.StudentName ||
+        data.studentName ||
+        "";
 
 
     document.getElementById(
         "editTeamName"
     ).value =
-        data.TeamName || "";
+        data.TeamName ||
+        data.teamName ||
+        "";
 
 
     document.getElementById(
         "editClass"
     ).value =
-        data.Class || "";
+        data.Class ||
+        "";
 
 
     document.getElementById(
         "editSection"
     ).value =
-        data.Section || "";
+        data.Section ||
+        "";
 
 
     document.getElementById(
         "editMobile"
     ).value =
-        data.MobileNumber || "";
+        data.MobileNumber ||
+        data.mobile ||
+        "";
 
 
     document.getElementById(
         "editEmail"
     ).value =
-        data.EmailAddress || "";
+        data.EmailAddress ||
+        data.email ||
+        "";
 
 
     document.getElementById(
@@ -890,7 +1005,9 @@ function (firebaseKey) {
 
     document.getElementById(
         "editModal"
-    ).classList.add("active");
+    ).classList.add(
+        "active"
+    );
 
 };
 
@@ -902,12 +1019,23 @@ function (firebaseKey) {
 window.closeEditModal =
 function () {
 
-    document.getElementById(
-        "editModal"
-    ).classList.remove("active");
+    const modal =
+        document.getElementById(
+            "editModal"
+        );
 
 
-    editingFirebaseKey = null;
+    if (modal) {
+
+        modal.classList.remove(
+            "active"
+        );
+
+    }
+
+
+    editingFirebaseKey =
+        null;
 
 };
 
@@ -975,7 +1103,10 @@ async function () {
 
         eventsText
             .split(",")
-            .map(event => event.trim())
+            .map(
+                event =>
+                    event.trim()
+            )
             .filter(Boolean)
 
         :
@@ -983,7 +1114,24 @@ async function () {
         [];
 
 
+    const oldData =
+        registrations[
+            editingFirebaseKey
+        ] || {};
+
+
     const changes = {
+
+        /*
+           Preserve the existing
+           registration ID.
+        */
+
+        RegistrationID:
+            getRegistrationID(
+                oldData,
+                editingFirebaseKey
+            ),
 
         StudentName:
             studentName,
@@ -1031,11 +1179,14 @@ async function () {
 
         closeEditModal();
 
-
     }
+
     catch(error) {
 
-        console.error(error);
+        console.error(
+            "Update error:",
+            error
+        );
 
 
         alert(
@@ -1056,10 +1207,16 @@ window.deleteRegistration =
 async function (firebaseKey) {
 
     const data =
-        registrations[firebaseKey];
+        registrations[
+            firebaseKey
+        ];
 
 
     if (!data) {
+
+        alert(
+            "Registration not found."
+        );
 
         return;
 
@@ -1075,21 +1232,24 @@ async function (firebaseKey) {
 
     const student =
         data.StudentName ||
-        "this registration";
+        data.studentName ||
+        "Unknown";
 
 
     const confirmed =
         confirm(
 
-            "Delete registration?\n\n" +
+            "DELETE REGISTRATION?\n\n" +
 
-            "Registration: " +
+            "Registration ID: " +
             registrationID +
 
             "\nStudent: " +
             student +
 
-            "\n\nThis action cannot be undone."
+            "\n\n" +
+
+            "This action cannot be undone."
 
         );
 
@@ -1118,11 +1278,14 @@ async function (firebaseKey) {
             "Registration deleted successfully."
         );
 
-
     }
+
     catch(error) {
 
-        console.error(error);
+        console.error(
+            "Delete error:",
+            error
+        );
 
 
         alert(
@@ -1136,7 +1299,7 @@ async function (firebaseKey) {
 
 
 /* =========================================================
-   CLOSE MODAL WHEN CLICKING OUTSIDE
+   CLOSE MODAL OUTSIDE CLICK
 ========================================================= */
 
 const editModal =
@@ -1152,7 +1315,8 @@ if (editModal) {
         function(event) {
 
             if (
-                event.target === editModal
+                event.target ===
+                editModal
             ) {
 
                 closeEditModal();
@@ -1166,7 +1330,7 @@ if (editModal) {
 
 
 /* =========================================================
-   ESC KEY CLOSE MODAL
+   ESC KEY
 ========================================================= */
 
 document.addEventListener(
@@ -1217,7 +1381,9 @@ window.downloadCSV =
 function () {
 
     const entries =
-        Object.entries(registrations);
+        Object.entries(
+            registrations
+        );
 
 
     if (!entries.length) {
@@ -1251,7 +1417,33 @@ function () {
 
         "Team Size",
 
-        "Remarks"
+        "Member 2 Name",
+
+        "Member 2 Class",
+
+        "Member 2 Section",
+
+        "Member 3 Name",
+
+        "Member 3 Class",
+
+        "Member 3 Section",
+
+        "Member 4 Name",
+
+        "Member 4 Class",
+
+        "Member 4 Section",
+
+        "Member 5 Name",
+
+        "Member 5 Class",
+
+        "Member 5 Section",
+
+        "Remarks",
+
+        "Registration Date"
 
     ];
 
@@ -1299,29 +1491,70 @@ function () {
 
                 data.TeamSize || "",
 
-                data.Remarks || ""
+                data.Member2Name || "",
+
+                data.Member2Class || "",
+
+                data.Member2Section || "",
+
+                data.Member3Name || "",
+
+                data.Member3Class || "",
+
+                data.Member3Section || "",
+
+                data.Member4Name || "",
+
+                data.Member4Class || "",
+
+                data.Member4Section || "",
+
+                data.Member5Name || "",
+
+                data.Member5Class || "",
+
+                data.Member5Section || "",
+
+                data.Remarks || "",
+
+                data.registrationDate || ""
 
             ]);
 
         }
+
     );
 
 
     const csv =
-        rows.map(row => {
 
-            return row.map(value => {
+        rows
 
-                const text =
-                    String(value)
-                    .replace(/"/g, '""');
+            .map(row => {
+
+                return row
+
+                    .map(value => {
+
+                        const text =
+                            String(
+                                value ?? ""
+                            )
+                            .replace(
+                                /"/g,
+                                '""'
+                            );
 
 
-                return `"${text}"`;
+                        return `"${text}"`;
 
-            }).join(",");
+                    })
 
-        }).join("\n");
+                    .join(",");
+
+            })
+
+            .join("\n");
 
 
     const blob =
@@ -1335,36 +1568,47 @@ function () {
 
 
     const url =
-        URL.createObjectURL(blob);
+        URL.createObjectURL(
+            blob
+        );
 
 
     const link =
-        document.createElement("a");
+        document.createElement(
+            "a"
+        );
 
 
-    link.href = url;
+    link.href =
+        url;
 
 
     link.download =
         "APS_Robotics_Registrations_2026.csv";
 
 
-    document.body.appendChild(link);
+    document.body.appendChild(
+        link
+    );
 
 
     link.click();
 
 
-    document.body.removeChild(link);
+    document.body.removeChild(
+        link
+    );
 
 
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(
+        url
+    );
 
 };
 
 
 /* =========================================================
-   INITIAL TABLE STATE
+   INITIAL STATE
 ========================================================= */
 
 if (
@@ -1373,6 +1617,11 @@ if (
     ) === "true"
 ) {
 
-    loadRegistrations();
+    showDashboard();
 
-   }
+}
+else {
+
+    showLogin();
+
+       }
