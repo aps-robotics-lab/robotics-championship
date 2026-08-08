@@ -1,17 +1,19 @@
-/* =====================================================
+/* =========================================================
    APS ROBOTICS CHAMPIONSHIP 2026
-   MAIN WEBSITE SCRIPT
+   MAIN WEBSITE JAVASCRIPT
 
-   Firebase:
-   - Authentication is NOT required for registration
-   - Realtime Database stores registrations
-   - Existing registration structure preserved
-===================================================== */
+   Firebase Realtime Database
+   Registration System
+   Mobile Navigation
+   Smooth Scrolling
+   Preloader
+   Animations
+========================================================= */
 
 
-/* =====================================================
+/* =========================================================
    FIREBASE IMPORTS
-===================================================== */
+========================================================= */
 
 import {
     initializeApp
@@ -28,10 +30,9 @@ import {
 "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 
-
-/* =====================================================
+/* =========================================================
    FIREBASE CONFIG
-===================================================== */
+========================================================= */
 
 const firebaseConfig = {
 
@@ -59,321 +60,196 @@ const firebaseConfig = {
 };
 
 
+/* =========================================================
+   INITIALIZE FIREBASE
+========================================================= */
 
-/* =====================================================
-   FIREBASE INITIALIZATION
-===================================================== */
-
-let database = null;
-
-try {
-
-    const app =
-        initializeApp(firebaseConfig);
-
-    database =
-        getDatabase(app);
-
-}
-catch (error) {
-
-    console.error(
-        "Firebase initialization failed:",
-        error
-    );
-
-}
+const app =
+    initializeApp(firebaseConfig);
 
 
-
-/* =====================================================
-   DOM ELEMENTS
-===================================================== */
-
-const preloader =
-    document.getElementById("preloader");
+const database =
+    getDatabase(app);
 
 
-const loaderProgress =
-    document.getElementById("loaderProgress");
+/* =========================================================
+   DOM READY
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        initPreloader();
+
+        initMobileMenu();
+
+        initSmoothScrolling();
+
+        initHeader();
+
+        initRevealAnimations();
+
+        initActiveNavigation();
+
+        initRegistration();
+
+        initMobileNumber();
+
+    }
+);
 
 
-const loaderStatus =
-    document.getElementById("loaderStatus");
-
-
-const header =
-    document.getElementById("siteHeader");
-
-
-const menuToggle =
-    document.getElementById("menuToggle");
-
-
-const mobileNav =
-    document.getElementById("mobileNav");
-
-
-const registrationForm =
-    document.getElementById("registrationForm");
-
-
-const submitButton =
-    document.getElementById("submitRegistration");
-
-
-const formMessage =
-    document.getElementById("formMessage");
-
-
-const toast =
-    document.getElementById("toast");
-
-
-const toastIcon =
-    document.getElementById("toastIcon");
-
-
-const toastMessage =
-    document.getElementById("toastMessage");
-
-
-
-/* =====================================================
+/* =========================================================
    PRELOADER
-   ALWAYS FINISHES
-===================================================== */
+========================================================= */
 
-function startPreloader() {
+function initPreloader(){
 
-    let progress = 0;
-
-    const statuses = [
-
-        "INITIALIZING ROBOTICS SYSTEM",
-
-        "LOADING CHAMPIONSHIP MODULES",
-
-        "CONNECTING EVENT SYSTEM",
-
-        "SYSTEM ONLINE"
-
-    ];
-
-    let statusIndex = 0;
+    const preloader =
+        document.getElementById(
+            "preloader"
+        );
 
 
-    const interval =
-        setInterval(() => {
-
-            progress +=
-                Math.floor(
-                    Math.random() * 8
-                ) + 4;
+    const loaderProgress =
+        document.getElementById(
+            "loaderProgress"
+        );
 
 
-            if(progress > 100) {
-
-                progress = 100;
-
-            }
-
-
-            if(loaderProgress) {
-
-                loaderProgress.style.width =
-                    progress + "%";
-
-            }
-
-
-            if(
-                progress > 25 &&
-                statusIndex === 0
-            ) {
-
-                statusIndex = 1;
-
-                if(loaderStatus) {
-
-                    loaderStatus.textContent =
-                        statuses[statusIndex];
-
-                }
-
-            }
-
-
-            if(
-                progress > 55 &&
-                statusIndex === 1
-            ) {
-
-                statusIndex = 2;
-
-                if(loaderStatus) {
-
-                    loaderStatus.textContent =
-                        statuses[statusIndex];
-
-                }
-
-            }
-
-
-            if(
-                progress > 85 &&
-                statusIndex === 2
-            ) {
-
-                statusIndex = 3;
-
-                if(loaderStatus) {
-
-                    loaderStatus.textContent =
-                        statuses[statusIndex];
-
-                }
-
-            }
-
-
-            if(progress >= 100) {
-
-                clearInterval(interval);
-
-                setTimeout(
-                    hidePreloader,
-                    250
-                );
-
-            }
-
-        }, 80);
-
-
-    /*
-       SAFETY FALLBACK
-
-       Even if something unexpected happens,
-       the preloader can NEVER stay forever.
-    */
-
-    setTimeout(
-        hidePreloader,
-        1800
-    );
-
-}
-
-
-function hidePreloader() {
-
-    if(!preloader) {
+    if(!preloader){
 
         return;
 
     }
 
 
-    preloader.classList.add(
-        "hidden"
+    /*
+     * Start progress immediately.
+     */
+
+    if(loaderProgress){
+
+        loaderProgress.style.width =
+            "100%";
+
+    }
+
+
+    /*
+     * Always remove the preloader.
+     *
+     * This prevents the site from getting
+     * stuck on the loading screen.
+     */
+
+    const hidePreloader =
+        () => {
+
+            preloader.classList.add(
+                "hide"
+            );
+
+            document.body.style.overflowX =
+                "hidden";
+
+        };
+
+
+    /*
+     * 1.2 second automatic transition.
+     */
+
+    setTimeout(
+        hidePreloader,
+        1200
     );
 
 
-    document.body.classList.remove(
-        "loading"
+    /*
+     * Safety fallback.
+     */
+
+    setTimeout(
+        hidePreloader,
+        2500
     );
-
-
-    setTimeout(() => {
-
-        preloader.style.display =
-            "none";
-
-    }, 800);
 
 }
 
 
-document.addEventListener(
-    "DOMContentLoaded",
-    startPreloader
-);
-
-
-
-/* =====================================================
+/* =========================================================
    MOBILE MENU
-===================================================== */
+========================================================= */
 
-function openMobileMenu() {
+function initMobileMenu(){
 
-    menuToggle.classList.add(
-        "open"
-    );
-
-    mobileNav.classList.add(
-        "open"
-    );
-
-    menuToggle.setAttribute(
-        "aria-expanded",
-        "true"
-    );
-
-    document.body.classList.add(
-        "menu-open"
-    );
-
-}
-
-
-function closeMobileMenu() {
-
-    menuToggle.classList.remove(
-        "open"
-    );
-
-    mobileNav.classList.remove(
-        "open"
-    );
-
-    menuToggle.setAttribute(
-        "aria-expanded",
-        "false"
-    );
-
-    document.body.classList.remove(
-        "menu-open"
-    );
-
-}
-
-
-function toggleMobileMenu() {
-
-    const isOpen =
-        mobileNav.classList.contains(
-            "open"
+    const menuToggle =
+        document.getElementById(
+            "menuToggle"
         );
 
 
-    if(isOpen) {
+    const mobileNav =
+        document.getElementById(
+            "mobileNav"
+        );
 
-        closeMobileMenu();
+
+    if(
+        !menuToggle ||
+        !mobileNav
+    ){
+
+        return;
 
     }
-    else {
 
-        openMobileMenu();
+
+    function openMenu(){
+
+        menuToggle.classList.add(
+            "active"
+        );
+
+        mobileNav.classList.add(
+            "open"
+        );
+
+        menuToggle.setAttribute(
+            "aria-expanded",
+            "true"
+        );
+
+        document.body.classList.add(
+            "menu-open"
+        );
 
     }
 
-}
 
+    function closeMenu(){
 
-if(menuToggle) {
+        menuToggle.classList.remove(
+            "active"
+        );
+
+        mobileNav.classList.remove(
+            "open"
+        );
+
+        menuToggle.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+        document.body.classList.remove(
+            "menu-open"
+        );
+
+    }
+
 
     menuToggle.addEventListener(
         "click",
@@ -383,270 +259,447 @@ if(menuToggle) {
 
             event.stopPropagation();
 
-            toggleMobileMenu();
+
+            if(
+                mobileNav.classList.contains(
+                    "open"
+                )
+            ){
+
+                closeMenu();
+
+            }
+            else{
+
+                openMenu();
+
+            }
 
         }
     );
 
-}
 
-
-/* Close menu when navigation item is clicked */
-
-if(mobileNav) {
+    /*
+     * Close when clicking a mobile link.
+     */
 
     mobileNav
-    .querySelectorAll("a")
-    .forEach(link => {
+    .querySelectorAll(
+        "a"
+    )
+    .forEach(
+        link => {
 
-        link.addEventListener(
-            "click",
-            () => {
+            link.addEventListener(
+                "click",
+                () => {
 
-                closeMobileMenu();
+                    closeMenu();
 
-            }
-        );
-
-    });
-
-}
-
-
-/* Close menu when clicking outside */
-
-document.addEventListener(
-    "click",
-    event => {
-
-        if(
-            mobileNav &&
-            menuToggle &&
-            mobileNav.classList.contains("open") &&
-            !mobileNav.contains(event.target) &&
-            !menuToggle.contains(event.target)
-        ) {
-
-            closeMobileMenu();
+                }
+            );
 
         }
-
-    }
-);
+    );
 
 
+    /*
+     * Close when tapping outside.
+     */
 
-/* =====================================================
-   SMOOTH NAVIGATION
-===================================================== */
-
-document
-.querySelectorAll(
-    'a[href^="#"]'
-)
-.forEach(link => {
-
-    link.addEventListener(
+    document.addEventListener(
         "click",
         event => {
 
-            const targetId =
-                link.getAttribute("href");
-
-
             if(
-                !targetId ||
-                targetId === "#"
-            ) {
+                !mobileNav.contains(event.target) &&
+                !menuToggle.contains(event.target)
+            ){
 
-                return;
-
-            }
-
-
-            const target =
-                document.querySelector(
-                    targetId
-                );
-
-
-            if(!target) {
-
-                return;
+                closeMenu();
 
             }
-
-
-            event.preventDefault();
-
-
-            closeMobileMenu();
-
-
-            const headerHeight =
-                header
-                ? header.offsetHeight
-                : 0;
-
-
-            const targetPosition =
-                target.getBoundingClientRect().top +
-                window.scrollY -
-                headerHeight +
-                1;
-
-
-            window.scrollTo({
-
-                top:
-                    targetPosition,
-
-                behavior:
-                    "smooth"
-
-            });
 
         }
     );
 
-});
+
+    /*
+     * Close with Escape.
+     */
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if(
+                event.key === "Escape"
+            ){
+
+                closeMenu();
+
+            }
+
+        }
+    );
 
 
+    /*
+     * Close if browser becomes desktop width.
+     */
 
-/* =====================================================
-   HEADER SCROLL EFFECT
-===================================================== */
+    window.addEventListener(
+        "resize",
+        () => {
 
-function updateHeader() {
+            if(
+                window.innerWidth > 850
+            ){
 
-    if(!header) {
+                closeMenu();
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   SMOOTH SCROLLING
+========================================================= */
+
+function initSmoothScrolling(){
+
+    const links =
+        document.querySelectorAll(
+            'a[href^="#"]'
+        );
+
+
+    links.forEach(
+        link => {
+
+            link.addEventListener(
+                "click",
+                event => {
+
+                    const href =
+                        link.getAttribute(
+                            "href"
+                        );
+
+
+                    if(
+                        !href ||
+                        href === "#"
+                    ){
+
+                        return;
+
+                    }
+
+
+                    const target =
+                        document.querySelector(
+                            href
+                        );
+
+
+                    if(!target){
+
+                        return;
+
+                    }
+
+
+                    event.preventDefault();
+
+
+                    const header =
+                        document.getElementById(
+                            "header"
+                        );
+
+
+                    const headerHeight =
+                        header
+                        ? header.offsetHeight
+                        : 0;
+
+
+                    const targetTop =
+                        target.getBoundingClientRect()
+                        .top
+                        +
+                        window.scrollY
+                        -
+                        headerHeight
+                        +
+                        1;
+
+
+                    window.scrollTo({
+
+                        top:
+                            Math.max(
+                                0,
+                                targetTop
+                            ),
+
+                        behavior:
+                            "smooth"
+
+                    });
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+function initHeader(){
+
+    const header =
+        document.getElementById(
+            "header"
+        );
+
+
+    if(!header){
 
         return;
 
     }
 
 
-    if(window.scrollY > 30) {
-
-        header.classList.add(
-            "scrolled"
-        );
-
-    }
-    else {
-
-        header.classList.remove(
-            "scrolled"
-        );
-
-    }
-
-}
-
-
-window.addEventListener(
-    "scroll",
-    updateHeader,
-    {
-        passive: true
-    }
-);
-
-
-updateHeader();
-
-
-
-/* =====================================================
-   ACTIVE NAVIGATION
-===================================================== */
-
-const sections =
-    document.querySelectorAll(
-        "main section[id]"
-    );
-
-
-const navLinks =
-    document.querySelectorAll(
-        ".nav-link"
-    );
-
-
-function updateActiveNav() {
-
-    let current =
-        "home";
-
-
-    const scrollPosition =
-        window.scrollY +
-        (header ? header.offsetHeight : 80) +
-        120;
-
-
-    sections.forEach(section => {
+    function updateHeader(){
 
         if(
-            scrollPosition >=
-            section.offsetTop
-        ) {
+            window.scrollY > 25
+        ){
 
-            current =
-                section.id;
+            header.classList.add(
+                "scrolled"
+            );
+
+        }
+        else{
+
+            header.classList.remove(
+                "scrolled"
+            );
 
         }
 
-    });
+    }
 
 
-    navLinks.forEach(link => {
-
-        const href =
-            link.getAttribute("href");
+    updateHeader();
 
 
-        link.classList.toggle(
-            "active",
-            href === "#" + current
-        );
-
-    });
+    window.addEventListener(
+        "scroll",
+        updateHeader,
+        {
+            passive: true
+        }
+    );
 
 }
 
 
-window.addEventListener(
-    "scroll",
-    updateActiveNav,
-    {
-        passive: true
+/* =========================================================
+   REVEAL ANIMATIONS
+========================================================= */
+
+function initRevealAnimations(){
+
+    const elements =
+        document.querySelectorAll(
+            ".reveal"
+        );
+
+
+    if(
+        !elements.length
+    ){
+
+        return;
+
     }
-);
 
 
-updateActiveNav();
+    /*
+     * IntersectionObserver provides
+     * smooth and efficient animations.
+     */
+
+    const observer =
+        new IntersectionObserver(
+            entries => {
+
+                entries.forEach(
+                    entry => {
+
+                        if(
+                            entry.isIntersecting
+                        ){
+
+                            entry.target.classList.add(
+                                "visible"
+                            );
+
+                            observer.unobserve(
+                                entry.target
+                            );
+
+                        }
+
+                    }
+                );
+
+            },
+            {
+                threshold: 0.12
+            }
+        );
 
 
+    elements.forEach(
+        element => {
 
-/* =====================================================
-   MOBILE NUMBER CLEANING
-===================================================== */
+            observer.observe(
+                element
+            );
 
-const mobileInput =
-    document.getElementById(
-        "mobileNumber"
+        }
     );
 
+}
 
-if(mobileInput) {
 
-    mobileInput.addEventListener(
+/* =========================================================
+   ACTIVE NAVIGATION
+========================================================= */
+
+function initActiveNavigation(){
+
+    const sections =
+        document.querySelectorAll(
+            "main section[id]"
+        );
+
+
+    const navLinks =
+        document.querySelectorAll(
+            ".nav-link"
+        );
+
+
+    if(
+        !sections.length ||
+        !navLinks.length
+    ){
+
+        return;
+
+    }
+
+
+    const observer =
+        new IntersectionObserver(
+            entries => {
+
+                entries.forEach(
+                    entry => {
+
+                        if(
+                            entry.isIntersecting
+                        ){
+
+                            const id =
+                                entry.target.id;
+
+
+                            navLinks.forEach(
+                                link => {
+
+                                    const isActive =
+                                        link.getAttribute(
+                                            "href"
+                                        ) ===
+                                        "#" + id;
+
+
+                                    link.classList.toggle(
+                                        "active",
+                                        isActive
+                                    );
+
+                                }
+
+                            );
+
+                        }
+
+                    }
+                );
+
+            },
+            {
+                rootMargin:
+                    "-35% 0px -55% 0px"
+            }
+        );
+
+
+    sections.forEach(
+        section => {
+
+            observer.observe(
+                section
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   MOBILE NUMBER
+========================================================= */
+
+function initMobileNumber(){
+
+    const mobile =
+        document.getElementById(
+            "mobileNumber"
+        );
+
+
+    if(!mobile){
+
+        return;
+
+    }
+
+
+    mobile.addEventListener(
         "input",
         () => {
 
-            mobileInput.value =
-                mobileInput.value
+            mobile.value =
+                mobile.value
                 .replace(
                     /\D/g,
                     ""
@@ -662,344 +715,157 @@ if(mobileInput) {
 }
 
 
+/* =========================================================
+   REGISTRATION
+========================================================= */
 
-/* =====================================================
-   EVENT VALIDATION
-===================================================== */
+function initRegistration(){
 
-function getSelectedEvents() {
-
-    return Array
-        .from(
-            document.querySelectorAll(
-                'input[name="Events"]:checked'
-            )
-        )
-        .map(
-            checkbox =>
-                checkbox.value
-        );
-
-}
-
-
-function validateEvents() {
-
-    const selected =
-        getSelectedEvents();
-
-
-    if(selected.length === 0) {
-
-        showFormMessage(
-            "Please select at least one robotics event.",
-            "error"
+    const form =
+        document.getElementById(
+            "registrationForm"
         );
 
 
-        const eventBox =
-            document.getElementById(
-                "eventSelection"
-            );
+    if(!form){
 
-
-        if(eventBox) {
-
-            eventBox.scrollIntoView({
-
-                behavior: "smooth",
-
-                block: "center"
-
-            });
-
-        }
-
-
-        return false;
+        return;
 
     }
 
 
-    return true;
-
-}
-
-
-
-/* =====================================================
-   EMAIL VALIDATION
-===================================================== */
-
-function isValidEmail(email) {
-
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        .test(email);
-
-}
-
-
-
-/* =====================================================
-   FORM VALIDATION
-===================================================== */
-
-function validateRegistrationForm() {
-
-    const studentName =
-        document
-        .getElementById(
-            "studentName"
-        )
-        .value
-        .trim();
-
-
-    const teamName =
-        document
-        .getElementById(
-            "teamName"
-        )
-        .value
-        .trim();
-
-
-    const studentClass =
-        document
-        .getElementById(
-            "studentClass"
-        )
-        .value
-        .trim();
-
-
-    const studentSection =
-        document
-        .getElementById(
-            "studentSection"
-        )
-        .value
-        .trim();
-
-
-    const mobile =
-        document
-        .getElementById(
-            "mobileNumber"
-        )
-        .value
-        .trim();
-
-
-    const email =
-        document
-        .getElementById(
-            "emailAddress"
-        )
-        .value
-        .trim();
-
-
-    if(studentName.length < 2) {
-
-        showFormMessage(
-            "Please enter the student's name.",
-            "error"
-        );
-
-        return false;
-
-    }
-
-
-    if(teamName.length < 2) {
-
-        showFormMessage(
-            "Please enter a valid team name.",
-            "error"
-        );
-
-        return false;
-
-    }
-
-
-    if(!studentClass) {
-
-        showFormMessage(
-            "Please enter the class.",
-            "error"
-        );
-
-        return false;
-
-    }
-
-
-    if(!studentSection) {
-
-        showFormMessage(
-            "Please enter the section.",
-            "error"
-        );
-
-        return false;
-
-    }
-
-
-    if(!/^[0-9]{10}$/.test(mobile)) {
-
-        showFormMessage(
-            "Please enter a valid 10-digit mobile number.",
-            "error"
-        );
-
-        return false;
-
-    }
-
-
-    if(!isValidEmail(email)) {
-
-        showFormMessage(
-            "Please enter a valid email address.",
-            "error"
-        );
-
-        return false;
-
-    }
-
-
-    if(!validateEvents()) {
-
-        return false;
-
-    }
-
-
-    return true;
-
-}
-
-
-
-/* =====================================================
-   CREATE REGISTRATION ID
-===================================================== */
-
-function createRegistrationId() {
-
-    const now =
-        new Date();
-
-
-    const year =
-        now.getFullYear();
-
-
-    const random =
-        Math.floor(
-            1000 +
-            Math.random() * 9000
-        );
-
-
-    return `APS-RBC-${year}-${random}`;
-
-}
-
-
-
-/* =====================================================
-   GET OPTIONAL TEAM MEMBERS
-===================================================== */
-
-function getMemberData(formData) {
-
-    const members = {};
-
-
-    for(let i = 2; i <= 5; i++) {
-
-        const name =
-            String(
-                formData.get(
-                    `Member${i}Name`
-                ) || ""
-            ).trim();
-
-
-        const className =
-            String(
-                formData.get(
-                    `Member${i}Class`
-                ) || ""
-            ).trim();
-
-
-        const section =
-            String(
-                formData.get(
-                    `Member${i}Section`
-                ) || ""
-            ).trim();
-
-
-        members[
-            `Member${i}Name`
-        ] = name;
-
-
-        members[
-            `Member${i}Class`
-        ] = className;
-
-
-        members[
-            `Member${i}Section`
-        ] = section;
-
-    }
-
-
-    return members;
-
-}
-
-
-
-/* =====================================================
-   SUBMIT REGISTRATION
-===================================================== */
-
-if(registrationForm) {
-
-    registrationForm.addEventListener(
+    form.addEventListener(
         "submit",
         async event => {
 
             event.preventDefault();
 
 
-            if(!validateRegistrationForm()) {
+            const submitButton =
+                document.getElementById(
+                    "submitBtn"
+                );
+
+
+            const formMessage =
+                document.getElementById(
+                    "formMessage"
+                );
+
+
+            const eventError =
+                document.getElementById(
+                    "eventError"
+                );
+
+
+            /*
+             * Reset messages.
+             */
+
+            formMessage.classList.remove(
+                "show"
+            );
+
+            formMessage.textContent =
+                "";
+
+
+            eventError.textContent =
+                "";
+
+
+            /*
+             * Prevent double submission.
+             */
+
+            if(
+                submitButton.disabled
+            ){
 
                 return;
 
             }
 
 
-            if(!database) {
+            /*
+             * Read fields.
+             */
 
-                showFormMessage(
-                    "Database connection is unavailable. Please try again.",
-                    "error"
+            const studentName =
+                getValue(
+                    "studentName"
                 );
 
-                showToast(
-                    "Firebase connection failed.",
-                    "error"
+
+            const teamName =
+                getValue(
+                    "teamName"
+                );
+
+
+            const className =
+                getValue(
+                    "class"
+                );
+
+
+            const section =
+                getValue(
+                    "section"
+                );
+
+
+            const mobileNumber =
+                getValue(
+                    "mobileNumber"
+                );
+
+
+            const emailAddress =
+                getValue(
+                    "emailAddress"
+                );
+
+
+            const remarks =
+                getValue(
+                    "remarks"
+                );
+
+
+            /*
+             * Events.
+             */
+
+            const events =
+                Array.from(
+                    document.querySelectorAll(
+                        'input[name="Events"]:checked'
+                    )
+                )
+                .map(
+                    input =>
+                        input.value
+                );
+
+
+            /*
+             * Basic validation.
+             */
+
+            if(
+                !studentName ||
+                !teamName ||
+                !className ||
+                !section ||
+                !mobileNumber ||
+                !emailAddress
+            ){
+
+                showFormError(
+                    formMessage,
+                    "Please complete all required team leader fields."
                 );
 
                 return;
@@ -1007,130 +873,238 @@ if(registrationForm) {
             }
 
 
-            const originalButton =
-                submitButton.innerHTML;
+            /*
+             * Mobile validation.
+             */
+
+            if(
+                !/^[6-9]\d{9}$/.test(
+                    mobileNumber
+                )
+            ){
+
+                showFormError(
+                    formMessage,
+                    "Please enter a valid 10-digit Indian mobile number."
+                );
+
+                document
+                .getElementById(
+                    "mobileNumber"
+                )
+                .focus();
+
+                return;
+
+            }
 
 
-            submitButton.disabled =
-                true;
+            /*
+             * Email validation.
+             */
+
+            if(
+                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                    .test(emailAddress)
+            ){
+
+                showFormError(
+                    formMessage,
+                    "Please enter a valid email address."
+                );
+
+                return;
+
+            }
 
 
-            submitButton.innerHTML = `
+            /*
+             * At least one event.
+             */
 
-                <i class="fa-solid fa-spinner fa-spin"></i>
+            if(
+                events.length === 0
+            ){
 
-                Submitting...
+                eventError.textContent =
+                    "Please select at least one event.";
 
-            `;
+                document
+                .getElementById(
+                    "eventSelection"
+                )
+                .scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
 
+                return;
 
-            clearFormMessage();
-
-
-            try {
-
-                const formData =
-                    new FormData(
-                        registrationForm
-                    );
-
-
-                const registrationId =
-                    createRegistrationId();
-
-
-                const selectedEvents =
-                    getSelectedEvents();
+            }
 
 
-                const now =
-                    new Date();
+            /*
+             * Team size.
+             */
+
+            const teamSize =
+                calculateTeamSize();
 
 
-                const registrationDate =
-                    now.toISOString();
+            /*
+             * Generate registration ID.
+             */
+
+            const registrationId =
+                generateRegistrationId();
 
 
-                const memberData =
-                    getMemberData(
-                        formData
-                    );
+            /*
+             * Registration date.
+             */
+
+            const registrationDate =
+                new Date().toISOString();
 
 
-                const registrationData = {
+            /*
+             * Collect team members.
+             */
 
-                    registrationId:
-                        registrationId,
+            const member2 =
+                collectMember(2);
 
-                    StudentName:
-                        String(
-                            formData.get(
-                                "StudentName"
-                            ) || ""
-                        ).trim(),
 
-                    TeamName:
-                        String(
-                            formData.get(
-                                "TeamName"
-                            ) || ""
-                        ).trim(),
+            const member3 =
+                collectMember(3);
 
-                    Class:
-                        String(
-                            formData.get(
-                                "Class"
-                            ) || ""
-                        ).trim(),
 
-                    Section:
-                        String(
-                            formData.get(
-                                "Section"
-                            ) || ""
-                        ).trim(),
+            const member4 =
+                collectMember(4);
 
-                    MobileNumber:
-                        String(
-                            formData.get(
-                                "MobileNumber"
-                            ) || ""
-                        ).trim(),
 
-                    EmailAddress:
-                        String(
-                            formData.get(
-                                "EmailAddress"
-                            ) || ""
-                        ).trim(),
+            const member5 =
+                collectMember(5);
 
-                    Events:
-                        selectedEvents,
 
-                    TeamSize:
-                        calculateTeamSize(
-                            memberData
-                        ),
+            /*
+             * Firebase data.
+             *
+             * These field names intentionally
+             * match your existing admin.js.
+             */
 
-                    Remarks:
-                        String(
-                            formData.get(
-                                "Remarks"
-                            ) || ""
-                        ).trim(),
+            const registrationData = {
 
-                    registrationDate:
-                        registrationDate,
+                registrationId:
 
-                    ...memberData
+                    registrationId,
 
-                };
+                registrationDate:
 
+                    registrationDate,
+
+                StudentName:
+
+                    studentName,
+
+                TeamName:
+
+                    teamName,
+
+                Class:
+
+                    className,
+
+                Section:
+
+                    section,
+
+                MobileNumber:
+
+                    mobileNumber,
+
+                EmailAddress:
+
+                    emailAddress,
+
+                Events:
+
+                    events,
+
+                TeamSize:
+
+                    teamSize,
+
+                Member2Name:
+
+                    member2.name,
+
+                Member2Class:
+
+                    member2.className,
+
+                Member2Section:
+
+                    member2.section,
+
+                Member3Name:
+
+                    member3.name,
+
+                Member3Class:
+
+                    member3.className,
+
+                Member3Section:
+
+                    member3.section,
+
+                Member4Name:
+
+                    member4.name,
+
+                Member4Class:
+
+                    member4.className,
+
+                Member4Section:
+
+                    member4.section,
+
+                Member5Name:
+
+                    member5.name,
+
+                Member5Class:
+
+                    member5.className,
+
+                Member5Section:
+
+                    member5.section,
+
+                Remarks:
+
+                    remarks
+
+            };
+
+
+            /*
+             * Start loading state.
+             */
+
+            setSubmitLoading(
+                submitButton,
+                true
+            );
+
+
+            try{
 
                 /*
-                 * Preserve existing Firebase path:
-                 *
-                 * registrations/
+                 * Create new registration.
                  */
 
                 const registrationsRef =
@@ -1146,92 +1120,112 @@ if(registrationForm) {
                     );
 
 
+                /*
+                 * Save data.
+                 */
+
                 await set(
                     newRegistrationRef,
                     registrationData
                 );
 
 
-                showFormMessage(
-                    "Registration submitted successfully.",
-                    "success"
-                );
-
-
-                showToast(
-                    "Registration successful!",
-                    "success"
-                );
-
-
                 /*
-                 * Save temporary local data
-                 * so thankyou.html can display it.
+                 * Save locally so thankyou.html
+                 * can access registration information
+                 * if your thankyou page wants it.
                  */
 
-                try {
+                try{
 
-                    sessionStorage.setItem(
-                        "apsRegistration",
-                        JSON.stringify(
-                            registrationData
-                        )
+                    localStorage.setItem(
+                        "apsLastRegistration",
+                        JSON.stringify({
+                            key:
+                                newRegistrationRef.key,
+                            ...registrationData
+                        })
                     );
 
                 }
-                catch(storageError) {
+                catch(storageError){
 
                     console.warn(
-                        "Session storage unavailable:",
+                        "Local storage unavailable:",
                         storageError
                     );
 
                 }
 
 
-                registrationForm.reset();
+                /*
+                 * Success message.
+                 */
+
+                showToast(
+                    "Registration submitted successfully."
+                );
 
 
                 /*
-                 * Redirect after a short delay.
+                 * Redirect to existing
+                 * thankyou.html.
                  */
 
-                setTimeout(() => {
+                setTimeout(
+                    () => {
 
-                    window.location.href =
-                        "thankyou.html";
+                        window.location.href =
+                            "thankyou.html?id=" +
+                            encodeURIComponent(
+                                registrationId
+                            );
 
-                }, 900);
+                    },
+                    500
+                );
 
             }
-            catch(error) {
+            catch(error){
 
                 console.error(
-                    "Registration error:",
+                    "Firebase registration error:",
                     error
                 );
 
 
-                showFormMessage(
-                    getFirebaseErrorMessage(error),
-                    "error"
+                let message =
+                    "Registration could not be submitted. Please try again.";
+
+
+                if(
+                    error &&
+                    error.code ===
+                    "PERMISSION_DENIED"
+                ){
+
+                    message =
+                        "Firebase permission denied. Please check your Realtime Database rules.";
+
+                }
+
+
+                showFormError(
+                    formMessage,
+                    message
                 );
 
 
                 showToast(
                     "Registration failed.",
-                    "error"
+                    true
                 );
 
-            }
-            finally {
 
-                submitButton.disabled =
-                    false;
-
-
-                submitButton.innerHTML =
-                    originalButton;
+                setSubmitLoading(
+                    submitButton,
+                    false
+                );
 
             }
 
@@ -1241,155 +1235,253 @@ if(registrationForm) {
 }
 
 
+/* =========================================================
+   GET VALUE
+========================================================= */
 
-/* =====================================================
+function getValue(id){
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+
+    if(!element){
+
+        return "";
+
+    }
+
+
+    return element.value.trim();
+
+}
+
+
+/* =========================================================
+   COLLECT MEMBER
+========================================================= */
+
+function collectMember(number){
+
+    const name =
+        getValue(
+            `member${number}Name`
+        );
+
+
+    const className =
+        getValue(
+            `member${number}Class`
+        );
+
+
+    const section =
+        getValue(
+            `member${number}Section`
+        );
+
+
+    return {
+
+        name:
+
+            name,
+
+        className:
+
+            className,
+
+        section:
+
+            section
+
+    };
+
+}
+
+
+/* =========================================================
    TEAM SIZE
-===================================================== */
+========================================================= */
 
-function calculateTeamSize(
-    memberData
-) {
+function calculateTeamSize(){
 
-    let count = 1;
+    let size =
+        1;
 
 
-    for(let i = 2; i <= 5; i++) {
+    for(
+        let i = 2;
+        i <= 5;
+        i++
+    ){
 
         const name =
-            memberData[
-                `Member${i}Name`
-            ];
+            getValue(
+                `member${i}Name`
+            );
 
 
-        if(
-            name &&
-            String(name).trim()
-        ) {
+        if(name){
 
-            count++;
+            size++;
 
         }
 
     }
 
 
-    return count;
+    return size;
 
 }
 
 
+/* =========================================================
+   REGISTRATION ID
+========================================================= */
 
-/* =====================================================
-   FIREBASE ERROR MESSAGE
-===================================================== */
+function generateRegistrationId(){
 
-function getFirebaseErrorMessage(
-    error
-) {
-
-    if(!error) {
-
-        return "Something went wrong. Please try again.";
-
-    }
+    const now =
+        new Date();
 
 
-    const code =
-        error.code || "";
+    const year =
+        now.getFullYear();
 
 
-    switch(code) {
+    const month =
+        String(
+            now.getMonth() + 1
+        )
+        .padStart(
+            2,
+            "0"
+        );
 
-        case "PERMISSION_DENIED":
 
-            return "Registration is currently unavailable. Please contact the organizers.";
+    const day =
+        String(
+            now.getDate()
+        )
+        .padStart(
+            2,
+            "0"
+        );
 
-        case "NETWORK_ERROR":
 
-            return "Network error. Please check your internet connection.";
+    const random =
+        Math
+        .floor(
+            1000 +
+            Math.random() * 9000
+        );
 
-        default:
 
-            return "Unable to submit registration. Please check your connection and try again.";
-
-    }
+    return (
+        "APS-RBC-" +
+        year +
+        month +
+        day +
+        "-" +
+        random
+    );
 
 }
 
 
+/* =========================================================
+   SUBMIT LOADING
+========================================================= */
 
-/* =====================================================
-   FORM MESSAGE
-===================================================== */
+function setSubmitLoading(
+    button,
+    loading
+){
 
-function showFormMessage(
-    message,
-    type
-) {
-
-    if(!formMessage) {
+    if(!button){
 
         return;
 
     }
 
 
-    formMessage.textContent =
+    button.disabled =
+        loading;
+
+
+    button.classList.toggle(
+        "loading",
+        loading
+    );
+
+}
+
+
+/* =========================================================
+   FORM ERROR
+========================================================= */
+
+function showFormError(
+    element,
+    message
+){
+
+    if(!element){
+
+        return;
+
+    }
+
+
+    element.textContent =
         message;
 
 
-    formMessage.className =
-        "form-message show " +
-        type;
+    element.classList.add(
+        "show"
+    );
 
 
-    formMessage.scrollIntoView({
-
+    element.scrollIntoView({
         behavior: "smooth",
-
-        block: "nearest"
-
+        block: "center"
     });
 
 }
 
 
-function clearFormMessage() {
-
-    if(!formMessage) {
-
-        return;
-
-    }
-
-
-    formMessage.textContent =
-        "";
-
-    formMessage.className =
-        "form-message";
-
-}
-
-
-
-/* =====================================================
+/* =========================================================
    TOAST
-===================================================== */
+========================================================= */
 
-let toastTimer = null;
+let toastTimer =
+    null;
 
 
 function showToast(
     message,
-    type = "success"
-) {
+    error = false
+){
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+
+    const toastMessage =
+        document.getElementById(
+            "toastMessage"
+        );
+
 
     if(
         !toast ||
-        !toastMessage ||
-        !toastIcon
-    ) {
+        !toastMessage
+    ){
 
         return;
 
@@ -1400,16 +1492,23 @@ function showToast(
         message;
 
 
-    if(type === "error") {
+    const icon =
+        toast.querySelector(
+            "i"
+        );
 
-        toastIcon.className =
-            "fa-solid fa-circle-exclamation";
 
-    }
-    else {
+    if(icon){
 
-        toastIcon.className =
-            "fa-solid fa-circle-check";
+        icon.className =
+            error
+            ? "fa-solid fa-circle-exclamation"
+            : "fa-solid fa-circle-check";
+
+        icon.style.color =
+            error
+            ? "#ff7180"
+            : "#00ff9d";
 
     }
 
@@ -1425,101 +1524,32 @@ function showToast(
 
 
     toastTimer =
-        setTimeout(() => {
+        setTimeout(
+            () => {
 
-            toast.classList.remove(
-                "show"
-            );
+                toast.classList.remove(
+                    "show"
+                );
 
-        }, 3500);
+            },
+            3500
+        );
 
 }
 
 
-
-/* =====================================================
-   ESCAPE KEY
-===================================================== */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if(
-            event.key === "Escape"
-        ) {
-
-            closeMobileMenu();
-
-        }
-
-    }
-);
-
-
-
-/* =====================================================
-   HANDLE RESIZE
-===================================================== */
-
-window.addEventListener(
-    "resize",
-    () => {
-
-        if(
-            window.innerWidth > 850
-        ) {
-
-            closeMobileMenu();
-
-        }
-
-    }
-);
-
-
-
-/* =====================================================
-   PAGE VISIBILITY
-===================================================== */
+/* =========================================================
+   PAGE VISIBILITY SAFETY
+========================================================= */
 
 document.addEventListener(
     "visibilitychange",
     () => {
 
-        if(
-            !document.hidden
-        ) {
-
-            updateHeader();
-
-            updateActiveNav();
-
-        }
+        /*
+         * Nothing destructive happens when the
+         * user switches browser tabs.
+         */
 
     }
 );
-
-
-
-/* =====================================================
-   FINAL SAFETY
-===================================================== */
-
-/*
- * If DOMContentLoaded somehow happened before
- * the preloader function was attached, this makes
- * sure the preloader still disappears.
- */
-
-if(
-    document.readyState === "interactive" ||
-    document.readyState === "complete"
-) {
-
-    setTimeout(
-        hidePreloader,
-        1600
-    );
-
-}
