@@ -188,7 +188,15 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         </button>
 
     </nav>
+<button
+class="nav-item"
+data-page="emails">
 
+    <i class="fa-solid fa-envelope"></i>
+
+    <span>Email Center</span>
+
+</button>
 
     <div class="sidebar-bottom">
 
@@ -796,7 +804,369 @@ class="page">
 id="eventsPage"
 class="page">
 
+<!-- =====================================================
+     EMAIL CENTER PAGE
+===================================================== -->
 
+<section
+id="emailsPage"
+class="page">
+
+    <div class="page-heading">
+
+        <div>
+
+            <span class="eyebrow">
+                COMMUNICATION
+            </span>
+
+            <h2>
+                Email Center
+            </h2>
+
+            <p>
+                Send registration confirmation emails.
+            </p>
+
+        </div>
+
+        <button
+        class="refresh-btn"
+        id="refreshEmails">
+
+            <i class="fa-solid fa-arrows-rotate"></i>
+
+            Refresh
+
+        </button>
+
+    </div>
+
+
+    <div class="email-center-grid">
+
+
+        <!-- RECIPIENT -->
+
+        <div class="panel email-selection-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="eyebrow">
+                        RECIPIENT
+                    </span>
+
+                    <h3>
+                        Select Registration
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-field">
+
+                <label>
+                    Registered Team
+                </label>
+
+                <select id="emailRegistrationSelect">
+
+                    <option value="">
+                        Select a registration
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div
+            id="emailRecipientInfo"
+            class="email-recipient-info hidden">
+
+                <div class="recipient-icon">
+
+                    <i class="fa-solid fa-user"></i>
+
+                </div>
+
+                <div>
+
+                    <strong id="emailRecipientName">
+                        -
+                    </strong>
+
+                    <span id="emailRecipientEmail">
+                        -
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PREVIEW -->
+
+        <div class="panel email-preview-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="eyebrow">
+                        PREVIEW
+                    </span>
+
+                    <h3>
+                        Registration Confirmation
+                    </h3>
+
+                </div>
+
+                <span
+                id="emailStatus"
+                class="email-status">
+
+                    Draft
+
+                </span>
+
+            </div>
+
+
+            <div class="email-preview">
+
+                <div class="email-preview-header">
+
+                    <div class="email-brand">
+
+                        <img
+                        src="https://i.ibb.co/spL8t7cv/Army-Welfare-Education-SOCIETY-logo-1.png"
+                        alt="APS Logo">
+
+                        <div>
+
+                            <strong>
+                                APS Robotics Championship 2026
+                            </strong>
+
+                            <span>
+                                Army Public School Lal Bahadur Shastri Marg
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="email-preview-body">
+
+                    <h3>
+                        Registration Confirmed! 🎉
+                    </h3>
+
+                    <p>
+                        Dear
+                        <strong id="previewStudentName">
+                            Participant
+                        </strong>,
+                    </p>
+
+                    <p>
+                        Your registration for the
+                        <strong>
+                            APS Robotics Championship 2026
+                        </strong>
+                        has been successfully received.
+                    </p>
+
+
+                    <div class="email-registration-card">
+
+                        <div class="email-detail">
+
+                            <span>
+                                Registration ID
+                            </span>
+
+                            <strong id="previewRegistrationID">
+                                -
+                            </strong>
+
+                        </div>
+
+
+                        <div class="email-detail">
+
+                            <span>
+                                Team Name
+                            </span>
+
+                            <strong id="previewTeamName">
+                                -
+                            </strong>
+
+                        </div>
+
+
+                        <div class="email-detail">
+
+                            <span>
+                                Class
+                            </span>
+
+                            <strong id="previewClass">
+                                -
+                            </strong>
+
+                        </div>
+
+
+                        <div class="email-detail">
+
+                            <span>
+                                Section
+                            </span>
+
+                            <strong id="previewSection">
+                                -
+                            </strong>
+
+                        </div>
+
+
+                        <div class="email-detail full">
+
+                            <span>
+                                Events
+                            </span>
+
+                            <strong id="previewEvents">
+                                -
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <p>
+                        Please keep your Registration ID safely
+                        for future communication.
+                    </p>
+
+                    <p>
+                        We look forward to seeing you at the
+                        championship.
+                    </p>
+
+                    <p>
+                        Regards,<br>
+
+                        <strong>
+                            APS Tinkering Lab
+                        </strong><br>
+
+                        Army Public School Lal Bahadur Shastri Marg
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="email-actions">
+
+                <button
+                type="button"
+                class="send-email-btn"
+                id="sendEmailBtn">
+
+                    <i class="fa-solid fa-paper-plane"></i>
+
+                    Send Confirmation Email
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- EMAIL HISTORY -->
+
+    <div class="panel email-history-panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <span class="eyebrow">
+                    HISTORY
+                </span>
+
+                <h3>
+                    Email History
+                </h3>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Registration ID</th>
+
+                        <th>Recipient</th>
+
+                        <th>Email</th>
+
+                        <th>Status</th>
+
+                        <th>Sent At</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="emailHistoryBody">
+
+                    <tr>
+
+                        <td colspan="5">
+                            No emails sent yet.
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+      
     <div class="page-heading">
 
         <div>
