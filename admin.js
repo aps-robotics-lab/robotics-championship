@@ -66,22 +66,28 @@ window.login = function () {
 
     if (username === "admin" && password === "aps2026") {
 
-        localStorage.setItem("adminLogin", "true");
+        localStorage.setItem(
+            "adminLogin",
+            "true"
+        );
 
-        document.querySelector(".login-box").style.display = "none";
+        document.querySelector(".login-box").style.display =
+            "none";
 
-        document.getElementById("dashboard").style.display = "block";
+        document.getElementById("dashboard").style.display =
+            "block";
 
-        error.innerHTML = "";
+        error.textContent = "";
 
         loadData();
 
     } else {
 
-        error.innerHTML =
+        error.textContent =
             "❌ Invalid Username or Password";
 
     }
+
 };
 
 
@@ -89,13 +95,18 @@ window.login = function () {
 // AUTO LOGIN
 // =====================================================
 
-if (localStorage.getItem("adminLogin") === "true") {
+if (
+    localStorage.getItem("adminLogin") === "true"
+) {
 
-    document.querySelector(".login-box").style.display = "none";
+    document.querySelector(".login-box").style.display =
+        "none";
 
-    document.getElementById("dashboard").style.display = "block";
+    document.getElementById("dashboard").style.display =
+        "block";
 
     loadData();
+
 }
 
 
@@ -108,6 +119,7 @@ window.logout = function () {
     localStorage.removeItem("adminLogin");
 
     location.reload();
+
 };
 
 
@@ -124,136 +136,284 @@ function loadData() {
         ref(database, "registrations");
 
 
-    onValue(dbRef, (snapshot) => {
+    onValue(
+        dbRef,
+        (snapshot) => {
 
-        table.innerHTML = "";
-
-        let total = 0;
-        let race = 0;
-        let war = 0;
-        let tug = 0;
-        let soccer = 0;
+            table.innerHTML = "";
 
 
-        if (!snapshot.exists()) {
+            let total = 0;
+
+            let race = 0;
+
+            let war = 0;
+
+            let tug = 0;
+
+            let soccer = 0;
+
+
+            // ---------------------------------------------
+            // NO DATA
+            // ---------------------------------------------
+
+            if (!snapshot.exists()) {
+
+                table.innerHTML = `
+
+                    <tr>
+
+                        <td colspan="6">
+
+                            <i class="fa-solid fa-circle-info"></i>
+
+                            No registrations found.
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+
+                updateStatistics(
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                );
+
+                return;
+
+            }
+
+
+            // ---------------------------------------------
+            // READ DATA
+            // ---------------------------------------------
+
+            snapshot.forEach(
+                (child) => {
+
+                    total++;
+
+
+                    const data =
+                        child.val();
+
+
+                    const registrationID =
+                        child.key;
+
+
+                    const events =
+                        data.Events || "";
+
+
+                    // -------------------------------------
+                    // EVENT COUNTERS
+                    // -------------------------------------
+
+                    if (
+                        events.includes("Robo Race")
+                    ) {
+
+                        race++;
+
+                    }
+
+
+                    if (
+                        events.includes("Robo War")
+                    ) {
+
+                        war++;
+
+                    }
+
+
+                    if (
+                        events.includes("Robo Tug of War") ||
+                        events.includes("Robo Tug")
+                    ) {
+
+                        tug++;
+
+                    }
+
+
+                    if (
+                        events.includes("Robo Soccer")
+                    ) {
+
+                        soccer++;
+
+                    }
+
+
+                    // -------------------------------------
+                    // CREATE ROW
+                    // -------------------------------------
+
+                    const row =
+                        document.createElement("tr");
+
+
+                    row.innerHTML = `
+
+                        <td>
+                            ${escapeHTML(
+                                registrationID
+                            )}
+                        </td>
+
+
+                        <td>
+                            ${escapeHTML(
+                                data.StudentName || "-"
+                            )}
+                        </td>
+
+
+                        <td>
+                            ${escapeHTML(
+                                data.TeamName || "-"
+                            )}
+                        </td>
+
+
+                        <td>
+                            ${escapeHTML(
+                                events || "-"
+                            )}
+                        </td>
+
+
+                        <td>
+                            ${escapeHTML(
+                                data.MobileNumber || "-"
+                            )}
+                        </td>
+
+
+                        <td class="action-buttons">
+
+
+                            <button
+                                type="button"
+                                class="edit-btn"
+                                onclick="editRegistration('${escapeJS(registrationID)}')"
+                            >
+
+                                <i class="fa-solid fa-pen"></i>
+
+                                Edit
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="delete-btn"
+                                onclick="deleteRegistration('${escapeJS(registrationID)}')"
+                            >
+
+                                <i class="fa-solid fa-trash"></i>
+
+                                Delete
+
+                            </button>
+
+
+                        </td>
+
+                    `;
+
+
+                    table.appendChild(row);
+
+                }
+            );
+
+
+            // ---------------------------------------------
+            // UPDATE STATISTICS
+            // ---------------------------------------------
+
+            updateStatistics(
+                total,
+                race,
+                war,
+                tug,
+                soccer
+            );
+
+        },
+
+
+        (error) => {
+
+            console.error(
+                "Firebase error:",
+                error
+            );
+
 
             table.innerHTML = `
+
                 <tr>
+
                     <td colspan="6">
-                        No registrations found.
+
+                        ❌ Unable to load registrations.
+
+                        <br>
+
+                        ${escapeHTML(
+                            error.message
+                        )}
+
                     </td>
+
                 </tr>
+
             `;
 
-            document.getElementById("total").textContent = 0;
-            document.getElementById("race").textContent = 0;
-            document.getElementById("war").textContent = 0;
-            document.getElementById("tug").textContent = 0;
-            document.getElementById("soccer").textContent = 0;
-
-            return;
         }
+    );
+
+}
 
 
-        snapshot.forEach((child) => {
+// =====================================================
+// UPDATE STATISTICS
+// =====================================================
 
-            total++;
+function updateStatistics(
+    total,
+    race,
+    war,
+    tug,
+    soccer
+) {
 
-            const data = child.val();
+    document.getElementById("total").textContent =
+        total;
 
-            const registrationID = child.key;
+    document.getElementById("race").textContent =
+        race;
 
-            const events = data.Events || "";
+    document.getElementById("war").textContent =
+        war;
 
+    document.getElementById("tug").textContent =
+        tug;
 
-            // EVENT COUNTS
+    document.getElementById("soccer").textContent =
+        soccer;
 
-            if (events.includes("Robo Race")) {
-                race++;
-            }
-
-            if (events.includes("Robo War")) {
-                war++;
-            }
-
-            if (events.includes("Robo Tug of War")) {
-                tug++;
-            }
-
-            if (events.includes("Robo Soccer")) {
-                soccer++;
-            }
-
-
-            // TABLE ROW
-
-            const row =
-                document.createElement("tr");
-
-
-            row.innerHTML = `
-
-                <td>
-                    ${escapeHTML(registrationID)}
-                </td>
-
-                <td>
-                    ${escapeHTML(data.StudentName || "-")}
-                </td>
-
-                <td>
-                    ${escapeHTML(data.TeamName || "-")}
-                </td>
-
-                <td>
-                    ${escapeHTML(events || "-")}
-                </td>
-
-                <td>
-                    ${escapeHTML(data.MobileNumber || "-")}
-                </td>
-
-                <td class="action-buttons">
-
-                    <button
-                        class="edit-btn"
-                        onclick="editRegistration('${escapeJS(registrationID)}')"
-                    >
-                        <i class="fa-solid fa-pen"></i>
-                        Edit
-                    </button>
-
-                    <button
-                        class="delete-btn"
-                        onclick="deleteRegistration('${escapeJS(registrationID)}')"
-                    >
-                        <i class="fa-solid fa-trash"></i>
-                        Delete
-                    </button>
-
-                </td>
-
-            `;
-
-
-            table.appendChild(row);
-
-        });
-
-
-        // UPDATE STATISTICS
-
-        document.getElementById("total").textContent = total;
-
-        document.getElementById("race").textContent = race;
-
-        document.getElementById("war").textContent = war;
-
-        document.getElementById("tug").textContent = tug;
-
-        document.getElementById("soccer").textContent = soccer;
-
-    });
 }
 
 
@@ -261,131 +421,256 @@ function loadData() {
 // EDIT REGISTRATION
 // =====================================================
 
-window.editRegistration = function (registrationID) {
+window.editRegistration = function (
+    registrationID
+) {
 
     const registrationRef =
-        ref(database, "registrations/" + registrationID);
+        ref(
+            database,
+            "registrations/" + registrationID
+        );
 
 
     onValue(
         registrationRef,
+
         (snapshot) => {
 
             if (!snapshot.exists()) {
 
-                alert("Registration not found.");
+                alert(
+                    "❌ Registration not found."
+                );
 
                 return;
+
             }
 
 
-            const data = snapshot.val();
+            const data =
+                snapshot.val();
 
+
+            // ---------------------------------------------
+            // FILL EDIT FORM
+            // ---------------------------------------------
 
             document.getElementById("editID").value =
                 registrationID;
 
-            document.getElementById("editStudentName").value =
+
+            document.getElementById(
+                "editStudentName"
+            ).value =
                 data.StudentName || "";
 
-            document.getElementById("editTeamName").value =
+
+            document.getElementById(
+                "editTeamName"
+            ).value =
                 data.TeamName || "";
 
-            document.getElementById("editClass").value =
+
+            document.getElementById(
+                "editClass"
+            ).value =
                 data.Class || "";
 
-            document.getElementById("editSection").value =
+
+            document.getElementById(
+                "editSection"
+            ).value =
                 data.Section || "";
 
-            document.getElementById("editMobile").value =
+
+            document.getElementById(
+                "editMobile"
+            ).value =
                 data.MobileNumber || "";
 
-            document.getElementById("editEmail").value =
+
+            document.getElementById(
+                "editEmail"
+            ).value =
                 data.Email || "";
 
-            document.getElementById("editEvents").value =
+
+            document.getElementById(
+                "editEvents"
+            ).value =
                 data.Events || "";
 
 
-            document.getElementById("editModal")
+            // ---------------------------------------------
+            // OPEN MODAL
+            // ---------------------------------------------
+
+            document
+                .getElementById("editModal")
                 .classList.add("active");
 
         },
+
         {
             onlyOnce: true
         }
+
     );
+
 };
 
 
 // =====================================================
-// SAVE EDITED REGISTRATION
+// SAVE EDIT
 // =====================================================
 
 window.saveEdit = function () {
 
     const registrationID =
-        document.getElementById("editID").value;
+        document.getElementById("editID").value.trim();
 
 
     if (!registrationID) {
 
-        alert("Registration ID missing.");
+        alert(
+            "❌ Registration ID is missing."
+        );
 
         return;
+
     }
 
 
     const updatedData = {
 
         StudentName:
-            document.getElementById("editStudentName").value.trim(),
+            document
+                .getElementById("editStudentName")
+                .value
+                .trim(),
+
 
         TeamName:
-            document.getElementById("editTeamName").value.trim(),
+            document
+                .getElementById("editTeamName")
+                .value
+                .trim(),
+
 
         Class:
-            document.getElementById("editClass").value.trim(),
+            document
+                .getElementById("editClass")
+                .value
+                .trim(),
+
 
         Section:
-            document.getElementById("editSection").value.trim(),
+            document
+                .getElementById("editSection")
+                .value
+                .trim(),
+
 
         MobileNumber:
-            document.getElementById("editMobile").value.trim(),
+            document
+                .getElementById("editMobile")
+                .value
+                .trim(),
+
 
         Email:
-            document.getElementById("editEmail").value.trim(),
+            document
+                .getElementById("editEmail")
+                .value
+                .trim(),
+
 
         Events:
-            document.getElementById("editEvents").value.trim()
+            document
+                .getElementById("editEvents")
+                .value
+                .trim()
 
     };
 
 
     const registrationRef =
-        ref(database, "registrations/" + registrationID);
+        ref(
+            database,
+            "registrations/" + registrationID
+        );
 
 
-    update(registrationRef, updatedData)
+    // ---------------------------------------------
+    // DISABLE SAVE BUTTON
+    // ---------------------------------------------
+
+    const saveButton =
+        document.querySelector(".save-btn");
+
+
+    if (saveButton) {
+
+        saveButton.disabled = true;
+
+        saveButton.innerHTML = `
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Saving...
+        `;
+
+    }
+
+
+    // ---------------------------------------------
+    // UPDATE FIREBASE
+    // ---------------------------------------------
+
+    update(
+        registrationRef,
+        updatedData
+    )
 
         .then(() => {
 
-            alert("✅ Registration updated successfully.");
+            alert(
+                "✅ Registration updated successfully!"
+            );
+
 
             closeEditModal();
 
         })
 
+
         .catch((error) => {
 
             console.error(error);
+
 
             alert(
                 "❌ Could not update registration.\n\n" +
                 error.message
             );
 
+        })
+
+
+        .finally(() => {
+
+            if (saveButton) {
+
+                saveButton.disabled = false;
+
+                saveButton.innerHTML = `
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Save Changes
+                `;
+
+            }
+
         });
+
 };
 
 
@@ -393,23 +678,42 @@ window.saveEdit = function () {
 // DELETE REGISTRATION
 // =====================================================
 
-window.deleteRegistration = function (registrationID) {
+window.deleteRegistration = function (
+    registrationID
+) {
+
 
     const confirmation =
         confirm(
-            "⚠️ Are you sure you want to delete this registration?\n\n" +
-            "Registration ID: " + registrationID +
-            "\n\nThis action cannot be undone."
+
+            "⚠️ DELETE REGISTRATION\n\n" +
+
+            "Registration ID: " +
+            registrationID +
+
+            "\n\n" +
+
+            "This registration will be permanently deleted." +
+
+            "\n\n" +
+
+            "Do you want to continue?"
+
         );
 
 
     if (!confirmation) {
+
         return;
+
     }
 
 
     const registrationRef =
-        ref(database, "registrations/" + registrationID);
+        ref(
+            database,
+            "registrations/" + registrationID
+        );
 
 
     remove(registrationRef)
@@ -417,21 +721,27 @@ window.deleteRegistration = function (registrationID) {
         .then(() => {
 
             alert(
-                "🗑️ Registration deleted successfully."
+                "🗑️ Registration deleted successfully!"
             );
 
         })
+
 
         .catch((error) => {
 
             console.error(error);
 
+
             alert(
+
                 "❌ Could not delete registration.\n\n" +
+
                 error.message
+
             );
 
         });
+
 };
 
 
@@ -441,10 +751,42 @@ window.deleteRegistration = function (registrationID) {
 
 window.closeEditModal = function () {
 
-    document.getElementById("editModal")
-        .classList.remove("active");
+    const modal =
+        document.getElementById("editModal");
+
+
+    if (modal) {
+
+        modal.classList.remove("active");
+
+    }
 
 };
+
+
+// =====================================================
+// CLOSE MODAL WHEN CLICKING OUTSIDE
+// =====================================================
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        const modal =
+            document.getElementById("editModal");
+
+
+        if (
+            modal &&
+            event.target === modal
+        ) {
+
+            closeEditModal();
+
+        }
+
+    }
+);
 
 
 // =====================================================
@@ -453,34 +795,51 @@ window.closeEditModal = function () {
 
 window.searchRegistration = function () {
 
+    const searchInput =
+        document.getElementById("search");
+
+
+    if (!searchInput) {
+
+        return;
+
+    }
+
+
     const value =
-        document.getElementById("search")
-            .value
+        searchInput.value
             .toLowerCase()
             .trim();
 
 
     const rows =
-        document.querySelectorAll("#tableBody tr");
+        document.querySelectorAll(
+            "#tableBody tr"
+        );
 
 
-    rows.forEach((row) => {
+    rows.forEach(
+        (row) => {
 
-        const text =
-            row.innerText.toLowerCase();
+            const text =
+                row.innerText
+                    .toLowerCase();
 
 
-        if (text.includes(value)) {
+            if (
+                text.includes(value)
+            ) {
 
-            row.style.display = "";
+                row.style.display = "";
 
-        } else {
+            } else {
 
-            row.style.display = "none";
+                row.style.display = "none";
+
+            }
 
         }
-
-    });
+    );
 
 };
 
@@ -491,49 +850,76 @@ window.searchRegistration = function () {
 
 window.downloadCSV = function () {
 
+    const table =
+        document.querySelector("table");
+
+
+    if (!table) {
+
+        return;
+
+    }
+
+
     const rows =
-        document.querySelectorAll("table tr");
+        table.querySelectorAll("tr");
 
 
     const csv = [];
 
 
-    rows.forEach((row) => {
+    rows.forEach(
+        (row) => {
 
-        const cols =
-            row.querySelectorAll("th, td");
-
-
-        const data = [];
-
-
-        cols.forEach((col, index) => {
-
-            // Don't include Action column
-            if (index !== 5) {
-
-                let value =
-                    col.innerText
-                        .replace(/"/g, '""');
+            const cols =
+                row.querySelectorAll(
+                    "th, td"
+                );
 
 
-                data.push(`"${value}"`);
-
-            }
-
-        });
+            const data = [];
 
 
-        csv.push(data.join(","));
+            cols.forEach(
+                (col, index) => {
 
-    });
+                    // Don't export Actions column
+                    if (index !== 5) {
+
+                        const value =
+                            col.innerText
+                                .replace(
+                                    /"/g,
+                                    '""'
+                                );
+
+
+                        data.push(
+                            `"${value}"`
+                        );
+
+                    }
+
+                }
+            );
+
+
+            csv.push(
+                data.join(",")
+            );
+
+        }
+    );
 
 
     const blob =
         new Blob(
-            [csv.join("\n")],
+            [
+                csv.join("\n")
+            ],
             {
-                type: "text/csv;charset=utf-8;"
+                type:
+                    "text/csv;charset=utf-8;"
             }
         );
 
@@ -542,8 +928,11 @@ window.downloadCSV = function () {
         document.createElement("a");
 
 
-    link.href =
+    const url =
         URL.createObjectURL(blob);
+
+
+    link.href = url;
 
 
     link.download =
@@ -552,45 +941,85 @@ window.downloadCSV = function () {
 
     document.body.appendChild(link);
 
+
     link.click();
 
+
     document.body.removeChild(link);
+
+
+    URL.revokeObjectURL(url);
 
 };
 
 
 // =====================================================
-// SECURITY HELPERS FOR TABLE HTML
+// ESCAPE HTML
 // =====================================================
 
 function escapeHTML(value) {
 
     return String(value)
 
-        .replace(/&/g, "&amp;")
+        .replace(
+            /&/g,
+            "&amp;"
+        )
 
-        .replace(/</g, "&lt;")
+        .replace(
+            /</g,
+            "&lt;"
+        )
 
-        .replace(/>/g, "&gt;")
+        .replace(
+            />/g,
+            "&gt;"
+        )
 
-        .replace(/"/g, "&quot;")
+        .replace(
+            /"/g,
+            "&quot;"
+        )
 
-        .replace(/'/g, "&#039;");
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
 }
 
+
+// =====================================================
+// ESCAPE JAVASCRIPT
+// =====================================================
 
 function escapeJS(value) {
 
     return String(value)
 
-        .replace(/\\/g, "\\\\")
+        .replace(
+            /\\/g,
+            "\\\\"
+        )
 
-        .replace(/'/g, "\\'")
+        .replace(
+            /'/g,
+            "\\'"
+        )
 
-        .replace(/"/g, '\\"')
+        .replace(
+            /"/g,
+            '\\"'
+        )
 
-        .replace(/\n/g, "\\n")
+        .replace(
+            /\n/g,
+            "\\n"
+        )
 
-        .replace(/\r/g, "\\r");
+        .replace(
+            /\r/g,
+            "\\r"
+        );
 
-          }
+                }
