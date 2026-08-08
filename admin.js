@@ -1,39 +1,44 @@
 /* =====================================================
    APS ROBOTICS CHAMPIONSHIP 2026
    ADMIN PANEL
-   COMPLETE FIREBASE VERSION
+   FIREBASE AUTH + REALTIME DATABASE
 
-   FEATURES:
-   - Firebase Email/Password Authentication
+   COMPLETE REPLACEMENT
+
+   Features:
+   - Firebase Authentication
    - Realtime Database
+   - Database connection testing
    - Dashboard
-   - Registration management
+   - Registrations
    - Search
-   - Event/Class/Section filters
-   - View details
+   - Filters
+   - Details
    - Edit
    - Delete
-   - CSV export
-   - Responsive sidebar
-   - Mobile navigation
-   - Toast notifications
+   - CSV Export
+   - Responsive navigation
 ===================================================== */
 
 
 /* =====================================================
-   FIREBASE IMPORTS
+   FIREBASE
 ===================================================== */
 
 import {
     initializeApp
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+} from
+"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+
 
 import {
     getAuth,
     signInWithEmailAndPassword,
     onAuthStateChanged,
     signOut
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+} from
+"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+
 
 import {
     getDatabase,
@@ -41,7 +46,8 @@ import {
     get,
     update,
     remove
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+} from
+"https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 
 /* =====================================================
@@ -75,14 +81,46 @@ const firebaseConfig = {
 
 
 /* =====================================================
-   FIREBASE INITIALIZATION
+   INITIALIZE
 ===================================================== */
 
-const app = initializeApp(firebaseConfig);
+let firebaseApp;
 
-const auth = getAuth(app);
+let auth;
 
-const database = getDatabase(app);
+let database;
+
+
+try {
+
+    firebaseApp =
+        initializeApp(
+            firebaseConfig
+        );
+
+    auth =
+        getAuth(
+            firebaseApp
+        );
+
+    database =
+        getDatabase(
+            firebaseApp
+        );
+
+}
+catch (error) {
+
+    console.error(
+        "Firebase initialization failed:",
+        error
+    );
+
+    showFatalError(
+        "Firebase initialization failed. Check your Firebase configuration."
+    );
+
+}
 
 
 /* =====================================================
@@ -97,112 +135,242 @@ let currentRegistrationKey = null;
 
 let toastTimer = null;
 
-let isLoading = false;
+let loadingRegistrations = false;
 
 
 /* =====================================================
    DOM
 ===================================================== */
 
-const $ = id => document.getElementById(id);
+const $ = id =>
+    document.getElementById(id);
 
-const loginScreen = $("loginScreen");
-const adminApp = $("adminApp");
 
-const loginForm = $("loginForm");
-const loginEmail = $("loginEmail");
-const loginPassword = $("loginPassword");
-const loginBtn = $("loginBtn");
-const loginError = $("loginError");
-const togglePassword = $("togglePassword");
+const loginScreen =
+    $("loginScreen");
 
-const adminEmail = $("adminEmail");
-const logoutBtn = $("logoutBtn");
 
-const sidebar = $("sidebar");
-const sidebarToggle = $("sidebarToggle");
-const sidebarOverlay = $("sidebarOverlay");
+const adminApp =
+    $("adminApp");
 
-const tableBody = $("registrationTableBody");
-const tableEmpty = $("tableEmpty");
 
-const resultCount = $("resultCount");
-const tableStatus = $("tableStatus");
+const loginForm =
+    $("loginForm");
 
-const searchInput = $("searchInput");
-const eventFilter = $("eventFilter");
-const classFilter = $("classFilter");
-const sectionFilter = $("sectionFilter");
 
-const clearFilters = $("clearFilters");
+const loginEmail =
+    $("loginEmail");
 
-const detailsModal = $("detailsModal");
-const editModal = $("editModal");
 
-const detailsContent = $("detailsContent");
-const modalDeleteBtn = $("modalDeleteBtn");
+const loginPassword =
+    $("loginPassword");
 
-const editForm = $("editForm");
-const editKey = $("editKey");
 
-const editStudentName = $("editStudentName");
-const editTeamName = $("editTeamName");
-const editClass = $("editClass");
-const editSection = $("editSection");
-const editMobile = $("editMobile");
-const editEmail = $("editEmail");
-const editRemarks = $("editRemarks");
+const loginBtn =
+    $("loginBtn");
 
-const toast = $("toast");
-const toastMessage = $("toastMessage");
 
-const firebaseStatus = $("firebaseStatus");
+const loginError =
+    $("loginError");
 
-const navRegistrationCount =
-    $("navRegistrationCount");
+
+const togglePassword =
+    $("togglePassword");
+
+
+const adminEmail =
+    $("adminEmail");
+
+
+const logoutBtn =
+    $("logoutBtn");
+
+
+const sidebar =
+    $("sidebar");
+
+
+const sidebarToggle =
+    $("sidebarToggle");
+
+
+const tableBody =
+    $("registrationTableBody");
+
+
+const tableEmpty =
+    $("tableEmpty");
+
+
+const resultCount =
+    $("resultCount");
+
+
+const tableStatus =
+    $("tableStatus");
+
+
+const searchInput =
+    $("searchInput");
+
+
+const eventFilter =
+    $("eventFilter");
+
+
+const classFilter =
+    $("classFilter");
+
+
+const sectionFilter =
+    $("sectionFilter");
+
+
+const clearFilters =
+    $("clearFilters");
+
+
+const detailsModal =
+    $("detailsModal");
+
+
+const editModal =
+    $("editModal");
+
+
+const detailsContent =
+    $("detailsContent");
+
+
+const modalDeleteBtn =
+    $("modalDeleteBtn");
+
+
+const editForm =
+    $("editForm");
+
+
+const editKey =
+    $("editKey");
+
+
+const editStudentName =
+    $("editStudentName");
+
+
+const editTeamName =
+    $("editTeamName");
+
+
+const editClass =
+    $("editClass");
+
+
+const editSection =
+    $("editSection");
+
+
+const editMobile =
+    $("editMobile");
+
+
+const editEmail =
+    $("editEmail");
+
+
+const editRemarks =
+    $("editRemarks");
+
+
+const toast =
+    $("toast");
+
+
+const toastMessage =
+    $("toastMessage");
+
+
+const databaseError =
+    $("databaseError");
+
+
+const databaseErrorText =
+    $("databaseErrorText");
+
+
+const databaseErrorCode =
+    $("databaseErrorCode");
+
+
+const databaseRetry =
+    $("databaseRetry");
+
+
+const connectionText =
+    $("connectionText");
+
+
+const topConnection =
+    $("topConnection");
 
 
 /* =====================================================
    AUTH STATE
 ===================================================== */
 
-onAuthStateChanged(
-    auth,
-    async user => {
+if (auth) {
 
-        if (user) {
+    onAuthStateChanged(
+        auth,
+        async user => {
 
-            loginScreen.classList.add("hidden");
+            if (user) {
 
-            adminApp.classList.remove("hidden");
+                loginScreen
+                    .classList
+                    .add("hidden");
 
-            adminEmail.textContent =
-                user.email ||
-                "Authenticated Admin";
 
-            if (firebaseStatus) {
-                firebaseStatus.textContent =
-                    "Firebase Connected";
+                adminApp
+                    .classList
+                    .remove("hidden");
+
+
+                adminEmail.textContent =
+                    user.email ||
+                    "Authenticated Admin";
+
+
+                setConnection(
+                    "authenticated"
+                );
+
+
+                await loadRegistrations();
+
+            }
+            else {
+
+                loginScreen
+                    .classList
+                    .remove("hidden");
+
+
+                adminApp
+                    .classList
+                    .add("hidden");
+
+
+                setConnection(
+                    "offline"
+                );
+
             }
 
-            await loadRegistrations();
-
-        } else {
-
-            loginScreen.classList.remove("hidden");
-
-            adminApp.classList.add("hidden");
-
-            registrations = {};
-
-            filteredRegistrations = {};
-
-            closeAllModals();
-
         }
+    );
 
-    }
-);
+}
 
 
 /* =====================================================
@@ -217,13 +385,19 @@ if (loginForm) {
 
             event.preventDefault();
 
+
+            loginError.textContent = "";
+
+
             const email =
-                loginEmail.value.trim();
+                loginEmail
+                    .value
+                    .trim();
+
 
             const password =
                 loginPassword.value;
 
-            loginError.textContent = "";
 
             if (!email || !password) {
 
@@ -234,7 +408,15 @@ if (loginForm) {
 
             }
 
-            setLoginLoading(true);
+
+            loginBtn.disabled = true;
+
+
+            loginBtn.innerHTML = `
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <span>Signing In...</span>
+            `;
+
 
             try {
 
@@ -244,21 +426,31 @@ if (loginForm) {
                     password
                 );
 
-                loginPassword.value = "";
-
-            } catch (error) {
+            }
+            catch (error) {
 
                 console.error(
                     "Firebase login error:",
                     error
                 );
 
+
                 loginError.textContent =
-                    getAuthError(error);
+                    getAuthError(
+                        error.code
+                    );
 
-            } finally {
+            }
+            finally {
 
-                setLoginLoading(false);
+                loginBtn.disabled =
+                    false;
+
+
+                loginBtn.innerHTML = `
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span>Login to Dashboard</span>
+                `;
 
             }
 
@@ -269,67 +461,54 @@ if (loginForm) {
 
 
 /* =====================================================
-   LOGIN BUTTON STATE
+   AUTH ERROR
 ===================================================== */
 
-function setLoginLoading(loading) {
-
-    if (!loginBtn) return;
-
-    loginBtn.disabled = loading;
-
-    loginBtn.innerHTML = loading
-
-        ? `
-            <i class="fa-solid fa-spinner fa-spin"></i>
-            <span>Signing In...</span>
-        `
-
-        : `
-            <i class="fa-solid fa-right-to-bracket"></i>
-            <span>Login to Dashboard</span>
-        `;
-
-}
-
-
-/* =====================================================
-   AUTH ERRORS
-===================================================== */
-
-function getAuthError(error) {
-
-    const code =
-        error?.code || "";
+function getAuthError(code) {
 
     switch (code) {
 
         case "auth/invalid-credential":
-            return "Invalid email or password.";
+
+        case "auth/invalid-login-credentials":
+
+            return "Invalid admin email or password.";
+
 
         case "auth/user-not-found":
-            return "Admin account was not found.";
+
+            return "No Firebase Authentication account exists for this email.";
+
 
         case "auth/wrong-password":
+
             return "Incorrect password.";
 
+
         case "auth/invalid-email":
+
             return "Please enter a valid email address.";
 
+
         case "auth/too-many-requests":
-            return "Too many attempts. Please try again later.";
+
+            return "Too many login attempts. Please wait and try again.";
+
 
         case "auth/network-request-failed":
+
             return "Network error. Check your internet connection.";
 
-        case "auth/user-disabled":
-            return "This admin account has been disabled.";
 
-        case "auth/operation-not-allowed":
-            return "Email/password authentication is disabled.";
+        case "auth/user-disabled":
+
+            return "This Firebase account has been disabled.";
+
 
         default:
-            return "Login failed. Please check your credentials.";
+
+            return
+                `Login failed: ${code || "unknown error"}`;
 
     }
 
@@ -346,25 +525,20 @@ if (togglePassword) {
         "click",
         () => {
 
-            const show =
-                loginPassword.type === "password";
+            const passwordVisible =
+                loginPassword.type === "text";
+
 
             loginPassword.type =
-                show
-                    ? "text"
-                    : "password";
+                passwordVisible
+                ? "password"
+                : "text";
+
 
             togglePassword.innerHTML =
-                show
-                    ? '<i class="fa-solid fa-eye-slash"></i>'
-                    : '<i class="fa-solid fa-eye"></i>';
-
-            togglePassword.setAttribute(
-                "aria-label",
-                show
-                    ? "Hide password"
-                    : "Show password"
-            );
+                passwordVisible
+                ? '<i class="fa-solid fa-eye"></i>'
+                : '<i class="fa-solid fa-eye-slash"></i>';
 
         }
     );
@@ -384,19 +558,23 @@ if (logoutBtn) {
 
             try {
 
-                await signOut(auth);
+                await signOut(
+                    auth
+                );
+
 
                 showToast(
                     "Logged out successfully.",
                     "success"
                 );
 
-            } catch (error) {
+            }
+            catch (error) {
 
                 console.error(
-                    "Logout error:",
                     error
                 );
+
 
                 showToast(
                     "Logout failed.",
@@ -421,32 +599,12 @@ if (sidebarToggle) {
         "click",
         () => {
 
-            sidebar.classList.toggle("open");
-
-            sidebarOverlay.classList.toggle(
-                "show",
-                sidebar.classList.contains("open")
+            sidebar.classList.toggle(
+                "open"
             );
 
         }
     );
-
-}
-
-if (sidebarOverlay) {
-
-    sidebarOverlay.addEventListener(
-        "click",
-        closeSidebar
-    );
-
-}
-
-function closeSidebar() {
-
-    sidebar.classList.remove("open");
-
-    sidebarOverlay.classList.remove("show");
 
 }
 
@@ -463,12 +621,14 @@ document
             "click",
             () => {
 
-                const page =
-                    button.dataset.page;
+                showPage(
+                    button.dataset.page
+                );
 
-                showPage(page);
 
-                closeSidebar();
+                sidebar.classList.remove(
+                    "open"
+                );
 
             }
         );
@@ -508,7 +668,10 @@ function showPage(pageName) {
 
 
     const target =
-        $(`${pageName}Page`);
+        document.getElementById(
+            `${pageName}Page`
+        );
+
 
     if (target) {
 
@@ -548,6 +711,7 @@ function showPage(pageName) {
     const pageTitle =
         $("pageTitle");
 
+
     if (pageTitle) {
 
         pageTitle.textContent =
@@ -579,44 +743,129 @@ function showPage(pageName) {
 
 async function loadRegistrations() {
 
-    if (isLoading) return;
+    if (loadingRegistrations) {
 
-    isLoading = true;
+        return;
 
-    setTableStatus("Loading...");
+    }
+
+
+    loadingRegistrations = true;
+
+
+    hideDatabaseError();
+
+
+    setConnection(
+        "loading"
+    );
+
+
+    if (tableStatus) {
+
+        tableStatus.textContent =
+            "Connecting to database...";
+
+    }
+
+
+    if (tableBody) {
+
+        tableBody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="10"
+                    style="text-align:center;padding:40px">
+
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+
+                    &nbsp; Loading registrations...
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
 
     try {
 
+        /*
+         * IMPORTANT:
+         *
+         * This is the exact database path.
+         *
+         * Your registration form must save data like:
+         *
+         * registrations
+         *     |- record1
+         *     |- record2
+         *     |- record3
+         *
+         */
+
+        const registrationsRef =
+            ref(
+                database,
+                "registrations"
+            );
+
+
+        console.log(
+            "Reading Firebase path:",
+            "registrations"
+        );
+
+
         const snapshot =
             await get(
-                ref(
-                    database,
-                    "registrations"
-                )
+                registrationsRef
             );
+
+
+        console.log(
+            "Firebase snapshot:",
+            snapshot
+        );
 
 
         if (snapshot.exists()) {
 
-            const data =
+            const value =
                 snapshot.val();
 
-            registrations =
-                data &&
-                typeof data === "object"
-                    ? data
-                    : {};
 
-        } else {
+            if (
+                value &&
+                typeof value === "object"
+            ) {
+
+                registrations =
+                    value;
+
+            }
+            else {
+
+                registrations = {};
+
+            }
+
+        }
+        else {
 
             registrations = {};
 
         }
 
 
-        filteredRegistrations = {
-            ...registrations
-        };
+        filteredRegistrations =
+            {
+                ...registrations
+            };
 
 
         populateFilters();
@@ -629,44 +878,68 @@ async function loadRegistrations() {
 
         updateEventPage();
 
-        updateNavigationCount();
 
-        setTableStatus(
-            "Database synced"
+        setConnection(
+            "connected"
         );
 
 
-    } catch (error) {
+        if (tableStatus) {
+
+            tableStatus.textContent =
+                `Database synced • ${
+                    Object.keys(
+                        registrations
+                    ).length
+                } record(s)`;
+
+        }
+
+
+        console.log(
+            "Registrations loaded:",
+            registrations
+        );
+
+    }
+    catch (error) {
 
         console.error(
-            "Database loading error:",
+            "FULL FIREBASE DATABASE ERROR:",
             error
         );
+
 
         registrations = {};
 
         filteredRegistrations = {};
 
-        setTableStatus(
-            "Database error"
-        );
 
         renderTable();
 
-        updateDashboard();
 
-        renderRecent();
-
-        updateEventPage();
-
-        showToast(
-            getDatabaseError(error),
+        setConnection(
             "error"
         );
 
-    } finally {
 
-        isLoading = false;
+        showDatabaseError(
+            error
+        );
+
+
+        if (tableStatus) {
+
+            tableStatus.textContent =
+                "Database error";
+
+        }
+
+    }
+    finally {
+
+        loadingRegistrations =
+            false;
 
     }
 
@@ -677,30 +950,213 @@ async function loadRegistrations() {
    DATABASE ERROR
 ===================================================== */
 
-function getDatabaseError(error) {
+function showDatabaseError(error) {
 
-    if (
-        error?.code ===
-        "PERMISSION_DENIED"
-    ) {
+    if (!databaseError) {
 
-        return (
-            "Database permission denied. " +
-            "Check Firebase Realtime Database rules."
+        return;
+
+    }
+
+
+    databaseError
+        .classList
+        .remove("hidden");
+
+
+    let message =
+        "Unable to load registrations.";
+
+
+    let code =
+        "";
+
+
+    if (error) {
+
+        code =
+            error.code ||
+            "unknown";
+
+
+        if (
+            code.includes(
+                "permission-denied"
+            )
+        ) {
+
+            message =
+                "Firebase denied access to the registrations database.";
+
+        }
+        else if (
+            code.includes(
+                "network"
+            )
+        ) {
+
+            message =
+                "Cannot reach Firebase. Check your internet connection.";
+
+        }
+        else {
+
+            message =
+                error.message ||
+                "Firebase returned an unknown database error.";
+
+        }
+
+    }
+
+
+    databaseErrorText.textContent =
+        message;
+
+
+    databaseErrorCode.textContent =
+        `Firebase error: ${code}`;
+
+}
+
+
+/* =====================================================
+   HIDE DATABASE ERROR
+===================================================== */
+
+function hideDatabaseError() {
+
+    if (!databaseError) {
+
+        return;
+
+    }
+
+
+    databaseError
+        .classList
+        .add("hidden");
+
+}
+
+
+/* =====================================================
+   CONNECTION STATUS
+===================================================== */
+
+function setConnection(status) {
+
+    if (!connectionText) {
+
+        return;
+
+    }
+
+
+    const states = {
+
+        loading: {
+
+            text:
+                "Firebase Connecting...",
+
+            color:
+                "#ff9f43"
+
+        },
+
+        connected: {
+
+            text:
+                "Firebase Connected",
+
+            color:
+                "#00e69a"
+
+        },
+
+        authenticated: {
+
+            text:
+                "Authenticated",
+
+            color:
+                "#38a9ff"
+
+        },
+
+        error: {
+
+            text:
+                "Firebase Error",
+
+            color:
+                "#ff536b"
+
+        },
+
+        offline: {
+
+            text:
+                "Offline",
+
+            color:
+                "#8d9ab1"
+
+        }
+
+    };
+
+
+    const state =
+        states[status] ||
+        states.offline;
+
+
+    connectionText.textContent =
+        state.text;
+
+
+    const dot =
+        document.querySelector(
+            ".status-dot"
         );
 
+
+    if (dot) {
+
+        dot.style.background =
+            state.color;
+
+        dot.style.color =
+            state.color;
+
     }
 
-    if (
-        error?.code ===
-        "NETWORK_ERROR"
-    ) {
 
-        return "Network error while loading database.";
+    if (topConnection) {
+
+        const span =
+            topConnection.querySelector(
+                "span"
+            );
+
+
+        if (span) {
+
+            span.style.background =
+                state.color;
+
+            span.style.boxShadow =
+                `0 0 10px ${state.color}`;
+
+        }
+
+
+        topConnection.style.color =
+            state.color;
 
     }
-
-    return "Unable to load registrations.";
 
 }
 
@@ -712,8 +1168,8 @@ function getDatabaseError(error) {
 function normalize(value) {
 
     if (
-        value === undefined ||
-        value === null
+        value === null ||
+        value === undefined
     ) {
 
         return "";
@@ -724,7 +1180,7 @@ function normalize(value) {
     if (Array.isArray(value)) {
 
         return value
-            .map(item => normalize(item))
+            .map(normalize)
             .filter(Boolean)
             .join(", ");
 
@@ -737,7 +1193,7 @@ function normalize(value) {
 
         return Object
             .values(value)
-            .map(item => normalize(item))
+            .map(normalize)
             .filter(Boolean)
             .join(", ");
 
@@ -750,98 +1206,80 @@ function normalize(value) {
 
 
 /* =====================================================
-   EVENTS
+   GET EVENTS
 ===================================================== */
 
 function getEvents(data) {
 
-    if (!data) return [];
+    if (!data) {
 
-    const possible =
+        return [];
+
+    }
+
+
+    let events =
         data.Events ??
         data.events ??
         data.Event ??
         data.event ??
-        data.selectedEvents ??
-        data.SelectedEvents;
+        data.SelectedEvents ??
+        data.selectedEvents;
 
 
-    if (!possible) return [];
+    if (!events) {
+
+        return [];
+
+    }
 
 
-    if (Array.isArray(possible)) {
+    if (Array.isArray(events)) {
 
-        return possible
-            .flatMap(event =>
-                normalize(event)
-                    .split(/\s*(?:,|\||;)\s*/)
-            )
-            .map(cleanEventName)
+        return events
+            .map(normalize)
+            .map(x => x.trim())
             .filter(Boolean);
 
     }
 
 
     if (
-        typeof possible === "object"
+        typeof events === "object"
     ) {
 
         return Object
-            .values(possible)
-            .flatMap(event =>
-                normalize(event)
-                    .split(/\s*(?:,|\||;)\s*/)
-            )
-            .map(cleanEventName)
+            .values(events)
+            .map(normalize)
+            .map(x => x.trim())
             .filter(Boolean);
 
     }
 
 
-    return normalize(possible)
-        .split(/\s*(?:,|\||;)\s*/)
-        .map(cleanEventName)
+    return String(events)
+        .split(
+            /\s*(?:,|\||;|\n)\s*/
+        )
+        .map(x => x.trim())
         .filter(Boolean);
 
 }
 
 
 /* =====================================================
-   CLEAN EVENT NAME
+   EVENT MATCH
 ===================================================== */
 
-function cleanEventName(value) {
+function normalizeEvent(event) {
 
-    const text =
-        normalize(value)
-            .trim();
-
-    if (!text) return "";
-
-    const lower =
-        text.toLowerCase();
-
-    if (lower.includes("tug")) {
-        return "Robo Tug of War";
-    }
-
-    if (lower.includes("soccer")) {
-        return "Robo Soccer";
-    }
-
-    if (
-        lower.includes("race")
-    ) {
-        return "Robo Race";
-    }
-
-    if (
-        lower.includes("war")
-    ) {
-        return "Robo War";
-    }
-
-    return text;
+    return normalize(event)
+        .toLowerCase()
+        .replace(
+            /\s+/g,
+            " "
+        )
+        .trim();
 
 }
 
@@ -852,11 +1290,18 @@ function cleanEventName(value) {
 
 function getRegistrationEmail(data) {
 
+    if (!data) {
+
+        return "";
+
+    }
+
+
     return normalize(
-        data?.EmailAddress ??
-        data?.emailAddress ??
-        data?.Email ??
-        data?.email
+        data.EmailAddress ??
+        data.Email ??
+        data.email ??
+        data.emailAddress
     ).trim();
 
 }
@@ -868,10 +1313,14 @@ function getRegistrationEmail(data) {
 
 function getTeamSize(data) {
 
-    if (!data) return 0;
+    if (!data) {
+
+        return 0;
+
+    }
 
 
-    const teamSize =
+    const explicit =
         Number(
             data.TeamSize ??
             data.teamSize
@@ -879,11 +1328,11 @@ function getTeamSize(data) {
 
 
     if (
-        Number.isFinite(teamSize) &&
-        teamSize > 0
+        Number.isFinite(explicit) &&
+        explicit > 0
     ) {
 
-        return teamSize;
+        return explicit;
 
     }
 
@@ -897,14 +1346,17 @@ function getTeamSize(data) {
         i++
     ) {
 
-        const member =
-            data[`Member${i}Name`] ??
-            data[`member${i}Name`] ??
-            data[`TeamMember${i}`];
+        const name =
+            data[
+                `Member${i}Name`
+            ] ??
+            data[
+                `member${i}Name`
+            ];
 
 
         if (
-            normalize(member).trim()
+            normalize(name).trim()
         ) {
 
             count++;
@@ -915,42 +1367,6 @@ function getTeamSize(data) {
 
 
     return count;
-
-}
-
-
-/* =====================================================
-   TEAM MEMBER FIELDS
-===================================================== */
-
-function getMemberName(data, number) {
-
-    return normalize(
-        data?.[`Member${number}Name`] ??
-        data?.[`member${number}Name`] ??
-        data?.[`TeamMember${number}Name`] ??
-        data?.[`TeamMember${number}`]
-    ).trim();
-
-}
-
-
-function getMemberClass(data, number) {
-
-    return normalize(
-        data?.[`Member${number}Class`] ??
-        data?.[`member${number}Class`]
-    ).trim();
-
-}
-
-
-function getMemberSection(data, number) {
-
-    return normalize(
-        data?.[`Member${number}Section`] ??
-        data?.[`member${number}Section`]
-    ).trim();
 
 }
 
@@ -988,15 +1404,18 @@ function updateDashboard() {
         counts.race
     );
 
+
     setText(
         "warCount",
         counts.war
     );
 
+
     setText(
         "tugCount",
         counts.tug
     );
+
 
     setText(
         "soccerCount",
@@ -1004,9 +1423,28 @@ function updateDashboard() {
     );
 
 
-    updateEventPage();
+    setText(
+        "eventRaceCount",
+        counts.race
+    );
 
-    updateNavigationCount();
+
+    setText(
+        "eventWarCount",
+        counts.war
+    );
+
+
+    setText(
+        "eventTugCount",
+        counts.tug
+    );
+
+
+    setText(
+        "eventSoccerCount",
+        counts.soccer
+    );
 
 }
 
@@ -1038,14 +1476,13 @@ function calculateEventCounts() {
                 .forEach(event => {
 
                     const clean =
-                        event
-                            .toLowerCase()
-                            .trim();
+                        normalizeEvent(
+                            event
+                        );
 
 
                     if (
-                        clean ===
-                        "robo race"
+                        clean === "robo race"
                     ) {
 
                         counts.race++;
@@ -1054,8 +1491,7 @@ function calculateEventCounts() {
 
 
                     if (
-                        clean ===
-                        "robo war"
+                        clean === "robo war"
                     ) {
 
                         counts.war++;
@@ -1101,7 +1537,12 @@ function renderRecent() {
     const container =
         $("recentRegistrations");
 
-    if (!container) return;
+
+    if (!container) {
+
+        return;
+
+    }
 
 
     const entries =
@@ -1118,10 +1559,15 @@ function renderRecent() {
     if (!entries.length) {
 
         container.innerHTML = `
+
             <div class="empty-state">
+
                 <i class="fa-solid fa-folder-open"></i>
+
                 No registrations found.
+
             </div>
+
         `;
 
         return;
@@ -1135,27 +1581,22 @@ function renderRecent() {
                 ([key, data]) => {
 
                     const id =
-                        normalize(
-                            data.registrationId ??
-                            data.RegistrationId ??
-                            data.registrationID
-                        ) ||
-                        key;
+                        getRegistrationId(
+                            data,
+                            key
+                        );
 
 
                     const name =
-                        normalize(
-                            data.StudentName ??
-                            data.studentName ??
-                            data.TeamLeader
+                        getStudentName(
+                            data
                         ) ||
                         "Unknown";
 
 
                     const team =
-                        normalize(
-                            data.TeamName ??
-                            data.teamName
+                        getTeamName(
+                            data
                         ) ||
                         "Unnamed Team";
 
@@ -1165,8 +1606,11 @@ function renderRecent() {
                         <div class="recent-item">
 
                             <div class="recent-avatar">
+
                                 <i class="fa-solid fa-user"></i>
+
                             </div>
+
 
                             <div class="recent-details">
 
@@ -1184,13 +1628,14 @@ function renderRecent() {
 
                             </div>
 
+
                             <button
                                 type="button"
                                 class="action-btn view"
-                                data-view="${escapeAttr(key)}"
-                                title="View Details"
-                            >
+                                data-view="${escapeAttr(key)}">
+
                                 <i class="fa-solid fa-eye"></i>
+
                             </button>
 
                         </div>
@@ -1203,7 +1648,9 @@ function renderRecent() {
 
 
     container
-        .querySelectorAll("[data-view]")
+        .querySelectorAll(
+            "[data-view]"
+        )
         .forEach(button => {
 
             button.addEventListener(
@@ -1231,11 +1678,16 @@ function populateFilters() {
     if (
         !classFilter ||
         !sectionFilter
-    ) return;
+    ) {
+
+        return;
+
+    }
 
 
     const classes =
         new Set();
+
 
     const sections =
         new Set();
@@ -1246,118 +1698,125 @@ function populateFilters() {
         .forEach(data => {
 
             const className =
-                normalize(
-                    data.Class ??
-                    data.class
-                ).trim();
+                getClass(
+                    data
+                );
 
 
             const section =
-                normalize(
-                    data.Section ??
-                    data.section
-                ).trim();
+                getSection(
+                    data
+                );
 
 
             if (className) {
-                classes.add(className);
+
+                classes.add(
+                    className
+                );
+
             }
 
+
             if (section) {
-                sections.add(section);
+
+                sections.add(
+                    section
+                );
+
             }
 
         });
 
 
-    const previousClass =
+    const oldClass =
         classFilter.value;
 
-    const previousSection =
+
+    const oldSection =
         sectionFilter.value;
 
 
-    classFilter.innerHTML = `
-        <option value="all">
-            All Classes
-        </option>
-    `;
+    classFilter.innerHTML =
+        `
+            <option value="all">
+                All Classes
+            </option>
+        `;
 
 
     [...classes]
         .sort(
             (a, b) =>
                 a.localeCompare(
-                    b,
-                    undefined,
-                    {
-                        numeric: true
-                    }
+                    b
                 )
         )
         .forEach(value => {
 
-            const option =
-                document.createElement(
-                    "option"
-                );
+            classFilter.innerHTML += `
 
-            option.value = value;
+                <option
+                    value="${escapeAttr(value)}">
 
-            option.textContent = value;
+                    ${escapeHTML(value)}
 
-            classFilter.appendChild(
-                option
-            );
+                </option>
+
+            `;
 
         });
 
 
-    sectionFilter.innerHTML = `
-        <option value="all">
-            All Sections
-        </option>
-    `;
+    sectionFilter.innerHTML =
+        `
+            <option value="all">
+                All Sections
+            </option>
+        `;
 
 
     [...sections]
-        .sort()
+        .sort(
+            (a, b) =>
+                a.localeCompare(
+                    b
+                )
+        )
         .forEach(value => {
 
-            const option =
-                document.createElement(
-                    "option"
-                );
+            sectionFilter.innerHTML += `
 
-            option.value = value;
+                <option
+                    value="${escapeAttr(value)}">
 
-            option.textContent = value;
+                    ${escapeHTML(value)}
 
-            sectionFilter.appendChild(
-                option
-            );
+                </option>
+
+            `;
 
         });
 
 
     if (
         [...classes]
-            .includes(previousClass)
+            .includes(oldClass)
     ) {
 
         classFilter.value =
-            previousClass;
+            oldClass;
 
     }
 
 
     if (
         [...sections]
-            .includes(previousSection)
+            .includes(oldSection)
     ) {
 
         sectionFilter.value =
-            previousSection;
+            oldSection;
 
     }
 
@@ -1377,6 +1836,7 @@ if (searchInput) {
 
 }
 
+
 if (eventFilter) {
 
     eventFilter.addEventListener(
@@ -1386,6 +1846,7 @@ if (eventFilter) {
 
 }
 
+
 if (classFilter) {
 
     classFilter.addEventListener(
@@ -1394,6 +1855,7 @@ if (classFilter) {
     );
 
 }
+
 
 if (sectionFilter) {
 
@@ -1422,6 +1884,7 @@ if (clearFilters) {
             sectionFilter.value =
                 "all";
 
+
             applyFilters();
 
         }
@@ -1431,7 +1894,7 @@ if (clearFilters) {
 
 
 /* =====================================================
-   APPLY FILTERS
+   FILTER
 ===================================================== */
 
 function applyFilters() {
@@ -1440,8 +1903,8 @@ function applyFilters() {
         normalize(
             searchInput.value
         )
-            .trim()
-            .toLowerCase();
+            .toLowerCase()
+            .trim();
 
 
     const selectedEvent =
@@ -1470,29 +1933,36 @@ function applyFilters() {
 
                 const searchable = [
 
-                    data.registrationId,
+                    getRegistrationId(
+                        data,
+                        key
+                    ),
 
-                    data.RegistrationId,
+                    getStudentName(
+                        data
+                    ),
 
-                    data.StudentName,
+                    getTeamName(
+                        data
+                    ),
 
-                    data.TeamLeader,
+                    getClass(
+                        data
+                    ),
 
-                    data.TeamName,
+                    getSection(
+                        data
+                    ),
 
-                    data.Class,
+                    getMobile(
+                        data
+                    ),
 
-                    data.Section,
+                    getRegistrationEmail(
+                        data
+                    ),
 
-                    data.MobileNumber,
-
-                    data.Mobile,
-
-                    data.EmailAddress,
-
-                    data.Email,
-
-                    ...events
+                    events.join(" ")
 
                 ]
                     .map(normalize)
@@ -1511,36 +1981,24 @@ function applyFilters() {
                     selectedEvent === "all" ||
                     events.some(
                         event =>
-                            event
-                                .toLowerCase() ===
-                            selectedEvent
-                                .toLowerCase()
+                            normalizeEvent(
+                                event
+                            ) ===
+                            normalizeEvent(
+                                selectedEvent
+                            )
                     );
-
-
-                const classValue =
-                    normalize(
-                        data.Class ??
-                        data.class
-                    ).trim();
-
-
-                const sectionValue =
-                    normalize(
-                        data.Section ??
-                        data.section
-                    ).trim();
 
 
                 const matchesClass =
                     selectedClass === "all" ||
-                    classValue ===
+                    getClass(data) ===
                     selectedClass;
 
 
                 const matchesSection =
                     selectedSection === "all" ||
-                    sectionValue ===
+                    getSection(data) ===
                     selectedSection;
 
 
@@ -1566,7 +2024,7 @@ function applyFilters() {
 
 
 /* =====================================================
-   RENDER TABLE
+   TABLE
 ===================================================== */
 
 function renderTable() {
@@ -1575,7 +2033,11 @@ function renderTable() {
         !tableBody ||
         !tableEmpty ||
         !resultCount
-    ) return;
+    ) {
+
+        return;
+
+    }
 
 
     const entries =
@@ -1597,18 +2059,18 @@ function renderTable() {
 
     if (!entries.length) {
 
-        tableEmpty.classList.remove(
-            "hidden"
-        );
+        tableEmpty
+            .classList
+            .remove("hidden");
 
         return;
 
     }
 
 
-    tableEmpty.classList.add(
-        "hidden"
-    );
+    tableEmpty
+        .classList
+        .add("hidden");
 
 
     entries.sort(
@@ -1622,82 +2084,82 @@ function renderTable() {
         ([key, data]) => {
 
             const id =
-                normalize(
-                    data.registrationId ??
-                    data.RegistrationId
-                ) ||
-                key;
+                getRegistrationId(
+                    data,
+                    key
+                );
 
 
             const name =
-                normalize(
-                    data.StudentName ??
-                    data.studentName ??
-                    data.TeamLeader
+                getStudentName(
+                    data
                 ) ||
                 "-";
 
 
             const team =
-                normalize(
-                    data.TeamName ??
-                    data.teamName
+                getTeamName(
+                    data
                 ) ||
                 "Unnamed Team";
 
 
             const className =
-                normalize(
-                    data.Class ??
-                    data.class
+                getClass(
+                    data
                 ) ||
                 "-";
 
 
             const section =
-                normalize(
-                    data.Section ??
-                    data.section
+                getSection(
+                    data
                 ) ||
                 "-";
 
 
             const mobile =
-                normalize(
-                    data.MobileNumber ??
-                    data.Mobile ??
-                    data.mobile
+                getMobile(
+                    data
                 ) ||
                 "-";
 
 
-            const events =
-                getEvents(data);
-
-
             const teamSize =
-                getTeamSize(data);
+                getTeamSize(
+                    data
+                );
+
+
+            const events =
+                getEvents(
+                    data
+                );
 
 
             const date =
                 formatDate(
-                    getRegistrationDate(data)
+                    getRegistrationDate(
+                        data
+                    )
                 );
 
 
             const eventHTML =
                 events.length
-
                     ? events
                         .map(
                             event => `
+
                                 <span class="event-tag">
+
                                     ${escapeHTML(event)}
+
                                 </span>
+
                             `
                         )
                         .join("")
-
                     : "-";
 
 
@@ -1710,77 +2172,114 @@ function renderTable() {
             row.innerHTML = `
 
                 <td>
+
                     <span class="registration-id">
+
                         ${escapeHTML(id)}
+
                     </span>
+
                 </td>
 
+
                 <td>
+
                     <strong class="team-name">
+
                         ${escapeHTML(name)}
+
                     </strong>
+
                 </td>
 
+
                 <td>
+
                     ${escapeHTML(team)}
+
                 </td>
 
+
                 <td>
+
                     ${escapeHTML(className)}
+
                 </td>
 
+
                 <td>
+
                     ${escapeHTML(section)}
+
                 </td>
 
+
                 <td>
+
                     ${escapeHTML(mobile)}
+
                 </td>
 
+
                 <td>
+
                     <div class="event-tags">
+
                         ${eventHTML}
+
                     </div>
+
                 </td>
 
+
                 <td>
+
                     ${teamSize}
+
                 </td>
 
+
                 <td>
+
                     ${escapeHTML(date)}
+
                 </td>
+
 
                 <td>
 
                     <div class="action-buttons">
 
+
                         <button
-                            type="button"
                             class="action-btn view"
-                            title="View Details"
                             data-view="${escapeAttr(key)}"
-                        >
+                            title="View">
+
                             <i class="fa-solid fa-eye"></i>
+
                         </button>
 
+
                         <button
-                            type="button"
                             class="action-btn edit"
-                            title="Edit Registration"
                             data-edit="${escapeAttr(key)}"
-                        >
+                            title="Edit">
+
                             <i class="fa-solid fa-pen"></i>
+
                         </button>
 
+
                         <button
-                            type="button"
                             class="action-btn delete"
-                            title="Delete Registration"
                             data-delete="${escapeAttr(key)}"
-                        >
+                            title="Delete">
+
                             <i class="fa-solid fa-trash"></i>
+
                         </button>
+
 
                     </div>
 
@@ -1789,7 +2288,9 @@ function renderTable() {
             `;
 
 
-            tableBody.appendChild(row);
+            tableBody.appendChild(
+                row
+            );
 
         }
     );
@@ -1807,7 +2308,9 @@ function renderTable() {
 function bindTableActions() {
 
     tableBody
-        .querySelectorAll("[data-view]")
+        .querySelectorAll(
+            "[data-view]"
+        )
         .forEach(button => {
 
             button.addEventListener(
@@ -1825,7 +2328,9 @@ function bindTableActions() {
 
 
     tableBody
-        .querySelectorAll("[data-edit]")
+        .querySelectorAll(
+            "[data-edit]"
+        )
         .forEach(button => {
 
             button.addEventListener(
@@ -1843,7 +2348,9 @@ function bindTableActions() {
 
 
     tableBody
-        .querySelectorAll("[data-delete]")
+        .querySelectorAll(
+            "[data-delete]"
+        )
         .forEach(button => {
 
             button.addEventListener(
@@ -1888,14 +2395,6 @@ function openDetails(key) {
         key;
 
 
-    const id =
-        normalize(
-            data.registrationId ??
-            data.RegistrationId
-        ) ||
-        key;
-
-
     const events =
         getEvents(data);
 
@@ -1910,26 +2409,42 @@ function openDetails(key) {
     ) {
 
         const name =
-            getMemberName(
-                data,
-                i
+            normalize(
+                data[
+                    `Member${i}Name`
+                ] ??
+                data[
+                    `member${i}Name`
+                ]
             );
 
 
-        if (!name) continue;
+        if (!name) {
+
+            continue;
+
+        }
 
 
         const memberClass =
-            getMemberClass(
-                data,
-                i
+            normalize(
+                data[
+                    `Member${i}Class`
+                ] ??
+                data[
+                    `member${i}Class`
+                ]
             );
 
 
         const memberSection =
-            getMemberSection(
-                data,
-                i
+            normalize(
+                data[
+                    `Member${i}Section`
+                ] ??
+                data[
+                    `member${i}Section`
+                ]
             );
 
 
@@ -1941,11 +2456,14 @@ function openDetails(key) {
                     Team Member ${i}
                 </strong>
 
+
                 <div class="detail-grid">
 
                     <div class="detail-item">
 
-                        <label>Name</label>
+                        <label>
+                            Name
+                        </label>
 
                         <strong>
                             ${escapeHTML(name)}
@@ -1953,9 +2471,12 @@ function openDetails(key) {
 
                     </div>
 
+
                     <div class="detail-item">
 
-                        <label>Class</label>
+                        <label>
+                            Class
+                        </label>
 
                         <strong>
                             ${escapeHTML(
@@ -1965,9 +2486,12 @@ function openDetails(key) {
 
                     </div>
 
+
                     <div class="detail-item">
 
-                        <label>Section</label>
+                        <label>
+                            Section
+                        </label>
 
                         <strong>
                             ${escapeHTML(
@@ -1994,6 +2518,7 @@ function openDetails(key) {
                 Registration Information
             </h3>
 
+
             <div class="detail-grid">
 
                 <div class="detail-item">
@@ -2003,10 +2528,16 @@ function openDetails(key) {
                     </label>
 
                     <strong>
-                        ${escapeHTML(id)}
+                        ${escapeHTML(
+                            getRegistrationId(
+                                data,
+                                key
+                            )
+                        )}
                     </strong>
 
                 </div>
+
 
                 <div class="detail-item">
 
@@ -2017,7 +2548,9 @@ function openDetails(key) {
                     <strong>
                         ${escapeHTML(
                             formatDate(
-                                getRegistrationDate(data)
+                                getRegistrationDate(
+                                    data
+                                )
                             )
                         )}
                     </strong>
@@ -2035,7 +2568,9 @@ function openDetails(key) {
                 Team Information
             </h3>
 
+
             <div class="detail-grid">
+
 
                 <div class="detail-item">
 
@@ -2045,11 +2580,8 @@ function openDetails(key) {
 
                     <strong>
                         ${escapeHTML(
-                            normalize(
-                                data.StudentName ??
-                                data.studentName ??
-                                data.TeamLeader
-                            ) || "-"
+                            getStudentName(data)
+                            || "-"
                         )}
                     </strong>
 
@@ -2064,10 +2596,8 @@ function openDetails(key) {
 
                     <strong>
                         ${escapeHTML(
-                            normalize(
-                                data.TeamName ??
-                                data.teamName
-                            ) || "-"
+                            getTeamName(data)
+                            || "-"
                         )}
                     </strong>
 
@@ -2082,10 +2612,8 @@ function openDetails(key) {
 
                     <strong>
                         ${escapeHTML(
-                            normalize(
-                                data.Class ??
-                                data.class
-                            ) || "-"
+                            getClass(data)
+                            || "-"
                         )}
                     </strong>
 
@@ -2100,10 +2628,8 @@ function openDetails(key) {
 
                     <strong>
                         ${escapeHTML(
-                            normalize(
-                                data.Section ??
-                                data.section
-                            ) || "-"
+                            getSection(data)
+                            || "-"
                         )}
                     </strong>
 
@@ -2118,11 +2644,8 @@ function openDetails(key) {
 
                     <strong>
                         ${escapeHTML(
-                            normalize(
-                                data.MobileNumber ??
-                                data.Mobile ??
-                                data.mobile
-                            ) || "-"
+                            getMobile(data)
+                            || "-"
                         )}
                     </strong>
 
@@ -2169,26 +2692,25 @@ function openDetails(key) {
                 Selected Events
             </h3>
 
+
             <div class="event-tags">
 
                 ${
                     events.length
-
                         ? events
                             .map(
                                 event => `
+
                                     <span class="event-tag">
+
                                         ${escapeHTML(event)}
+
                                     </span>
+
                                 `
                             )
                             .join("")
-
-                        : `
-                            <span>
-                                No event selected
-                            </span>
-                        `
+                        : "No event selected"
                 }
 
             </div>
@@ -2198,8 +2720,8 @@ function openDetails(key) {
 
         ${
             membersHTML
-
                 ? `
+
                     <div class="detail-section">
 
                         <h3>
@@ -2209,8 +2731,8 @@ function openDetails(key) {
                         ${membersHTML}
 
                     </div>
-                `
 
+                `
                 : ""
         }
 
@@ -2221,9 +2743,11 @@ function openDetails(key) {
                 Remarks
             </h3>
 
+
             <div class="detail-item">
 
                 <strong>
+
                     ${escapeHTML(
                         normalize(
                             data.Remarks ??
@@ -2231,6 +2755,7 @@ function openDetails(key) {
                         ) ||
                         "No remarks."
                     )}
+
                 </strong>
 
             </div>
@@ -2240,41 +2765,15 @@ function openDetails(key) {
     `;
 
 
-    detailsModal.classList.remove(
-        "hidden"
-    );
+    detailsModal
+        .classList
+        .remove("hidden");
 
 }
 
 
 /* =====================================================
-   DETAILS DELETE
-===================================================== */
-
-if (modalDeleteBtn) {
-
-    modalDeleteBtn.addEventListener(
-        "click",
-        () => {
-
-            if (
-                currentRegistrationKey
-            ) {
-
-                deleteRegistration(
-                    currentRegistrationKey
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   OPEN EDIT
+   EDIT
 ===================================================== */
 
 function openEdit(key) {
@@ -2300,44 +2799,39 @@ function openEdit(key) {
 
 
     editStudentName.value =
-        normalize(
-            data.StudentName ??
-            data.studentName ??
-            data.TeamLeader
+        getStudentName(
+            data
         );
 
 
     editTeamName.value =
-        normalize(
-            data.TeamName ??
-            data.teamName
+        getTeamName(
+            data
         );
 
 
     editClass.value =
-        normalize(
-            data.Class ??
-            data.class
+        getClass(
+            data
         );
 
 
     editSection.value =
-        normalize(
-            data.Section ??
-            data.section
+        getSection(
+            data
         );
 
 
     editMobile.value =
-        normalize(
-            data.MobileNumber ??
-            data.Mobile ??
-            data.mobile
+        getMobile(
+            data
         );
 
 
     editEmail.value =
-        getRegistrationEmail(data);
+        getRegistrationEmail(
+            data
+        );
 
 
     editRemarks.value =
@@ -2347,9 +2841,9 @@ function openEdit(key) {
         );
 
 
-    editModal.classList.remove(
-        "hidden"
-    );
+    editModal
+        .classList
+        .remove("hidden");
 
 }
 
@@ -2372,11 +2866,6 @@ if (editForm) {
 
 
             if (!key) {
-
-                showToast(
-                    "Invalid registration.",
-                    "error"
-                );
 
                 return;
 
@@ -2402,25 +2891,32 @@ if (editForm) {
                 const updates = {
 
                     StudentName:
-                        editStudentName.value.trim(),
+                        editStudentName.value
+                            .trim(),
 
                     TeamName:
-                        editTeamName.value.trim(),
+                        editTeamName.value
+                            .trim(),
 
                     Class:
-                        editClass.value.trim(),
+                        editClass.value
+                            .trim(),
 
                     Section:
-                        editSection.value.trim(),
+                        editSection.value
+                            .trim(),
 
                     MobileNumber:
-                        editMobile.value.trim(),
+                        editMobile.value
+                            .trim(),
 
                     EmailAddress:
-                        editEmail.value.trim(),
+                        editEmail.value
+                            .trim(),
 
                     Remarks:
-                        editRemarks.value.trim()
+                        editRemarks.value
+                            .trim()
 
                 };
 
@@ -2446,19 +2942,24 @@ if (editForm) {
                 };
 
 
-                applyFilters();
+                filteredRegistrations[key] =
+                    registrations[key];
+
+
+                editModal
+                    .classList
+                    .add("hidden");
+
 
                 updateDashboard();
 
                 renderRecent();
 
-                updateEventPage();
+                renderTable();
 
                 populateFilters();
 
-                editModal.classList.add(
-                    "hidden"
-                );
+                updateEventPage();
 
 
                 showToast(
@@ -2466,8 +2967,8 @@ if (editForm) {
                     "success"
                 );
 
-
-            } catch (error) {
+            }
+            catch (error) {
 
                 console.error(
                     "Update error:",
@@ -2476,11 +2977,15 @@ if (editForm) {
 
 
                 showToast(
-                    "Unable to update registration.",
+                    `Update failed: ${
+                        error.code ||
+                        error.message
+                    }`,
                     "error"
                 );
 
-            } finally {
+            }
+            finally {
 
                 saveButton.disabled =
                     false;
@@ -2511,41 +3016,40 @@ async function deleteRegistration(key) {
 
     if (!data) {
 
-        showToast(
-            "Registration not found.",
-            "error"
-        );
-
         return;
 
     }
 
 
     const name =
-        normalize(
-            data.StudentName ??
-            data.studentName ??
-            data.TeamLeader
+        getStudentName(
+            data
         ) ||
         "this registration";
 
 
     const confirmed =
         window.confirm(
-            `Are you sure you want to delete the registration for ${name}?\n\nThis action cannot be undone.`
+            `Delete registration for ${name}?\n\nThis action cannot be undone.`
         );
 
 
-    if (!confirmed) return;
+    if (!confirmed) {
+
+        return;
+
+    }
 
 
     try {
 
         await remove(
+
             ref(
                 database,
                 `registrations/${key}`
             )
+
         );
 
 
@@ -2554,15 +3058,18 @@ async function deleteRegistration(key) {
         delete filteredRegistrations[key];
 
 
-        closeAllModals();
+        detailsModal
+            .classList
+            .add("hidden");
+
 
         updateDashboard();
-
-        populateFilters();
 
         renderRecent();
 
         renderTable();
+
+        populateFilters();
 
         updateEventPage();
 
@@ -2572,8 +3079,8 @@ async function deleteRegistration(key) {
             "success"
         );
 
-
-    } catch (error) {
+    }
+    catch (error) {
 
         console.error(
             "Delete error:",
@@ -2582,7 +3089,10 @@ async function deleteRegistration(key) {
 
 
         showToast(
-            "Unable to delete registration.",
+            `Delete failed: ${
+                error.code ||
+                error.message
+            }`,
             "error"
         );
 
@@ -2592,7 +3102,7 @@ async function deleteRegistration(key) {
 
 
 /* =====================================================
-   EVENT PAGE
+   EVENTS
 ===================================================== */
 
 function updateEventPage() {
@@ -2606,15 +3116,18 @@ function updateEventPage() {
         counts.race
     );
 
+
     setText(
         "eventWarCount",
         counts.war
     );
 
+
     setText(
         "eventTugCount",
         counts.tug
     );
+
 
     setText(
         "eventSoccerCount",
@@ -2631,20 +3144,12 @@ function updateEventPage() {
 const dashboardRefresh =
     $("dashboardRefresh");
 
+
 if (dashboardRefresh) {
 
     dashboardRefresh.addEventListener(
         "click",
-        async () => {
-
-            await loadRegistrations();
-
-            showToast(
-                "Dashboard refreshed.",
-                "success"
-            );
-
-        }
+        loadRegistrations
     );
 
 }
@@ -2653,31 +3158,34 @@ if (dashboardRefresh) {
 const refreshRegistrations =
     $("refreshRegistrations");
 
+
 if (refreshRegistrations) {
 
     refreshRegistrations.addEventListener(
         "click",
-        async () => {
+        loadRegistrations
+    );
 
-            await loadRegistrations();
+}
 
-            showToast(
-                "Registrations refreshed.",
-                "success"
-            );
 
-        }
+if (databaseRetry) {
+
+    databaseRetry.addEventListener(
+        "click",
+        loadRegistrations
     );
 
 }
 
 
 /* =====================================================
-   EXPORT BUTTONS
+   CSV
 ===================================================== */
 
 const exportCsv =
     $("exportCsv");
+
 
 if (exportCsv) {
 
@@ -2698,6 +3206,7 @@ if (exportCsv) {
 const exportDashboard =
     $("exportDashboard");
 
+
 if (exportDashboard) {
 
     exportDashboard.addEventListener(
@@ -2715,7 +3224,7 @@ if (exportDashboard) {
 
 
 /* =====================================================
-   CSV EXPORT
+   EXPORT CSV
 ===================================================== */
 
 function exportCSV(dataObject) {
@@ -2783,60 +3292,67 @@ function exportCSV(dataObject) {
 
             rows.push([
 
-                normalize(
-                    data.registrationId ??
-                    data.RegistrationId
-                ) ||
-                key,
+                getRegistrationId(
+                    data,
+                    key
+                ),
 
-                normalize(
-                    data.StudentName ??
-                    data.studentName ??
-                    data.TeamLeader
+                getStudentName(
+                    data
+                ),
+
+                getTeamName(
+                    data
+                ),
+
+                getClass(
+                    data
+                ),
+
+                getSection(
+                    data
+                ),
+
+                getMobile(
+                    data
+                ),
+
+                getRegistrationEmail(
+                    data
+                ),
+
+                getEvents(
+                    data
+                ).join(" | "),
+
+                getTeamSize(
+                    data
                 ),
 
                 normalize(
-                    data.TeamName ??
-                    data.teamName
+                    data.Member2Name
                 ),
 
                 normalize(
-                    data.Class ??
-                    data.class
+                    data.Member3Name
                 ),
 
                 normalize(
-                    data.Section ??
-                    data.section
+                    data.Member4Name
                 ),
 
                 normalize(
-                    data.MobileNumber ??
-                    data.Mobile ??
-                    data.mobile
+                    data.Member5Name
                 ),
-
-                getRegistrationEmail(data),
-
-                getEvents(data)
-                    .join(" | "),
-
-                getTeamSize(data),
-
-                getMemberName(data, 2),
-
-                getMemberName(data, 3),
-
-                getMemberName(data, 4),
-
-                getMemberName(data, 5),
 
                 normalize(
                     data.Remarks ??
                     data.remarks
                 ),
 
-                getRegistrationDate(data)
+                getRegistrationDate(
+                    data
+                )
 
             ]);
 
@@ -2880,7 +3396,9 @@ function exportCSV(dataObject) {
         );
 
 
-    link.href = url;
+    link.href =
+        url;
+
 
     link.download =
         "APS_Robotics_Registrations_2026.csv";
@@ -2893,7 +3411,9 @@ function exportCSV(dataObject) {
 
     link.click();
 
+
     link.remove();
+
 
     URL.revokeObjectURL(
         url
@@ -2938,25 +3458,72 @@ document
 
         button.addEventListener(
             "click",
-            closeAllModals
+            closeModals
         );
 
     });
 
 
-if (detailsModal) {
+function closeModals() {
 
-    detailsModal.addEventListener(
+    detailsModal
+        .classList
+        .add("hidden");
+
+
+    editModal
+        .classList
+        .add("hidden");
+
+}
+
+
+detailsModal.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target ===
+            detailsModal
+        ) {
+
+            closeModals();
+
+        }
+
+    }
+);
+
+
+editModal.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target ===
+            editModal
+        ) {
+
+            closeModals();
+
+        }
+
+    }
+);
+
+
+if (modalDeleteBtn) {
+
+    modalDeleteBtn.addEventListener(
         "click",
-        event => {
+        () => {
 
             if (
-                event.target ===
-                detailsModal
+                currentRegistrationKey
             ) {
 
-                detailsModal.classList.add(
-                    "hidden"
+                deleteRegistration(
+                    currentRegistrationKey
                 );
 
             }
@@ -2967,51 +3534,29 @@ if (detailsModal) {
 }
 
 
-if (editModal) {
+/* =====================================================
+   ESC
+===================================================== */
 
-    editModal.addEventListener(
-        "click",
-        event => {
+document.addEventListener(
+    "keydown",
+    event => {
 
-            if (
-                event.target ===
-                editModal
-            ) {
+        if (
+            event.key ===
+            "Escape"
+        ) {
 
-                editModal.classList.add(
-                    "hidden"
-                );
+            closeModals();
 
-            }
+            sidebar.classList.remove(
+                "open"
+            );
 
         }
-    );
-
-}
-
-
-function closeAllModals() {
-
-    if (detailsModal) {
-
-        detailsModal.classList.add(
-            "hidden"
-        );
 
     }
-
-    if (editModal) {
-
-        editModal.classList.add(
-            "hidden"
-        );
-
-    }
-
-    currentRegistrationKey =
-        null;
-
-}
+);
 
 
 /* =====================================================
@@ -3026,7 +3571,11 @@ function showToast(
     if (
         !toast ||
         !toastMessage
-    ) return;
+    ) {
+
+        return;
+
+    }
 
 
     toastMessage.textContent =
@@ -3034,17 +3583,23 @@ function showToast(
 
 
     const icon =
-        toast.querySelector("i");
+        toast.querySelector(
+            "i"
+        );
 
 
     if (icon) {
 
         icon.className =
             type === "error"
-
                 ? "fa-solid fa-circle-exclamation"
-
                 : "fa-solid fa-circle-check";
+
+
+        icon.style.color =
+            type === "error"
+                ? "#ff536b"
+                : "#00e69a";
 
     }
 
@@ -3068,101 +3623,128 @@ function showToast(
                 );
 
             },
-            3200
+            3500
         );
 
 }
 
 
 /* =====================================================
-   DATE FIELD
+   DATE
 ===================================================== */
 
 function getRegistrationDate(data) {
 
-    return (
-        data?.registrationDate ??
-        data?.RegistrationDate ??
-        data?.registeredAt ??
-        data?.createdAt ??
-        ""
-    );
+    if (!data) {
+
+        return "";
+
+    }
+
+
+    return data.registrationDate ??
+        data.RegistrationDate ??
+        data.createdAt ??
+        data.created_at ??
+        data.timestamp ??
+        "";
 
 }
 
 
-/* =====================================================
-   TIMESTAMP
-===================================================== */
-
 function getTimestamp(data) {
 
     const value =
-        getRegistrationDate(data);
+        getRegistrationDate(
+            data
+        );
 
 
-    if (!value) return 0;
+    if (!value) {
+
+        return 0;
+
+    }
 
 
     if (
         typeof value === "number"
     ) {
 
-        return value;
+        return value < 10000000000
+            ? value * 1000
+            : value;
 
     }
 
 
-    const date =
-        new Date(value);
-
-
     const timestamp =
-        date.getTime();
+        new Date(
+            value
+        ).getTime();
 
 
-    return Number.isNaN(timestamp)
+    return Number.isNaN(
+        timestamp
+    )
         ? 0
         : timestamp;
 
 }
 
 
-/* =====================================================
-   DATE FORMAT
-===================================================== */
-
 function formatDate(value) {
 
-    if (!value) return "-";
+    if (!value) {
+
+        return "-";
+
+    }
 
 
     if (
         typeof value === "number"
     ) {
 
+        const milliseconds =
+            value < 10000000000
+                ? value * 1000
+                : value;
+
+
         const date =
-            new Date(value);
+            new Date(
+                milliseconds
+            );
 
-        if (
-            Number.isNaN(
-                date.getTime()
-            )
-        ) {
 
-            return String(value);
+        return date.toLocaleString(
+            "en-IN",
+            {
+                day:
+                    "2-digit",
 
-        }
+                month:
+                    "short",
 
-        return formatDateObject(
-            date
+                year:
+                    "numeric",
+
+                hour:
+                    "2-digit",
+
+                minute:
+                    "2-digit"
+            }
         );
 
     }
 
 
     const date =
-        new Date(value);
+        new Date(
+            value
+        );
 
 
     if (
@@ -3171,29 +3753,117 @@ function formatDate(value) {
         )
     ) {
 
-        return String(value);
+        return normalize(
+            value
+        );
 
     }
 
 
-    return formatDateObject(
-        date
+    return date.toLocaleString(
+        "en-IN",
+        {
+            day:
+                "2-digit",
+
+            month:
+                "short",
+
+            year:
+                "numeric",
+
+            hour:
+                "2-digit",
+
+            minute:
+                "2-digit"
+        }
     );
 
 }
 
 
-function formatDateObject(date) {
+/* =====================================================
+   FIELD HELPERS
+===================================================== */
 
-    return date.toLocaleString(
-        "en-IN",
-        {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
-        }
+function getRegistrationId(
+    data,
+    fallback = ""
+) {
+
+    return normalize(
+        data?.registrationId ??
+        data?.RegistrationID ??
+        data?.registrationID ??
+        data?.registration_id ??
+        data?.id ??
+        fallback
+    );
+
+}
+
+
+function getStudentName(data) {
+
+    return normalize(
+        data?.StudentName ??
+        data?.studentName ??
+        data?.TeamLeader ??
+        data?.teamLeader ??
+        data?.name ??
+        ""
+    );
+
+}
+
+
+function getTeamName(data) {
+
+    return normalize(
+        data?.TeamName ??
+        data?.teamName ??
+        data?.team ??
+        ""
+    );
+
+}
+
+
+function getClass(data) {
+
+    return normalize(
+        data?.Class ??
+        data?.class ??
+        data?.className ??
+        ""
+    )
+        .trim();
+
+}
+
+
+function getSection(data) {
+
+    return normalize(
+        data?.Section ??
+        data?.section ??
+        ""
+    )
+        .trim();
+
+}
+
+
+function getMobile(data) {
+
+    return normalize(
+        data?.MobileNumber ??
+        data?.mobileNumber ??
+        data?.Mobile ??
+        data?.mobile ??
+        data?.phone ??
+        ""
     );
 
 }
@@ -3223,45 +3893,7 @@ function setText(
 
 
 /* =====================================================
-   NAV COUNT
-===================================================== */
-
-function updateNavigationCount() {
-
-    if (
-        navRegistrationCount
-    ) {
-
-        navRegistrationCount.textContent =
-            Object.keys(
-                registrations
-            ).length;
-
-    }
-
-}
-
-
-/* =====================================================
-   TABLE STATUS
-===================================================== */
-
-function setTableStatus(
-    message
-) {
-
-    if (tableStatus) {
-
-        tableStatus.textContent =
-            message;
-
-    }
-
-}
-
-
-/* =====================================================
-   HTML SECURITY
+   SECURITY
 ===================================================== */
 
 function escapeHTML(value) {
@@ -3273,15 +3905,20 @@ function escapeHTML(value) {
 
                 const entities = {
 
-                    "&": "&amp;",
+                    "&":
+                        "&amp;",
 
-                    "<": "&lt;",
+                    "<":
+                        "&lt;",
 
-                    ">": "&gt;",
+                    ">":
+                        "&gt;",
 
-                    '"': "&quot;",
+                    '"':
+                        "&quot;",
 
-                    "'": "&#039;"
+                    "'":
+                        "&#039;"
 
                 };
 
@@ -3298,32 +3935,24 @@ function escapeHTML(value) {
 
 function escapeAttr(value) {
 
-    return escapeHTML(value);
+    return escapeHTML(
+        value
+    );
 
 }
 
 
 /* =====================================================
-   KEYBOARD
+   FATAL ERROR
 ===================================================== */
 
-document.addEventListener(
-    "keydown",
-    event => {
+function showFatalError(message) {
 
-        if (
-            event.key ===
-            "Escape"
-        ) {
+    console.error(
+        message
+    );
 
-            closeAllModals();
-
-            closeSidebar();
-
-        }
-
-    }
-);
+}
 
 
 /* =====================================================
@@ -3332,58 +3961,6 @@ document.addEventListener(
 
 filteredRegistrations = {};
 
-
-/* =====================================================
-   PREVENT BODY SCROLL WHEN MODAL OPEN
-===================================================== */
-
-const modalObserver =
-    new MutationObserver(
-        () => {
-
-            const modalOpen =
-                !detailsModal.classList.contains(
-                    "hidden"
-                ) ||
-                !editModal.classList.contains(
-                    "hidden"
-                );
-
-
-            document.body.style.overflow =
-                modalOpen
-                    ? "hidden"
-                    : "";
-
-        }
-    );
-
-
-if (detailsModal) {
-
-    modalObserver.observe(
-        detailsModal,
-        {
-            attributes: true,
-            attributeFilter: [
-                "class"
-            ]
-        }
-    );
-
-}
-
-
-if (editModal) {
-
-    modalObserver.observe(
-        editModal,
-        {
-            attributes: true,
-            attributeFilter: [
-                "class"
-            ]
-        }
-    );
-
-}
+setConnection(
+    "loading"
+);
