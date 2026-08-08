@@ -1,17 +1,13 @@
 /* =====================================================
    APS ROBOTICS CHAMPIONSHIP 2026
-   COMPLETE IMPROVED MAIN STYLESHEET
-===================================================== */
-
-
-/* =====================================================
-   RESET
+   FINAL RESPONSIVE STYLESHEET
 ===================================================== */
 
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
+    scroll-behavior:smooth;
 }
 
 html{
@@ -21,14 +17,14 @@ html{
 
 body{
     font-family:'Poppins',sans-serif;
-    background:#05070b;
+    background:#050505;
     color:#fff;
     overflow-x:hidden;
-    min-width:280px;
 }
 
 a{
     text-decoration:none;
+    color:inherit;
 }
 
 button,
@@ -39,12 +35,7 @@ select{
 }
 
 button{
-    outline:none;
-}
-
-::selection{
-    background:#00f2ff;
-    color:#000;
+    cursor:pointer;
 }
 
 
@@ -57,7 +48,7 @@ button{
 }
 
 ::-webkit-scrollbar-track{
-    background:#020407;
+    background:#030303;
 }
 
 ::-webkit-scrollbar-thumb{
@@ -73,6 +64,11 @@ button{
     background:#00f2ff;
 }
 
+::selection{
+    background:#00f2ff;
+    color:#000;
+}
+
 
 /* =====================================================
    NAVBAR
@@ -82,10 +78,11 @@ button{
     position:fixed;
     top:0;
     left:0;
+
     width:100%;
     min-height:78px;
 
-    padding:10px 6%;
+    padding:12px 6%;
 
     display:flex;
     align-items:center;
@@ -96,24 +93,23 @@ button{
     backdrop-filter:blur(18px);
     -webkit-backdrop-filter:blur(18px);
 
-    border-bottom:1px solid rgba(0,242,255,.15);
+    border-bottom:
+        1px solid rgba(0,242,255,.12);
 
     z-index:1000;
 }
 
-
-/* LOGO */
-
 .logo{
     display:flex;
     align-items:center;
+
     gap:12px;
 
     color:#00f2ff;
 
     font-family:'Orbitron',sans-serif;
 
-    font-size:16px;
+    font-size:17px;
     font-weight:700;
 
     white-space:nowrap;
@@ -126,15 +122,15 @@ button{
     object-fit:contain;
 
     filter:
-        drop-shadow(0 0 8px rgba(0,242,255,.65));
+        drop-shadow(
+            0 0 8px rgba(0,242,255,.7)
+        );
 }
-
-
-/* NAVIGATION */
 
 .navbar ul{
     display:flex;
     align-items:center;
+
     gap:25px;
 
     list-style:none;
@@ -143,14 +139,12 @@ button{
 .navbar ul li a{
     position:relative;
 
-    display:block;
-
-    padding:10px 0;
-
     color:#fff;
 
     font-size:14px;
     font-weight:500;
+
+    padding:10px 0;
 
     transition:.3s;
 }
@@ -168,7 +162,8 @@ button{
 
     background:#00f2ff;
 
-    box-shadow:0 0 10px #00f2ff;
+    box-shadow:
+        0 0 10px #00f2ff;
 
     transition:.3s;
 }
@@ -192,19 +187,17 @@ button{
     width:45px;
     height:45px;
 
-    align-items:center;
-    justify-content:center;
+    border:1px solid
+        rgba(0,242,255,.35);
 
-    border:1px solid rgba(0,242,255,.35);
     border-radius:10px;
 
-    background:rgba(0,242,255,.08);
+    background:
+        rgba(0,242,255,.08);
 
     color:#00f2ff;
 
     font-size:20px;
-
-    cursor:pointer;
 
     transition:.3s;
 }
@@ -213,12 +206,13 @@ button{
     background:#00f2ff;
     color:#000;
 
-    box-shadow:0 0 20px rgba(0,242,255,.5);
+    box-shadow:
+        0 0 20px rgba(0,242,255,.5);
 }
 
 
 /* =====================================================
-   COMMON SECTION
+   COMMON
 ===================================================== */
 
 section{
@@ -229,11 +223,11 @@ section{
 .section-title{
     position:relative;
 
+    text-align:center;
+
     max-width:1000px;
 
     margin:0 auto 60px;
-
-    text-align:center;
 }
 
 .section-number{
@@ -247,10 +241,10 @@ section{
 
     margin-bottom:14px;
 
-    border:1px solid rgba(0,242,255,.4);
-    border-radius:20px;
+    border:
+        1px solid rgba(0,242,255,.4);
 
-    background:rgba(0,242,255,.05);
+    border-radius:20px;
 
     color:#00f2ff;
 
@@ -259,27 +253,32 @@ section{
     font-size:11px;
 
     letter-spacing:1px;
+
+    background:
+        rgba(0,242,255,.05);
 }
 
 .section-title h2{
-    margin-bottom:14px;
-
-    color:#00f2ff;
-
     font-family:'Orbitron',sans-serif;
 
     font-size:45px;
+
+    color:#00f2ff;
+
     line-height:1.25;
 
     text-shadow:
         0 0 10px rgba(0,242,255,.45),
         0 0 25px rgba(0,242,255,.2);
+
+    margin-bottom:14px;
 }
 
 .section-title p{
     color:#ff00cc;
 
     font-size:14px;
+
     font-weight:500;
 
     letter-spacing:2px;
@@ -287,7 +286,7 @@ section{
 
 
 /* =====================================================
-   BUTTONS
+   BUTTON
 ===================================================== */
 
 .btn{
@@ -300,7 +299,6 @@ section{
 
     padding:15px 30px;
 
-    border:2px solid #00f2ff;
     border-radius:50px;
 
     background:#00f2ff;
@@ -308,12 +306,16 @@ section{
     color:#000;
 
     font-size:15px;
+
     font-weight:700;
 
     box-shadow:
         0 0 15px rgba(0,242,255,.45);
 
     transition:.35s;
+
+    border:
+        2px solid #00f2ff;
 }
 
 .btn:hover{
@@ -325,14 +327,14 @@ section{
 }
 
 .btn-outline{
-    border-color:#ff00cc;
-
     background:transparent;
 
     color:#fff;
 
+    border-color:#ff00cc;
+
     box-shadow:
-        0 0 15px rgba(255,0,204,.25);
+        0 0 15px rgba(255,0,204,.3);
 }
 
 .btn-outline:hover{
@@ -357,14 +359,16 @@ section{
     align-items:center;
     justify-content:center;
 
-    padding:150px 6% 90px;
-
     text-align:center;
+
+    padding:
+        150px 6%
+        90px;
 
     background:
         radial-gradient(
             circle at 50% 20%,
-            rgba(0,242,255,.14),
+            rgba(0,242,255,.13),
             transparent 35%
         ),
         radial-gradient(
@@ -388,16 +392,15 @@ section{
     width:500px;
     height:500px;
 
-    top:-180px;
-    left:-180px;
-
     border-radius:50%;
 
-    background:rgba(0,242,255,.06);
+    background:
+        rgba(0,242,255,.06);
 
     filter:blur(80px);
 
-    pointer-events:none;
+    top:-180px;
+    left:-180px;
 }
 
 .hero::after{
@@ -408,16 +411,15 @@ section{
     width:450px;
     height:450px;
 
-    right:-180px;
-    bottom:-180px;
-
     border-radius:50%;
 
-    background:rgba(255,0,204,.05);
+    background:
+        rgba(255,0,204,.05);
 
     filter:blur(90px);
 
-    pointer-events:none;
+    right:-180px;
+    bottom:-180px;
 }
 
 .hero-content{
@@ -426,11 +428,9 @@ section{
     z-index:2;
 
     width:100%;
+
     max-width:1200px;
 }
-
-
-/* HERO LOGO */
 
 .hero-logo-wrapper{
     display:flex;
@@ -446,50 +446,55 @@ section{
     margin-bottom:25px;
 
     filter:
-        drop-shadow(0 0 10px rgba(0,242,255,.7))
-        drop-shadow(0 0 30px rgba(0,242,255,.25));
+        drop-shadow(
+            0 0 10px rgba(0,242,255,.7)
+        )
+        drop-shadow(
+            0 0 30px rgba(0,242,255,.25)
+        );
 
-    animation:floating 4s ease-in-out infinite;
+    animation:
+        floating 4s ease-in-out infinite;
 }
-
-
-/* HERO BADGE */
 
 .hero-badge{
     display:inline-flex;
 
     align-items:center;
+
     gap:9px;
 
     padding:8px 18px;
 
     margin-bottom:20px;
 
-    border:1px solid rgba(0,242,255,.35);
+    border:
+        1px solid rgba(0,242,255,.35);
+
     border-radius:30px;
 
-    background:rgba(0,242,255,.05);
+    background:
+        rgba(0,242,255,.05);
 
     color:#00f2ff;
 
     font-size:11px;
+
     font-weight:600;
 
     letter-spacing:1.5px;
 }
 
-
-/* HERO TITLE */
-
 .hero h1{
-    color:#00f2ff;
-
     font-family:'Orbitron',sans-serif;
 
     font-size:64px;
+
     font-weight:900;
 
     line-height:1.15;
+
+    color:#00f2ff;
 
     text-shadow:
         0 0 12px rgba(0,242,255,.7),
@@ -523,9 +528,6 @@ section{
 .hero p strong{
     color:#fff;
 }
-
-
-/* HERO BUTTONS */
 
 .hero-buttons{
     display:flex;
@@ -562,7 +564,8 @@ section{
             rgba(255,255,255,.015)
         );
 
-    border:1px solid rgba(255,255,255,.09);
+    border:
+        1px solid rgba(255,255,255,.09);
 
     border-radius:18px;
 
@@ -574,7 +577,8 @@ section{
 .card:hover{
     transform:translateY(-8px);
 
-    border-color:rgba(0,242,255,.5);
+    border-color:
+        rgba(0,242,255,.5);
 
     box-shadow:
         0 0 25px rgba(0,242,255,.18);
@@ -594,19 +598,19 @@ section{
 }
 
 .card h3{
-    margin-bottom:7px;
-
     font-family:'Orbitron',sans-serif;
 
     font-size:14px;
+
+    margin-bottom:7px;
 }
 
 .card p{
     margin:0;
 
-    color:#888;
-
     font-size:12px;
+
+    color:#888;
 }
 
 
@@ -631,13 +635,13 @@ section{
 
     margin:auto;
 
+    text-align:center;
+
     color:#cfd2d6;
 
     font-size:17px;
 
     line-height:1.9;
-
-    text-align:center;
 }
 
 .about-text p{
@@ -647,6 +651,9 @@ section{
 .about-text strong{
     color:#00f2ff;
 }
+
+
+/* EVENT GRID */
 
 .event-grid{
     display:grid;
@@ -666,8 +673,6 @@ section{
 
     padding:35px;
 
-    overflow:hidden;
-
     text-align:center;
 
     background:
@@ -677,11 +682,14 @@ section{
             rgba(255,255,255,.015)
         );
 
-    border:1px solid rgba(255,255,255,.08);
+    border:
+        1px solid rgba(255,255,255,.08);
 
     border-radius:20px;
 
     transition:.4s;
+
+    overflow:hidden;
 }
 
 .event-card::before{
@@ -692,14 +700,15 @@ section{
     width:120px;
     height:120px;
 
-    top:-50px;
-    right:-50px;
-
     border-radius:50%;
 
-    background:rgba(0,242,255,.08);
+    background:
+        rgba(0,242,255,.08);
 
     filter:blur(30px);
+
+    top:-50px;
+    right:-50px;
 }
 
 .event-card:hover{
@@ -715,45 +724,48 @@ section{
     width:70px;
     height:70px;
 
+    margin:0 auto 20px;
+
     display:flex;
+
     align-items:center;
     justify-content:center;
 
-    margin:0 auto 20px;
-
     border-radius:18px;
 
-    background:rgba(0,242,255,.08);
+    background:
+        rgba(0,242,255,.08);
 
-    border:1px solid rgba(0,242,255,.2);
+    border:
+        1px solid rgba(0,242,255,.2);
 }
 
 .event-card-icon i{
-    color:#00f2ff;
-
     font-size:32px;
+
+    color:#00f2ff;
 }
 
 .event-card h3{
-    margin-bottom:12px;
-
     font-family:'Orbitron',sans-serif;
 
     font-size:18px;
+
+    margin-bottom:12px;
 }
 
 .event-card p{
     color:#aaa;
 
-    font-size:14px;
-
     line-height:1.7;
+
+    font-size:14px;
 }
 
 .about-btn{
-    margin-top:55px;
-
     text-align:center;
+
+    margin-top:55px;
 }
 
 
@@ -800,7 +812,8 @@ section{
             rgba(255,255,255,.025)
         );
 
-    border:1px solid rgba(255,255,255,.1);
+    border:
+        1px solid rgba(255,255,255,.1);
 
     border-radius:25px;
 
@@ -811,20 +824,18 @@ section{
     backdrop-filter:blur(18px);
 }
 
-
-/* =====================================================
-   FORM HEADER
-===================================================== */
-
 .form-header{
     grid-column:1/-1;
 
     display:flex;
+
     align-items:center;
 
     gap:18px;
 
     padding-bottom:25px;
+
+    margin-bottom:5px;
 
     border-bottom:
         1px solid rgba(255,255,255,.08);
@@ -835,16 +846,17 @@ section{
     height:60px;
 
     display:flex;
+
     align-items:center;
     justify-content:center;
 
-    flex-shrink:0;
-
     border-radius:16px;
 
-    background:rgba(0,242,255,.1);
+    background:
+        rgba(0,242,255,.1);
 
-    border:1px solid rgba(0,242,255,.3);
+    border:
+        1px solid rgba(0,242,255,.3);
 
     color:#00f2ff;
 
@@ -852,11 +864,11 @@ section{
 }
 
 .form-header h3{
-    margin-bottom:5px;
-
     font-family:'Orbitron',sans-serif;
 
     font-size:18px;
+
+    margin-bottom:5px;
 }
 
 .form-header p{
@@ -865,15 +877,11 @@ section{
     font-size:13px;
 }
 
-
-/* =====================================================
-   FORM SECTION TITLE
-===================================================== */
-
 .form-section-title{
     grid-column:1/-1;
 
     display:flex;
+
     align-items:center;
 
     gap:10px;
@@ -892,9 +900,7 @@ section{
 }
 
 
-/* =====================================================
-   INPUT
-===================================================== */
+/* INPUT */
 
 .input-box{
     position:relative;
@@ -915,8 +921,6 @@ section{
     font-size:16px;
 
     z-index:2;
-
-    pointer-events:none;
 }
 
 .input-box input,
@@ -929,11 +933,13 @@ section{
         15px
         48px;
 
-    background:rgba(0,0,0,.35);
+    background:
+        rgba(0,0,0,.35);
 
     color:#fff;
 
-    border:1px solid rgba(255,255,255,.1);
+    border:
+        1px solid rgba(255,255,255,.1);
 
     border-radius:12px;
 
@@ -963,24 +969,30 @@ section{
 }
 
 .input-box textarea{
-    min-height:130px;
+    height:130px;
 
     resize:vertical;
 
     padding-top:16px;
 }
 
-.input-box textarea + i{
+.textarea-box i{
     top:25px;
 }
 
 
-/* =====================================================
-   FULL WIDTH
-===================================================== */
+/* FULL WIDTH */
 
 .full-width{
     grid-column:1/-1;
+}
+
+.event-help{
+    margin-top:-8px;
+
+    color:#888;
+
+    font-size:13px;
 }
 
 
@@ -1003,40 +1015,45 @@ section{
     position:relative;
 
     display:flex;
+
     align-items:center;
 
     gap:14px;
 
-    min-height:85px;
-
     padding:18px;
 
-    overflow:hidden;
+    min-height:85px;
 
-    background:rgba(0,0,0,.28);
+    background:
+        rgba(0,0,0,.28);
 
-    border:1px solid rgba(255,255,255,.09);
+    border:
+        1px solid rgba(255,255,255,.09);
 
     border-radius:15px;
 
     cursor:pointer;
 
     transition:.3s;
+
+    overflow:hidden;
 }
 
 .event-option:hover{
-    transform:translateY(-3px);
+    border-color:
+        rgba(0,242,255,.5);
 
-    border-color:rgba(0,242,255,.5);
+    transform:translateY(-3px);
 
     box-shadow:
         0 8px 25px rgba(0,242,255,.08);
 }
 
 .event-option.selected{
-    background:rgba(0,242,255,.08);
-
     border-color:#00f2ff;
+
+    background:
+        rgba(0,242,255,.08);
 
     box-shadow:
         0 0 20px rgba(0,242,255,.12);
@@ -1051,30 +1068,36 @@ section{
 }
 
 .event-option-icon{
+    flex-shrink:0;
+
     width:45px;
     height:45px;
 
     display:flex;
+
     align-items:center;
     justify-content:center;
 
-    flex-shrink:0;
-
     border-radius:12px;
 
-    background:rgba(0,242,255,.08);
+    background:
+        rgba(0,242,255,.08);
 
     color:#00f2ff;
 
     font-size:19px;
 }
 
-.event-option h4{
-    margin-bottom:4px;
+.event-option-content{
+    min-width:0;
+}
 
+.event-option h4{
     font-family:'Orbitron',sans-serif;
 
     font-size:13px;
+
+    margin-bottom:4px;
 }
 
 .event-option small{
@@ -1084,18 +1107,20 @@ section{
 }
 
 .check-icon{
+    margin-left:auto;
+
+    flex-shrink:0;
+
     width:25px;
     height:25px;
 
     display:flex;
+
     align-items:center;
     justify-content:center;
 
-    flex-shrink:0;
-
-    margin-left:auto;
-
-    border:1px solid #444;
+    border:
+        1px solid #444;
 
     border-radius:50%;
 
@@ -1125,11 +1150,10 @@ section{
 ===================================================== */
 
 .team-size-box{
-    grid-column:1/-1;
-
     display:grid;
 
-    grid-template-columns:1fr 250px;
+    grid-template-columns:
+        1fr 250px;
 
     align-items:center;
 
@@ -1137,9 +1161,11 @@ section{
 
     padding:18px;
 
-    background:rgba(0,0,0,.25);
+    background:
+        rgba(0,0,0,.25);
 
-    border:1px solid rgba(255,255,255,.08);
+    border:
+        1px solid rgba(255,255,255,.08);
 
     border-radius:15px;
 }
@@ -1160,6 +1186,7 @@ section{
 
 .team-size-box select{
     width:100%;
+
     height:48px;
 
     padding:0 15px;
@@ -1168,7 +1195,8 @@ section{
 
     color:#fff;
 
-    border:1px solid rgba(0,242,255,.3);
+    border:
+        1px solid rgba(0,242,255,.3);
 
     border-radius:10px;
 
@@ -1199,11 +1227,9 @@ section{
     grid-template-columns:
         repeat(3,1fr);
 
-    gap:18px;
+    gap:15px;
 
     padding:22px;
-
-    margin-top:5px;
 
     background:
         linear-gradient(
@@ -1212,36 +1238,39 @@ section{
             rgba(255,255,255,.02)
         );
 
-    border:1px solid rgba(0,242,255,.15);
+    border:
+        1px solid rgba(0,242,255,.15);
 
     border-radius:18px;
 
-    animation:memberAppear .35s ease;
+    animation:
+        memberAppear .35s ease;
 }
 
-.member-box h3,
 .member-title{
     grid-column:1/-1;
 
     display:flex;
+
     align-items:center;
 
     gap:10px;
-
-    padding-bottom:5px;
 
     color:#00f2ff;
 
     font-family:'Orbitron',sans-serif;
 
-    font-size:15px;
+    font-size:13px;
+
+    padding-bottom:5px;
 }
 
 .member-title span{
+    display:inline-flex;
+
     width:32px;
     height:32px;
 
-    display:inline-flex;
     align-items:center;
     justify-content:center;
 
@@ -1263,14 +1292,11 @@ section{
     min-height:56px;
 
     display:flex;
+
     align-items:center;
     justify-content:center;
 
-    gap:10px;
-
-    grid-column:1/-1;
-
-    border:0;
+    border:none;
 
     border-radius:50px;
 
@@ -1309,14 +1335,17 @@ section{
     cursor:not-allowed;
 }
 
+.submit-text,
+.loading-text{
+    display:flex;
 
-/* =====================================================
-   SECURE NOTE
-===================================================== */
+    align-items:center;
+    justify-content:center;
+
+    gap:10px;
+}
 
 .secure-note{
-    grid-column:1/-1;
-
     text-align:center;
 
     color:#666;
@@ -1325,9 +1354,9 @@ section{
 }
 
 .secure-note i{
-    margin-right:5px;
-
     color:#00f2ff;
+
+    margin-right:5px;
 }
 
 
@@ -1350,7 +1379,7 @@ section{
 .events-grid{
     max-width:1100px;
 
-    margin:auto;
+    margin:0 auto;
 
     display:grid;
 
@@ -1365,8 +1394,6 @@ section{
 
     padding:35px;
 
-    overflow:hidden;
-
     background:
         linear-gradient(
             145deg,
@@ -1374,11 +1401,14 @@ section{
             rgba(255,255,255,.015)
         );
 
-    border:1px solid rgba(255,255,255,.09);
+    border:
+        1px solid rgba(255,255,255,.09);
 
     border-radius:22px;
 
     transition:.4s;
+
+    overflow:hidden;
 }
 
 .event-box::after{
@@ -1389,20 +1419,22 @@ section{
     width:160px;
     height:160px;
 
-    right:-80px;
-    bottom:-80px;
-
     border-radius:50%;
 
-    background:rgba(0,242,255,.05);
+    background:
+        rgba(0,242,255,.05);
 
     filter:blur(35px);
+
+    right:-80px;
+    bottom:-80px;
 }
 
 .event-box:hover{
     transform:translateY(-8px);
 
-    border-color:rgba(0,242,255,.5);
+    border-color:
+        rgba(0,242,255,.5);
 
     box-shadow:
         0 15px 40px rgba(0,242,255,.1);
@@ -1412,11 +1444,12 @@ section{
     width:75px;
     height:75px;
 
+    margin:0 auto 22px;
+
     display:flex;
+
     align-items:center;
     justify-content:center;
-
-    margin:0 auto 22px;
 
     border-radius:50%;
 
@@ -1433,13 +1466,13 @@ section{
 }
 
 .event-box h3{
-    margin-bottom:20px;
-
     text-align:center;
 
     font-family:'Orbitron',sans-serif;
 
     font-size:18px;
+
+    margin-bottom:20px;
 }
 
 .event-box ul{
@@ -1525,26 +1558,28 @@ section{
 }
 
 .teacher-image{
+    flex-shrink:0;
+
     width:300px;
     height:300px;
 
     display:flex;
+
     align-items:center;
     justify-content:center;
 
-    flex-shrink:0;
-
-    overflow:hidden;
-
-    border:4px solid #00f2ff;
-
     border-radius:50%;
 
-    background:#111;
+    border:
+        4px solid #00f2ff;
 
     box-shadow:
         0 0 20px rgba(0,242,255,.5),
         0 0 55px rgba(0,242,255,.15);
+
+    overflow:hidden;
+
+    background:#111;
 }
 
 .teacher-image img{
@@ -1554,14 +1589,37 @@ section{
     object-fit:cover;
 }
 
+.teacher-placeholder{
+    width:100%;
+    height:100%;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(0,242,255,.15),
+            #070b12 65%
+        );
+
+    color:#00f2ff;
+
+    font-size:90px;
+}
+
 .teacher-message{
     max-width:620px;
 
     padding:40px;
 
-    background:rgba(255,255,255,.045);
+    background:
+        rgba(255,255,255,.045);
 
-    border:1px solid rgba(255,255,255,.09);
+    border:
+        1px solid rgba(255,255,255,.09);
 
     border-radius:22px;
 
@@ -1571,34 +1629,34 @@ section{
 .quote{
     display:block;
 
-    margin-bottom:18px;
-
     color:#00f2ff;
 
     font-size:45px;
+
+    margin-bottom:18px;
 
     text-shadow:
         0 0 15px rgba(0,242,255,.35);
 }
 
 .teacher-message p{
-    margin-bottom:25px;
-
     color:#d2d2d2;
 
     font-size:15px;
 
     line-height:1.9;
+
+    margin-bottom:25px;
 }
 
 .teacher-message h3{
-    margin-bottom:8px;
+    font-family:'Orbitron',sans-serif;
 
     color:#00f2ff;
 
-    font-family:'Orbitron',sans-serif;
-
     font-size:17px;
+
+    margin-bottom:8px;
 }
 
 .teacher-message span{
@@ -1625,7 +1683,7 @@ section{
 .contact-container{
     max-width:1050px;
 
-    margin:auto;
+    margin:0 auto;
 
     display:grid;
 
@@ -1645,7 +1703,8 @@ section{
             rgba(255,255,255,.015)
         );
 
-    border:1px solid rgba(255,255,255,.08);
+    border:
+        1px solid rgba(255,255,255,.08);
 
     border-radius:20px;
 
@@ -1662,18 +1721,20 @@ section{
 }
 
 .contact-card i{
-    width:65px;
-    height:65px;
-
     display:flex;
+
     align-items:center;
     justify-content:center;
+
+    width:65px;
+    height:65px;
 
     margin:0 auto 18px;
 
     border-radius:18px;
 
-    background:rgba(0,242,255,.08);
+    background:
+        rgba(0,242,255,.08);
 
     color:#00f2ff;
 
@@ -1681,11 +1742,11 @@ section{
 }
 
 .contact-card h3{
-    margin-bottom:12px;
-
     font-family:'Orbitron',sans-serif;
 
     font-size:16px;
+
+    margin-bottom:12px;
 }
 
 .contact-card p{
@@ -1696,6 +1757,16 @@ section{
     line-height:1.8;
 
     word-break:break-word;
+}
+
+.contact-card p a{
+    color:#aaa;
+
+    transition:.3s;
+}
+
+.contact-card p a:hover{
+    color:#00f2ff;
 }
 
 
@@ -1710,7 +1781,8 @@ footer{
 
     background:#000;
 
-    border-top:1px solid rgba(255,255,255,.06);
+    border-top:
+        1px solid rgba(255,255,255,.06);
 
     color:#777;
 
@@ -1736,9 +1808,9 @@ footer{
 }
 
 .footer-logo h3{
-    color:#00f2ff;
-
     font-family:'Orbitron',sans-serif;
+
+    color:#00f2ff;
 
     font-size:15px;
 }
@@ -1796,10 +1868,9 @@ footer p{
     height:50px;
 
     display:flex;
+
     align-items:center;
     justify-content:center;
-
-    z-index:900;
 
     border-radius:50%;
 
@@ -1811,6 +1882,8 @@ footer p{
 
     box-shadow:
         0 0 20px rgba(0,242,255,.4);
+
+    z-index:900;
 
     transition:.3s;
 }
@@ -1895,7 +1968,7 @@ footer p{
 
 
 /* =====================================================
-   MOBILE NAVIGATION
+   MOBILE
 ===================================================== */
 
 @media(max-width:800px){
@@ -1917,6 +1990,9 @@ footer p{
 
     .menu-toggle{
         display:flex;
+
+        align-items:center;
+        justify-content:center;
     }
 
     .navbar ul{
@@ -1937,7 +2013,8 @@ footer p{
 
         gap:5px;
 
-        background:rgba(2,6,12,.97);
+        background:
+            rgba(2,6,12,.98);
 
         border-bottom:
             1px solid rgba(0,242,255,.15);
@@ -1961,12 +2038,14 @@ footer p{
     }
 
     .navbar ul li a:hover{
-        background:rgba(0,242,255,.06);
+        background:
+            rgba(0,242,255,.06);
     }
 
     .navbar ul li a::after{
         display:none;
     }
+
 
     .section-title h2{
         font-size:34px;
@@ -1975,6 +2054,7 @@ footer p{
     .section-title p{
         font-size:11px;
     }
+
 
     .hero{
         padding-top:130px;
@@ -1993,10 +2073,15 @@ footer p{
         font-size:14px;
     }
 
-    .event-grid,
+
+    .event-grid{
+        grid-template-columns:1fr;
+    }
+
     .events-grid{
         grid-template-columns:1fr;
     }
+
 
     .register-form{
         grid-template-columns:1fr;
@@ -2004,28 +2089,24 @@ footer p{
         padding:28px 20px;
     }
 
-    .full-width,
     .form-header,
     .form-section-title,
+    .full-width,
     .event-help,
+    .event-options,
     .member-box,
-    .team-size-box,
-    .submit-btn,
-    .secure-note{
+    .team-size-box{
         grid-column:1;
     }
 
     .event-options{
         grid-template-columns:1fr;
-
-        grid-column:1;
     }
 
     .member-box{
         grid-template-columns:1fr;
     }
 
-    .member-box h3,
     .member-title{
         grid-column:1;
     }
@@ -2034,9 +2115,11 @@ footer p{
         grid-template-columns:1fr;
     }
 
+
     .message-container{
         gap:35px;
     }
+
 
     .contact-container{
         grid-template-columns:1fr;
@@ -2046,7 +2129,7 @@ footer p{
 
 
 /* =====================================================
-   MOBILE
+   SMALL MOBILE
 ===================================================== */
 
 @media(max-width:600px){
@@ -2056,7 +2139,7 @@ footer p{
     }
 
     .logo span{
-        font-size:11px;
+        font-size:10px;
     }
 
     .logo img{
@@ -2069,8 +2152,11 @@ footer p{
         height:40px;
     }
 
+
     .hero{
-        padding:120px 5% 70px;
+        padding:
+            120px 5%
+            70px;
     }
 
     .hero-logo{
@@ -2107,7 +2193,8 @@ footer p{
     .hero-buttons{
         flex-direction:column;
 
-        margin:28px 0 40px;
+        margin:
+            28px 0 40px;
     }
 
     .hero-buttons .btn{
@@ -2132,20 +2219,23 @@ footer p{
     }
 
     .card h3{
-        font-size:11px;
+        font-size:10px;
     }
 
     .card p{
         font-size:9px;
     }
 
+
     .about,
     .registration,
     .events,
     .message,
     .contact{
-        padding:80px 5%;
+        padding:
+            80px 5%;
     }
+
 
     .section-title{
         margin-bottom:40px;
@@ -2161,11 +2251,13 @@ footer p{
         letter-spacing:1px;
     }
 
+
     .about-text{
         font-size:14px;
 
         line-height:1.8;
     }
+
 
     .event-card{
         padding:25px 18px;
@@ -2178,6 +2270,7 @@ footer p{
     .event-card p{
         font-size:12px;
     }
+
 
     .register-form{
         padding:22px 15px;
@@ -2219,10 +2312,11 @@ footer p{
         font-size:13px;
     }
 
-    .event-option{
-        min-height:75px;
 
+    .event-option{
         padding:14px;
+
+        min-height:75px;
 
         gap:10px;
     }
@@ -2242,6 +2336,7 @@ footer p{
         font-size:9px;
     }
 
+
     .team-size-box{
         padding:14px;
     }
@@ -2250,15 +2345,13 @@ footer p{
         font-size:12px;
     }
 
+
     .member-box{
         padding:15px;
 
         gap:12px;
     }
 
-    .member-box h3{
-        font-size:13px;
-    }
 
     .event-box{
         padding:25px 18px;
@@ -2272,9 +2365,14 @@ footer p{
         font-size:12px;
     }
 
+
     .teacher-image{
         width:220px;
         height:220px;
+    }
+
+    .teacher-placeholder{
+        font-size:65px;
     }
 
     .teacher-message{
@@ -2295,12 +2393,15 @@ footer p{
         font-size:11px;
     }
 
+
     .contact-card{
         padding:28px 18px;
     }
 
+
     footer{
-        padding:35px 5%;
+        padding:
+            35px 5%;
     }
 
     .footer-logo h3{
@@ -2310,6 +2411,7 @@ footer p{
     footer p{
         font-size:10px;
     }
+
 
     .top-btn{
         width:43px;
@@ -2349,10 +2451,6 @@ footer p{
     .check-icon{
         width:21px;
         height:21px;
-    }
-
-    .member-box{
-        padding:13px;
     }
 
    }
