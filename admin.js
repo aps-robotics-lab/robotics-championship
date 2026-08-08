@@ -2,12 +2,26 @@
    APS ROBOTICS CHAMPIONSHIP 2026
    ADMIN PANEL
    FIREBASE AUTH + REALTIME DATABASE
-   OLD VERSION — BEFORE SEND EMAIL FUNCTION
+
+   OLD VERSION
+   BEFORE SEND EMAIL FEATURE
+
+   Features:
+   - Firebase Authentication
+   - Realtime Database
+   - Dashboard
+   - Registration management
+   - Search
+   - Event/Class/Section filters
+   - View details
+   - Edit
+   - Delete
+   - CSV export
 ===================================================== */
 
 
 /* =====================================================
-   FIREBASE APP
+   FIREBASE IMPORTS
 ===================================================== */
 
 import {
@@ -15,10 +29,6 @@ import {
 } from
 "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 
-
-/* =====================================================
-   FIREBASE AUTHENTICATION
-===================================================== */
 
 import {
     getAuth,
@@ -28,10 +38,6 @@ import {
 } from
 "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
-
-/* =====================================================
-   FIREBASE REALTIME DATABASE
-===================================================== */
 
 import {
     getDatabase,
@@ -90,7 +96,7 @@ const database =
 
 
 /* =====================================================
-   GLOBAL DATA
+   GLOBAL VARIABLES
 ===================================================== */
 
 let registrations = {};
@@ -103,7 +109,7 @@ let toastTimer = null;
 
 
 /* =====================================================
-   DOM ELEMENTS
+   DOM REFERENCES
 ===================================================== */
 
 const loginScreen =
@@ -264,13 +270,9 @@ onAuthStateChanged(
 
             adminApp.classList.remove("hidden");
 
-            if(adminEmail){
-
-                adminEmail.textContent =
-                    user.email ||
-                    "Authenticated Admin";
-
-            }
+            adminEmail.textContent =
+                user.email ||
+                "Authenticated Admin";
 
             loadRegistrations();
 
@@ -291,82 +293,61 @@ onAuthStateChanged(
    LOGIN
 ===================================================== */
 
-if(loginForm){
+loginForm.addEventListener(
+    "submit",
+    async event => {
 
-    loginForm.addEventListener(
-        "submit",
-        async event => {
+        event.preventDefault();
 
-            event.preventDefault();
+        loginError.textContent = "";
 
-            if(loginError){
+        loginBtn.disabled = true;
 
-                loginError.textContent = "";
-
-            }
-
-            if(loginBtn){
-
-                loginBtn.disabled = true;
-
-                loginBtn.innerHTML = `
-                    <i class="fa-solid fa-spinner fa-spin"></i>
-                    Signing In...
-                `;
-
-            }
+        loginBtn.innerHTML = `
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Signing In...
+        `;
 
 
-            try{
+        try{
 
-                await signInWithEmailAndPassword(
+            await signInWithEmailAndPassword(
 
-                    auth,
+                auth,
 
-                    loginEmail.value.trim(),
+                loginEmail.value.trim(),
 
-                    loginPassword.value
+                loginPassword.value
 
-                );
-
-            }
-            catch(error){
-
-                console.error(
-                    "Login error:",
-                    error
-                );
-
-
-                if(loginError){
-
-                    loginError.textContent =
-                        getAuthError(
-                            error.code
-                        );
-
-                }
-
-            }
-            finally{
-
-                if(loginBtn){
-
-                    loginBtn.disabled = false;
-
-                    loginBtn.innerHTML = `
-                        <i class="fa-solid fa-right-to-bracket"></i>
-                        Login to Dashboard
-                    `;
-
-                }
-
-            }
+            );
 
         }
-    );
+        catch(error){
 
-}
+            console.error(
+                "Login error:",
+                error
+            );
+
+            loginError.textContent =
+                getAuthError(
+                    error.code
+                );
+
+        }
+        finally{
+
+            loginBtn.disabled = false;
+
+            loginBtn.innerHTML = `
+                <i class="fa-solid fa-right-to-bracket"></i>
+                Login to Dashboard
+            `;
+
+        }
+
+    }
+);
 
 
 /* =====================================================
@@ -393,10 +374,7 @@ function getAuthError(code){
             return "Too many attempts. Please try again later.";
 
         case "auth/network-request-failed":
-            return "Network error. Check your internet connection.";
-
-        case "auth/user-disabled":
-            return "This admin account has been disabled.";
+            return "Network error. Please check your internet.";
 
         default:
             return "Login failed. Please check your credentials.";
@@ -410,72 +388,63 @@ function getAuthError(code){
    PASSWORD TOGGLE
 ===================================================== */
 
-if(togglePassword){
+togglePassword.addEventListener(
+    "click",
+    () => {
 
-    togglePassword.addEventListener(
-        "click",
-        () => {
-
-            const isPassword =
-                loginPassword.type === "password";
+        const isPassword =
+            loginPassword.type === "password";
 
 
-            loginPassword.type =
-                isPassword
-                ? "text"
-                : "password";
+        loginPassword.type =
+            isPassword
+            ? "text"
+            : "password";
 
 
-            togglePassword.innerHTML =
-                isPassword
-                ? '<i class="fa-solid fa-eye-slash"></i>'
-                : '<i class="fa-solid fa-eye"></i>';
+        togglePassword.innerHTML =
+            isPassword
+            ? '<i class="fa-solid fa-eye-slash"></i>'
+            : '<i class="fa-solid fa-eye"></i>';
 
-        }
-    );
-
-}
+    }
+);
 
 
 /* =====================================================
    LOGOUT
 ===================================================== */
 
-if(logoutBtn){
+logoutBtn.addEventListener(
+    "click",
+    async () => {
 
-    logoutBtn.addEventListener(
-        "click",
-        async () => {
+        try{
 
-            try{
+            await signOut(auth);
 
-                await signOut(auth);
-
-                showToast(
-                    "Logged out successfully.",
-                    "success"
-                );
-
-            }
-            catch(error){
-
-                console.error(
-                    "Logout error:",
-                    error
-                );
-
-
-                showToast(
-                    "Logout failed.",
-                    "error"
-                );
-
-            }
+            showToast(
+                "Logged out successfully.",
+                "success"
+            );
 
         }
-    );
+        catch(error){
 
-}
+            console.error(
+                "Logout error:",
+                error
+            );
+
+            showToast(
+                "Logout failed.",
+                "error"
+            );
+
+        }
+
+    }
+);
 
 
 /* =====================================================
@@ -493,21 +462,11 @@ document
             const page =
                 button.dataset.page;
 
+            showPage(page);
 
-            if(page){
-
-                showPage(page);
-
-            }
-
-
-            if(sidebar){
-
-                sidebar.classList.remove(
-                    "open"
-                );
-
-            }
+            sidebar.classList.remove(
+                "open"
+            );
 
         }
     );
@@ -523,15 +482,9 @@ document
         "click",
         () => {
 
-            const page =
-                button.dataset.pageTarget;
-
-
-            if(page){
-
-                showPage(page);
-
-            }
+            showPage(
+                button.dataset.pageTarget
+            );
 
         }
     );
@@ -554,7 +507,7 @@ function showPage(pageName){
 
     const target =
         document.getElementById(
-            pageName + "Page"
+            `${pageName}Page`
         );
 
 
@@ -614,6 +567,13 @@ function showPage(pageName){
 
     }
 
+
+    if(pageName === "events"){
+
+        updateEventPage();
+
+    }
+
 }
 
 
@@ -621,24 +581,16 @@ function showPage(pageName){
    SIDEBAR
 ===================================================== */
 
-if(sidebarToggle){
+sidebarToggle.addEventListener(
+    "click",
+    () => {
 
-    sidebarToggle.addEventListener(
-        "click",
-        () => {
+        sidebar.classList.toggle(
+            "open"
+        );
 
-            if(sidebar){
-
-                sidebar.classList.toggle(
-                    "open"
-                );
-
-            }
-
-        }
-    );
-
-}
+    }
+);
 
 
 /* =====================================================
@@ -647,12 +599,8 @@ if(sidebarToggle){
 
 async function loadRegistrations(){
 
-    if(tableStatus){
-
-        tableStatus.textContent =
-            "Loading...";
-
-    }
+    tableStatus.textContent =
+        "Loading...";
 
 
     try{
@@ -668,8 +616,14 @@ async function loadRegistrations(){
 
         if(snapshot.exists()){
 
-            registrations =
+            const data =
                 snapshot.val();
+
+            registrations =
+                data &&
+                typeof data === "object"
+                ? data
+                : {};
 
         }
         else{
@@ -696,12 +650,9 @@ async function loadRegistrations(){
         updateEventPage();
 
 
-        if(tableStatus){
+        tableStatus.textContent =
+            "Database synced";
 
-            tableStatus.textContent =
-                "Database synced";
-
-        }
 
     }
     catch(error){
@@ -712,12 +663,16 @@ async function loadRegistrations(){
         );
 
 
-        if(tableStatus){
+        registrations = {};
 
-            tableStatus.textContent =
-                "Database error";
+        filteredRegistrations = {};
 
-        }
+
+        tableStatus.textContent =
+            "Database error";
+
+
+        renderTable();
 
 
         showToast(
@@ -731,7 +686,7 @@ async function loadRegistrations(){
 
 
 /* =====================================================
-   NORMALIZE VALUE
+   NORMALIZE
 ===================================================== */
 
 function normalize(value){
@@ -753,13 +708,23 @@ function normalize(value){
     }
 
 
+    if(
+        typeof value === "object"
+    ){
+
+        return Object.values(value)
+            .join(", ");
+
+    }
+
+
     return String(value);
 
 }
 
 
 /* =====================================================
-   GET EVENTS
+   EVENTS
 ===================================================== */
 
 function getEvents(data){
@@ -771,8 +736,11 @@ function getEvents(data){
     }
 
 
-    let events =
-        data.Events;
+    const events =
+        data.Events ||
+        data.events ||
+        data.Event ||
+        data.event;
 
 
     if(!events){
@@ -791,10 +759,19 @@ function getEvents(data){
     }
 
 
+    if(typeof events === "object"){
+
+        return Object.values(events)
+            .map(event => normalize(event).trim())
+            .filter(Boolean);
+
+    }
+
+
     if(typeof events === "string"){
 
         return events
-            .split(/\s*(?:,|\|)\s*/)
+            .split(/\s*(?:,|\||;)\s*/)
             .map(event => event.trim())
             .filter(Boolean);
 
@@ -809,26 +786,22 @@ function getEvents(data){
 
 
 /* =====================================================
-   GET REGISTRATION EMAIL
+   EMAIL
 ===================================================== */
 
 function getRegistrationEmail(data){
 
     return normalize(
-
         data.EmailAddress ||
-
         data.Email ||
-
         data.email
-
     ).trim();
 
 }
 
 
 /* =====================================================
-   GET TEAM SIZE
+   TEAM SIZE
 ===================================================== */
 
 function getTeamSize(data){
@@ -840,26 +813,20 @@ function getTeamSize(data){
     }
 
 
+    const possibleTeamSize =
+        Number(
+            data.TeamSize
+        );
+
+
     if(
-        data.TeamSize !== undefined &&
-        data.TeamSize !== null &&
-        data.TeamSize !== ""
+        Number.isFinite(
+            possibleTeamSize
+        ) &&
+        possibleTeamSize > 0
     ){
 
-        const size =
-            Number(
-                data.TeamSize
-            );
-
-
-        if(
-            Number.isFinite(size) &&
-            size > 0
-        ){
-
-            return size;
-
-        }
+        return possibleTeamSize;
 
     }
 
@@ -873,11 +840,15 @@ function getTeamSize(data){
         i++
     ){
 
+        const member =
+            data[
+                `Member${i}Name`
+            ];
+
+
         if(
-            data[`Member${i}Name`] &&
-            String(
-                data[`Member${i}Name`]
-            ).trim()
+            member &&
+            String(member).trim()
         ){
 
             count++;
@@ -893,14 +864,14 @@ function getTeamSize(data){
 
 
 /* =====================================================
-   UPDATE DASHBOARD
+   DASHBOARD
 ===================================================== */
 
 function updateDashboard(){
 
     const list =
         Object.values(
-            registrations || {}
+            registrations
         );
 
 
@@ -920,72 +891,8 @@ function updateDashboard(){
     );
 
 
-    const counts = {
-
-        race: 0,
-
-        war: 0,
-
-        tug: 0,
-
-        soccer: 0
-
-    };
-
-
-    list.forEach(data => {
-
-        getEvents(data)
-        .forEach(event => {
-
-            const eventName =
-                event
-                .trim()
-                .toLowerCase();
-
-
-            if(
-                eventName ===
-                "robo race"
-            ){
-
-                counts.race++;
-
-            }
-
-
-            if(
-                eventName ===
-                "robo war"
-            ){
-
-                counts.war++;
-
-            }
-
-
-            if(
-                eventName ===
-                "robo tug of war"
-            ){
-
-                counts.tug++;
-
-            }
-
-
-            if(
-                eventName ===
-                "robo soccer"
-            ){
-
-                counts.soccer++;
-
-            }
-
-        });
-
-    });
+    const counts =
+        calculateEventCounts();
 
 
     setText(
@@ -1039,6 +946,85 @@ function updateDashboard(){
 
 
 /* =====================================================
+   EVENT COUNTS
+===================================================== */
+
+function calculateEventCounts(){
+
+    const counts = {
+
+        race:0,
+
+        war:0,
+
+        tug:0,
+
+        soccer:0
+
+    };
+
+
+    Object.values(
+        registrations
+    )
+    .forEach(data => {
+
+        getEvents(data)
+        .forEach(event => {
+
+            const clean =
+                event
+                .trim()
+                .toLowerCase();
+
+
+            if(
+                clean === "robo race"
+            ){
+
+                counts.race++;
+
+            }
+
+
+            if(
+                clean === "robo war"
+            ){
+
+                counts.war++;
+
+            }
+
+
+            if(
+                clean ===
+                "robo tug of war"
+            ){
+
+                counts.tug++;
+
+            }
+
+
+            if(
+                clean === "robo soccer"
+            ){
+
+                counts.soccer++;
+
+            }
+
+        });
+
+    });
+
+
+    return counts;
+
+}
+
+
+/* =====================================================
    RECENT REGISTRATIONS
 ===================================================== */
 
@@ -1059,24 +1045,13 @@ function renderRecent(){
 
     const entries =
         Object.entries(
-            registrations || {}
+            registrations
         )
         .sort(
-            (a,b) => {
+            ([,a],[,b]) => {
 
-                const dateA =
-                    getTimestamp(
-                        a[1].registrationDate
-                    );
-
-
-                const dateB =
-                    getTimestamp(
-                        b[1].registrationDate
-                    );
-
-
-                return dateB - dateA;
+                return getTimestamp(b) -
+                       getTimestamp(a);
 
             }
         )
@@ -1086,15 +1061,15 @@ function renderRecent(){
     if(entries.length === 0){
 
         container.innerHTML = `
+
             <div class="empty-state">
 
                 <i class="fa-solid fa-folder-open"></i>
 
-                <span>
-                    No registrations found.
-                </span>
+                No registrations found.
 
             </div>
+
         `;
 
         return;
@@ -1110,19 +1085,22 @@ function renderRecent(){
                 const id =
                     normalize(
                         data.registrationId
-                    ) || key;
+                    ) ||
+                    key;
 
 
                 const name =
                     normalize(
                         data.StudentName
-                    ) || "Unknown";
+                    ) ||
+                    "Unknown";
 
 
                 const team =
                     normalize(
                         data.TeamName
-                    ) || "Unnamed Team";
+                    ) ||
+                    "Unnamed Team";
 
 
                 return `
@@ -1142,11 +1120,9 @@ function renderRecent(){
                                 ${escapeHTML(name)}
                             </strong>
 
-
                             <span>
                                 ${escapeHTML(team)}
                             </span>
-
 
                             <span class="recent-id">
                                 ${escapeHTML(id)}
@@ -1156,10 +1132,10 @@ function renderRecent(){
 
 
                         <button
-                            type="button"
-                            class="action-btn view"
-                            title="View Registration"
-                            data-view="${escapeAttr(key)}">
+                        type="button"
+                        class="action-btn view"
+                        data-view="${escapeAttr(key)}"
+                        title="View Details">
 
                             <i class="fa-solid fa-eye"></i>
 
@@ -1195,7 +1171,7 @@ function renderRecent(){
 
 
 /* =====================================================
-   POPULATE FILTERS
+   FILTER OPTIONS
 ===================================================== */
 
 function populateFilters(){
@@ -1219,7 +1195,7 @@ function populateFilters(){
 
 
     Object.values(
-        registrations || {}
+        registrations
     )
     .forEach(data => {
 
@@ -1264,46 +1240,63 @@ function populateFilters(){
 
 
     classFilter.innerHTML =
-        `<option value="all">All Classes</option>`;
+        `
+            <option value="all">
+                All Classes
+            </option>
+        `;
 
 
     [...classes]
     .sort(
-        naturalSort
+        (a,b) =>
+            a.localeCompare(b)
     )
     .forEach(value => {
 
         classFilter.innerHTML += `
+
             <option value="${escapeAttr(value)}">
+
                 ${escapeHTML(value)}
+
             </option>
+
         `;
 
     });
 
 
     sectionFilter.innerHTML =
-        `<option value="all">All Sections</option>`;
+        `
+            <option value="all">
+                All Sections
+            </option>
+        `;
 
 
     [...sections]
     .sort(
-        naturalSort
+        (a,b) =>
+            a.localeCompare(b)
     )
     .forEach(value => {
 
         sectionFilter.innerHTML += `
+
             <option value="${escapeAttr(value)}">
+
                 ${escapeHTML(value)}
+
             </option>
+
         `;
 
     });
 
 
     if(
-        [...classes]
-        .includes(
+        [...classes].includes(
             currentClass
         )
     ){
@@ -1315,8 +1308,7 @@ function populateFilters(){
 
 
     if(
-        [...sections]
-        .includes(
+        [...sections].includes(
             currentSection
         )
     ){
@@ -1333,89 +1325,49 @@ function populateFilters(){
    FILTER EVENTS
 ===================================================== */
 
-if(searchInput){
-
-    searchInput.addEventListener(
-        "input",
-        applyFilters
-    );
-
-}
+searchInput.addEventListener(
+    "input",
+    applyFilters
+);
 
 
-if(eventFilter){
-
-    eventFilter.addEventListener(
-        "change",
-        applyFilters
-    );
-
-}
+eventFilter.addEventListener(
+    "change",
+    applyFilters
+);
 
 
-if(classFilter){
-
-    classFilter.addEventListener(
-        "change",
-        applyFilters
-    );
-
-}
+classFilter.addEventListener(
+    "change",
+    applyFilters
+);
 
 
-if(sectionFilter){
-
-    sectionFilter.addEventListener(
-        "change",
-        applyFilters
-    );
-
-}
+sectionFilter.addEventListener(
+    "change",
+    applyFilters
+);
 
 
-if(clearFilters){
+clearFilters.addEventListener(
+    "click",
+    () => {
 
-    clearFilters.addEventListener(
-        "click",
-        () => {
+        searchInput.value = "";
 
-            if(searchInput){
+        eventFilter.value =
+            "all";
 
-                searchInput.value = "";
+        classFilter.value =
+            "all";
 
-            }
+        sectionFilter.value =
+            "all";
 
+        applyFilters();
 
-            if(eventFilter){
-
-                eventFilter.value =
-                    "all";
-
-            }
-
-
-            if(classFilter){
-
-                classFilter.value =
-                    "all";
-
-            }
-
-
-            if(sectionFilter){
-
-                sectionFilter.value =
-                    "all";
-
-            }
-
-
-            applyFilters();
-
-        }
-    );
-
-}
+    }
+);
 
 
 /* =====================================================
@@ -1425,36 +1377,28 @@ if(clearFilters){
 function applyFilters(){
 
     const search =
-        searchInput
-        ? searchInput.value
-            .trim()
-            .toLowerCase()
-        : "";
+        searchInput.value
+        .trim()
+        .toLowerCase();
 
 
     const selectedEvent =
-        eventFilter
-        ? eventFilter.value
-        : "all";
+        eventFilter.value;
 
 
     const selectedClass =
-        classFilter
-        ? classFilter.value
-        : "all";
+        classFilter.value;
 
 
     const selectedSection =
-        sectionFilter
-        ? sectionFilter.value
-        : "all";
+        sectionFilter.value;
 
 
     filteredRegistrations = {};
 
 
     Object.entries(
-        registrations || {}
+        registrations
     )
     .forEach(
         ([key,data]) => {
@@ -1481,8 +1425,6 @@ function applyFilters(){
 
                 data.Email,
 
-                data.email,
-
                 events.join(" ")
 
             ]
@@ -1500,8 +1442,12 @@ function applyFilters(){
 
             const matchesEvent =
                 selectedEvent === "all" ||
-                events.includes(
-                    selectedEvent
+                events.some(
+                    event =>
+                        event.trim()
+                        .toLowerCase() ===
+                        selectedEvent
+                        .toLowerCase()
                 );
 
 
@@ -1550,7 +1496,8 @@ function renderTable(){
 
     if(
         !tableBody ||
-        !tableEmpty
+        !tableEmpty ||
+        !resultCount
     ){
 
         return;
@@ -1560,16 +1507,16 @@ function renderTable(){
 
     const entries =
         Object.entries(
-            filteredRegistrations || {}
+            filteredRegistrations
         );
 
 
-    if(resultCount){
-
-        resultCount.textContent =
-            `${entries.length} registration${entries.length === 1 ? "" : "s"}`;
-
-    }
+    resultCount.textContent =
+        `${entries.length} registration${
+            entries.length === 1
+            ? ""
+            : "s"
+        }`;
 
 
     tableBody.innerHTML = "";
@@ -1592,21 +1539,10 @@ function renderTable(){
 
 
     entries.sort(
-        (a,b) => {
+        ([,a],[,b]) => {
 
-            const dateA =
-                getTimestamp(
-                    a[1].registrationDate
-                );
-
-
-            const dateB =
-                getTimestamp(
-                    b[1].registrationDate
-                );
-
-
-            return dateB - dateA;
+            return getTimestamp(b) -
+                   getTimestamp(a);
 
         }
     );
@@ -1618,37 +1554,43 @@ function renderTable(){
             const id =
                 normalize(
                     data.registrationId
-                ) || key;
+                ) ||
+                key;
 
 
             const name =
                 normalize(
                     data.StudentName
-                ) || "-";
+                ) ||
+                "-";
 
 
             const team =
                 normalize(
                     data.TeamName
-                ) || "Unnamed Team";
+                ) ||
+                "Unnamed Team";
 
 
             const className =
                 normalize(
                     data.Class
-                ) || "-";
+                ) ||
+                "-";
 
 
             const section =
                 normalize(
                     data.Section
-                ) || "-";
+                ) ||
+                "-";
 
 
             const mobile =
                 normalize(
                     data.MobileNumber
-                ) || "-";
+                ) ||
+                "-";
 
 
             const teamSize =
@@ -1670,9 +1612,13 @@ function renderTable(){
                 ? events
                     .map(
                         event => `
+
                             <span class="event-tag">
+
                                 ${escapeHTML(event)}
+
                             </span>
+
                         `
                     )
                     .join("")
@@ -1680,7 +1626,9 @@ function renderTable(){
 
 
             const row =
-                document.createElement("tr");
+                document.createElement(
+                    "tr"
+                );
 
 
             row.innerHTML = `
@@ -1764,11 +1712,12 @@ function renderTable(){
 
                     <div class="action-buttons">
 
+
                         <button
-                            type="button"
-                            class="action-btn view"
-                            title="View Details"
-                            data-view="${escapeAttr(key)}">
+                        type="button"
+                        class="action-btn view"
+                        title="View Details"
+                        data-view="${escapeAttr(key)}">
 
                             <i class="fa-solid fa-eye"></i>
 
@@ -1776,10 +1725,10 @@ function renderTable(){
 
 
                         <button
-                            type="button"
-                            class="action-btn edit"
-                            title="Edit Registration"
-                            data-edit="${escapeAttr(key)}">
+                        type="button"
+                        class="action-btn edit"
+                        title="Edit Registration"
+                        data-edit="${escapeAttr(key)}">
 
                             <i class="fa-solid fa-pen"></i>
 
@@ -1787,14 +1736,15 @@ function renderTable(){
 
 
                         <button
-                            type="button"
-                            class="action-btn delete"
-                            title="Delete Registration"
-                            data-delete="${escapeAttr(key)}">
+                        type="button"
+                        class="action-btn delete"
+                        title="Delete Registration"
+                        data-delete="${escapeAttr(key)}">
 
                             <i class="fa-solid fa-trash"></i>
 
                         </button>
+
 
                     </div>
 
@@ -1808,6 +1758,17 @@ function renderTable(){
         }
     );
 
+
+    bindTableActions();
+
+}
+
+
+/* =====================================================
+   TABLE ACTIONS
+===================================================== */
+
+function bindTableActions(){
 
     tableBody
     .querySelectorAll("[data-view]")
@@ -1898,11 +1859,8 @@ function openDetails(key){
     const id =
         normalize(
             data.registrationId
-        ) || key;
-
-
-    const email =
-        getRegistrationEmail(data);
+        ) ||
+        key;
 
 
     let membersHTML = "";
@@ -1916,7 +1874,9 @@ function openDetails(key){
 
         const name =
             normalize(
-                data[`Member${i}Name`]
+                data[
+                    `Member${i}Name`
+                ]
             );
 
 
@@ -1929,13 +1889,17 @@ function openDetails(key){
 
         const memberClass =
             normalize(
-                data[`Member${i}Class`]
+                data[
+                    `Member${i}Class`
+                ]
             );
 
 
         const memberSection =
             normalize(
-                data[`Member${i}Section`]
+                data[
+                    `Member${i}Section`
+                ]
             );
 
 
@@ -2001,13 +1965,6 @@ function openDetails(key){
     }
 
 
-    if(!detailsContent){
-
-        return;
-
-    }
-
-
     detailsContent.innerHTML = `
 
         <div class="detail-section">
@@ -2039,11 +1996,13 @@ function openDetails(key){
                     </label>
 
                     <strong>
+
                         ${escapeHTML(
                             formatDate(
                                 data.registrationDate
                             )
                         )}
+
                     </strong>
 
                 </div>
@@ -2155,7 +2114,8 @@ function openDetails(key){
 
                     <strong>
                         ${escapeHTML(
-                            email || "-"
+                            getRegistrationEmail(data)
+                            || "-"
                         )}
                     </strong>
 
@@ -2169,8 +2129,7 @@ function openDetails(key){
                     </label>
 
                     <strong>
-                        ${getTeamSize(data)}
-                        Member(s)
+                        ${getTeamSize(data)} Member(s)
                     </strong>
 
                 </div>
@@ -2194,13 +2153,21 @@ function openDetails(key){
                     ? events
                         .map(
                             event => `
+
                                 <span class="event-tag">
+
                                     ${escapeHTML(event)}
+
                                 </span>
+
                             `
                         )
                         .join("")
-                    : "<span>No event selected</span>"
+                    : `
+                        <span>
+                            No event selected
+                        </span>
+                    `
                 }
 
             </div>
@@ -2211,6 +2178,7 @@ function openDetails(key){
         ${
             membersHTML
             ? `
+
                 <div class="detail-section">
 
                     <h3>
@@ -2220,6 +2188,7 @@ function openDetails(key){
                     ${membersHTML}
 
                 </div>
+
             `
             : ""
         }
@@ -2252,45 +2221,37 @@ function openDetails(key){
     `;
 
 
-    if(detailsModal){
-
-        detailsModal.classList.remove(
-            "hidden"
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   DELETE FROM DETAILS MODAL
-===================================================== */
-
-if(modalDeleteBtn){
-
-    modalDeleteBtn.addEventListener(
-        "click",
-        () => {
-
-            if(
-                currentRegistrationKey
-            ){
-
-                deleteRegistration(
-                    currentRegistrationKey
-                );
-
-            }
-
-        }
+    detailsModal.classList.remove(
+        "hidden"
     );
 
 }
 
 
 /* =====================================================
-   OPEN EDIT MODAL
+   DELETE FROM DETAILS
+===================================================== */
+
+modalDeleteBtn.addEventListener(
+    "click",
+    () => {
+
+        if(
+            currentRegistrationKey
+        ){
+
+            deleteRegistration(
+                currentRegistrationKey
+            );
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   OPEN EDIT
 ===================================================== */
 
 function openEdit(key){
@@ -2311,89 +2272,53 @@ function openEdit(key){
     }
 
 
-    if(editKey){
-
-        editKey.value =
-            key;
-
-    }
+    editKey.value =
+        key;
 
 
-    if(editStudentName){
-
-        editStudentName.value =
-            normalize(
-                data.StudentName
-            );
-
-    }
-
-
-    if(editTeamName){
-
-        editTeamName.value =
-            normalize(
-                data.TeamName
-            );
-
-    }
-
-
-    if(editClass){
-
-        editClass.value =
-            normalize(
-                data.Class
-            );
-
-    }
-
-
-    if(editSection){
-
-        editSection.value =
-            normalize(
-                data.Section
-            );
-
-    }
-
-
-    if(editMobile){
-
-        editMobile.value =
-            normalize(
-                data.MobileNumber
-            );
-
-    }
-
-
-    if(editEmail){
-
-        editEmail.value =
-            getRegistrationEmail(data);
-
-    }
-
-
-    if(editRemarks){
-
-        editRemarks.value =
-            normalize(
-                data.Remarks
-            );
-
-    }
-
-
-    if(editModal){
-
-        editModal.classList.remove(
-            "hidden"
+    editStudentName.value =
+        normalize(
+            data.StudentName
         );
 
-    }
+
+    editTeamName.value =
+        normalize(
+            data.TeamName
+        );
+
+
+    editClass.value =
+        normalize(
+            data.Class
+        );
+
+
+    editSection.value =
+        normalize(
+            data.Section
+        );
+
+
+    editMobile.value =
+        normalize(
+            data.MobileNumber
+        );
+
+
+    editEmail.value =
+        getRegistrationEmail(data);
+
+
+    editRemarks.value =
+        normalize(
+            data.Remarks
+        );
+
+
+    editModal.classList.remove(
+        "hidden"
+    );
 
 }
 
@@ -2402,177 +2327,144 @@ function openEdit(key){
    SAVE EDIT
 ===================================================== */
 
-if(editForm){
+editForm.addEventListener(
+    "submit",
+    async event => {
 
-    editForm.addEventListener(
-        "submit",
-        async event => {
-
-            event.preventDefault();
+        event.preventDefault();
 
 
-            const key =
-                editKey
-                ? editKey.value
-                : "";
+        const key =
+            editKey.value;
 
 
-            if(!key){
+        if(!key){
 
-                showToast(
-                    "Invalid registration.",
-                    "error"
-                );
-
-                return;
-
-            }
-
-
-            const saveButton =
-                document.getElementById(
-                    "saveEditBtn"
-                );
-
-
-            if(saveButton){
-
-                saveButton.disabled = true;
-
-                saveButton.innerHTML = `
-                    <i class="fa-solid fa-spinner fa-spin"></i>
-                    Saving...
-                `;
-
-            }
-
-
-            try{
-
-                const updates = {
-
-                    StudentName:
-                        editStudentName
-                        ? editStudentName.value.trim()
-                        : "",
-
-                    TeamName:
-                        editTeamName
-                        ? editTeamName.value.trim()
-                        : "",
-
-                    Class:
-                        editClass
-                        ? editClass.value.trim()
-                        : "",
-
-                    Section:
-                        editSection
-                        ? editSection.value.trim()
-                        : "",
-
-                    MobileNumber:
-                        editMobile
-                        ? editMobile.value.trim()
-                        : "",
-
-                    EmailAddress:
-                        editEmail
-                        ? editEmail.value.trim()
-                        : "",
-
-                    Remarks:
-                        editRemarks
-                        ? editRemarks.value.trim()
-                        : ""
-
-                };
-
-
-                await update(
-
-                    ref(
-                        database,
-                        `registrations/${key}`
-                    ),
-
-                    updates
-
-                );
-
-
-                registrations[key] = {
-
-                    ...registrations[key],
-
-                    ...updates
-
-                };
-
-
-                filteredRegistrations[key] =
-                    registrations[key];
-
-
-                if(editModal){
-
-                    editModal.classList.add(
-                        "hidden"
-                    );
-
-                }
-
-
-                updateDashboard();
-
-                renderRecent();
-
-                renderTable();
-
-                updateEventPage();
-
-                populateFilters();
-
-
-                showToast(
-                    "Registration updated successfully.",
-                    "success"
-                );
-
-            }
-            catch(error){
-
-                console.error(
-                    "Update error:",
-                    error
-                );
-
-
-                showToast(
-                    "Unable to update registration.",
-                    "error"
-                );
-
-            }
-            finally{
-
-                if(saveButton){
-
-                    saveButton.disabled = false;
-
-                    saveButton.innerHTML = `
-                        <i class="fa-solid fa-floppy-disk"></i>
-                        Save Changes
-                    `;
-
-                }
-
-            }
+            return;
 
         }
-    );
 
-}
+
+        const saveButton =
+            document.getElementById(
+                "saveEditBtn"
+            );
+
+
+        saveButton.disabled =
+            true;
+
+
+        saveButton.innerHTML = `
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Saving...
+        `;
+
+
+        try{
+
+            const updates = {
+
+                StudentName:
+                    editStudentName.value.trim(),
+
+                TeamName:
+                    editTeamName.value.trim(),
+
+                Class:
+                    editClass.value.trim(),
+
+                Section:
+                    editSection.value.trim(),
+
+                MobileNumber:
+                    editMobile.value.trim(),
+
+                EmailAddress:
+                    editEmail.value.trim(),
+
+                Remarks:
+                    editRemarks.value.trim()
+
+            };
+
+
+            await update(
+
+                ref(
+                    database,
+                    `registrations/${key}`
+                ),
+
+                updates
+
+            );
+
+
+            registrations[key] = {
+
+                ...registrations[key],
+
+                ...updates
+
+            };
+
+
+            filteredRegistrations[key] =
+                registrations[key];
+
+
+            editModal.classList.add(
+                "hidden"
+            );
+
+
+            updateDashboard();
+
+            renderRecent();
+
+            renderTable();
+
+            updateEventPage();
+
+            populateFilters();
+
+
+            showToast(
+                "Registration updated successfully.",
+                "success"
+            );
+
+        }
+        catch(error){
+
+            console.error(
+                "Update error:",
+                error
+            );
+
+
+            showToast(
+                "Unable to update registration.",
+                "error"
+            );
+
+        }
+        finally{
+
+            saveButton.disabled =
+                false;
+
+
+            saveButton.innerHTML = `
+                <i class="fa-solid fa-floppy-disk"></i>
+                Save Changes
+            `;
+
+        }
+
+    }
+);
 
 
 /* =====================================================
@@ -2586,11 +2478,6 @@ async function deleteRegistration(key){
 
 
     if(!data){
-
-        showToast(
-            "Registration not found.",
-            "error"
-        );
 
         return;
 
@@ -2634,22 +2521,9 @@ async function deleteRegistration(key){
         delete filteredRegistrations[key];
 
 
-        if(detailsModal){
-
-            detailsModal.classList.add(
-                "hidden"
-            );
-
-        }
-
-
-        if(editModal){
-
-            editModal.classList.add(
-                "hidden"
-            );
-
-        }
+        detailsModal.classList.add(
+            "hidden"
+        );
 
 
         updateDashboard();
@@ -2693,75 +2567,8 @@ async function deleteRegistration(key){
 
 function updateEventPage(){
 
-    const counts = {
-
-        race: 0,
-
-        war: 0,
-
-        tug: 0,
-
-        soccer: 0
-
-    };
-
-
-    Object.values(
-        registrations || {}
-    )
-    .forEach(data => {
-
-        getEvents(data)
-        .forEach(event => {
-
-            const eventName =
-                event
-                .trim()
-                .toLowerCase();
-
-
-            if(
-                eventName ===
-                "robo race"
-            ){
-
-                counts.race++;
-
-            }
-
-
-            if(
-                eventName ===
-                "robo war"
-            ){
-
-                counts.war++;
-
-            }
-
-
-            if(
-                eventName ===
-                "robo tug of war"
-            ){
-
-                counts.tug++;
-
-            }
-
-
-            if(
-                eventName ===
-                "robo soccer"
-            ){
-
-                counts.soccer++;
-
-            }
-
-        });
-
-    });
+    const counts =
+        calculateEventCounts();
 
 
     setText(
@@ -2791,98 +2598,74 @@ function updateEventPage(){
 
 
 /* =====================================================
-   REFRESH BUTTONS
+   REFRESH
 ===================================================== */
 
-const dashboardRefresh =
-    document.getElementById(
-        "dashboardRefresh"
-    );
+document
+.getElementById(
+    "dashboardRefresh"
+)
+.addEventListener(
+    "click",
+    loadRegistrations
+);
 
 
-if(dashboardRefresh){
-
-    dashboardRefresh.addEventListener(
-        "click",
-        loadRegistrations
-    );
-
-}
-
-
-const refreshRegistrations =
-    document.getElementById(
-        "refreshRegistrations"
-    );
+document
+.getElementById(
+    "refreshRegistrations"
+)
+.addEventListener(
+    "click",
+    loadRegistrations
+);
 
 
-if(refreshRegistrations){
+/* =====================================================
+   EXPORT
+===================================================== */
 
-    refreshRegistrations.addEventListener(
-        "click",
-        loadRegistrations
-    );
+document
+.getElementById(
+    "exportCsv"
+)
+.addEventListener(
+    "click",
+    () => {
 
-}
+        exportCSV(
+            filteredRegistrations
+        );
+
+    }
+);
+
+
+document
+.getElementById(
+    "exportDashboard"
+)
+.addEventListener(
+    "click",
+    () => {
+
+        exportCSV(
+            registrations
+        );
+
+    }
+);
 
 
 /* =====================================================
    EXPORT CSV
 ===================================================== */
 
-const exportCsv =
-    document.getElementById(
-        "exportCsv"
-    );
-
-
-if(exportCsv){
-
-    exportCsv.addEventListener(
-        "click",
-        () => {
-
-            exportCSV(
-                filteredRegistrations
-            );
-
-        }
-    );
-
-}
-
-
-const exportDashboard =
-    document.getElementById(
-        "exportDashboard"
-    );
-
-
-if(exportDashboard){
-
-    exportDashboard.addEventListener(
-        "click",
-        () => {
-
-            exportCSV(
-                registrations
-            );
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   EXPORT CSV FUNCTION
-===================================================== */
-
 function exportCSV(dataObject){
 
     const entries =
         Object.entries(
-            dataObject || {}
+            dataObject
         );
 
 
@@ -2934,9 +2717,7 @@ function exportCSV(dataObject){
 
 
     const rows = [
-
         headers
-
     ];
 
 
@@ -2947,68 +2728,55 @@ function exportCSV(dataObject){
 
                 normalize(
                     data.registrationId
-                ) || key,
-
+                ) ||
+                key,
 
                 normalize(
                     data.StudentName
                 ),
 
-
                 normalize(
                     data.TeamName
                 ),
-
 
                 normalize(
                     data.Class
                 ),
 
-
                 normalize(
                     data.Section
                 ),
-
 
                 normalize(
                     data.MobileNumber
                 ),
 
-
                 getRegistrationEmail(data),
 
-
                 getEvents(data)
-                .join(" | "),
-
+                    .join(" | "),
 
                 getTeamSize(data),
-
 
                 normalize(
                     data.Member2Name
                 ),
 
-
                 normalize(
                     data.Member3Name
                 ),
-
 
                 normalize(
                     data.Member4Name
                 ),
 
-
                 normalize(
                     data.Member5Name
                 ),
 
-
                 normalize(
                     data.Remarks
                 ),
-
 
                 normalize(
                     data.registrationDate
@@ -3034,7 +2802,8 @@ function exportCSV(dataObject){
     const blob =
         new Blob(
             [
-                "\ufeff" + csv
+                "\ufeff" +
+                csv
             ],
             {
                 type:
@@ -3107,33 +2876,26 @@ function csvEscape(value){
 
 
 /* =====================================================
-   MODAL CLOSE BUTTONS
+   MODAL CLOSE
 ===================================================== */
 
 document
-.querySelectorAll("[data-close-modal]")
+.querySelectorAll(
+    "[data-close-modal]"
+)
 .forEach(button => {
 
     button.addEventListener(
         "click",
         () => {
 
-            if(detailsModal){
+            detailsModal.classList.add(
+                "hidden"
+            );
 
-                detailsModal.classList.add(
-                    "hidden"
-                );
-
-            }
-
-
-            if(editModal){
-
-                editModal.classList.add(
-                    "hidden"
-                );
-
-            }
+            editModal.classList.add(
+                "hidden"
+            );
 
         }
     );
@@ -3141,58 +2903,42 @@ document
 });
 
 
-/* =====================================================
-   DETAILS MODAL BACKDROP
-===================================================== */
+detailsModal.addEventListener(
+    "click",
+    event => {
 
-if(detailsModal){
+        if(
+            event.target ===
+            detailsModal
+        ){
 
-    detailsModal.addEventListener(
-        "click",
-        event => {
-
-            if(
-                event.target ===
-                detailsModal
-            ){
-
-                detailsModal.classList.add(
-                    "hidden"
-                );
-
-            }
+            detailsModal.classList.add(
+                "hidden"
+            );
 
         }
-    );
 
-}
+    }
+);
 
 
-/* =====================================================
-   EDIT MODAL BACKDROP
-===================================================== */
+editModal.addEventListener(
+    "click",
+    event => {
 
-if(editModal){
+        if(
+            event.target ===
+            editModal
+        ){
 
-    editModal.addEventListener(
-        "click",
-        event => {
-
-            if(
-                event.target ===
-                editModal
-            ){
-
-                editModal.classList.add(
-                    "hidden"
-                );
-
-            }
+            editModal.classList.add(
+                "hidden"
+            );
 
         }
-    );
 
-}
+    }
+);
 
 
 /* =====================================================
@@ -3229,7 +2975,6 @@ function showToast(
             ? "fa-solid fa-circle-exclamation"
             : "fa-solid fa-circle-check";
 
-
         icon.style.color =
             type === "error"
             ? "#ff6278"
@@ -3264,16 +3009,49 @@ function showToast(
 
 
 /* =====================================================
-   DATE FORMAT
+   DATE / TIME
 ===================================================== */
+
+function getTimestamp(data){
+
+    if(!data){
+
+        return 0;
+
+    }
+
+
+    const value =
+        data.registrationDate;
+
+
+    if(!value){
+
+        return 0;
+
+    }
+
+
+    const date =
+        new Date(value);
+
+
+    const timestamp =
+        date.getTime();
+
+
+    return Number.isNaN(
+        timestamp
+    )
+    ? 0
+    : timestamp;
+
+}
+
 
 function formatDate(value){
 
-    if(
-        value === undefined ||
-        value === null ||
-        value === ""
-    ){
+    if(!value){
 
         return "-";
 
@@ -3298,6 +3076,7 @@ function formatDate(value){
     return date.toLocaleString(
         "en-IN",
         {
+
             day:
                 "2-digit",
 
@@ -3320,49 +3099,16 @@ function formatDate(value){
 
 
 /* =====================================================
-   TIMESTAMP HELPER
-===================================================== */
-
-function getTimestamp(value){
-
-    if(
-        value === undefined ||
-        value === null ||
-        value === ""
-    ){
-
-        return 0;
-
-    }
-
-
-    const timestamp =
-        new Date(value)
-        .getTime();
-
-
-    return Number.isNaN(
-        timestamp
-    )
-    ? 0
-    : timestamp;
-
-}
-
-
-/* =====================================================
-   TEXT HELPER
+   SAFE DOM TEXT
 ===================================================== */
 
 function setText(
-    elementId,
+    id,
     value
 ){
 
     const element =
-        document.getElementById(
-            elementId
-        );
+        document.getElementById(id);
 
 
     if(element){
@@ -3371,25 +3117,6 @@ function setText(
             value;
 
     }
-
-}
-
-
-/* =====================================================
-   NATURAL SORT
-===================================================== */
-
-function naturalSort(a,b){
-
-    return String(a)
-        .localeCompare(
-            String(b),
-            undefined,
-            {
-                numeric: true,
-                sensitivity: "base"
-            }
-        );
 
 }
 
@@ -3435,10 +3162,6 @@ function escapeHTML(value){
 }
 
 
-/* =====================================================
-   ATTRIBUTE SECURITY
-===================================================== */
-
 function escapeAttr(value){
 
     return escapeHTML(value);
@@ -3451,10 +3174,6 @@ function escapeAttr(value){
 ===================================================== */
 
 filteredRegistrations = {};
-
-updateDashboard();
-
-updateEventPage();
 
 
 /* =====================================================
@@ -3470,29 +3189,15 @@ document.addEventListener(
             "Escape"
         ){
 
-            if(detailsModal){
+            detailsModal.classList.add(
+                "hidden"
+            );
 
-                detailsModal.classList.add(
-                    "hidden"
-                );
-
-            }
-
-
-            if(editModal){
-
-                editModal.classList.add(
-                    "hidden"
-                );
-
-            }
+            editModal.classList.add(
+                "hidden"
+            );
 
         }
 
     }
 );
-
-
-/* =====================================================
-   END OF ADMIN.JS
-===================================================== */
