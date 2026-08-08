@@ -2,6 +2,7 @@
    APS ROBOTICS CHAMPIONSHIP 2026
    ADMIN PANEL
    FIREBASE AUTH + REALTIME DATABASE
+   + FIREBASE TRIGGER EMAIL
 ===================================================== */
 
 import {
@@ -30,8 +31,21 @@ import {
 
 
 /* =====================================================
+   FIRESTORE
+   USED FOR FIREBASE TRIGGER EMAIL
+===================================================== */
+
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp
+} from
+"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
+
+/* =====================================================
    FIREBASE CONFIG
-   SAME PROJECT AS YOUR REGISTRATION PAGE
 ===================================================== */
 
 const firebaseConfig = {
@@ -61,17 +75,27 @@ const firebaseConfig = {
 
 
 /* =====================================================
-   INITIALIZE
+   INITIALIZE FIREBASE
 ===================================================== */
 
 const app =
     initializeApp(firebaseConfig);
 
+
 const auth =
     getAuth(app);
 
+
 const database =
     getDatabase(app);
+
+
+/* =====================================================
+   INITIALIZE FIRESTORE
+===================================================== */
+
+const firestore =
+    getFirestore(app);
 
 
 /* =====================================================
@@ -94,107 +118,142 @@ let toastTimer = null;
 const loginScreen =
     document.getElementById("loginScreen");
 
+
 const adminApp =
     document.getElementById("adminApp");
+
 
 const loginForm =
     document.getElementById("loginForm");
 
+
 const loginEmail =
     document.getElementById("loginEmail");
+
 
 const loginPassword =
     document.getElementById("loginPassword");
 
+
 const loginBtn =
     document.getElementById("loginBtn");
+
 
 const loginError =
     document.getElementById("loginError");
 
+
 const togglePassword =
     document.getElementById("togglePassword");
+
 
 const adminEmail =
     document.getElementById("adminEmail");
 
+
 const logoutBtn =
     document.getElementById("logoutBtn");
+
 
 const sidebar =
     document.getElementById("sidebar");
 
+
 const sidebarToggle =
     document.getElementById("sidebarToggle");
+
 
 const tableBody =
     document.getElementById("registrationTableBody");
 
+
 const tableEmpty =
     document.getElementById("tableEmpty");
+
 
 const resultCount =
     document.getElementById("resultCount");
 
+
 const tableStatus =
     document.getElementById("tableStatus");
+
 
 const searchInput =
     document.getElementById("searchInput");
 
+
 const eventFilter =
     document.getElementById("eventFilter");
+
 
 const classFilter =
     document.getElementById("classFilter");
 
+
 const sectionFilter =
     document.getElementById("sectionFilter");
+
 
 const clearFilters =
     document.getElementById("clearFilters");
 
+
 const detailsModal =
     document.getElementById("detailsModal");
+
 
 const editModal =
     document.getElementById("editModal");
 
+
 const detailsContent =
     document.getElementById("detailsContent");
+
 
 const modalDeleteBtn =
     document.getElementById("modalDeleteBtn");
 
+
 const editForm =
     document.getElementById("editForm");
+
 
 const editKey =
     document.getElementById("editKey");
 
+
 const editStudentName =
     document.getElementById("editStudentName");
+
 
 const editTeamName =
     document.getElementById("editTeamName");
 
+
 const editClass =
     document.getElementById("editClass");
+
 
 const editSection =
     document.getElementById("editSection");
 
+
 const editMobile =
     document.getElementById("editMobile");
+
 
 const editEmail =
     document.getElementById("editEmail");
 
+
 const editRemarks =
     document.getElementById("editRemarks");
 
+
 const toast =
     document.getElementById("toast");
+
 
 const toastMessage =
     document.getElementById("toastMessage");
@@ -632,7 +691,39 @@ function getEvents(data){
     }
 
 
+    if(typeof events === "string"){
+
+        /*
+         Handles:
+         Robo Race
+         Robo Race, Robo War
+         Robo Race | Robo War
+        */
+
+        return events
+            .split(/\s*(?:,|\|)\s*/)
+            .map(event => event.trim())
+            .filter(Boolean);
+
+    }
+
+
     return [events];
+
+}
+
+
+/* =====================================================
+   GET EMAIL ADDRESS
+===================================================== */
+
+function getRegistrationEmail(data){
+
+    return normalize(
+        data.EmailAddress ||
+        data.Email ||
+        data.email
+    ).trim();
 
 }
 
@@ -645,9 +736,19 @@ function getTeamSize(data){
 
     if(data.TeamSize){
 
-        return Number(
-            data.TeamSize
-        );
+        const size =
+            Number(
+                data.TeamSize
+            );
+
+        if(
+            Number.isFinite(size) &&
+            size > 0
+        ){
+
+            return size;
+
+        }
 
     }
 
@@ -1133,6 +1234,8 @@ function applyFilters(){
 
                 data.EmailAddress,
 
+                data.Email,
+
                 events.join(" ")
 
             ]
@@ -1297,6 +1400,10 @@ function renderTable(){
                 getEvents(data);
 
 
+            const email =
+                getRegistrationEmail(data);
+
+
             const eventHTML =
                 events.length
                 ? events.map(
@@ -1307,6 +1414,21 @@ function renderTable(){
                     `
                 ).join("")
                 : "-";
+
+
+            const emailButton =
+                email
+                ? `
+                    <button
+                    class="action-btn email"
+                    title="Send Confirmation Email"
+                    data-email="${escapeAttr(key)}">
+
+                        <i class="fa-solid fa-envelope"></i>
+
+                    </button>
+                `
+                : "";
 
 
             const row =
@@ -1408,6 +1530,9 @@ function renderTable(){
                         </button>
 
 
+                        ${emailButton}
+
+
                         <button
                         class="action-btn delete"
                         title="Delete Registration"
@@ -1467,6 +1592,24 @@ function renderTable(){
 
 
     tableBody
+    .querySelectorAll("[data-email]")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                sendConfirmationEmail(
+                    button.dataset.email
+                );
+
+            }
+        );
+
+    });
+
+
+    tableBody
     .querySelectorAll("[data-delete]")
     .forEach(button => {
 
@@ -1513,6 +1656,10 @@ function openDetails(key){
         normalize(
             data.registrationId
         ) || key;
+
+
+    const email =
+        getRegistrationEmail(data);
 
 
     let membersHTML = "";
@@ -1721,9 +1868,7 @@ function openDetails(key){
 
                     <strong>
                         ${escapeHTML(
-                            normalize(
-                                data.EmailAddress
-                            ) || "-"
+                            email || "-"
                         )}
                     </strong>
 
@@ -1809,12 +1954,74 @@ function openDetails(key){
 
         </div>
 
+
+        <div class="detail-section email-section">
+
+            <h3>
+                Confirmation Email
+            </h3>
+
+            <div class="email-admin-box">
+
+                ${
+                    email
+                    ? `
+                        <p>
+                            <i class="fa-solid fa-envelope"></i>
+                            ${escapeHTML(email)}
+                        </p>
+
+                        <button
+                        type="button"
+                        class="send-email-detail-btn"
+                        id="sendDetailEmailBtn">
+
+                            <i class="fa-solid fa-paper-plane"></i>
+
+                            Send Confirmation Email
+
+                        </button>
+                    `
+                    : `
+                        <p class="email-warning">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            No email address is available for this registration.
+                        </p>
+                    `
+                }
+
+            </div>
+
+        </div>
+
     `;
 
 
     detailsModal.classList.remove(
         "hidden"
     );
+
+
+    const sendDetailEmailBtn =
+        document.getElementById(
+            "sendDetailEmailBtn"
+        );
+
+
+    if(sendDetailEmailBtn){
+
+        sendDetailEmailBtn.addEventListener(
+            "click",
+            () => {
+
+                sendConfirmationEmail(
+                    key
+                );
+
+            }
+        );
+
+    }
 
 }
 
@@ -1891,9 +2098,7 @@ function openEdit(key){
 
 
     editEmail.value =
-        normalize(
-            data.EmailAddress
-        );
+        getRegistrationEmail(data);
 
 
     editRemarks.value =
@@ -2130,6 +2335,972 @@ async function deleteRegistration(key){
 
 
 /* =====================================================
+   SEND CONFIRMATION EMAIL
+===================================================== */
+
+async function sendConfirmationEmail(key){
+
+    const data =
+        registrations[key];
+
+
+    if(!data){
+
+        showToast(
+            "Registration not found.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const email =
+        getRegistrationEmail(data);
+
+
+    if(!email){
+
+        showToast(
+            "No email address found for this registration.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const registrationID =
+        normalize(
+            data.registrationId
+        ) || key;
+
+
+    const studentName =
+        normalize(
+            data.StudentName
+        ) || "Participant";
+
+
+    const teamName =
+        normalize(
+            data.TeamName
+        ) || "Not provided";
+
+
+    const className =
+        normalize(
+            data.Class
+        ) || "-";
+
+
+    const section =
+        normalize(
+            data.Section
+        ) || "-";
+
+
+    const mobile =
+        normalize(
+            data.MobileNumber
+        ) || "-";
+
+
+    const events =
+        getEvents(data);
+
+
+    const teamSize =
+        getTeamSize(data);
+
+
+    const registrationDate =
+        formatDate(
+            data.registrationDate
+        );
+
+
+    const members = [];
+
+
+    for(let i = 2; i <= 5; i++){
+
+        const memberName =
+            normalize(
+                data[`Member${i}Name`]
+            );
+
+
+        if(memberName){
+
+            members.push({
+                number:i,
+                name:memberName,
+                className:
+                    normalize(
+                        data[`Member${i}Class`]
+                    ) || "-",
+                section:
+                    normalize(
+                        data[`Member${i}Section`]
+                    ) || "-"
+            });
+
+        }
+
+    }
+
+
+    const eventsHTML =
+        events.length
+        ? events
+            .map(
+                event => `
+                    <span style="
+                        display:inline-block;
+                        background:#e8fbff;
+                        color:#087f8c;
+                        border:1px solid #b8edf3;
+                        border-radius:20px;
+                        padding:7px 13px;
+                        margin:4px;
+                        font-size:13px;
+                        font-weight:600;
+                    ">
+                        ${escapeHTML(event)}
+                    </span>
+                `
+            )
+            .join("")
+        : `
+            <span>
+                No event selected
+            </span>
+        `;
+
+
+    const membersHTML =
+        members.length
+        ? `
+            <table
+            style="
+                width:100%;
+                border-collapse:collapse;
+                margin-top:12px;
+            ">
+
+                <thead>
+
+                    <tr>
+
+                        <th
+                        style="
+                            text-align:left;
+                            padding:9px;
+                            background:#f1f5f9;
+                            border:1px solid #e2e8f0;
+                        ">
+                            Member
+                        </th>
+
+                        <th
+                        style="
+                            text-align:left;
+                            padding:9px;
+                            background:#f1f5f9;
+                            border:1px solid #e2e8f0;
+                        ">
+                            Name
+                        </th>
+
+                        <th
+                        style="
+                            text-align:left;
+                            padding:9px;
+                            background:#f1f5f9;
+                            border:1px solid #e2e8f0;
+                        ">
+                            Class
+                        </th>
+
+                        <th
+                        style="
+                            text-align:left;
+                            padding:9px;
+                            background:#f1f5f9;
+                            border:1px solid #e2e8f0;
+                        ">
+                            Section
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    ${members.map(
+                        member => `
+                            <tr>
+
+                                <td
+                                style="
+                                    padding:9px;
+                                    border:1px solid #e2e8f0;
+                                ">
+                                    Member ${member.number}
+                                </td>
+
+                                <td
+                                style="
+                                    padding:9px;
+                                    border:1px solid #e2e8f0;
+                                ">
+                                    ${escapeHTML(member.name)}
+                                </td>
+
+                                <td
+                                style="
+                                    padding:9px;
+                                    border:1px solid #e2e8f0;
+                                ">
+                                    ${escapeHTML(member.className)}
+                                </td>
+
+                                <td
+                                style="
+                                    padding:9px;
+                                    border:1px solid #e2e8f0;
+                                ">
+                                    ${escapeHTML(member.section)}
+                                </td>
+
+                            </tr>
+                        `
+                    ).join("")}
+
+                </tbody>
+
+            </table>
+        `
+        : `
+            <p>
+                No additional team members were registered.
+            </p>
+        `;
+
+
+    const subject =
+        `APS Robotics Championship 2026 – Registration Confirmed (${registrationID})`;
+
+
+    const text =
+`Dear ${studentName},
+
+Your registration for APS Robotics Championship 2026 has been successfully received.
+
+Registration ID: ${registrationID}
+Team Name: ${teamName}
+Class: ${className}
+Section: ${section}
+Mobile: ${mobile}
+Email: ${email}
+Team Size: ${teamSize}
+
+Selected Events:
+${events.length ? events.join(", ") : "No event selected"}
+
+Registration Date:
+${registrationDate}
+
+Please keep your Registration ID for future communication.
+
+Regards,
+APS Tinkering Lab
+Army Public School
+Lal Bahadur Shastri Marg
+Lucknow, Uttar Pradesh`;
+
+
+    const html =
+`
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>
+APS Robotics Championship 2026
+</title>
+
+</head>
+
+
+<body
+style="
+    margin:0;
+    padding:0;
+    background:#eef4f8;
+    font-family:Arial,Helvetica,sans-serif;
+    color:#172033;
+">
+
+<table
+width="100%"
+cellpadding="0"
+cellspacing="0"
+style="
+    padding:30px 10px;
+">
+
+<tr>
+
+<td align="center">
+
+
+<table
+width="100%"
+cellpadding="0"
+cellspacing="0"
+style="
+    max-width:680px;
+    background:#ffffff;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 8px 35px rgba(0,0,0,.10);
+">
+
+
+<!-- HEADER -->
+
+<tr>
+
+<td
+style="
+    background:#061a2d;
+    padding:28px;
+    text-align:center;
+">
+
+<img
+src="https://i.ibb.co/spL8t7cv/Army-Welfare-Education-Society-logo-1.png"
+alt="APS Logo"
+style="
+    width:80px;
+    height:auto;
+    margin-bottom:12px;
+">
+
+
+<h1
+style="
+    margin:0;
+    color:#00d9ff;
+    font-size:24px;
+">
+
+APS ROBOTICS
+
+</h1>
+
+
+<p
+style="
+    margin:6px 0 0;
+    color:#ffffff;
+    font-size:14px;
+">
+
+CHAMPIONSHIP 2026
+
+</p>
+
+</td>
+
+</tr>
+
+
+<!-- SUCCESS -->
+
+<tr>
+
+<td
+style="
+    padding:32px 30px 15px;
+">
+
+<h2
+style="
+    margin:0 0 10px;
+    color:#087f8c;
+">
+
+Registration Confirmed! ✓
+
+</h2>
+
+
+<p
+style="
+    line-height:1.7;
+    margin:0;
+">
+
+Dear
+<strong>
+${escapeHTML(studentName)}
+</strong>,
+
+</p>
+
+
+<p
+style="
+    line-height:1.7;
+">
+
+Thank you for registering for
+<strong>
+APS Robotics Championship 2026
+</strong>.
+
+Your registration has been successfully received by
+<strong>
+APS Tinkering Lab
+</strong>.
+
+</p>
+
+</td>
+
+</tr>
+
+
+<!-- REGISTRATION ID -->
+
+<tr>
+
+<td
+style="
+    padding:0 30px 20px;
+">
+
+<table
+width="100%"
+style="
+    background:#f0fbfd;
+    border:1px solid #c8eef3;
+    border-radius:12px;
+">
+
+<tr>
+
+<td
+style="
+    padding:18px;
+    text-align:center;
+">
+
+<p
+style="
+    margin:0 0 5px;
+    color:#64748b;
+    font-size:12px;
+    text-transform:uppercase;
+">
+
+Registration ID
+
+</p>
+
+
+<strong
+style="
+    font-size:22px;
+    color:#087f8c;
+">
+
+${escapeHTML(registrationID)}
+
+</strong>
+
+</td>
+
+</tr>
+
+</table>
+
+</td>
+
+</tr>
+
+
+<!-- DETAILS -->
+
+<tr>
+
+<td
+style="
+    padding:0 30px 25px;
+">
+
+<h3
+style="
+    color:#172033;
+    border-bottom:2px solid #e2e8f0;
+    padding-bottom:10px;
+">
+
+Registration Details
+
+</h3>
+
+
+<table
+width="100%"
+style="
+    border-collapse:collapse;
+">
+
+<tr>
+
+<td
+style="
+    padding:9px 0;
+    color:#64748b;
+    width:40%;
+">
+
+Team Leader
+
+</td>
+
+<td
+style="
+    padding:9px 0;
+    font-weight:bold;
+">
+
+${escapeHTML(studentName)}
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td
+style="
+    padding:9px 0;
+    color:#64748b;
+">
+
+Team Name
+
+</td>
+
+<td
+style="
+    padding:9px 0;
+    font-weight:bold;
+">
+
+${escapeHTML(teamName)}
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td
+style="
+    padding:9px 0;
+    color:#64748b;
+">
+
+Class
+
+</td>
+
+<td
+style="
+    padding:9px 0;
+">
+
+${escapeHTML(className)}
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td
+style="
+    padding:9px 0;
+    color:#64748b;
+">
+
+Section
+
+</td>
+
+<td
+style="
+    padding:9px 0;
+">
+
+${escapeHTML(section)}
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td
+style="
+    padding:9px 0;
+    color:#64748b;
+">
+
+Mobile
+
+</td>
+
+<td
+style="
+    padding:9px 0;
+">
+
+${escapeHTML(mobile)}
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td
+style="
+    padding:9px 0;
+    color:#64748b;
+">
+
+Team Size
+
+</td>
+
+<td
+style="
+    padding:9px 0;
+">
+
+${teamSize} Member(s)
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td
+style="
+    padding:9px 0;
+    color:#64748b;
+">
+
+Registration Date
+
+</td>
+
+<td
+style="
+    padding:9px 0;
+">
+
+${escapeHTML(registrationDate)}
+
+</td>
+
+</tr>
+
+</table>
+
+</td>
+
+</tr>
+
+
+<!-- EVENTS -->
+
+<tr>
+
+<td
+style="
+    padding:0 30px 25px;
+">
+
+<h3
+style="
+    color:#172033;
+">
+
+Selected Events
+
+</h3>
+
+
+<div>
+
+${eventsHTML}
+
+</div>
+
+</td>
+
+</tr>
+
+
+<!-- MEMBERS -->
+
+<tr>
+
+<td
+style="
+    padding:0 30px 25px;
+">
+
+<h3
+style="
+    color:#172033;
+">
+
+Team Members
+
+</h3>
+
+
+${membersHTML}
+
+</td>
+
+</tr>
+
+
+<!-- IMPORTANT -->
+
+<tr>
+
+<td
+style="
+    padding:0 30px 25px;
+">
+
+<table
+width="100%"
+style="
+    background:#fff8e8;
+    border:1px solid #f5d78e;
+    border-radius:12px;
+">
+
+<tr>
+
+<td
+style="
+    padding:16px;
+    line-height:1.6;
+">
+
+<strong>
+Important:
+</strong>
+
+Please save your Registration ID
+<strong>
+${escapeHTML(registrationID)}
+</strong>
+for future communication regarding the championship.
+
+</td>
+
+</tr>
+
+</table>
+
+</td>
+
+</tr>
+
+
+<!-- FOOTER -->
+
+<tr>
+
+<td
+style="
+    background:#061a2d;
+    padding:25px;
+    text-align:center;
+    color:#ffffff;
+">
+
+<strong>
+APS Tinkering Lab
+</strong>
+
+<br>
+
+Army Public School
+
+<br>
+
+Lal Bahadur Shastri Marg
+
+<br>
+
+Lucknow, Uttar Pradesh
+
+<br><br>
+
+<span
+style="
+    color:#8ca5b8;
+    font-size:12px;
+">
+
+APS Robotics Championship 2026
+
+</span>
+
+</td>
+
+</tr>
+
+
+</table>
+
+</td>
+
+</tr>
+
+</table>
+
+</body>
+
+</html>
+`;
+
+
+    const confirmed =
+        confirm(
+            `Send confirmation email to:\n\n${email}\n\nRegistration ID: ${registrationID}`
+        );
+
+
+    if(!confirmed){
+        return;
+    }
+
+
+    try{
+
+        showToast(
+            "Preparing confirmation email...",
+            "success"
+        );
+
+
+        /*
+         * IMPORTANT:
+         *
+         * The Firebase Trigger Email Extension
+         * watches the "mail" Firestore collection.
+         *
+         * Creating this document places the email
+         * into the Firebase email queue.
+         */
+
+        await addDoc(
+            collection(
+                firestore,
+                "mail"
+            ),
+            {
+
+                to: email,
+
+                message: {
+
+                    subject: subject,
+
+                    text: text,
+
+                    html: html
+
+                },
+
+                registrationId:
+                    registrationID,
+
+                emailType:
+                    "registration_confirmation",
+
+                createdBy:
+                    auth.currentUser
+                    ? auth.currentUser.uid
+                    : "admin",
+
+                createdAt:
+                    serverTimestamp()
+
+            }
+        );
+
+
+        detailsModal.classList.add(
+            "hidden"
+        );
+
+
+        showToast(
+            `Confirmation email queued for ${email}`,
+            "success"
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            "Email error:",
+            error
+        );
+
+
+        showToast(
+            "Could not queue confirmation email.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
    EVENT PAGE
 ===================================================== */
 
@@ -2327,9 +3498,7 @@ function exportCSV(dataObject){
                     data.MobileNumber
                 ),
 
-                normalize(
-                    data.EmailAddress
-                ),
+                getRegistrationEmail(data),
 
                 getEvents(data).join(
                     " | "
