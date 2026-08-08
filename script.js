@@ -1,19 +1,17 @@
-/* =========================================================
+/* =====================================================
    APS ROBOTICS CHAMPIONSHIP 2026
-   MAIN WEBSITE JAVASCRIPT
+   MAIN WEBSITE SCRIPT
 
-   Firebase Realtime Database
-   Registration System
-   Mobile Navigation
-   Smooth Scrolling
-   Preloader
-   Animations
-========================================================= */
+   Firebase:
+   - Authentication is NOT required for registration
+   - Realtime Database stores registrations
+   - Existing registration structure preserved
+===================================================== */
 
 
-/* =========================================================
+/* =====================================================
    FIREBASE IMPORTS
-========================================================= */
+===================================================== */
 
 import {
     initializeApp
@@ -30,9 +28,10 @@ import {
 "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 
-/* =========================================================
+
+/* =====================================================
    FIREBASE CONFIG
-========================================================= */
+===================================================== */
 
 const firebaseConfig = {
 
@@ -60,196 +59,321 @@ const firebaseConfig = {
 };
 
 
-/* =========================================================
-   INITIALIZE FIREBASE
-========================================================= */
 
-const app =
-    initializeApp(firebaseConfig);
+/* =====================================================
+   FIREBASE INITIALIZATION
+===================================================== */
 
+let database = null;
 
-const database =
-    getDatabase(app);
+try {
 
+    const app =
+        initializeApp(firebaseConfig);
 
-/* =========================================================
-   DOM READY
-========================================================= */
+    database =
+        getDatabase(app);
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
+}
+catch (error) {
 
-        initPreloader();
-
-        initMobileMenu();
-
-        initSmoothScrolling();
-
-        initHeader();
-
-        initRevealAnimations();
-
-        initActiveNavigation();
-
-        initRegistration();
-
-        initMobileNumber();
-
-    }
-);
-
-
-/* =========================================================
-   PRELOADER
-========================================================= */
-
-function initPreloader(){
-
-    const preloader =
-        document.getElementById(
-            "preloader"
-        );
-
-
-    const loaderProgress =
-        document.getElementById(
-            "loaderProgress"
-        );
-
-
-    if(!preloader){
-
-        return;
-
-    }
-
-
-    /*
-     * Start progress immediately.
-     */
-
-    if(loaderProgress){
-
-        loaderProgress.style.width =
-            "100%";
-
-    }
-
-
-    /*
-     * Always remove the preloader.
-     *
-     * This prevents the site from getting
-     * stuck on the loading screen.
-     */
-
-    const hidePreloader =
-        () => {
-
-            preloader.classList.add(
-                "hide"
-            );
-
-            document.body.style.overflowX =
-                "hidden";
-
-        };
-
-
-    /*
-     * 1.2 second automatic transition.
-     */
-
-    setTimeout(
-        hidePreloader,
-        1200
-    );
-
-
-    /*
-     * Safety fallback.
-     */
-
-    setTimeout(
-        hidePreloader,
-        2500
+    console.error(
+        "Firebase initialization failed:",
+        error
     );
 
 }
 
 
-/* =========================================================
-   MOBILE MENU
-========================================================= */
 
-function initMobileMenu(){
+/* =====================================================
+   DOM ELEMENTS
+===================================================== */
 
-    const menuToggle =
-        document.getElementById(
-            "menuToggle"
-        );
+const preloader =
+    document.getElementById("preloader");
 
 
-    const mobileNav =
-        document.getElementById(
-            "mobileNav"
-        );
+const loaderProgress =
+    document.getElementById("loaderProgress");
 
 
-    if(
-        !menuToggle ||
-        !mobileNav
-    ){
+const loaderStatus =
+    document.getElementById("loaderStatus");
+
+
+const header =
+    document.getElementById("siteHeader");
+
+
+const menuToggle =
+    document.getElementById("menuToggle");
+
+
+const mobileNav =
+    document.getElementById("mobileNav");
+
+
+const registrationForm =
+    document.getElementById("registrationForm");
+
+
+const submitButton =
+    document.getElementById("submitRegistration");
+
+
+const formMessage =
+    document.getElementById("formMessage");
+
+
+const toast =
+    document.getElementById("toast");
+
+
+const toastIcon =
+    document.getElementById("toastIcon");
+
+
+const toastMessage =
+    document.getElementById("toastMessage");
+
+
+
+/* =====================================================
+   PRELOADER
+   ALWAYS FINISHES
+===================================================== */
+
+function startPreloader() {
+
+    let progress = 0;
+
+    const statuses = [
+
+        "INITIALIZING ROBOTICS SYSTEM",
+
+        "LOADING CHAMPIONSHIP MODULES",
+
+        "CONNECTING EVENT SYSTEM",
+
+        "SYSTEM ONLINE"
+
+    ];
+
+    let statusIndex = 0;
+
+
+    const interval =
+        setInterval(() => {
+
+            progress +=
+                Math.floor(
+                    Math.random() * 8
+                ) + 4;
+
+
+            if(progress > 100) {
+
+                progress = 100;
+
+            }
+
+
+            if(loaderProgress) {
+
+                loaderProgress.style.width =
+                    progress + "%";
+
+            }
+
+
+            if(
+                progress > 25 &&
+                statusIndex === 0
+            ) {
+
+                statusIndex = 1;
+
+                if(loaderStatus) {
+
+                    loaderStatus.textContent =
+                        statuses[statusIndex];
+
+                }
+
+            }
+
+
+            if(
+                progress > 55 &&
+                statusIndex === 1
+            ) {
+
+                statusIndex = 2;
+
+                if(loaderStatus) {
+
+                    loaderStatus.textContent =
+                        statuses[statusIndex];
+
+                }
+
+            }
+
+
+            if(
+                progress > 85 &&
+                statusIndex === 2
+            ) {
+
+                statusIndex = 3;
+
+                if(loaderStatus) {
+
+                    loaderStatus.textContent =
+                        statuses[statusIndex];
+
+                }
+
+            }
+
+
+            if(progress >= 100) {
+
+                clearInterval(interval);
+
+                setTimeout(
+                    hidePreloader,
+                    250
+                );
+
+            }
+
+        }, 80);
+
+
+    /*
+       SAFETY FALLBACK
+
+       Even if something unexpected happens,
+       the preloader can NEVER stay forever.
+    */
+
+    setTimeout(
+        hidePreloader,
+        1800
+    );
+
+}
+
+
+function hidePreloader() {
+
+    if(!preloader) {
 
         return;
 
     }
 
 
-    function openMenu(){
+    preloader.classList.add(
+        "hidden"
+    );
 
-        menuToggle.classList.add(
-            "active"
-        );
 
-        mobileNav.classList.add(
+    document.body.classList.remove(
+        "loading"
+    );
+
+
+    setTimeout(() => {
+
+        preloader.style.display =
+            "none";
+
+    }, 800);
+
+}
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    startPreloader
+);
+
+
+
+/* =====================================================
+   MOBILE MENU
+===================================================== */
+
+function openMobileMenu() {
+
+    menuToggle.classList.add(
+        "open"
+    );
+
+    mobileNav.classList.add(
+        "open"
+    );
+
+    menuToggle.setAttribute(
+        "aria-expanded",
+        "true"
+    );
+
+    document.body.classList.add(
+        "menu-open"
+    );
+
+}
+
+
+function closeMobileMenu() {
+
+    menuToggle.classList.remove(
+        "open"
+    );
+
+    mobileNav.classList.remove(
+        "open"
+    );
+
+    menuToggle.setAttribute(
+        "aria-expanded",
+        "false"
+    );
+
+    document.body.classList.remove(
+        "menu-open"
+    );
+
+}
+
+
+function toggleMobileMenu() {
+
+    const isOpen =
+        mobileNav.classList.contains(
             "open"
         );
 
-        menuToggle.setAttribute(
-            "aria-expanded",
-            "true"
-        );
 
-        document.body.classList.add(
-            "menu-open"
-        );
+    if(isOpen) {
+
+        closeMobileMenu();
+
+    }
+    else {
+
+        openMobileMenu();
 
     }
 
+}
 
-    function closeMenu(){
 
-        menuToggle.classList.remove(
-            "active"
-        );
-
-        mobileNav.classList.remove(
-            "open"
-        );
-
-        menuToggle.setAttribute(
-            "aria-expanded",
-            "false"
-        );
-
-        document.body.classList.remove(
-            "menu-open"
-        );
-
-    }
-
+if(menuToggle) {
 
     menuToggle.addEventListener(
         "click",
@@ -259,447 +383,270 @@ function initMobileMenu(){
 
             event.stopPropagation();
 
-
-            if(
-                mobileNav.classList.contains(
-                    "open"
-                )
-            ){
-
-                closeMenu();
-
-            }
-            else{
-
-                openMenu();
-
-            }
+            toggleMobileMenu();
 
         }
     );
 
+}
 
-    /*
-     * Close when clicking a mobile link.
-     */
+
+/* Close menu when navigation item is clicked */
+
+if(mobileNav) {
 
     mobileNav
-    .querySelectorAll(
-        "a"
-    )
-    .forEach(
-        link => {
+    .querySelectorAll("a")
+    .forEach(link => {
 
-            link.addEventListener(
-                "click",
-                () => {
+        link.addEventListener(
+            "click",
+            () => {
 
-                    closeMenu();
+                closeMobileMenu();
 
-                }
-            );
+            }
+        );
+
+    });
+
+}
+
+
+/* Close menu when clicking outside */
+
+document.addEventListener(
+    "click",
+    event => {
+
+        if(
+            mobileNav &&
+            menuToggle &&
+            mobileNav.classList.contains("open") &&
+            !mobileNav.contains(event.target) &&
+            !menuToggle.contains(event.target)
+        ) {
+
+            closeMobileMenu();
 
         }
-    );
+
+    }
+);
 
 
-    /*
-     * Close when tapping outside.
-     */
 
-    document.addEventListener(
+/* =====================================================
+   SMOOTH NAVIGATION
+===================================================== */
+
+document
+.querySelectorAll(
+    'a[href^="#"]'
+)
+.forEach(link => {
+
+    link.addEventListener(
         "click",
         event => {
 
-            if(
-                !mobileNav.contains(event.target) &&
-                !menuToggle.contains(event.target)
-            ){
+            const targetId =
+                link.getAttribute("href");
 
-                closeMenu();
+
+            if(
+                !targetId ||
+                targetId === "#"
+            ) {
+
+                return;
 
             }
 
-        }
-    );
+
+            const target =
+                document.querySelector(
+                    targetId
+                );
 
 
-    /*
-     * Close with Escape.
-     */
+            if(!target) {
 
-    document.addEventListener(
-        "keydown",
-        event => {
-
-            if(
-                event.key === "Escape"
-            ){
-
-                closeMenu();
+                return;
 
             }
 
-        }
-    );
+
+            event.preventDefault();
 
 
-    /*
-     * Close if browser becomes desktop width.
-     */
-
-    window.addEventListener(
-        "resize",
-        () => {
-
-            if(
-                window.innerWidth > 850
-            ){
-
-                closeMenu();
-
-            }
-
-        }
-    );
-
-}
+            closeMobileMenu();
 
 
-/* =========================================================
-   SMOOTH SCROLLING
-========================================================= */
-
-function initSmoothScrolling(){
-
-    const links =
-        document.querySelectorAll(
-            'a[href^="#"]'
-        );
+            const headerHeight =
+                header
+                ? header.offsetHeight
+                : 0;
 
 
-    links.forEach(
-        link => {
-
-            link.addEventListener(
-                "click",
-                event => {
-
-                    const href =
-                        link.getAttribute(
-                            "href"
-                        );
+            const targetPosition =
+                target.getBoundingClientRect().top +
+                window.scrollY -
+                headerHeight +
+                1;
 
 
-                    if(
-                        !href ||
-                        href === "#"
-                    ){
+            window.scrollTo({
 
-                        return;
+                top:
+                    targetPosition,
 
-                    }
+                behavior:
+                    "smooth"
 
-
-                    const target =
-                        document.querySelector(
-                            href
-                        );
-
-
-                    if(!target){
-
-                        return;
-
-                    }
-
-
-                    event.preventDefault();
-
-
-                    const header =
-                        document.getElementById(
-                            "header"
-                        );
-
-
-                    const headerHeight =
-                        header
-                        ? header.offsetHeight
-                        : 0;
-
-
-                    const targetTop =
-                        target.getBoundingClientRect()
-                        .top
-                        +
-                        window.scrollY
-                        -
-                        headerHeight
-                        +
-                        1;
-
-
-                    window.scrollTo({
-
-                        top:
-                            Math.max(
-                                0,
-                                targetTop
-                            ),
-
-                        behavior:
-                            "smooth"
-
-                    });
-
-                }
-            );
+            });
 
         }
     );
 
-}
+});
 
 
-/* =========================================================
-   HEADER
-========================================================= */
 
-function initHeader(){
+/* =====================================================
+   HEADER SCROLL EFFECT
+===================================================== */
 
-    const header =
-        document.getElementById(
-            "header"
-        );
+function updateHeader() {
 
-
-    if(!header){
+    if(!header) {
 
         return;
 
     }
 
 
-    function updateHeader(){
+    if(window.scrollY > 30) {
+
+        header.classList.add(
+            "scrolled"
+        );
+
+    }
+    else {
+
+        header.classList.remove(
+            "scrolled"
+        );
+
+    }
+
+}
+
+
+window.addEventListener(
+    "scroll",
+    updateHeader,
+    {
+        passive: true
+    }
+);
+
+
+updateHeader();
+
+
+
+/* =====================================================
+   ACTIVE NAVIGATION
+===================================================== */
+
+const sections =
+    document.querySelectorAll(
+        "main section[id]"
+    );
+
+
+const navLinks =
+    document.querySelectorAll(
+        ".nav-link"
+    );
+
+
+function updateActiveNav() {
+
+    let current =
+        "home";
+
+
+    const scrollPosition =
+        window.scrollY +
+        (header ? header.offsetHeight : 80) +
+        120;
+
+
+    sections.forEach(section => {
 
         if(
-            window.scrollY > 25
-        ){
+            scrollPosition >=
+            section.offsetTop
+        ) {
 
-            header.classList.add(
-                "scrolled"
-            );
-
-        }
-        else{
-
-            header.classList.remove(
-                "scrolled"
-            );
+            current =
+                section.id;
 
         }
 
-    }
+    });
 
 
-    updateHeader();
+    navLinks.forEach(link => {
+
+        const href =
+            link.getAttribute("href");
 
 
-    window.addEventListener(
-        "scroll",
-        updateHeader,
-        {
-            passive: true
-        }
-    );
+        link.classList.toggle(
+            "active",
+            href === "#" + current
+        );
+
+    });
 
 }
 
 
-/* =========================================================
-   REVEAL ANIMATIONS
-========================================================= */
-
-function initRevealAnimations(){
-
-    const elements =
-        document.querySelectorAll(
-            ".reveal"
-        );
-
-
-    if(
-        !elements.length
-    ){
-
-        return;
-
+window.addEventListener(
+    "scroll",
+    updateActiveNav,
+    {
+        passive: true
     }
+);
 
 
-    /*
-     * IntersectionObserver provides
-     * smooth and efficient animations.
-     */
-
-    const observer =
-        new IntersectionObserver(
-            entries => {
-
-                entries.forEach(
-                    entry => {
-
-                        if(
-                            entry.isIntersecting
-                        ){
-
-                            entry.target.classList.add(
-                                "visible"
-                            );
-
-                            observer.unobserve(
-                                entry.target
-                            );
-
-                        }
-
-                    }
-                );
-
-            },
-            {
-                threshold: 0.12
-            }
-        );
+updateActiveNav();
 
 
-    elements.forEach(
-        element => {
 
-            observer.observe(
-                element
-            );
+/* =====================================================
+   MOBILE NUMBER CLEANING
+===================================================== */
 
-        }
+const mobileInput =
+    document.getElementById(
+        "mobileNumber"
     );
 
-}
 
+if(mobileInput) {
 
-/* =========================================================
-   ACTIVE NAVIGATION
-========================================================= */
-
-function initActiveNavigation(){
-
-    const sections =
-        document.querySelectorAll(
-            "main section[id]"
-        );
-
-
-    const navLinks =
-        document.querySelectorAll(
-            ".nav-link"
-        );
-
-
-    if(
-        !sections.length ||
-        !navLinks.length
-    ){
-
-        return;
-
-    }
-
-
-    const observer =
-        new IntersectionObserver(
-            entries => {
-
-                entries.forEach(
-                    entry => {
-
-                        if(
-                            entry.isIntersecting
-                        ){
-
-                            const id =
-                                entry.target.id;
-
-
-                            navLinks.forEach(
-                                link => {
-
-                                    const isActive =
-                                        link.getAttribute(
-                                            "href"
-                                        ) ===
-                                        "#" + id;
-
-
-                                    link.classList.toggle(
-                                        "active",
-                                        isActive
-                                    );
-
-                                }
-
-                            );
-
-                        }
-
-                    }
-                );
-
-            },
-            {
-                rootMargin:
-                    "-35% 0px -55% 0px"
-            }
-        );
-
-
-    sections.forEach(
-        section => {
-
-            observer.observe(
-                section
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   MOBILE NUMBER
-========================================================= */
-
-function initMobileNumber(){
-
-    const mobile =
-        document.getElementById(
-            "mobileNumber"
-        );
-
-
-    if(!mobile){
-
-        return;
-
-    }
-
-
-    mobile.addEventListener(
+    mobileInput.addEventListener(
         "input",
         () => {
 
-            mobile.value =
-                mobile.value
+            mobileInput.value =
+                mobileInput.value
                 .replace(
                     /\D/g,
                     ""
@@ -715,157 +662,344 @@ function initMobileNumber(){
 }
 
 
-/* =========================================================
-   REGISTRATION
-========================================================= */
 
-function initRegistration(){
+/* =====================================================
+   EVENT VALIDATION
+===================================================== */
 
-    const form =
-        document.getElementById(
-            "registrationForm"
+function getSelectedEvents() {
+
+    return Array
+        .from(
+            document.querySelectorAll(
+                'input[name="Events"]:checked'
+            )
+        )
+        .map(
+            checkbox =>
+                checkbox.value
+        );
+
+}
+
+
+function validateEvents() {
+
+    const selected =
+        getSelectedEvents();
+
+
+    if(selected.length === 0) {
+
+        showFormMessage(
+            "Please select at least one robotics event.",
+            "error"
         );
 
 
-    if(!form){
+        const eventBox =
+            document.getElementById(
+                "eventSelection"
+            );
 
-        return;
+
+        if(eventBox) {
+
+            eventBox.scrollIntoView({
+
+                behavior: "smooth",
+
+                block: "center"
+
+            });
+
+        }
+
+
+        return false;
 
     }
 
 
-    form.addEventListener(
+    return true;
+
+}
+
+
+
+/* =====================================================
+   EMAIL VALIDATION
+===================================================== */
+
+function isValidEmail(email) {
+
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        .test(email);
+
+}
+
+
+
+/* =====================================================
+   FORM VALIDATION
+===================================================== */
+
+function validateRegistrationForm() {
+
+    const studentName =
+        document
+        .getElementById(
+            "studentName"
+        )
+        .value
+        .trim();
+
+
+    const teamName =
+        document
+        .getElementById(
+            "teamName"
+        )
+        .value
+        .trim();
+
+
+    const studentClass =
+        document
+        .getElementById(
+            "studentClass"
+        )
+        .value
+        .trim();
+
+
+    const studentSection =
+        document
+        .getElementById(
+            "studentSection"
+        )
+        .value
+        .trim();
+
+
+    const mobile =
+        document
+        .getElementById(
+            "mobileNumber"
+        )
+        .value
+        .trim();
+
+
+    const email =
+        document
+        .getElementById(
+            "emailAddress"
+        )
+        .value
+        .trim();
+
+
+    if(studentName.length < 2) {
+
+        showFormMessage(
+            "Please enter the student's name.",
+            "error"
+        );
+
+        return false;
+
+    }
+
+
+    if(teamName.length < 2) {
+
+        showFormMessage(
+            "Please enter a valid team name.",
+            "error"
+        );
+
+        return false;
+
+    }
+
+
+    if(!studentClass) {
+
+        showFormMessage(
+            "Please enter the class.",
+            "error"
+        );
+
+        return false;
+
+    }
+
+
+    if(!studentSection) {
+
+        showFormMessage(
+            "Please enter the section.",
+            "error"
+        );
+
+        return false;
+
+    }
+
+
+    if(!/^[0-9]{10}$/.test(mobile)) {
+
+        showFormMessage(
+            "Please enter a valid 10-digit mobile number.",
+            "error"
+        );
+
+        return false;
+
+    }
+
+
+    if(!isValidEmail(email)) {
+
+        showFormMessage(
+            "Please enter a valid email address.",
+            "error"
+        );
+
+        return false;
+
+    }
+
+
+    if(!validateEvents()) {
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
+
+/* =====================================================
+   CREATE REGISTRATION ID
+===================================================== */
+
+function createRegistrationId() {
+
+    const now =
+        new Date();
+
+
+    const year =
+        now.getFullYear();
+
+
+    const random =
+        Math.floor(
+            1000 +
+            Math.random() * 9000
+        );
+
+
+    return `APS-RBC-${year}-${random}`;
+
+}
+
+
+
+/* =====================================================
+   GET OPTIONAL TEAM MEMBERS
+===================================================== */
+
+function getMemberData(formData) {
+
+    const members = {};
+
+
+    for(let i = 2; i <= 5; i++) {
+
+        const name =
+            String(
+                formData.get(
+                    `Member${i}Name`
+                ) || ""
+            ).trim();
+
+
+        const className =
+            String(
+                formData.get(
+                    `Member${i}Class`
+                ) || ""
+            ).trim();
+
+
+        const section =
+            String(
+                formData.get(
+                    `Member${i}Section`
+                ) || ""
+            ).trim();
+
+
+        members[
+            `Member${i}Name`
+        ] = name;
+
+
+        members[
+            `Member${i}Class`
+        ] = className;
+
+
+        members[
+            `Member${i}Section`
+        ] = section;
+
+    }
+
+
+    return members;
+
+}
+
+
+
+/* =====================================================
+   SUBMIT REGISTRATION
+===================================================== */
+
+if(registrationForm) {
+
+    registrationForm.addEventListener(
         "submit",
         async event => {
 
             event.preventDefault();
 
 
-            const submitButton =
-                document.getElementById(
-                    "submitBtn"
-                );
-
-
-            const formMessage =
-                document.getElementById(
-                    "formMessage"
-                );
-
-
-            const eventError =
-                document.getElementById(
-                    "eventError"
-                );
-
-
-            /*
-             * Reset messages.
-             */
-
-            formMessage.classList.remove(
-                "show"
-            );
-
-            formMessage.textContent =
-                "";
-
-
-            eventError.textContent =
-                "";
-
-
-            /*
-             * Prevent double submission.
-             */
-
-            if(
-                submitButton.disabled
-            ){
+            if(!validateRegistrationForm()) {
 
                 return;
 
             }
 
 
-            /*
-             * Read fields.
-             */
+            if(!database) {
 
-            const studentName =
-                getValue(
-                    "studentName"
+                showFormMessage(
+                    "Database connection is unavailable. Please try again.",
+                    "error"
                 );
 
-
-            const teamName =
-                getValue(
-                    "teamName"
-                );
-
-
-            const className =
-                getValue(
-                    "class"
-                );
-
-
-            const section =
-                getValue(
-                    "section"
-                );
-
-
-            const mobileNumber =
-                getValue(
-                    "mobileNumber"
-                );
-
-
-            const emailAddress =
-                getValue(
-                    "emailAddress"
-                );
-
-
-            const remarks =
-                getValue(
-                    "remarks"
-                );
-
-
-            /*
-             * Events.
-             */
-
-            const events =
-                Array.from(
-                    document.querySelectorAll(
-                        'input[name="Events"]:checked'
-                    )
-                )
-                .map(
-                    input =>
-                        input.value
-                );
-
-
-            /*
-             * Basic validation.
-             */
-
-            if(
-                !studentName ||
-                !teamName ||
-                !className ||
-                !section ||
-                !mobileNumber ||
-                !emailAddress
-            ){
-
-                showFormError(
-                    formMessage,
-                    "Please complete all required team leader fields."
+                showToast(
+                    "Firebase connection failed.",
+                    "error"
                 );
 
                 return;
@@ -873,238 +1007,130 @@ function initRegistration(){
             }
 
 
-            /*
-             * Mobile validation.
-             */
+            const originalButton =
+                submitButton.innerHTML;
 
-            if(
-                !/^[6-9]\d{9}$/.test(
-                    mobileNumber
-                )
-            ){
 
-                showFormError(
-                    formMessage,
-                    "Please enter a valid 10-digit Indian mobile number."
-                );
+            submitButton.disabled =
+                true;
 
-                document
-                .getElementById(
-                    "mobileNumber"
-                )
-                .focus();
 
-                return;
+            submitButton.innerHTML = `
 
-            }
+                <i class="fa-solid fa-spinner fa-spin"></i>
 
+                Submitting...
 
-            /*
-             * Email validation.
-             */
+            `;
 
-            if(
-                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/
-                    .test(emailAddress)
-            ){
 
-                showFormError(
-                    formMessage,
-                    "Please enter a valid email address."
-                );
+            clearFormMessage();
 
-                return;
 
-            }
+            try {
 
+                const formData =
+                    new FormData(
+                        registrationForm
+                    );
 
-            /*
-             * At least one event.
-             */
 
-            if(
-                events.length === 0
-            ){
+                const registrationId =
+                    createRegistrationId();
 
-                eventError.textContent =
-                    "Please select at least one event.";
 
-                document
-                .getElementById(
-                    "eventSelection"
-                )
-                .scrollIntoView({
-                    behavior: "smooth",
-                    block: "center"
-                });
+                const selectedEvents =
+                    getSelectedEvents();
 
-                return;
 
-            }
+                const now =
+                    new Date();
 
 
-            /*
-             * Team size.
-             */
+                const registrationDate =
+                    now.toISOString();
 
-            const teamSize =
-                calculateTeamSize();
 
+                const memberData =
+                    getMemberData(
+                        formData
+                    );
 
-            /*
-             * Generate registration ID.
-             */
 
-            const registrationId =
-                generateRegistrationId();
+                const registrationData = {
 
+                    registrationId:
+                        registrationId,
 
-            /*
-             * Registration date.
-             */
+                    StudentName:
+                        String(
+                            formData.get(
+                                "StudentName"
+                            ) || ""
+                        ).trim(),
 
-            const registrationDate =
-                new Date().toISOString();
+                    TeamName:
+                        String(
+                            formData.get(
+                                "TeamName"
+                            ) || ""
+                        ).trim(),
 
+                    Class:
+                        String(
+                            formData.get(
+                                "Class"
+                            ) || ""
+                        ).trim(),
 
-            /*
-             * Collect team members.
-             */
+                    Section:
+                        String(
+                            formData.get(
+                                "Section"
+                            ) || ""
+                        ).trim(),
 
-            const member2 =
-                collectMember(2);
+                    MobileNumber:
+                        String(
+                            formData.get(
+                                "MobileNumber"
+                            ) || ""
+                        ).trim(),
 
+                    EmailAddress:
+                        String(
+                            formData.get(
+                                "EmailAddress"
+                            ) || ""
+                        ).trim(),
 
-            const member3 =
-                collectMember(3);
+                    Events:
+                        selectedEvents,
 
+                    TeamSize:
+                        calculateTeamSize(
+                            memberData
+                        ),
 
-            const member4 =
-                collectMember(4);
+                    Remarks:
+                        String(
+                            formData.get(
+                                "Remarks"
+                            ) || ""
+                        ).trim(),
 
+                    registrationDate:
+                        registrationDate,
 
-            const member5 =
-                collectMember(5);
+                    ...memberData
 
+                };
 
-            /*
-             * Firebase data.
-             *
-             * These field names intentionally
-             * match your existing admin.js.
-             */
-
-            const registrationData = {
-
-                registrationId:
-
-                    registrationId,
-
-                registrationDate:
-
-                    registrationDate,
-
-                StudentName:
-
-                    studentName,
-
-                TeamName:
-
-                    teamName,
-
-                Class:
-
-                    className,
-
-                Section:
-
-                    section,
-
-                MobileNumber:
-
-                    mobileNumber,
-
-                EmailAddress:
-
-                    emailAddress,
-
-                Events:
-
-                    events,
-
-                TeamSize:
-
-                    teamSize,
-
-                Member2Name:
-
-                    member2.name,
-
-                Member2Class:
-
-                    member2.className,
-
-                Member2Section:
-
-                    member2.section,
-
-                Member3Name:
-
-                    member3.name,
-
-                Member3Class:
-
-                    member3.className,
-
-                Member3Section:
-
-                    member3.section,
-
-                Member4Name:
-
-                    member4.name,
-
-                Member4Class:
-
-                    member4.className,
-
-                Member4Section:
-
-                    member4.section,
-
-                Member5Name:
-
-                    member5.name,
-
-                Member5Class:
-
-                    member5.className,
-
-                Member5Section:
-
-                    member5.section,
-
-                Remarks:
-
-                    remarks
-
-            };
-
-
-            /*
-             * Start loading state.
-             */
-
-            setSubmitLoading(
-                submitButton,
-                true
-            );
-
-
-            try{
 
                 /*
-                 * Create new registration.
+                 * Preserve existing Firebase path:
+                 *
+                 * registrations/
                  */
 
                 const registrationsRef =
@@ -1120,112 +1146,92 @@ function initRegistration(){
                     );
 
 
-                /*
-                 * Save data.
-                 */
-
                 await set(
                     newRegistrationRef,
                     registrationData
                 );
 
 
+                showFormMessage(
+                    "Registration submitted successfully.",
+                    "success"
+                );
+
+
+                showToast(
+                    "Registration successful!",
+                    "success"
+                );
+
+
                 /*
-                 * Save locally so thankyou.html
-                 * can access registration information
-                 * if your thankyou page wants it.
+                 * Save temporary local data
+                 * so thankyou.html can display it.
                  */
 
-                try{
+                try {
 
-                    localStorage.setItem(
-                        "apsLastRegistration",
-                        JSON.stringify({
-                            key:
-                                newRegistrationRef.key,
-                            ...registrationData
-                        })
+                    sessionStorage.setItem(
+                        "apsRegistration",
+                        JSON.stringify(
+                            registrationData
+                        )
                     );
 
                 }
-                catch(storageError){
+                catch(storageError) {
 
                     console.warn(
-                        "Local storage unavailable:",
+                        "Session storage unavailable:",
                         storageError
                     );
 
                 }
 
 
-                /*
-                 * Success message.
-                 */
-
-                showToast(
-                    "Registration submitted successfully."
-                );
+                registrationForm.reset();
 
 
                 /*
-                 * Redirect to existing
-                 * thankyou.html.
+                 * Redirect after a short delay.
                  */
 
-                setTimeout(
-                    () => {
+                setTimeout(() => {
 
-                        window.location.href =
-                            "thankyou.html?id=" +
-                            encodeURIComponent(
-                                registrationId
-                            );
+                    window.location.href =
+                        "thankyou.html";
 
-                    },
-                    500
-                );
+                }, 900);
 
             }
-            catch(error){
+            catch(error) {
 
                 console.error(
-                    "Firebase registration error:",
+                    "Registration error:",
                     error
                 );
 
 
-                let message =
-                    "Registration could not be submitted. Please try again.";
-
-
-                if(
-                    error &&
-                    error.code ===
-                    "PERMISSION_DENIED"
-                ){
-
-                    message =
-                        "Firebase permission denied. Please check your Realtime Database rules.";
-
-                }
-
-
-                showFormError(
-                    formMessage,
-                    message
+                showFormMessage(
+                    getFirebaseErrorMessage(error),
+                    "error"
                 );
 
 
                 showToast(
                     "Registration failed.",
-                    true
+                    "error"
                 );
 
+            }
+            finally {
 
-                setSubmitLoading(
-                    submitButton,
-                    false
-                );
+                submitButton.disabled =
+                    false;
+
+
+                submitButton.innerHTML =
+                    originalButton;
 
             }
 
@@ -1235,253 +1241,155 @@ function initRegistration(){
 }
 
 
-/* =========================================================
-   GET VALUE
-========================================================= */
 
-function getValue(id){
-
-    const element =
-        document.getElementById(
-            id
-        );
-
-
-    if(!element){
-
-        return "";
-
-    }
-
-
-    return element.value.trim();
-
-}
-
-
-/* =========================================================
-   COLLECT MEMBER
-========================================================= */
-
-function collectMember(number){
-
-    const name =
-        getValue(
-            `member${number}Name`
-        );
-
-
-    const className =
-        getValue(
-            `member${number}Class`
-        );
-
-
-    const section =
-        getValue(
-            `member${number}Section`
-        );
-
-
-    return {
-
-        name:
-
-            name,
-
-        className:
-
-            className,
-
-        section:
-
-            section
-
-    };
-
-}
-
-
-/* =========================================================
+/* =====================================================
    TEAM SIZE
-========================================================= */
+===================================================== */
 
-function calculateTeamSize(){
+function calculateTeamSize(
+    memberData
+) {
 
-    let size =
-        1;
+    let count = 1;
 
 
-    for(
-        let i = 2;
-        i <= 5;
-        i++
-    ){
+    for(let i = 2; i <= 5; i++) {
 
         const name =
-            getValue(
-                `member${i}Name`
-            );
+            memberData[
+                `Member${i}Name`
+            ];
 
 
-        if(name){
+        if(
+            name &&
+            String(name).trim()
+        ) {
 
-            size++;
+            count++;
 
         }
 
     }
 
 
-    return size;
+    return count;
 
 }
 
 
-/* =========================================================
-   REGISTRATION ID
-========================================================= */
 
-function generateRegistrationId(){
+/* =====================================================
+   FIREBASE ERROR MESSAGE
+===================================================== */
 
-    const now =
-        new Date();
+function getFirebaseErrorMessage(
+    error
+) {
 
+    if(!error) {
 
-    const year =
-        now.getFullYear();
+        return "Something went wrong. Please try again.";
 
-
-    const month =
-        String(
-            now.getMonth() + 1
-        )
-        .padStart(
-            2,
-            "0"
-        );
+    }
 
 
-    const day =
-        String(
-            now.getDate()
-        )
-        .padStart(
-            2,
-            "0"
-        );
+    const code =
+        error.code || "";
 
 
-    const random =
-        Math
-        .floor(
-            1000 +
-            Math.random() * 9000
-        );
+    switch(code) {
 
+        case "PERMISSION_DENIED":
 
-    return (
-        "APS-RBC-" +
-        year +
-        month +
-        day +
-        "-" +
-        random
-    );
+            return "Registration is currently unavailable. Please contact the organizers.";
+
+        case "NETWORK_ERROR":
+
+            return "Network error. Please check your internet connection.";
+
+        default:
+
+            return "Unable to submit registration. Please check your connection and try again.";
+
+    }
 
 }
 
 
-/* =========================================================
-   SUBMIT LOADING
-========================================================= */
 
-function setSubmitLoading(
-    button,
-    loading
-){
+/* =====================================================
+   FORM MESSAGE
+===================================================== */
 
-    if(!button){
+function showFormMessage(
+    message,
+    type
+) {
+
+    if(!formMessage) {
 
         return;
 
     }
 
 
-    button.disabled =
-        loading;
-
-
-    button.classList.toggle(
-        "loading",
-        loading
-    );
-
-}
-
-
-/* =========================================================
-   FORM ERROR
-========================================================= */
-
-function showFormError(
-    element,
-    message
-){
-
-    if(!element){
-
-        return;
-
-    }
-
-
-    element.textContent =
+    formMessage.textContent =
         message;
 
 
-    element.classList.add(
-        "show"
-    );
+    formMessage.className =
+        "form-message show " +
+        type;
 
 
-    element.scrollIntoView({
+    formMessage.scrollIntoView({
+
         behavior: "smooth",
-        block: "center"
+
+        block: "nearest"
+
     });
 
 }
 
 
-/* =========================================================
-   TOAST
-========================================================= */
+function clearFormMessage() {
 
-let toastTimer =
-    null;
+    if(!formMessage) {
+
+        return;
+
+    }
+
+
+    formMessage.textContent =
+        "";
+
+    formMessage.className =
+        "form-message";
+
+}
+
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+let toastTimer = null;
 
 
 function showToast(
     message,
-    error = false
-){
-
-    const toast =
-        document.getElementById(
-            "toast"
-        );
-
-
-    const toastMessage =
-        document.getElementById(
-            "toastMessage"
-        );
-
+    type = "success"
+) {
 
     if(
         !toast ||
-        !toastMessage
-    ){
+        !toastMessage ||
+        !toastIcon
+    ) {
 
         return;
 
@@ -1492,23 +1400,16 @@ function showToast(
         message;
 
 
-    const icon =
-        toast.querySelector(
-            "i"
-        );
+    if(type === "error") {
 
+        toastIcon.className =
+            "fa-solid fa-circle-exclamation";
 
-    if(icon){
+    }
+    else {
 
-        icon.className =
-            error
-            ? "fa-solid fa-circle-exclamation"
-            : "fa-solid fa-circle-check";
-
-        icon.style.color =
-            error
-            ? "#ff7180"
-            : "#00ff9d";
+        toastIcon.className =
+            "fa-solid fa-circle-check";
 
     }
 
@@ -1524,32 +1425,101 @@ function showToast(
 
 
     toastTimer =
-        setTimeout(
-            () => {
+        setTimeout(() => {
 
-                toast.classList.remove(
-                    "show"
-                );
+            toast.classList.remove(
+                "show"
+            );
 
-            },
-            3500
-        );
+        }, 3500);
 
 }
 
 
-/* =========================================================
-   PAGE VISIBILITY SAFETY
-========================================================= */
+
+/* =====================================================
+   ESCAPE KEY
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if(
+            event.key === "Escape"
+        ) {
+
+            closeMobileMenu();
+
+        }
+
+    }
+);
+
+
+
+/* =====================================================
+   HANDLE RESIZE
+===================================================== */
+
+window.addEventListener(
+    "resize",
+    () => {
+
+        if(
+            window.innerWidth > 850
+        ) {
+
+            closeMobileMenu();
+
+        }
+
+    }
+);
+
+
+
+/* =====================================================
+   PAGE VISIBILITY
+===================================================== */
 
 document.addEventListener(
     "visibilitychange",
     () => {
 
-        /*
-         * Nothing destructive happens when the
-         * user switches browser tabs.
-         */
+        if(
+            !document.hidden
+        ) {
+
+            updateHeader();
+
+            updateActiveNav();
+
+        }
 
     }
 );
+
+
+
+/* =====================================================
+   FINAL SAFETY
+===================================================== */
+
+/*
+ * If DOMContentLoaded somehow happened before
+ * the preloader function was attached, this makes
+ * sure the preloader still disappears.
+ */
+
+if(
+    document.readyState === "interactive" ||
+    document.readyState === "complete"
+) {
+
+    setTimeout(
+        hidePreloader,
+        1600
+    );
+
+}
