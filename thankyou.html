@@ -11,13 +11,9 @@
     <meta name="theme-color"
           content="#020711">
 
-    <meta name="description"
-          content="Registration successful - APS Robotics Championship 2026">
-
     <title>
         Registration Successful | APS Robotics Championship 2026
     </title>
-
 
     <link rel="preconnect"
           href="https://fonts.googleapis.com">
@@ -28,7 +24,6 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap"
           rel="stylesheet">
-
 
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -42,29 +37,26 @@
             box-sizing: border-box;
         }
 
+
         :root {
 
             --bg: #020711;
+
+            --panel: #071321;
+
             --cyan: #00d9ff;
-            --blue: #187cff;
+
+            --green: #64f2a0;
 
             --white: #f4fbff;
+
             --muted: #8da5ba;
 
             --border:
-                rgba(0,217,255,.14);
-
-            --green:
-                #64f2a0;
+                rgba(0,217,255,.15);
 
         }
 
-        html,
-        body {
-
-            min-height: 100%;
-
-        }
 
         body {
 
@@ -78,33 +70,24 @@
 
             overflow-x: hidden;
 
-            background:
-                radial-gradient(
-                    circle at 20% 10%,
-                    rgba(0,217,255,.08),
-                    transparent 30%
-                ),
-                radial-gradient(
-                    circle at 90% 90%,
-                    rgba(24,124,255,.08),
-                    transparent 30%
-                ),
-                var(--bg);
-
             color: var(--white);
 
-            font-family:
-                Poppins,
-                sans-serif;
+            font-family: Poppins,sans-serif;
+
+            background:
+
+                radial-gradient(
+                    circle at center,
+                    rgba(0,217,255,.08),
+                    transparent 35%
+                ),
+
+                var(--bg);
 
         }
 
 
-        /* GRID */
-
-        body::before {
-
-            content: "";
+        .background-grid {
 
             position: fixed;
 
@@ -132,56 +115,20 @@
         }
 
 
-        /* GLOW */
+        .success-box {
 
-        body::after {
+            width: min(650px,100%);
 
-            content: "";
-
-            position: fixed;
-
-            width: 400px;
-            height: 400px;
-
-            left: 50%;
-            top: 50%;
-
-            z-index: -1;
-
-            transform:
-                translate(-50%, -50%);
-
-            border-radius: 50%;
-
-            background:
-                var(--cyan);
-
-            filter:
-                blur(160px);
-
-            opacity: .05;
-
-        }
-
-
-        /* CARD */
-
-        .success-card {
-
-            width:
-                min(620px, 100%);
-
-            padding:
-                45px 35px;
+            padding: 45px 30px;
 
             text-align: center;
 
-            border:
-                1px solid var(--border);
+            border: 1px solid var(--border);
 
             border-radius: 25px;
 
             background:
+
                 linear-gradient(
                     145deg,
                     rgba(7,19,33,.97),
@@ -189,15 +136,15 @@
                 );
 
             box-shadow:
-                0 30px 100px
-                rgba(0,0,0,.35);
+                0 30px 100px rgba(0,0,0,.45);
 
             animation:
-                cardIn .7s ease;
+                appear .7s ease;
 
         }
 
-        @keyframes cardIn {
+
+        @keyframes appear {
 
             from {
 
@@ -222,77 +169,44 @@
         }
 
 
-        /* ICON */
-
         .success-icon {
 
             width: 85px;
+
             height: 85px;
 
-            margin: auto;
+            margin: 0 auto;
 
             display: grid;
 
             place-items: center;
 
-            border:
-                1px solid
-                rgba(100,242,160,.35);
-
             border-radius: 50%;
 
-            color:
-                var(--green);
+            color: var(--green);
+
+            border: 1px solid
+                rgba(100,242,160,.4);
 
             background:
-                rgba(100,242,160,.07);
-
-            font-size: 34px;
-
-            box-shadow:
-                0 0 45px
                 rgba(100,242,160,.08);
 
-            animation:
-                iconPop .7s ease .2s both;
+            font-size: 36px;
 
-        }
-
-        @keyframes iconPop {
-
-            from {
-
-                opacity: 0;
-
-                transform:
-                    scale(.5);
-
-            }
-
-            to {
-
-                opacity: 1;
-
-                transform:
-                    scale(1);
-
-            }
+            box-shadow:
+                0 0 40px
+                rgba(100,242,160,.12);
 
         }
 
 
-        .success-card .eyebrow {
-
-            display: block;
+        .eyebrow {
 
             margin-top: 25px;
 
-            color:
-                var(--cyan);
+            color: var(--cyan);
 
-            font-family:
-                Orbitron,
-                sans-serif;
+            font-family: Orbitron,sans-serif;
 
             font-size: 9px;
 
@@ -305,67 +219,58 @@
 
             margin-top: 10px;
 
-            font-family:
-                Orbitron,
-                sans-serif;
+            font-family: Orbitron,sans-serif;
 
             font-size:
-                clamp(25px, 5vw, 38px);
+                clamp(28px,6vw,46px);
 
-            line-height: 1.2;
+            line-height: 1.15;
 
         }
 
 
         h1 span {
 
-            color:
-                var(--cyan);
+            color: var(--cyan);
 
         }
 
 
         .message {
 
-            margin:
-                15px auto 0;
+            margin: 15px auto 0;
 
-            max-width: 480px;
+            max-width: 500px;
 
-            color:
-                var(--muted);
+            color: var(--muted);
 
-            font-size: 11px;
+            font-size: 12px;
 
             line-height: 1.8;
 
         }
 
 
-        /* REGISTRATION ID */
+        .registration-id-box {
 
-        .id-box {
+            margin-top: 30px;
 
-            margin-top: 28px;
+            padding: 22px;
 
-            padding: 22px 15px;
-
-            border:
-                1px solid
-                rgba(0,217,255,.25);
+            border: 1px solid
+                rgba(0,217,255,.22);
 
             border-radius: 15px;
 
             background:
-                rgba(0,217,255,.045);
+                rgba(0,217,255,.04);
 
         }
 
 
-        .id-label {
+        .registration-id-label {
 
-            color:
-                var(--muted);
+            color: var(--muted);
 
             font-size: 8px;
 
@@ -378,77 +283,77 @@
 
             margin-top: 9px;
 
-            color:
-                var(--cyan);
+            color: var(--cyan);
 
-            font-family:
-                Orbitron,
-                sans-serif;
+            font-family: Orbitron,sans-serif;
 
             font-size:
-                clamp(23px, 6vw, 35px);
+                clamp(20px,5vw,32px);
 
             font-weight: 800;
 
             letter-spacing: 2px;
 
+            word-break: break-word;
+
             text-shadow:
-                0 0 25px
+                0 0 20px
                 rgba(0,217,255,.2);
 
-            word-break:
-                break-word;
-
         }
 
 
-        .team-name {
-
-            margin-top: 9px;
-
-            color:
-                var(--white);
-
-            font-size: 10px;
-
-        }
-
-
-        /* NOTE */
-
-        .important {
+        .details {
 
             margin-top: 20px;
 
+            display: grid;
+
+            grid-template-columns:
+                repeat(2,1fr);
+
+            gap: 10px;
+
+        }
+
+
+        .detail {
+
             padding: 14px;
 
-            border-radius: 10px;
+            border: 1px solid var(--border);
 
-            color:
-                #9bb0c0;
+            border-radius: 11px;
 
             background:
-                rgba(255,255,255,.025);
-
-            font-size: 9px;
-
-            line-height: 1.7;
-
-        }
-
-        .important i {
-
-            margin-right: 5px;
-
-            color:
-                var(--cyan);
+                rgba(2,7,17,.5);
 
         }
 
 
-        /* BUTTONS */
+        .detail-label {
 
-        .actions {
+            color: var(--muted);
+
+            font-size: 8px;
+
+        }
+
+
+        .detail-value {
+
+            margin-top: 4px;
+
+            color: var(--white);
+
+            font-size: 10px;
+
+            font-weight: 600;
+
+        }
+
+
+        .buttons {
 
             margin-top: 28px;
 
@@ -463,61 +368,47 @@
         }
 
 
-        .btn {
+        .button {
 
             min-height: 45px;
 
-            padding:
-                11px 18px;
+            padding: 12px 18px;
 
-            display:
-                inline-flex;
+            display: inline-flex;
 
-            align-items:
-                center;
+            align-items: center;
 
-            justify-content:
-                center;
+            justify-content: center;
 
             gap: 8px;
 
-            border-radius:
-                10px;
+            border-radius: 10px;
 
-            font-size:
-                10px;
+            font-size: 10px;
 
-            font-weight:
-                600;
+            font-weight: 600;
 
-            text-decoration:
-                none;
+            text-decoration: none;
 
-            transition:
-                .25s;
+            transition: .25s;
 
         }
 
 
-        .btn-primary {
+        .button-primary {
 
-            color:
-                #001018;
+            color: #001018;
 
-            background:
-                var(--cyan);
+            background: var(--cyan);
 
         }
 
 
-        .btn-secondary {
+        .button-secondary {
 
-            color:
-                var(--cyan);
+            color: var(--cyan);
 
-            border:
-                1px solid
-                var(--border);
+            border: 1px solid var(--border);
 
             background:
                 rgba(0,217,255,.04);
@@ -525,7 +416,7 @@
         }
 
 
-        .btn:hover {
+        .button:hover {
 
             transform:
                 translateY(-3px);
@@ -533,49 +424,41 @@
         }
 
 
-        /* FOOTER */
+        .footer-text {
 
-        .footer-note {
+            margin-top: 25px;
 
-            margin-top:
-                25px;
+            color: #53697a;
 
-            color:
-                #53697a;
-
-            font-size:
-                8px;
+            font-size: 8px;
 
         }
 
 
-        @media (max-width: 500px) {
+        @media(max-width:500px) {
 
-            body {
-
-                padding:
-                    15px;
-
-            }
-
-            .success-card {
+            .success-box {
 
                 padding:
-                    35px 20px;
+                    35px 18px;
 
             }
 
-            .actions {
+            .details {
 
-                flex-direction:
-                    column;
+                grid-template-columns: 1fr;
 
             }
 
-            .btn {
+            .buttons {
 
-                width:
-                    100%;
+                flex-direction: column;
+
+            }
+
+            .button {
+
+                width: 100%;
 
             }
 
@@ -588,8 +471,10 @@
 
 <body>
 
+<div class="background-grid"></div>
 
-<main class="success-card">
+
+<main class="success-box">
 
 
     <div class="success-icon">
@@ -599,70 +484,90 @@
     </div>
 
 
-    <span class="eyebrow">
+    <div class="eyebrow">
         APS ROBOTICS CHAMPIONSHIP 2026
-    </span>
+    </div>
 
 
     <h1>
-
         Registration
         <span>Successful!</span>
-
     </h1>
 
 
     <p class="message">
 
-        Your registration has been successfully submitted.
-        Please save your Registration ID for future
-        communication and event verification.
+        Your team has been successfully registered
+        for APS Robotics Championship 2026.
+
+        Please save your registration ID for
+        future reference.
 
     </p>
 
 
-    <!-- REGISTRATION ID -->
+    <div class="registration-id-box">
 
-    <div class="id-box">
-
-        <div class="id-label">
+        <div class="registration-id-label">
             YOUR REGISTRATION ID
         </div>
 
-
-        <div id="registrationId"
-             class="registration-id">
+        <div
+            class="registration-id"
+            id="registrationId">
 
             APSRC-2026-0001
 
         </div>
 
+    </div>
 
-        <div id="teamName"
-             class="team-name">
 
-            APS Robotics Championship 2026
+    <div class="details">
+
+
+        <div class="detail">
+
+            <div class="detail-label">
+                TEAM SIZE
+            </div>
+
+            <div
+                class="detail-value"
+                id="teamSize">
+
+                -
+
+            </div>
 
         </div>
 
+
+        <div class="detail">
+
+            <div class="detail-label">
+                EVENTS
+            </div>
+
+            <div
+                class="detail-value"
+                id="events">
+
+                -
+
+            </div>
+
+        </div>
+
+
     </div>
 
 
-    <div class="important">
+    <div class="buttons">
 
-        <i class="fa-solid fa-circle-info"></i>
-
-        Please keep your Registration ID safe.
-        You may be asked to provide it during
-        the championship.
-
-    </div>
-
-
-    <div class="actions">
-
-        <a href="index.html"
-           class="btn btn-primary">
+        <a
+            href="index.html"
+            class="button button-primary">
 
             <i class="fa-solid fa-house"></i>
 
@@ -671,23 +576,24 @@
         </a>
 
 
-        <a href="rules.html"
-           class="btn btn-secondary">
+        <a
+            href="admin.html"
+            class="button button-secondary">
 
-            <i class="fa-solid fa-book-open"></i>
+            <i class="fa-solid fa-user-shield"></i>
 
-            View Rules
+            Admin
 
         </a>
 
     </div>
 
 
-    <p class="footer-note">
+    <div class="footer-text">
 
-        APS Tinkering Lab • APS Robotics Championship 2026
+        APS Tinkering Lab · APS Robotics Championship 2026
 
-    </p>
+    </div>
 
 
 </main>
@@ -695,104 +601,116 @@
 
 <script>
 
-    /* ========================================================
-       GET REGISTRATION DETAILS
-    ======================================================== */
-
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
 
-    const id =
-        params.get("id");
+        const idElement =
+            document.getElementById(
+                "registrationId"
+            );
 
 
-    const team =
-        params.get("team");
+        const teamElement =
+            document.getElementById(
+                "teamSize"
+            );
 
 
-    const registrationId =
-        document.getElementById(
-            "registrationId"
-        );
+        const eventsElement =
+            document.getElementById(
+                "events"
+            );
 
 
-    const teamName =
-        document.getElementById(
-            "teamName"
-        );
+        /* Read URL */
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
 
 
-    /* ========================================================
-       DISPLAY ID
-    ======================================================== */
+        const urlId =
+            params.get("id");
 
-    if (id) {
 
-        registrationId.textContent =
-            id;
+        /* Read session */
 
-    }
-    else {
+        let data = null;
 
-        /* Try localStorage */
 
         try {
 
-            const saved =
-                JSON.parse(
-                    localStorage.getItem(
-                        "apsLastRegistration"
-                    )
+            const stored =
+                sessionStorage.getItem(
+                    "apsRegistration"
                 );
 
 
-            if (
-                saved &&
-                saved.registrationId
-            ) {
+            if (stored) {
 
-                registrationId.textContent =
-                    saved.registrationId;
+                data =
+                    JSON.parse(stored);
 
             }
 
-            if (
-                saved &&
-                saved.teamName
-            ) {
+        } catch (error) {
 
-                teamName.textContent =
-                    saved.teamName;
-
-            }
-
-        }
-        catch (error) {
-
-            console.error(error);
+            console.error(
+                "Unable to read registration data:",
+                error
+            );
 
         }
 
+
+        /* Registration ID */
+
+        const registrationId =
+            urlId ||
+            data?.registrationId ||
+            "APSRC-2026-0001";
+
+
+        idElement.textContent =
+            registrationId;
+
+
+        /* Team size */
+
+        if (data?.teamSize) {
+
+            teamElement.textContent =
+                `${data.teamSize} ${
+                    Number(data.teamSize) === 1
+                        ? "Member"
+                        : "Members"
+                }`;
+
+        }
+
+
+        /* Events */
+
+        if (
+            data?.events &&
+            Array.isArray(data.events)
+        ) {
+
+            eventsElement.textContent =
+                data.events.join(", ");
+
+        }
+
+
     }
 
-
-    /* ========================================================
-       DISPLAY TEAM
-    ======================================================== */
-
-    if (team) {
-
-        teamName.textContent =
-            decodeURIComponent(team);
-
-    }
+);
 
 </script>
 
-
 </body>
 
-    </html>
+</html>
