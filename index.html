@@ -2,58 +2,49 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <meta name="theme-color"
-          content="#020711">
-
+    <meta name="theme-color" content="#020711">
     <meta name="description"
           content="APS Robotics Championship 2026 - APS Tinkering Lab">
 
-    <title>
-        APS Robotics Championship 2026
-    </title>
+    <title>APS Robotics Championship 2026</title>
 
-
-    <!-- Google Fonts -->
-
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
-
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect"
           href="https://fonts.gstatic.com"
           crossorigin>
 
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
-
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        media="print"
+        onload="this.media='all'">
 
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
+    <noscript>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    </noscript>
 
     <!-- Main CSS -->
-
-    <link rel="stylesheet"
-          href="style.css">
-
+    <link rel="stylesheet" href="style.css">
 </head>
 
-
 <body>
-
 
 <!-- =========================================
      PRELOADER
 ========================================= -->
 
-<div id="preloader">
+<div id="preloader" aria-label="Loading website">
 
     <div class="loader">
 
@@ -92,104 +83,67 @@
      HEADER
 ========================================= -->
 
-<header class="header"
-        id="header">
+<header class="header" id="header">
 
     <div class="nav-container">
 
-
         <!-- LOGO -->
-
-        <a href="#home"
-           class="logo">
+        <a href="#home" class="logo" aria-label="APS Tinkering Lab Home">
 
             <div class="logo-icon">
-
                 <i class="fa-solid fa-robot"></i>
-
             </div>
 
             <div class="logo-text">
-
-                <strong>
-                    APS
-                </strong>
-
-                <span>
-                    TINKERING LAB
-                </span>
-
+                <strong>APS</strong>
+                <span>TINKERING LAB</span>
             </div>
 
         </a>
 
 
-        <!-- DESKTOP NAV -->
+        <!-- DESKTOP / MOBILE NAV -->
+        <nav class="nav" id="nav" aria-label="Main navigation">
 
-        <nav class="nav"
-             id="nav">
-
-            <a href="#home"
-               class="nav-link active">
-
+            <a href="#home" class="nav-link active">
                 Home
-
             </a>
 
-            <a href="#about"
-               class="nav-link">
-
+            <a href="#about" class="nav-link">
                 About
-
             </a>
 
-            <a href="#events"
-               class="nav-link">
-
+            <a href="#events" class="nav-link">
                 Events
-
             </a>
 
-            <a href="#registration"
-               class="nav-link">
-
+            <a href="#registration" class="nav-link">
                 Registration
-
             </a>
 
-            <a href="#message"
-               class="nav-link">
-
+            <a href="#message" class="nav-link">
                 Message
-
             </a>
 
-            <a href="#contact"
-               class="nav-link">
-
+            <a href="#contact" class="nav-link">
                 Contact
-
             </a>
 
-            <!-- SEPARATE RULE PAGE -->
-
-            <a href="rules.html"
-               class="nav-rules">
-
+            <a href="rules.html" class="nav-rules">
                 <i class="fa-solid fa-book-open"></i>
-
                 Rules
-
             </a>
 
         </nav>
 
 
         <!-- MOBILE MENU -->
-
-        <button class="menu-toggle"
-                id="menuToggle"
-                aria-label="Open navigation">
+        <button
+            class="menu-toggle"
+            id="menuToggle"
+            type="button"
+            aria-label="Open navigation"
+            aria-expanded="false">
 
             <span></span>
             <span></span>
@@ -206,27 +160,17 @@
      HERO
 ========================================= -->
 
-<section class="hero"
-         id="home">
-
-
-    <div class="hero-particles"></div>
-
+<section class="hero" id="home">
 
     <div class="hero-content">
 
-
         <div class="hero-badge">
-
             <span class="live-dot"></span>
-
             APS TINKERING LAB PRESENTS
-
         </div>
 
 
         <h1>
-
             APS ROBOTICS
 
             <span>
@@ -236,17 +180,14 @@
             <strong>
                 2026
             </strong>
-
         </h1>
 
 
         <p class="hero-description">
-
             Where imagination meets engineering.
             Design intelligent machines, challenge
             your limits and experience the future
             of robotics.
-
         </p>
 
 
@@ -256,64 +197,38 @@
                class="btn btn-primary">
 
                 <i class="fa-solid fa-rocket"></i>
-
                 Register Your Team
 
             </a>
-
 
             <a href="rules.html"
                class="btn btn-secondary">
 
                 <i class="fa-solid fa-book-open"></i>
-
-                Rules & Event Details
+                Rules &amp; Event Details
 
             </a>
 
         </div>
 
 
-        <!-- EVENT STATS -->
+        <!-- STATS -->
 
         <div class="hero-stats">
 
             <div class="stat">
-
-                <strong>
-                    04
-                </strong>
-
-                <span>
-                    EVENTS
-                </span>
-
+                <strong>04</strong>
+                <span>EVENTS</span>
             </div>
 
-
             <div class="stat">
-
-                <strong>
-                    01
-                </strong>
-
-                <span>
-                    CHAMPIONSHIP
-                </span>
-
+                <strong>01</strong>
+                <span>CHAMPIONSHIP</span>
             </div>
 
-
             <div class="stat">
-
-                <strong>
-                    ∞
-                </strong>
-
-                <span>
-                    INNOVATION
-                </span>
-
+                <strong>∞</strong>
+                <span>INNOVATION</span>
             </div>
 
         </div>
@@ -323,7 +238,7 @@
 
     <!-- ROBOT VISUAL -->
 
-    <div class="hero-visual">
+    <div class="hero-visual" aria-hidden="true">
 
         <div class="orbit orbit-1"></div>
         <div class="orbit orbit-2"></div>
@@ -341,6 +256,7 @@
 
             </div>
 
+
             <div class="robot-body">
 
                 <div class="robot-chest">
@@ -348,6 +264,7 @@
                 </div>
 
             </div>
+
 
             <div class="robot-leg left"></div>
             <div class="robot-leg right"></div>
@@ -387,8 +304,7 @@
      ABOUT
 ========================================= -->
 
-<section class="section about"
-         id="about">
+<section class="section about" id="about">
 
     <div class="section-heading">
 
@@ -412,13 +328,10 @@
 
     <div class="about-grid">
 
-
         <div class="about-card large">
 
             <div class="card-icon">
-
                 <i class="fa-solid fa-microchip"></i>
-
             </div>
 
             <h3>
@@ -437,9 +350,7 @@
         <div class="about-card">
 
             <div class="card-icon">
-
                 <i class="fa-solid fa-users"></i>
-
             </div>
 
             <h3>
@@ -457,9 +368,7 @@
         <div class="about-card">
 
             <div class="card-icon">
-
                 <i class="fa-solid fa-code"></i>
-
             </div>
 
             <h3>
@@ -477,9 +386,7 @@
         <div class="about-card">
 
             <div class="card-icon">
-
                 <i class="fa-solid fa-lightbulb"></i>
-
             </div>
 
             <h3>
@@ -502,8 +409,7 @@
      EVENTS
 ========================================= -->
 
-<section class="section events"
-         id="events">
+<section class="section events" id="events">
 
     <div class="section-heading">
 
@@ -526,7 +432,6 @@
 
     <div class="events-grid">
 
-
         <!-- RACE -->
 
         <article class="event-card">
@@ -536,9 +441,7 @@
             </div>
 
             <div class="event-icon">
-
                 <i class="fa-solid fa-flag-checkered"></i>
-
             </div>
 
             <h3>
@@ -554,7 +457,6 @@
                class="event-link">
 
                 View Rules
-
                 <i class="fa-solid fa-arrow-right"></i>
 
             </a>
@@ -571,9 +473,7 @@
             </div>
 
             <div class="event-icon">
-
                 <i class="fa-solid fa-shield-halved"></i>
-
             </div>
 
             <h3>
@@ -589,7 +489,6 @@
                class="event-link">
 
                 View Rules
-
                 <i class="fa-solid fa-arrow-right"></i>
 
             </a>
@@ -606,9 +505,7 @@
             </div>
 
             <div class="event-icon">
-
                 <i class="fa-solid fa-handshake"></i>
-
             </div>
 
             <h3>
@@ -624,7 +521,6 @@
                class="event-link">
 
                 View Rules
-
                 <i class="fa-solid fa-arrow-right"></i>
 
             </a>
@@ -641,9 +537,7 @@
             </div>
 
             <div class="event-icon">
-
                 <i class="fa-solid fa-futbol"></i>
-
             </div>
 
             <h3>
@@ -659,7 +553,6 @@
                class="event-link">
 
                 View Rules
-
                 <i class="fa-solid fa-arrow-right"></i>
 
             </a>
@@ -669,12 +562,12 @@
     </div>
 
 
+    <!-- RULE CALLOUT -->
+
     <div class="rules-callout">
 
         <div>
-
             <i class="fa-solid fa-shield-halved"></i>
-
         </div>
 
         <section>
@@ -694,7 +587,6 @@
            class="btn btn-primary">
 
             Open Rulebook
-
             <i class="fa-solid fa-arrow-right"></i>
 
         </a>
@@ -732,13 +624,10 @@
 
     <div class="registration-box">
 
-
         <div class="registration-info">
 
             <div class="registration-icon">
-
                 <i class="fa-solid fa-rocket"></i>
-
             </div>
 
             <h3>
@@ -754,46 +643,23 @@
             <div class="registration-points">
 
                 <div>
-
                     <i class="fa-solid fa-check"></i>
-
-                    <span>
-                        Choose your competition
-                    </span>
-
+                    <span>Choose your competition</span>
                 </div>
 
-
                 <div>
-
                     <i class="fa-solid fa-check"></i>
-
-                    <span>
-                        Prepare your robot
-                    </span>
-
+                    <span>Prepare your robot</span>
                 </div>
 
-
                 <div>
-
                     <i class="fa-solid fa-check"></i>
-
-                    <span>
-                        Follow the official rules
-                    </span>
-
+                    <span>Follow the official rules</span>
                 </div>
 
-
                 <div>
-
                     <i class="fa-solid fa-check"></i>
-
-                    <span>
-                        Compete and innovate
-                    </span>
-
+                    <span>Compete and innovate</span>
                 </div>
 
             </div>
@@ -815,13 +681,10 @@
                 Registration is now open.
             </p>
 
-            <!-- Change this to your actual registration page -->
-
             <a href="registration.html"
                class="btn btn-primary large">
 
                 <i class="fa-solid fa-user-plus"></i>
-
                 Register Now
 
             </a>
@@ -857,9 +720,7 @@
     <div class="message-box">
 
         <div class="quote-icon">
-
             <i class="fa-solid fa-quote-left"></i>
-
         </div>
 
 
@@ -924,13 +785,10 @@
 
     <div class="contact-grid">
 
-
         <div class="contact-card">
 
             <div class="contact-icon">
-
                 <i class="fa-solid fa-location-dot"></i>
-
             </div>
 
             <h3>
@@ -949,9 +807,7 @@
         <div class="contact-card">
 
             <div class="contact-icon">
-
                 <i class="fa-solid fa-phone"></i>
-
             </div>
 
             <h3>
@@ -968,9 +824,7 @@
         <div class="contact-card">
 
             <div class="contact-icon">
-
                 <i class="fa-solid fa-envelope"></i>
-
             </div>
 
             <h3>
@@ -996,15 +850,12 @@
 
     <div class="footer-top">
 
-
         <div class="footer-brand">
 
             <div class="logo">
 
                 <div class="logo-icon">
-
                     <i class="fa-solid fa-robot"></i>
-
                 </div>
 
                 <div class="logo-text">
@@ -1036,25 +887,11 @@
                 QUICK LINKS
             </h4>
 
-            <a href="#home">
-                Home
-            </a>
-
-            <a href="#about">
-                About
-            </a>
-
-            <a href="#events">
-                Events
-            </a>
-
-            <a href="#registration">
-                Registration
-            </a>
-
-            <a href="rules.html">
-                Rules
-            </a>
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#events">Events</a>
+            <a href="#registration">Registration</a>
+            <a href="rules.html">Rules</a>
 
         </div>
 
@@ -1065,24 +902,12 @@
                 EVENTS
             </h4>
 
-            <a href="#events">
-                Robo Race
-            </a>
-
-            <a href="#events">
-                Robo War
-            </a>
-
-            <a href="#events">
-                Robo Tug of War
-            </a>
-
-            <a href="#events">
-                Robo Soccer
-            </a>
+            <a href="#events">Robo Race</a>
+            <a href="#events">Robo War</a>
+            <a href="#events">Robo Tug of War</a>
+            <a href="#events">Robo Soccer</a>
 
         </div>
-
 
     </div>
 
@@ -1102,11 +927,15 @@
 </footer>
 
 
-<!-- BACK TO TOP -->
+<!-- =========================================
+     BACK TO TOP
+========================================= -->
 
-<button class="back-top"
-        id="backTop"
-        aria-label="Back to top">
+<button
+    class="back-top"
+    id="backTop"
+    type="button"
+    aria-label="Back to top">
 
     <i class="fa-solid fa-arrow-up"></i>
 
@@ -1115,8 +944,7 @@
 
 <!-- JAVASCRIPT -->
 
-<script src="script.js"></script>
+<script src="script.js" defer></script>
 
 </body>
-
 </html>
