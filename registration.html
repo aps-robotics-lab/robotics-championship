@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color"
+          content="#020711">
+
+    <meta name="description"
+          content="Register for APS Robotics Championship 2026">
+
+    <title>Registration | APS Robotics Championship 2026</title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet"
+          href="registration.css">
+</head>
+
+<body>
+
+<!-- BACKGROUND -->
+
+<div class="background-grid"></div>
+<div class="background-glow glow-1"></div>
+<div class="background-glow glow-2"></div>
+
+
+<!-- HEADER -->
+
+<header class="header">
+
+    <div class="nav-container">
+
+        <a href="index.html"
+           class="brand">
+
+            <div class="brand-icon">
+                <i class="fa-solid fa-robot"></i>
+            </div>
+
+            <div>
+                <strong>APS</strong>
+                <span>TINKERING LAB</span>
+            </div>
+
+        </a>
+
+        <div class="header-actions">
+
+            <a href="index.html"
+               class="header-link">
+                <i class="fa-solid fa-house"></i>
+                Home
+            </a>
+
+            <a href="rules.html"
+               class="header-link">
+                <i class="fa-solid fa-book-open"></i>
+                Rules
+            </a>
+
+            <!-- ADMIN IS SEPARATE -->
+
+            <a href="admin.html"
+               class="admin-link">
+                <i class="fa-solid fa-user-shield"></i>
+                Admin
+            </a>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- MAIN -->
+
+<main>
+
+    <section class="registration-page">
+
+        <!-- PAGE HEADING -->
+
+        <div class="page-heading">
+
+            <span class="eyebrow">
+                APS ROBOTICS CHAMPIONSHIP 2026
+            </span>
+
+            <h1>
+                Register Your
+                <span>Team</span>
+            </h1>
+
+            <p>
+                Complete the registration form below.
+                Select the number of participants and only
+                the required member fields will appear.
+            </p>
+
+        </div>
+
+
+        <!-- FORM -->
+
+        <form id="registrationForm"
+              class="registration-form"
+              novalidate>
+
+
+            <!-- =================================
+                 TEAM INFORMATION
+            ================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <div class="section-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+
+                    <div>
+                        <span>01</span>
+                        <h2>Team Information</h2>
+                    </div>
+
+                </div>
+
+
+                <!-- PARTICIPATION TYPE -->
+
+                <div class="field-group">
+
+                    <label>
+                        Participation Type
+                        <span>*</span>
+                    </label>
+
+                    <div class="member-selector">
+
+                        <label class="member-option">
+
+                            <input type="radio"
+                                   name="teamSize"
+                                   value="1"
+                                   checked>
+
+                            <span class="member-option-content">
+
+                                <i class="fa-solid fa-user"></i>
+
+                                <strong>Solo</strong>
+
+                                <small>
+                                    1 Member
+                                </small>
+
+                            </span>
+
+                        </label>
+
+
+                        <label class="member-option">
+
+                            <input type="radio"
+                                   name="teamSize"
+                                   value="2">
+
+                            <span class="member-option-content">
+
+                                <i class="fa-solid fa-user-group"></i>
+
+                                <strong>2 Members</strong>
+
+                                <small>
+                                    Team of 2
+                                </small>
+
+                            </span>
+
+                        </label>
+
+
+                        <label class="member-option">
+
+                            <input type="radio"
+                                   name="teamSize"
+                                   value="3">
+
+                            <span class="member-option-content">
+
+                                <i class="fa-solid fa-users"></i>
+
+                                <strong>3 Members</strong>
+
+                                <small>
+                                    Team of 3
+                                </small>
+
+                            </span>
+
+                        </label>
+
+
+                        <label class="member-option">
+
+                            <input type="radio"
+                                   name="teamSize"
+                                   value="4">
+
+                            <span class="member-option-content">
+
+                                <i class="fa-solid fa-people-group"></i>
+
+                                <strong>4 Members</strong>
+
+                                <small>
+                                    Team of 4
+                                </small>
+
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                    <small class="field-help">
+                        Select Solo if you are participating alone.
+                    </small>
+
+                </div>
+
+
+                <!-- TEAM NAME -->
+
+                <div class="field-group">
+
+                    <label for="teamName">
+                        Team Name
+                        <span>*</span>
+                    </label>
+
+                    <input type="text"
+                           id="teamName"
+                           name="teamName"
+                           placeholder="Enter your team name"
+                           maxlength="60"
+                           required>
+
+                    <small class="field-help">
+                        For solo participants, you may use your name.
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================
+                 MEMBERS
+            ================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <div class="section-icon">
+                        <i class="fa-solid fa-id-card"></i>
+                    </div>
+
+                    <div>
+                        <span>02</span>
+                        <h2>Participant Details</h2>
+                    </div>
+
+                </div>
+
+
+                <div id="membersContainer">
+
+                    <!-- CREATED BY JAVASCRIPT -->
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================
+                 CONTACT
+            ================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <div class="section-icon">
+                        <i class="fa-solid fa-address-book"></i>
+                    </div>
+
+                    <div>
+                        <span>03</span>
+                        <h2>Contact Details</h2>
+                    </div>
+
+                </div>
+
+
+                <div class="field-grid">
+
+                    <div class="field-group">
+
+                        <label for="phone">
+                            Mobile Number
+                            <span>*</span>
+                        </label>
+
+                        <input type="tel"
+                               id="phone"
+                               name="phone"
+                               inputmode="numeric"
+                               maxlength="10"
+                               placeholder="10-digit mobile number"
+                               required>
+
+                    </div>
+
+
+                    <div class="field-group">
+
+                        <label for="email">
+                            Email Address
+                            <span>*</span>
+                        </label>
+
+                        <input type="email"
+                               id="email"
+                               name="email"
+                               placeholder="example@email.com"
+                               maxlength="100"
+                               required>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================
+                 EVENTS
+            ================================== -->
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+
+                    <div class="section-icon">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+
+                    <div>
+                        <span>04</span>
+                        <h2>Select Event</h2>
+                    </div>
+
+                </div>
+
+
+                <p class="section-description">
+                    Select one or more competitions in which your
+                    team wants to participate.
+                </p>
+
+
+                <div class="event-selection">
+
+
+                    <label class="event-option">
+
+                        <input type="checkbox"
+                               name="events"
+                               value="Robo Race">
+
+                        <span>
+
+                            <i class="fa-solid fa-flag-checkered"></i>
+
+                            <strong>Robo Race</strong>
+
+                            <small>
+                                Speed & Precision
+                            </small>
+
+                        </span>
+
+                    </label>
+
+
+                    <label class="event-option">
+
+                        <input type="checkbox"
+                               name="events"
+                               value="Robo War">
+
+                        <span>
+
+                            <i class="fa-solid fa-shield-halved"></i>
+
+                            <strong>Robo War</strong>
+
+                            <small>
+                                Strategy & Control
+                            </small>
+
+                        </span>
+
+                    </label>
+
+
+                    <label class="event-option">
+
+                        <input type="checkbox"
+                               name="events"
+                               value="Robo Tug of War">
+
+                        <span>
+
+                            <i class="fa-solid fa-handshake"></i>
+
+                            <strong>Robo Tug of War</strong>
+
+                            <small>
+                                Power & Engineering
+                            </small>
+
+                        </span>
+
+                    </label>
+
+
+                    <label class="event-option">
+
+                        <input type="checkbox"
+                               name="events"
+                               value="Robo Soccer">
+
+                        <span>
+
+                            <i class="fa-solid fa-futbol"></i>
+
+                            <strong>Robo Soccer</strong>
+
+                            <small>
+                                Control & Teamwork
+                            </small>
+
+                        </span>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================
+                 AGREEMENT
+            ================================== -->
+
+            <div class="agreement-box">
+
+                <label>
+
+                    <input type="checkbox"
+                           id="agreement"
+                           required>
+
+                    <span>
+                        I confirm that the information provided
+                        above is correct and that I agree to follow
+                        the official APS Robotics Championship 2026
+                        rules and guidelines.
+                    </span>
+
+                </label>
+
+            </div>
+
+
+            <!-- ERROR -->
+
+            <div id="formError"
+                 class="form-error"
+                 role="alert">
+
+                <i class="fa-solid fa-circle-exclamation"></i>
+
+                <span id="formErrorText">
+                    Please check the form.
+                </span>
+
+            </div>
+
+
+            <!-- SUBMIT -->
+
+            <button type="submit"
+                    id="submitButton"
+                    class="submit-button">
+
+                <span id="submitText">
+
+                    <i class="fa-solid fa-rocket"></i>
+
+                    Submit Registration
+
+                </span>
+
+                <span id="submitLoading"
+                      class="submit-loading">
+
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+
+                    Submitting...
+
+                </span>
+
+            </button>
+
+
+            <p class="secure-note">
+
+                <i class="fa-solid fa-lock"></i>
+
+                Your registration information is securely stored.
+
+            </p>
+
+        </form>
+
+    </section>
+
+</main>
+
+
+<!-- FIREBASE -->
+
+<script type="module"
+        src="registration.js"></script>
+
+</body>
+</html>
