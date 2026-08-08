@@ -2065,3 +2065,134 @@ img {
         transition-duration: .01ms !important;
     }
     }
+/* =========================================
+   PERFORMANCE FRIENDLY PARTICLES
+========================================= */
+
+.hero-particles {
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    overflow: hidden;
+}
+
+.hero-particle {
+    position: absolute;
+
+    width: 2px;
+    height: 2px;
+
+    border-radius: 50%;
+
+    background: var(--cyan);
+
+    opacity: .35;
+
+    box-shadow:
+        0 0 7px var(--cyan);
+
+    animation:
+        particleFloat 6s ease-in-out infinite;
+}
+
+@keyframes particleFloat {
+
+    0%,
+    100% {
+        transform:
+            translate3d(0,0,0);
+    }
+
+    50% {
+        transform:
+            translate3d(12px,-25px,0);
+    }
+
+}
+
+
+/* =========================================
+   REVEAL ANIMATION
+========================================= */
+
+.reveal {
+    opacity: 0;
+
+    transform:
+        translate3d(0,20px,0);
+
+    transition:
+        opacity .6s ease,
+        transform .6s ease;
+}
+
+.reveal.visible {
+    opacity: 1;
+
+    transform:
+        translate3d(0,0,0);
+}
+
+
+/* =========================================
+   ADMIN BUTTON
+========================================= */
+
+.nav-admin {
+
+    margin-left: 5px;
+
+    padding: 9px 13px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    border: 1px solid rgba(99,243,160,.25);
+
+    border-radius: 9px;
+
+    color: #63f3a0;
+
+    background: rgba(99,243,160,.05);
+
+    font-size: 10px;
+
+    transition: .25s;
+}
+
+.nav-admin:hover {
+
+    background:
+        rgba(99,243,160,.1);
+
+    transform:
+        translateY(-2px);
+}
+
+
+/* =========================================
+   REDUCE ANIMATION ON LOW POWER DEVICES
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+
+        animation-duration: .01ms !important;
+
+        animation-iteration-count: 1 !important;
+
+        scroll-behavior: auto !important;
+
+        transition-duration: .01ms !important;
+
+    }
+
+}
