@@ -1,7 +1,7 @@
-/* ============================================================
+/* =========================================================
    APS ROBOTICS CHAMPIONSHIP 2026
    REGISTRATION SYSTEM
-============================================================ */
+========================================================= */
 
 import {
     initializeApp
@@ -16,91 +16,147 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
-/* ============================================================
+/* =========================================================
    FIREBASE CONFIGURATION
+=========================================================
 
    IMPORTANT:
-   Replace these values with the Firebase configuration
-   from the SAME Firebase project used by your admin panel.
-============================================================ */
+
+   Replace ONLY the values below with the SAME Firebase
+   configuration used by your existing admin.js.
+
+========================================================= */
 
 const firebaseConfig = {
 
     apiKey: "YOUR_API_KEY",
 
-    authDomain:
-        "YOUR_PROJECT.firebaseapp.com",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
 
-    projectId:
-        "YOUR_PROJECT_ID",
+    projectId: "YOUR_PROJECT_ID",
 
-    storageBucket:
-        "YOUR_PROJECT.firebasestorage.app",
+    storageBucket: "YOUR_PROJECT.firebasestorage.app",
 
-    messagingSenderId:
-        "YOUR_MESSAGING_SENDER_ID",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
 
-    appId:
-        "YOUR_APP_ID"
+    appId: "YOUR_APP_ID"
 
 };
 
 
-/* ============================================================
-   INITIALIZE FIREBASE
-============================================================ */
+/* =========================================================
+   FIREBASE INITIALIZATION
+========================================================= */
 
-const app =
-    initializeApp(firebaseConfig);
+let db;
 
-const db =
-    getFirestore(app);
+try {
+
+    const app = initializeApp(firebaseConfig);
+
+    db = getFirestore(app);
+
+} catch (error) {
+
+    console.error(
+        "Firebase initialization failed:",
+        error
+    );
+
+}
 
 
-/* ============================================================
+/* =========================================================
    DOM
-============================================================ */
+========================================================= */
 
 const form =
-    document.getElementById(
-        "registrationForm"
-    );
+    document.getElementById("registrationForm");
 
 const membersContainer =
-    document.getElementById(
-        "membersContainer"
-    );
+    document.getElementById("membersContainer");
 
 const submitButton =
-    document.getElementById(
-        "submitButton"
-    );
+    document.getElementById("submitButton");
 
 const formError =
-    document.getElementById(
-        "formError"
-    );
+    document.getElementById("formError");
 
 const formErrorText =
-    document.getElementById(
-        "formErrorText"
-    );
+    document.getElementById("formErrorText");
+
+const mobileInput =
+    document.getElementById("mobile");
+
+const emailInput =
+    document.getElementById("email");
+
+const agreement =
+    document.getElementById("agreement");
 
 
-/* ============================================================
-   MEMBER FIELD GENERATOR
-============================================================ */
+/* =========================================================
+   ERROR
+========================================================= */
 
-function createMemberFields(number) {
+function showError(message) {
+
+    if (!formError || !formErrorText) return;
+
+    formErrorText.textContent = message;
+
+    formError.classList.add("show");
+
+    formError.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+}
+
+
+function hideError() {
+
+    if (!formError) return;
+
+    formError.classList.remove("show");
+
+}
+
+
+/* =========================================================
+   TEAM SIZE
+========================================================= */
+
+function getTeamSize() {
+
+    const selected =
+        document.querySelector(
+            'input[name="teamSize"]:checked'
+        );
+
+    return selected
+        ? Number(selected.value)
+        : 1;
+}
+
+
+/* =========================================================
+   CREATE MEMBER CARD
+========================================================= */
+
+function createMemberCard(number) {
 
     const card =
         document.createElement("div");
 
-    card.className =
-        "member-card";
+    card.className = "member-card";
 
     card.dataset.member =
         String(number);
+
+
+    const isCaptain =
+        number === 1;
 
 
     card.innerHTML = `
@@ -112,14 +168,12 @@ function createMemberFields(number) {
             </div>
 
             <strong>
-                Member ${number}
+                ${isCaptain ? "Team Leader" : "Team Member " + number}
             </strong>
 
-            ${
-                number === 1
-                    ? "<span>TEAM LEADER</span>"
-                    : "<span>TEAM MEMBER</span>"
-            }
+            <span>
+                ${isCaptain ? "LEADER" : "MEMBER"}
+            </span>
 
         </div>
 
@@ -136,12 +190,11 @@ function createMemberFields(number) {
 
                 <input
                     type="text"
-                    name="member${number}Name"
+                    class="member-name"
+                    data-member="${number}"
                     placeholder="Enter full name"
-                    maxlength="80"
                     autocomplete="name"
-                    required
-                >
+                    required>
 
             </div>
 
@@ -155,11 +208,11 @@ function createMemberFields(number) {
 
                 <input
                     type="text"
-                    name="member${number}Class"
+                    class="member-class"
+                    data-member="${number}"
                     placeholder="e.g. IX"
-                    maxlength="20"
-                    required
-                >
+                    maxlength="10"
+                    required>
 
             </div>
 
@@ -173,29 +226,39 @@ function createMemberFields(number) {
 
                 <input
                     type="text"
-                    name="member${number}Section"
+                    class="member-section"
+                    data-member="${number}"
                     placeholder="e.g. A"
-                    maxlength="10"
-                    required
-                >
+                    maxlength="5"
+                    required>
 
             </div>
+
 
         </div>
 
     `;
 
+
     return card;
 }
 
 
-/* ============================================================
+/* =========================================================
    RENDER MEMBERS
-============================================================ */
+========================================================= */
 
-function renderMembers(teamSize) {
+function renderMembers() {
+
+    if (!membersContainer) return;
+
+
+    const teamSize =
+        getTeamSize();
+
 
     membersContainer.innerHTML = "";
+
 
     for (
         let i = 1;
@@ -204,7 +267,7 @@ function renderMembers(teamSize) {
     ) {
 
         membersContainer.appendChild(
-            createMemberFields(i)
+            createMemberCard(i)
         );
 
     }
@@ -212,33 +275,23 @@ function renderMembers(teamSize) {
 }
 
 
-/* ============================================================
-   INITIAL MEMBER
-============================================================ */
-
-renderMembers(1);
-
-
-/* ============================================================
-   TEAM SIZE CHANGE
-============================================================ */
+/* =========================================================
+   TEAM SIZE LISTENERS
+========================================================= */
 
 document
     .querySelectorAll(
         'input[name="teamSize"]'
     )
-    .forEach(radio => {
+    .forEach(option => {
 
-        radio.addEventListener(
+        option.addEventListener(
             "change",
             () => {
 
-                const teamSize =
-                    Number(radio.value);
+                hideError();
 
-                renderMembers(
-                    teamSize
-                );
+                renderMembers();
 
             }
         );
@@ -246,166 +299,152 @@ document
     });
 
 
-/* ============================================================
-   ERROR
-============================================================ */
+/* Initial member */
 
-function showError(message) {
+renderMembers();
 
-    formErrorText.textContent =
-        message;
 
-    formError.classList.add(
-        "show"
-    );
+/* =========================================================
+   MOBILE VALIDATION
+========================================================= */
 
-    formError.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-    });
+if (mobileInput) {
 
-}
+    mobileInput.addEventListener(
+        "input",
+        () => {
 
-function hideError() {
+            mobileInput.value =
+                mobileInput.value
+                    .replace(/\D/g, "")
+                    .slice(0, 10);
 
-    formError.classList.remove(
-        "show"
+        }
     );
 
 }
 
 
-/* ============================================================
-   VALIDATION HELPERS
-============================================================ */
+/* =========================================================
+   COLLECT MEMBERS
+========================================================= */
 
-function clean(value) {
+function collectMembers() {
 
-    return String(value || "")
-        .trim()
-        .replace(/\s+/g, " ");
-
-}
-
-
-function validPhone(phone) {
-
-    return /^[6-9]\d{9}$/.test(
-        phone
-    );
-
-}
-
-
-function validEmail(email) {
-
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        .test(email);
-
-}
-
-
-/* ============================================================
-   GET TEAM SIZE
-============================================================ */
-
-function getTeamSize() {
-
-    const selected =
-        document.querySelector(
-            'input[name="teamSize"]:checked'
+    const cards =
+        document.querySelectorAll(
+            ".member-card"
         );
 
-    return selected
-        ? Number(selected.value)
-        : 1;
-
-}
-
-
-/* ============================================================
-   COLLECT MEMBERS
-============================================================ */
-
-function collectMembers(teamSize) {
 
     const members = [];
 
-    for (
-        let i = 1;
-        i <= teamSize;
-        i++
-    ) {
+
+    cards.forEach(card => {
+
+        const number =
+            Number(
+                card.dataset.member
+            );
+
 
         const name =
-            clean(
-                document.querySelector(
-                    `[name="member${i}Name"]`
-                )?.value
-            );
+            card
+                .querySelector(".member-name")
+                ?.value
+                .trim();
+
 
         const className =
-            clean(
-                document.querySelector(
-                    `[name="member${i}Class"]`
-                )?.value
-            );
+            card
+                .querySelector(".member-class")
+                ?.value
+                .trim();
+
 
         const section =
-            clean(
-                document.querySelector(
-                    `[name="member${i}Section"]`
-                )?.value
-            );
-
-
-        if (!name) {
-
-            throw new Error(
-                `Please enter the name of Member ${i}.`
-            );
-
-        }
-
-        if (!className) {
-
-            throw new Error(
-                `Please enter the class of Member ${i}.`
-            );
-
-        }
-
-        if (!section) {
-
-            throw new Error(
-                `Please enter the section of Member ${i}.`
-            );
-
-        }
+            card
+                .querySelector(".member-section")
+                ?.value
+                .trim();
 
 
         members.push({
 
-            number: i,
+            memberNumber: number,
 
-            name: name,
+            name: name || "",
 
-            class: className,
+            class: className || "",
 
-            section: section
+            section: section || ""
 
         });
 
-    }
+    });
+
 
     return members;
-
 }
 
 
-/* ============================================================
-   GET EVENTS
-============================================================ */
+/* =========================================================
+   VALIDATE MEMBERS
+========================================================= */
+
+function validateMembers(members) {
+
+    if (!members.length) {
+
+        showError(
+            "Please add at least one participant."
+        );
+
+        return false;
+    }
+
+
+    for (const member of members) {
+
+        if (!member.name) {
+
+            showError(
+                `Please enter the name of Member ${member.memberNumber}.`
+            );
+
+            return false;
+        }
+
+
+        if (!member.class) {
+
+            showError(
+                `Please enter the class of Member ${member.memberNumber}.`
+            );
+
+            return false;
+        }
+
+
+        if (!member.section) {
+
+            showError(
+                `Please enter the section of Member ${member.memberNumber}.`
+            );
+
+            return false;
+        }
+
+    }
+
+
+    return true;
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
 
 function collectEvents() {
 
@@ -414,33 +453,32 @@ function collectEvents() {
             'input[name="events"]:checked'
         )
     ).map(
-        checkbox =>
-            checkbox.value
+        checkbox => checkbox.value
     );
 
 }
 
 
-/* ============================================================
-   GENERATE REGISTRATION ID
-============================================================
+/* =========================================================
+   GENERATE SEQUENTIAL REGISTRATION ID
+=========================================================
 
-   Firestore transaction guarantees that two users
-   don't normally receive the same sequential number.
+   Firestore transaction prevents two people submitting
+   simultaneously from receiving the same ID.
 
-============================================================ */
+========================================================= */
 
 async function generateRegistrationId() {
 
     const counterRef =
         doc(
             db,
-            "system",
-            "registrationCounter"
+            "counters",
+            "registration"
         );
 
 
-    const registrationNumber =
+    const registrationId =
         await runTransaction(
             db,
             async transaction => {
@@ -485,50 +523,30 @@ async function generateRegistrationId() {
                 );
 
 
-                return nextNumber;
+                const formatted =
+                    String(
+                        nextNumber
+                    ).padStart(
+                        4,
+                        "0"
+                    );
+
+
+                return `APSRC-2026-${formatted}`;
 
             }
         );
 
 
-    const paddedNumber =
-        String(
-            registrationNumber
-        ).padStart(
-            4,
-            "0"
-        );
-
-
-    return `APSRC-2026-${paddedNumber}`;
-
+    return registrationId;
 }
 
 
-/* ============================================================
-   SUBMIT BUTTON STATE
-============================================================ */
+/* =========================================================
+   SUBMIT
+========================================================= */
 
-function setLoading(isLoading) {
-
-    if (!submitButton) return;
-
-    submitButton.disabled =
-        isLoading;
-
-    submitButton.classList.toggle(
-        "loading",
-        isLoading
-    );
-
-}
-
-
-/* ============================================================
-   FORM SUBMIT
-============================================================ */
-
-form.addEventListener(
+form?.addEventListener(
     "submit",
     async event => {
 
@@ -537,293 +555,264 @@ form.addEventListener(
         hideError();
 
 
+        /* Firebase check */
+
+        if (!db) {
+
+            showError(
+                "Firebase is not configured correctly. Please check registration.js."
+            );
+
+            return;
+        }
+
+
+        /* Prevent double submit */
+
+        if (
+            submitButton?.disabled
+        ) {
+
+            return;
+
+        }
+
+
+        /* Team */
+
+        const teamSize =
+            getTeamSize();
+
+
+        const members =
+            collectMembers();
+
+
+        if (
+            !validateMembers(
+                members
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        /* Mobile */
+
+        const mobile =
+            mobileInput
+                ?.value
+                .trim() || "";
+
+
+        if (
+            !/^[0-9]{10}$/.test(
+                mobile
+            )
+        ) {
+
+            showError(
+                "Please enter a valid 10-digit mobile number."
+            );
+
+            mobileInput?.focus();
+
+            return;
+
+        }
+
+
+        /* Email */
+
+        const email =
+            emailInput
+                ?.value
+                .trim()
+                .toLowerCase() || "";
+
+
+        if (!email) {
+
+            showError(
+                "Please enter your email address."
+            );
+
+            emailInput?.focus();
+
+            return;
+
+        }
+
+
+        const emailPattern =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+        if (
+            !emailPattern.test(
+                email
+            )
+        ) {
+
+            showError(
+                "Please enter a valid email address."
+            );
+
+            emailInput?.focus();
+
+            return;
+
+        }
+
+
+        /* Events */
+
+        const events =
+            collectEvents();
+
+
+        if (
+            events.length === 0
+        ) {
+
+            showError(
+                "Please select at least one event."
+            );
+
+            return;
+
+        }
+
+
+        /* Agreement */
+
+        if (
+            !agreement?.checked
+        ) {
+
+            showError(
+                "Please accept the confirmation before submitting."
+            );
+
+            return;
+
+        }
+
+
+        /* Loading */
+
+        if (submitButton) {
+
+            submitButton.disabled =
+                true;
+
+            submitButton.classList.add(
+                "loading"
+            );
+
+        }
+
+
         try {
 
-            /* --------------------------------------------
-               BASIC HTML VALIDATION
-            -------------------------------------------- */
-
-            if (!form.checkValidity()) {
-
-                form.reportValidity();
-
-                showError(
-                    "Please complete all required fields."
-                );
-
-                return;
-
-            }
-
-
-            /* --------------------------------------------
-               TEAM SIZE
-            -------------------------------------------- */
-
-            const teamSize =
-                getTeamSize();
-
-
-            /* --------------------------------------------
-               TEAM NAME
-            -------------------------------------------- */
-
-            const teamName =
-                clean(
-                    document.getElementById(
-                        "teamName"
-                    ).value
-                );
-
-
-            if (!teamName) {
-
-                showError(
-                    "Please enter a team name."
-                );
-
-                return;
-
-            }
-
-
-            /* --------------------------------------------
-               PHONE
-            -------------------------------------------- */
-
-            const phone =
-                clean(
-                    document.getElementById(
-                        "phone"
-                    ).value
-                );
-
-
-            if (!validPhone(phone)) {
-
-                showError(
-                    "Please enter a valid 10-digit Indian mobile number."
-                );
-
-                return;
-
-            }
-
-
-            /* --------------------------------------------
-               EMAIL
-            -------------------------------------------- */
-
-            const email =
-                clean(
-                    document.getElementById(
-                        "email"
-                    ).value
-                )
-                .toLowerCase();
-
-
-            if (!validEmail(email)) {
-
-                showError(
-                    "Please enter a valid email address."
-                );
-
-                return;
-
-            }
-
-
-            /* --------------------------------------------
-               MEMBERS
-            -------------------------------------------- */
-
-            const members =
-                collectMembers(
-                    teamSize
-                );
-
-
-            /* --------------------------------------------
-               EVENTS
-            -------------------------------------------- */
-
-            const events =
-                collectEvents();
-
-
-            if (!events.length) {
-
-                showError(
-                    "Please select at least one event."
-                );
-
-                return;
-
-            }
-
-
-            /* --------------------------------------------
-               AGREEMENT
-            -------------------------------------------- */
-
-            const agreement =
-                document.getElementById(
-                    "agreement"
-                ).checked;
-
-
-            if (!agreement) {
-
-                showError(
-                    "Please accept the rules and confirmation."
-                );
-
-                return;
-
-            }
-
-
-            /* --------------------------------------------
-               LOADING
-            -------------------------------------------- */
-
-            setLoading(true);
-
-
-            /* --------------------------------------------
-               REGISTRATION ID
-            -------------------------------------------- */
+            /* Generate ID */
 
             const registrationId =
                 await generateRegistrationId();
 
 
-            /* --------------------------------------------
-               DOCUMENT
-            -------------------------------------------- */
+            /* Registration document */
+
+            const registrationRef =
+                doc(
+                    collection(
+                        db,
+                        "registrations"
+                    )
+                );
+
 
             const registrationData = {
 
-                registrationId:
-                    registrationId,
+                registrationId,
 
-                teamName:
-                    teamName,
+                teamSize,
 
-                teamSize:
-                    teamSize,
+                members,
 
-                participationType:
-                    teamSize === 1
-                        ? "Solo"
-                        : "Team",
+                events,
 
-                members:
-                    members,
+                mobile,
 
-                events:
-                    events,
+                email,
 
-                phone:
-                    phone,
-
-                email:
-                    email,
-
-                status:
-                    "Registered",
+                status: "Registered",
 
                 createdAt:
+                    serverTimestamp(),
+
+                updatedAt:
                     serverTimestamp()
 
             };
 
 
-            /* --------------------------------------------
-               SAVE TO FIRESTORE
-            -------------------------------------------- */
+            /* Save */
 
-            await runTransaction(
-                db,
-                async transaction => {
-
-                    const registrationRef =
-                        doc(
-                            collection(
-                                db,
-                                "registrations"
-                            )
-                        );
-
-
-                    transaction.set(
-                        registrationRef,
-                        registrationData
-                    );
-
-                }
+            const {
+                setDoc
+            } = await import(
+                "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
             );
 
 
-            /* --------------------------------------------
-               SAVE LOCAL COPY
-            -------------------------------------------- */
-
-            localStorage.setItem(
-                "apsLastRegistration",
-                JSON.stringify({
-
-                    registrationId:
-                        registrationId,
-
-                    teamName:
-                        teamName,
-
-                    teamSize:
-                        teamSize,
-
-                    members:
-                        members,
-
-                    events:
-                        events,
-
-                    phone:
-                        phone,
-
-                    email:
-                        email
-
-                })
+            await setDoc(
+                registrationRef,
+                registrationData
             );
 
 
-            /* --------------------------------------------
-               REDIRECT
-            -------------------------------------------- */
+            /* Local copy for thankyou page */
 
-            const params =
-                new URLSearchParams({
+            const thankYouData = {
 
-                    id:
-                        registrationId,
+                registrationId,
 
-                    team:
-                        teamName
+                teamSize,
 
-                });
+                members,
 
+                events,
+
+                mobile,
+
+                email
+
+            };
+
+
+            sessionStorage.setItem(
+                "apsRegistration",
+                JSON.stringify(
+                    thankYouData
+                )
+            );
+
+
+            /* Redirect */
 
             window.location.href =
-                `thankyou.html?${params.toString()}`;
+                `thankyou.html?id=${encodeURIComponent(
+                    registrationId
+                )}`;
 
-        }
 
-        catch (error) {
+        } catch (error) {
 
             console.error(
-                "Registration error:",
+                "REGISTRATION ERROR:",
                 error
             );
 
@@ -833,47 +822,55 @@ form.addEventListener(
 
 
             if (
-                error &&
-                error.message
+                error?.code ===
+                "permission-denied"
             ) {
 
-                if (
-                    error.message.includes(
-                        "permission"
-                    )
-                ) {
+                message =
+                    "Firebase permission denied. Please check your Firestore security rules.";
 
-                    message =
-                        "Firebase permission denied. Please check your Firestore security rules.";
+            } else if (
+                error?.code ===
+                "failed-precondition"
+            ) {
 
-                }
-                else if (
-                    error.message.includes(
-                        "network"
-                    )
-                ) {
+                message =
+                    "Firebase Firestore is not enabled or configured correctly.";
 
-                    message =
-                        "Network error. Please check your internet connection.";
+            } else if (
+                error?.code ===
+                "unavailable"
+            ) {
 
-                }
-                else if (
-                    error.message.startsWith(
-                        "Please"
-                    )
-                ) {
+                message =
+                    "Firebase is temporarily unavailable. Please check your internet connection and try again.";
 
-                    message =
-                        error.message;
+            } else if (
+                error?.message
+            ) {
 
-                }
+                console.error(
+                    error.message
+                );
 
             }
 
 
-            showError(message);
+            showError(
+                message
+            );
 
-            setLoading(false);
+
+            if (submitButton) {
+
+                submitButton.disabled =
+                    false;
+
+                submitButton.classList.remove(
+                    "loading"
+                );
+
+            }
 
         }
 
