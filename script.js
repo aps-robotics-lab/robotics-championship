@@ -1,104 +1,147 @@
+/* =========================================================
+   APS ROBOTICS CHAMPIONSHIP 2026
+   PERFORMANCE OPTIMIZED JAVASCRIPT
+========================================================= */
+
+"use strict";
+
+
+/* =========================================================
+   DOM READY
+========================================================= */
+
 document.addEventListener("DOMContentLoaded", () => {
-
-
-    /* =========================================
-       PRELOADER
-    ========================================= */
 
     const preloader =
         document.getElementById("preloader");
 
+    const header =
+        document.getElementById("header");
+
+    const menuToggle =
+        document.getElementById("menuToggle");
+
+    const nav =
+        document.getElementById("nav");
+
+    const backTop =
+        document.getElementById("backTop");
+
+    const navLinks =
+        document.querySelectorAll(".nav-link");
+
+    const sections =
+        document.querySelectorAll("section[id]");
+
+    const animatedElements =
+        document.querySelectorAll(
+            ".about-card, .event-card, .contact-card, .registration-box, .message-box"
+        );
+
+
+    /* =====================================================
+       PRELOADER
+    ===================================================== */
+
+    let preloaderHidden = false;
 
     const hidePreloader = () => {
 
-        if (!preloader) return;
+        if (!preloader || preloaderHidden) {
+            return;
+        }
+
+        preloaderHidden = true;
 
         preloader.classList.add("hide");
 
         setTimeout(() => {
 
-            preloader.style.display = "none";
+            if (preloader) {
+                preloader.remove();
+            }
 
-        }, 700);
-
+        }, 500);
     };
 
 
+    /*
+        Hide quickly after DOM is ready.
+        This prevents the external fonts/icons from
+        unnecessarily blocking the visitor.
+    */
+
+    setTimeout(hidePreloader, 650);
+
+
+    /*
+        Safety fallback.
+    */
+
+    setTimeout(hidePreloader, 1800);
+
+
+    /*
+        If everything loads normally, hide immediately.
+    */
+
     window.addEventListener(
         "load",
-        () => {
-
-            setTimeout(
-                hidePreloader,
-                1200
-            );
-
-        }
-    );
-
-
-    /* Safety fallback */
-
-    setTimeout(
         hidePreloader,
-        2500
+        { once: true }
     );
 
 
-    /* =========================================
-       HEADER SCROLL
-    ========================================= */
-
-    const header =
-        document.getElementById("header");
-
-
-    const updateHeader =
-        () => {
-
-            if (!header) return;
-
-
-            if (window.scrollY > 40) {
-
-                header.classList.add(
-                    "scrolled"
-                );
-
-            } else {
-
-                header.classList.remove(
-                    "scrolled"
-                );
-
-            }
-
-        };
-
-
-    window.addEventListener(
-        "scroll",
-        updateHeader,
-        { passive: true }
-    );
-
-
-    updateHeader();
-
-
-    /* =========================================
+    /* =====================================================
        MOBILE MENU
-    ========================================= */
+    ===================================================== */
 
-    const menuToggle =
-        document.getElementById(
-            "menuToggle"
+    const closeMenu = () => {
+
+        if (!menuToggle || !nav) {
+            return;
+        }
+
+        menuToggle.classList.remove("active");
+
+        nav.classList.remove("open");
+
+        document.body.classList.remove("menu-open");
+
+        menuToggle.setAttribute(
+            "aria-expanded",
+            "false"
         );
 
-    const nav =
-        document.getElementById(
-            "nav"
+        menuToggle.setAttribute(
+            "aria-label",
+            "Open navigation"
         );
+    };
+
+
+    const openMenu = () => {
+
+        if (!menuToggle || !nav) {
+            return;
+        }
+
+        menuToggle.classList.add("active");
+
+        nav.classList.add("open");
+
+        document.body.classList.add("menu-open");
+
+        menuToggle.setAttribute(
+            "aria-expanded",
+            "true"
+        );
+
+        menuToggle.setAttribute(
+            "aria-label",
+            "Close navigation"
+        );
+    };
 
 
     if (menuToggle && nav) {
@@ -107,55 +150,31 @@ document.addEventListener("DOMContentLoaded", () => {
             "click",
             () => {
 
-                menuToggle.classList.toggle(
-                    "active"
-                );
-
-                nav.classList.toggle(
-                    "open"
-                );
-
-                document.body.classList.toggle(
-                    "menu-open"
-                );
+                if (nav.classList.contains("open")) {
+                    closeMenu();
+                } else {
+                    openMenu();
+                }
 
             }
         );
 
 
-        /* Close menu after clicking a link */
+        nav.querySelectorAll("a")
+            .forEach(link => {
 
-        nav.querySelectorAll(
-            "a"
-        ).forEach(link => {
+                link.addEventListener(
+                    "click",
+                    closeMenu
+                );
 
-            link.addEventListener(
-                "click",
-                () => {
-
-                    menuToggle.classList.remove(
-                        "active"
-                    );
-
-                    nav.classList.remove(
-                        "open"
-                    );
-
-                    document.body.classList.remove(
-                        "menu-open"
-                    );
-
-                }
-            );
-
-        });
-
+            });
     }
 
 
-    /* =========================================
-       SMOOTH SCROLL
-    ========================================= */
+    /* =====================================================
+       SMOOTH INTERNAL NAVIGATION
+    ===================================================== */
 
     document.querySelectorAll(
         'a[href^="#"]'
@@ -166,31 +185,20 @@ document.addEventListener("DOMContentLoaded", () => {
             event => {
 
                 const id =
-                    link.getAttribute(
-                        "href"
-                    );
+                    link.getAttribute("href");
 
 
-                if (
-                    !id ||
-                    id === "#"
-                ) {
-
+                if (!id || id === "#") {
                     return;
-
                 }
 
 
                 const target =
-                    document.querySelector(
-                        id
-                    );
+                    document.querySelector(id);
 
 
                 if (!target) {
-
                     return;
-
                 }
 
 
@@ -204,8 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 const targetPosition =
-                    target.getBoundingClientRect()
-                        .top
+                    target.getBoundingClientRect().top
                     +
                     window.scrollY
                     -
@@ -215,11 +222,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 window.scrollTo({
-
                     top: targetPosition,
-
                     behavior: "smooth"
-
                 });
 
             }
@@ -228,140 +232,96 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    /* =========================================
+    /* =====================================================
        ACTIVE NAVIGATION
-    ========================================= */
+    ===================================================== */
 
-    const sections =
-        document.querySelectorAll(
-            "section[id]"
-        );
+    const updateActiveNav = () => {
 
-    const navLinks =
-        document.querySelectorAll(
-            ".nav-link"
-        );
+        if (!sections.length) {
+            return;
+        }
 
+        let current = "home";
 
-    const updateActiveNav =
-        () => {
-
-            let current =
-                "home";
+        const scrollPosition =
+            window.scrollY + 180;
 
 
-            sections.forEach(
-                section => {
+        sections.forEach(section => {
 
-                    const sectionTop =
-                        section.offsetTop
-                        -
-                        150;
+            if (
+                scrollPosition >=
+                section.offsetTop
+            ) {
+
+                current =
+                    section.id;
+
+            }
+
+        });
 
 
-                    if (
-                        window.scrollY
-                        >=
-                        sectionTop
-                    ) {
+        navLinks.forEach(link => {
 
-                        current =
-                            section.id;
+            const href =
+                link.getAttribute("href");
 
-                    }
 
-                }
+            link.classList.toggle(
+                "active",
+                href === "#" + current
             );
 
+        });
 
-            navLinks.forEach(
-                link => {
-
-                    link.classList.remove(
-                        "active"
-                    );
+    };
 
 
-                    const href =
-                        link.getAttribute(
-                            "href"
-                        );
+    /* =====================================================
+       HEADER
+    ===================================================== */
+
+    const updateHeader = () => {
+
+        if (!header) {
+            return;
+        }
+
+        header.classList.toggle(
+            "scrolled",
+            window.scrollY > 40
+        );
+    };
 
 
-                    if (
-                        href ===
-                        "#" + current
-                    ) {
-
-                        link.classList.add(
-                            "active"
-                        );
-
-                    }
-
-                }
-            );
-
-        };
-
-
-    window.addEventListener(
-        "scroll",
-        updateActiveNav,
-        { passive: true }
-    );
-
-
-    updateActiveNav();
-
-
-    /* =========================================
+    /* =====================================================
        BACK TO TOP
-    ========================================= */
+    ===================================================== */
 
-    const backTop =
-        document.getElementById(
-            "backTop"
+    const updateBackTop = () => {
+
+        if (!backTop) {
+            return;
+        }
+
+        backTop.classList.toggle(
+            "show",
+            window.scrollY > 500
         );
+    };
 
 
     if (backTop) {
-
-        window.addEventListener(
-            "scroll",
-            () => {
-
-                if (
-                    window.scrollY > 500
-                ) {
-
-                    backTop.classList.add(
-                        "show"
-                    );
-
-                } else {
-
-                    backTop.classList.remove(
-                        "show"
-                    );
-
-                }
-
-            },
-            { passive: true }
-        );
-
 
         backTop.addEventListener(
             "click",
             () => {
 
                 window.scrollTo({
-
                     top: 0,
-
                     behavior: "smooth"
-
                 });
 
             }
@@ -370,139 +330,106 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /* =========================================
-       HERO PARTICLES
-    ========================================= */
+    /* =====================================================
+       OPTIMIZED SCROLL HANDLER
+    ===================================================== */
 
-    const particleContainer =
-        document.querySelector(
-            ".hero-particles"
-        );
+    let ticking = false;
 
+    const handleScroll = () => {
 
-    if (particleContainer) {
-
-        for (
-            let i = 0;
-            i < 18;
-            i++
-        ) {
-
-            const particle =
-                document.createElement(
-                    "span"
-                );
-
-
-            particle.style.position =
-                "absolute";
-
-            particle.style.width =
-                "2px";
-
-            particle.style.height =
-                "2px";
-
-            particle.style.borderRadius =
-                "50%";
-
-            particle.style.background =
-                "#00d9ff";
-
-            particle.style.opacity =
-                String(
-                    Math.random() * .5 + .1
-                );
-
-            particle.style.left =
-                Math.random() * 100 + "%";
-
-            particle.style.top =
-                Math.random() * 100 + "%";
-
-            particle.style.boxShadow =
-                "0 0 8px #00d9ff";
-
-
-            const duration =
-                Math.random() * 5 + 4;
-
-            particle.style.animation =
-                `particleFloat ${duration}s ease-in-out infinite`;
-
-            particle.style.animationDelay =
-                Math.random() * 3 + "s";
-
-
-            particleContainer.appendChild(
-                particle
-            );
-
+        if (ticking) {
+            return;
         }
 
-    }
+        ticking = true;
 
 
-    /* =========================================
-       INTERSECTION ANIMATIONS
-    ========================================= */
+        window.requestAnimationFrame(() => {
 
-    const animatedElements =
-        document.querySelectorAll(
-            ".about-card, .event-card, .contact-card, .registration-box, .message-box"
-        );
+            updateHeader();
+
+            updateActiveNav();
+
+            updateBackTop();
+
+            ticking = false;
+
+        });
+
+    };
 
 
-    animatedElements.forEach(
-        element => {
-
-            element.style.opacity =
-                "0";
-
-            element.style.transform =
-                "translateY(20px)";
-
-            element.style.transition =
-                "opacity .7s ease, transform .7s ease";
-
+    window.addEventListener(
+        "scroll",
+        handleScroll,
+        {
+            passive: true
         }
     );
 
 
+    /*
+        Initial state.
+    */
+
+    updateHeader();
+
+    updateActiveNav();
+
+    updateBackTop();
+
+
+    /* =====================================================
+       INTERSECTION ANIMATIONS
+    ===================================================== */
+
+    /*
+        Do not hide content if the browser doesn't support
+        IntersectionObserver.
+    */
+
     if (
-        "IntersectionObserver"
-        in window
+        "IntersectionObserver" in window
     ) {
+
+        animatedElements.forEach(element => {
+
+            element.classList.add(
+                "prepare-animation"
+            );
+
+        });
+
 
         const observer =
             new IntersectionObserver(
                 entries => {
 
-                    entries.forEach(
-                        entry => {
+                    entries.forEach(entry => {
 
-                            if (
-                                entry.isIntersecting
-                            ) {
-
-                                entry.target.style.opacity =
-                                    "1";
-
-                                entry.target.style.transform =
-                                    "translateY(0)";
-
-                                observer.unobserve(
-                                    entry.target
-                                );
-
-                            }
-
+                        if (
+                            !entry.isIntersecting
+                        ) {
+                            return;
                         }
-                    );
+
+
+                        entry.target.classList.add(
+                            "visible"
+                        );
+
+
+                        observer.unobserve(
+                            entry.target
+                        );
+
+                    });
 
                 },
                 {
-                    threshold: .12
+                    threshold: 0.08,
+                    rootMargin: "0px 0px -40px 0px"
                 }
             );
 
@@ -510,23 +437,7 @@ document.addEventListener("DOMContentLoaded", () => {
         animatedElements.forEach(
             element => {
 
-                observer.observe(
-                    element
-                );
-
-            }
-        );
-
-    } else {
-
-        animatedElements.forEach(
-            element => {
-
-                element.style.opacity =
-                    "1";
-
-                element.style.transform =
-                    "translateY(0)";
+                observer.observe(element);
 
             }
         );
@@ -534,9 +445,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /* =========================================
+    /* =====================================================
        ESCAPE KEY
-    ========================================= */
+    ===================================================== */
 
     document.addEventListener(
         "keydown",
@@ -546,24 +457,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 event.key === "Escape"
             ) {
 
-                if (
-                    menuToggle &&
-                    nav
-                ) {
-
-                    menuToggle.classList.remove(
-                        "active"
-                    );
-
-                    nav.classList.remove(
-                        "open"
-                    );
-
-                    document.body.classList.remove(
-                        "menu-open"
-                    );
-
-                }
+                closeMenu();
 
             }
 
@@ -571,40 +465,111 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
+    /* =====================================================
+       CLOSE MOBILE MENU WHEN CLICKING OUTSIDE
+    ===================================================== */
+
+    document.addEventListener(
+        "click",
+        event => {
+
+            if (
+                !nav ||
+                !menuToggle
+            ) {
+                return;
+            }
+
+
+            if (
+                !nav.classList.contains("open")
+            ) {
+                return;
+            }
+
+
+            if (
+                nav.contains(event.target) ||
+                menuToggle.contains(event.target)
+            ) {
+                return;
+            }
+
+
+            closeMenu();
+
+        }
+    );
+
+
+    /* =====================================================
+       CLOSE MENU WHEN SCREEN BECOMES DESKTOP
+    ===================================================== */
+
+    window.addEventListener(
+        "resize",
+        () => {
+
+            if (
+                window.innerWidth > 780
+            ) {
+
+                closeMenu();
+
+            }
+
+        },
+        {
+            passive: true
+        }
+    );
+
 });
 
 
-/* =========================================
-   PARTICLE ANIMATION
-========================================= */
+/* =========================================================
+   ANIMATION CSS
+========================================================= */
 
-const particleStyle =
-document.createElement("style");
+const animationStyle =
+    document.createElement("style");
 
-particleStyle.textContent = `
 
-@keyframes particleFloat {
+animationStyle.textContent = `
 
-    0%, 100% {
+    .prepare-animation {
+        opacity: 0;
+        transform: translateY(18px);
+        transition:
+            opacity .55s ease,
+            transform .55s ease;
+    }
 
-        transform:
-            translateY(0)
-            translateX(0);
+    .prepare-animation.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    @media (max-width: 600px) {
+
+        .prepare-animation {
+            transform: translateY(12px);
+        }
 
     }
 
-    50% {
+    @media (prefers-reduced-motion: reduce) {
 
-        transform:
-            translateY(-25px)
-            translateX(12px);
+        .prepare-animation {
+            opacity: 1;
+            transform: none;
+        }
 
     }
-
-}
 
 `;
 
+
 document.head.appendChild(
-    particleStyle
+    animationStyle
 );
