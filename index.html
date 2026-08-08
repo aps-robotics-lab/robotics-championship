@@ -1,53 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="theme-color" content="#020711">
-    <meta name="description"
-          content="APS Robotics Championship 2026 - APS Tinkering Lab">
+<meta name="theme-color" content="#020711">
+<meta name="description" content="APS Robotics Championship 2026 - APS Tinkering Lab">
 
-    <title>APS Robotics Championship 2026</title>
+<title>APS Robotics Championship 2026</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Font Awesome -->
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-        media="print"
-        onload="this.media='all'">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    <noscript>
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    </noscript>
-
-    <!-- Main CSS -->
-    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- =========================================
-     PRELOADER
-========================================= -->
-
-<div id="preloader" aria-label="Loading website">
-
+<!-- PRELOADER -->
+<div id="preloader">
     <div class="loader">
-
         <div class="loader-robot">
             <i class="fa-solid fa-robot"></i>
         </div>
@@ -63,32 +40,19 @@
         <small>
             INITIALIZING CHAMPIONSHIP...
         </small>
-
     </div>
-
 </div>
 
-
-<!-- =========================================
-     BACKGROUND
-========================================= -->
-
 <div class="background-grid"></div>
-
 <div class="background-glow glow-1"></div>
 <div class="background-glow glow-2"></div>
 
-
-<!-- =========================================
-     HEADER
-========================================= -->
-
+<!-- HEADER -->
 <header class="header" id="header">
 
     <div class="nav-container">
 
-        <!-- LOGO -->
-        <a href="#home" class="logo" aria-label="APS Tinkering Lab Home">
+        <a href="#home" class="logo">
 
             <div class="logo-icon">
                 <i class="fa-solid fa-robot"></i>
@@ -101,49 +65,38 @@
 
         </a>
 
+        <nav class="nav" id="nav">
 
-        <!-- DESKTOP / MOBILE NAV -->
-        <nav class="nav" id="nav" aria-label="Main navigation">
+            <a href="#home" class="nav-link active">Home</a>
 
-            <a href="#home" class="nav-link active">
-                Home
-            </a>
+            <a href="#about" class="nav-link">About</a>
 
-            <a href="#about" class="nav-link">
-                About
-            </a>
-
-            <a href="#events" class="nav-link">
-                Events
-            </a>
+            <a href="#events" class="nav-link">Events</a>
 
             <a href="#registration" class="nav-link">
                 Registration
             </a>
 
-            <a href="#message" class="nav-link">
-                Message
-            </a>
+            <a href="#message" class="nav-link">Message</a>
 
-            <a href="#contact" class="nav-link">
-                Contact
-            </a>
+            <a href="#contact" class="nav-link">Contact</a>
 
             <a href="rules.html" class="nav-rules">
                 <i class="fa-solid fa-book-open"></i>
                 Rules
             </a>
 
+            <a href="admin.html" class="nav-admin">
+                <i class="fa-solid fa-user-shield"></i>
+                Admin
+            </a>
+
         </nav>
 
-
-        <!-- MOBILE MENU -->
         <button
             class="menu-toggle"
             id="menuToggle"
-            type="button"
-            aria-label="Open navigation"
-            aria-expanded="false">
+            aria-label="Open navigation">
 
             <span></span>
             <span></span>
@@ -155,12 +108,10 @@
 
 </header>
 
-
-<!-- =========================================
-     HERO
-========================================= -->
-
+<!-- HERO -->
 <section class="hero" id="home">
+
+    <div class="hero-particles"></div>
 
     <div class="hero-content">
 
@@ -169,19 +120,11 @@
             APS TINKERING LAB PRESENTS
         </div>
 
-
         <h1>
             APS ROBOTICS
-
-            <span>
-                CHAMPIONSHIP
-            </span>
-
-            <strong>
-                2026
-            </strong>
+            <span>CHAMPIONSHIP</span>
+            <strong>2026</strong>
         </h1>
-
 
         <p class="hero-description">
             Where imagination meets engineering.
@@ -190,10 +133,9 @@
             of robotics.
         </p>
 
-
         <div class="hero-buttons">
 
-            <a href="#registration"
+            <a href="registration.html"
                class="btn btn-primary">
 
                 <i class="fa-solid fa-rocket"></i>
@@ -205,14 +147,11 @@
                class="btn btn-secondary">
 
                 <i class="fa-solid fa-book-open"></i>
-                Rules &amp; Event Details
+                Rules & Event Details
 
             </a>
 
         </div>
-
-
-        <!-- STATS -->
 
         <div class="hero-stats">
 
@@ -235,42 +174,30 @@
 
     </div>
 
-
-    <!-- ROBOT VISUAL -->
-
-    <div class="hero-visual" aria-hidden="true">
+    <div class="hero-visual">
 
         <div class="orbit orbit-1"></div>
         <div class="orbit orbit-2"></div>
         <div class="orbit orbit-3"></div>
 
-
         <div class="robot-display">
 
             <div class="robot-face">
-
                 <div class="robot-eye left"></div>
                 <div class="robot-eye right"></div>
-
                 <div class="robot-mouth"></div>
-
             </div>
 
-
             <div class="robot-body">
-
                 <div class="robot-chest">
                     APS
                 </div>
-
             </div>
-
 
             <div class="robot-leg left"></div>
             <div class="robot-leg right"></div>
 
         </div>
-
 
         <div class="floating-chip chip-1">
             AI
@@ -286,31 +213,19 @@
 
     </div>
 
-
     <div class="scroll-indicator">
-
-        <span>
-            SCROLL TO EXPLORE
-        </span>
-
+        <span>SCROLL TO EXPLORE</span>
         <i class="fa-solid fa-chevron-down"></i>
-
     </div>
 
 </section>
 
-
-<!-- =========================================
-     ABOUT
-========================================= -->
-
+<!-- ABOUT -->
 <section class="section about" id="about">
 
     <div class="section-heading">
 
-        <span>
-            01 / ABOUT
-        </span>
+        <span>01 / ABOUT</span>
 
         <h2>
             Engineering the
@@ -325,7 +240,6 @@
 
     </div>
 
-
     <div class="about-grid">
 
         <div class="about-card large">
@@ -334,9 +248,7 @@
                 <i class="fa-solid fa-microchip"></i>
             </div>
 
-            <h3>
-                Innovation
-            </h3>
+            <h3>Innovation</h3>
 
             <p>
                 Transform ideas into working robotic
@@ -346,16 +258,13 @@
 
         </div>
 
-
         <div class="about-card">
 
             <div class="card-icon">
                 <i class="fa-solid fa-users"></i>
             </div>
 
-            <h3>
-                Teamwork
-            </h3>
+            <h3>Teamwork</h3>
 
             <p>
                 Work together, solve problems and build
@@ -364,16 +273,13 @@
 
         </div>
 
-
         <div class="about-card">
 
             <div class="card-icon">
                 <i class="fa-solid fa-code"></i>
             </div>
 
-            <h3>
-                Technology
-            </h3>
+            <h3>Technology</h3>
 
             <p>
                 Explore electronics, programming,
@@ -382,16 +288,13 @@
 
         </div>
 
-
         <div class="about-card">
 
             <div class="card-icon">
                 <i class="fa-solid fa-lightbulb"></i>
             </div>
 
-            <h3>
-                Creativity
-            </h3>
+            <h3>Creativity</h3>
 
             <p>
                 Think differently and create solutions
@@ -404,18 +307,12 @@
 
 </section>
 
-
-<!-- =========================================
-     EVENTS
-========================================= -->
-
+<!-- EVENTS -->
 <section class="section events" id="events">
 
     <div class="section-heading">
 
-        <span>
-            02 / COMPETITIONS
-        </span>
+        <span>02 / COMPETITIONS</span>
 
         <h2>
             Choose Your
@@ -429,140 +326,103 @@
 
     </div>
 
-
     <div class="events-grid">
-
-        <!-- RACE -->
 
         <article class="event-card">
 
-            <div class="event-number">
-                01
-            </div>
+            <div class="event-number">01</div>
 
             <div class="event-icon">
                 <i class="fa-solid fa-flag-checkered"></i>
             </div>
 
-            <h3>
-                Robo Race
-            </h3>
+            <h3>Robo Race</h3>
 
             <p>
-                Speed, precision and control. Navigate
-                the track and reach the finish line.
+                Speed, precision and control.
+                Navigate the track and reach
+                the finish line.
             </p>
 
             <a href="rules.html#events"
                class="event-link">
-
                 View Rules
                 <i class="fa-solid fa-arrow-right"></i>
-
             </a>
 
         </article>
 
-
-        <!-- WAR -->
-
         <article class="event-card">
 
-            <div class="event-number">
-                02
-            </div>
+            <div class="event-number">02</div>
 
             <div class="event-icon">
                 <i class="fa-solid fa-shield-halved"></i>
             </div>
 
-            <h3>
-                Robo War
-            </h3>
+            <h3>Robo War</h3>
 
             <p>
-                Strategy, engineering and robot control
-                collide in an exciting arena challenge.
+                Strategy, engineering and robot
+                control collide in an exciting
+                arena challenge.
             </p>
 
             <a href="rules.html#events"
                class="event-link">
-
                 View Rules
                 <i class="fa-solid fa-arrow-right"></i>
-
             </a>
 
         </article>
 
-
-        <!-- TUG -->
-
         <article class="event-card">
 
-            <div class="event-number">
-                03
-            </div>
+            <div class="event-number">03</div>
 
             <div class="event-icon">
                 <i class="fa-solid fa-handshake"></i>
             </div>
 
-            <h3>
-                Robo Tug of War
-            </h3>
+            <h3>Robo Tug of War</h3>
 
             <p>
-                Build a powerful robot and pull your
-                opponent beyond the winning line.
+                Build a powerful robot and pull
+                your opponent beyond the winning line.
             </p>
 
             <a href="rules.html#events"
                class="event-link">
-
                 View Rules
                 <i class="fa-solid fa-arrow-right"></i>
-
             </a>
 
         </article>
 
-
-        <!-- SOCCER -->
-
         <article class="event-card">
 
-            <div class="event-number">
-                04
-            </div>
+            <div class="event-number">04</div>
 
             <div class="event-icon">
                 <i class="fa-solid fa-futbol"></i>
             </div>
 
-            <h3>
-                Robo Soccer
-            </h3>
+            <h3>Robo Soccer</h3>
 
             <p>
-                Control your robotic player, score goals
-                and outsmart your opponents.
+                Control your robotic player,
+                score goals and outsmart opponents.
             </p>
 
             <a href="rules.html#events"
                class="event-link">
-
                 View Rules
                 <i class="fa-solid fa-arrow-right"></i>
-
             </a>
 
         </article>
 
     </div>
-
-
-    <!-- RULE CALLOUT -->
 
     <div class="rules-callout">
 
@@ -585,29 +445,20 @@
 
         <a href="rules.html"
            class="btn btn-primary">
-
             Open Rulebook
             <i class="fa-solid fa-arrow-right"></i>
-
         </a>
 
     </div>
 
 </section>
 
-
-<!-- =========================================
-     REGISTRATION
-========================================= -->
-
-<section class="section registration"
-         id="registration">
+<!-- REGISTRATION -->
+<section class="section registration" id="registration">
 
     <div class="section-heading">
 
-        <span>
-            03 / REGISTRATION
-        </span>
+        <span>03 / REGISTRATION</span>
 
         <h2>
             Register Your
@@ -615,12 +466,12 @@
         </h2>
 
         <p>
-            Get ready to compete in APS Robotics
-            Championship 2026.
+            Ready to compete?
+            Complete your registration and receive
+            your unique championship registration ID.
         </p>
 
     </div>
-
 
     <div class="registration-box">
 
@@ -630,52 +481,45 @@
                 <i class="fa-solid fa-rocket"></i>
             </div>
 
-            <h3>
-                Ready to Build?
-            </h3>
+            <h3>Ready to Build?</h3>
 
             <p>
-                Gather your team, choose your event
-                and get ready for the challenge.
+                Gather your team, choose your events
+                and get ready for the APS Robotics
+                Championship 2026.
             </p>
-
 
             <div class="registration-points">
 
                 <div>
                     <i class="fa-solid fa-check"></i>
-                    <span>Choose your competition</span>
+                    Choose your competition
                 </div>
 
                 <div>
                     <i class="fa-solid fa-check"></i>
-                    <span>Prepare your robot</span>
+                    Prepare your robot
                 </div>
 
                 <div>
                     <i class="fa-solid fa-check"></i>
-                    <span>Follow the official rules</span>
+                    Follow official rules
                 </div>
 
                 <div>
                     <i class="fa-solid fa-check"></i>
-                    <span>Compete and innovate</span>
+                    Compete and innovate
                 </div>
 
             </div>
 
         </div>
 
-
         <div class="registration-action">
 
-            <span>
-                APS ROBOTICS CHAMPIONSHIP
-            </span>
+            <span>APS ROBOTICS CHAMPIONSHIP</span>
 
-            <strong>
-                2026
-            </strong>
+            <strong>2026</strong>
 
             <p>
                 Registration is now open.
@@ -695,19 +539,12 @@
 
 </section>
 
-
-<!-- =========================================
-     MESSAGE
-========================================= -->
-
-<section class="section message"
-         id="message">
+<!-- MESSAGE -->
+<section class="section message" id="message">
 
     <div class="section-heading">
 
-        <span>
-            04 / MESSAGE
-        </span>
+        <span>04 / MESSAGE</span>
 
         <h2>
             A Message to
@@ -716,13 +553,11 @@
 
     </div>
 
-
     <div class="message-box">
 
         <div class="quote-icon">
             <i class="fa-solid fa-quote-left"></i>
         </div>
-
 
         <p>
             Robotics is not just about building machines.
@@ -731,7 +566,6 @@
             differently.
         </p>
 
-
         <p>
             We encourage every participant to experiment,
             learn from failure and turn ideas into reality.
@@ -739,12 +573,9 @@
             imagination becomes innovation.
         </p>
 
-
         <div class="message-sign">
 
-            <strong>
-                APS Tinkering Lab
-            </strong>
+            <strong>APS Tinkering Lab</strong>
 
             <span>
                 Inspiring Young Innovators
@@ -756,19 +587,12 @@
 
 </section>
 
-
-<!-- =========================================
-     CONTACT
-========================================= -->
-
-<section class="section contact"
-         id="contact">
+<!-- CONTACT -->
+<section class="section contact" id="contact">
 
     <div class="section-heading">
 
-        <span>
-            05 / CONTACT
-        </span>
+        <span>05 / CONTACT</span>
 
         <h2>
             Get in
@@ -782,7 +606,6 @@
 
     </div>
 
-
     <div class="contact-grid">
 
         <div class="contact-card">
@@ -791,9 +614,7 @@
                 <i class="fa-solid fa-location-dot"></i>
             </div>
 
-            <h3>
-                Address
-            </h3>
+            <h3>Address</h3>
 
             <p>
                 Army Public School<br>
@@ -803,16 +624,13 @@
 
         </div>
 
-
         <div class="contact-card">
 
             <div class="contact-icon">
                 <i class="fa-solid fa-phone"></i>
             </div>
 
-            <h3>
-                Phone
-            </h3>
+            <h3>Phone</h3>
 
             <p>
                 +91 XXXXX XXXXX
@@ -820,19 +638,16 @@
 
         </div>
 
-
         <div class="contact-card">
 
             <div class="contact-icon">
                 <i class="fa-solid fa-envelope"></i>
             </div>
 
-            <h3>
-                Email
-            </h3>
+            <h3>Email</h3>
 
             <p>
-                tinkeringlab@aps.edu.in
+                aayushksingh3746@gmail.com
             </p>
 
         </div>
@@ -841,11 +656,7 @@
 
 </section>
 
-
-<!-- =========================================
-     FOOTER
-========================================= -->
-
+<!-- FOOTER -->
 <footer class="footer">
 
     <div class="footer-top">
@@ -859,19 +670,11 @@
                 </div>
 
                 <div class="logo-text">
-
-                    <strong>
-                        APS
-                    </strong>
-
-                    <span>
-                        TINKERING LAB
-                    </span>
-
+                    <strong>APS</strong>
+                    <span>TINKERING LAB</span>
                 </div>
 
             </div>
-
 
             <p>
                 Building the innovators of tomorrow
@@ -880,42 +683,44 @@
 
         </div>
 
-
         <div class="footer-links">
 
-            <h4>
-                QUICK LINKS
-            </h4>
+            <h4>QUICK LINKS</h4>
 
             <a href="#home">Home</a>
             <a href="#about">About</a>
             <a href="#events">Events</a>
-            <a href="#registration">Registration</a>
+            <a href="registration.html">Registration</a>
             <a href="rules.html">Rules</a>
 
         </div>
 
-
         <div class="footer-links">
 
-            <h4>
-                EVENTS
-            </h4>
+            <h4>PORTAL</h4>
 
-            <a href="#events">Robo Race</a>
-            <a href="#events">Robo War</a>
-            <a href="#events">Robo Tug of War</a>
-            <a href="#events">Robo Soccer</a>
+            <a href="registration.html">
+                Register Team
+            </a>
+
+            <a href="thankyou.html">
+                Registration Status
+            </a>
+
+            <a href="admin.html">
+                <i class="fa-solid fa-user-shield"></i>
+                Admin Login
+            </a>
 
         </div>
 
     </div>
 
-
     <div class="footer-bottom">
 
         <span>
-            © 2026 APS Tinkering Lab. All Rights Reserved.
+            © 2026 APS Tinkering Lab.
+            All Rights Reserved.
         </span>
 
         <span>
@@ -926,25 +731,15 @@
 
 </footer>
 
-
-<!-- =========================================
-     BACK TO TOP
-========================================= -->
-
-<button
-    class="back-top"
-    id="backTop"
-    type="button"
-    aria-label="Back to top">
+<button class="back-top"
+        id="backTop"
+        aria-label="Back to top">
 
     <i class="fa-solid fa-arrow-up"></i>
 
 </button>
 
-
-<!-- JAVASCRIPT -->
-
-<script src="script.js" defer></script>
+<script src="script.js"></script>
 
 </body>
 </html>
