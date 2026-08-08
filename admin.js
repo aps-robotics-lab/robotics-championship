@@ -1,23 +1,56 @@
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+/* =====================================================
+   APS ROBOTICS CHAMPIONSHIP 2026
+   ADMIN PANEL
+   FIREBASE AUTH + REALTIME DATABASE
+   OLD VERSION — BEFORE SEND EMAIL FUNCTION
+===================================================== */
+
+
+/* =====================================================
+   FIREBASE APP
+===================================================== */
+
+import {
+    initializeApp
+} from
+"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+
+
+/* =====================================================
+   FIREBASE AUTHENTICATION
+===================================================== */
+
+import {
+    getAuth,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
+} from
+"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+
+
+/* =====================================================
+   FIREBASE REALTIME DATABASE
+===================================================== */
 
 import {
     getDatabase,
     ref,
-    onValue,
+    get,
     update,
     remove
-}
-from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+} from
+"https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 
-// =====================================================
-// FIREBASE CONFIG
-// =====================================================
+/* =====================================================
+   FIREBASE CONFIG
+===================================================== */
 
 const firebaseConfig = {
 
-    apiKey: "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
+    apiKey:
+        "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
 
     authDomain:
         "aps-robotics-championship.firebaseapp.com",
@@ -36,501 +69,1817 @@ const firebaseConfig = {
 
     appId:
         "1:1063542904891:web:82ff9bb3fba0b87384a41e"
+
 };
 
 
-// =====================================================
-// FIREBASE INITIALIZATION
-// =====================================================
+/* =====================================================
+   INITIALIZE FIREBASE
+===================================================== */
 
-const app = initializeApp(firebaseConfig);
+const app =
+    initializeApp(firebaseConfig);
 
-const database = getDatabase(app);
+
+const auth =
+    getAuth(app);
 
 
-// =====================================================
-// VARIABLES
-// =====================================================
+const database =
+    getDatabase(app);
 
-let deleteTargetID = null;
+
+/* =====================================================
+   GLOBAL DATA
+===================================================== */
 
 let registrations = {};
 
-let unsubscribeRegistrations = null;
+let filteredRegistrations = {};
+
+let currentRegistrationKey = null;
+
+let toastTimer = null;
 
 
-// =====================================================
-// LOGIN
-// =====================================================
+/* =====================================================
+   DOM ELEMENTS
+===================================================== */
 
-window.login = function(){
-
-    const username =
-        document.getElementById("username")
-            .value
-            .trim();
-
-    const password =
-        document.getElementById("password")
-            .value;
-
-    const error =
-        document.getElementById("error");
+const loginScreen =
+    document.getElementById("loginScreen");
 
 
-    if(
-        username === "admin" &&
-        password === "aps2026"
-    ){
+const adminApp =
+    document.getElementById("adminApp");
 
-        localStorage.setItem(
-            "adminLogin",
-            "true"
-        );
 
-        showDashboard();
+const loginForm =
+    document.getElementById("loginForm");
 
-        error.textContent = "";
 
-        loadData();
+const loginEmail =
+    document.getElementById("loginEmail");
 
-    }else{
 
-        error.textContent =
-            "❌ Invalid username or password.";
+const loginPassword =
+    document.getElementById("loginPassword");
+
+
+const loginBtn =
+    document.getElementById("loginBtn");
+
+
+const loginError =
+    document.getElementById("loginError");
+
+
+const togglePassword =
+    document.getElementById("togglePassword");
+
+
+const adminEmail =
+    document.getElementById("adminEmail");
+
+
+const logoutBtn =
+    document.getElementById("logoutBtn");
+
+
+const sidebar =
+    document.getElementById("sidebar");
+
+
+const sidebarToggle =
+    document.getElementById("sidebarToggle");
+
+
+const tableBody =
+    document.getElementById("registrationTableBody");
+
+
+const tableEmpty =
+    document.getElementById("tableEmpty");
+
+
+const resultCount =
+    document.getElementById("resultCount");
+
+
+const tableStatus =
+    document.getElementById("tableStatus");
+
+
+const searchInput =
+    document.getElementById("searchInput");
+
+
+const eventFilter =
+    document.getElementById("eventFilter");
+
+
+const classFilter =
+    document.getElementById("classFilter");
+
+
+const sectionFilter =
+    document.getElementById("sectionFilter");
+
+
+const clearFilters =
+    document.getElementById("clearFilters");
+
+
+const detailsModal =
+    document.getElementById("detailsModal");
+
+
+const editModal =
+    document.getElementById("editModal");
+
+
+const detailsContent =
+    document.getElementById("detailsContent");
+
+
+const modalDeleteBtn =
+    document.getElementById("modalDeleteBtn");
+
+
+const editForm =
+    document.getElementById("editForm");
+
+
+const editKey =
+    document.getElementById("editKey");
+
+
+const editStudentName =
+    document.getElementById("editStudentName");
+
+
+const editTeamName =
+    document.getElementById("editTeamName");
+
+
+const editClass =
+    document.getElementById("editClass");
+
+
+const editSection =
+    document.getElementById("editSection");
+
+
+const editMobile =
+    document.getElementById("editMobile");
+
+
+const editEmail =
+    document.getElementById("editEmail");
+
+
+const editRemarks =
+    document.getElementById("editRemarks");
+
+
+const toast =
+    document.getElementById("toast");
+
+
+const toastMessage =
+    document.getElementById("toastMessage");
+
+
+/* =====================================================
+   AUTH STATE
+===================================================== */
+
+onAuthStateChanged(
+    auth,
+    user => {
+
+        if(user){
+
+            loginScreen.classList.add("hidden");
+
+            adminApp.classList.remove("hidden");
+
+            if(adminEmail){
+
+                adminEmail.textContent =
+                    user.email ||
+                    "Authenticated Admin";
+
+            }
+
+            loadRegistrations();
+
+        }
+        else{
+
+            loginScreen.classList.remove("hidden");
+
+            adminApp.classList.add("hidden");
+
+        }
 
     }
-
-};
-
-
-// =====================================================
-// SHOW DASHBOARD
-// =====================================================
-
-function showDashboard(){
-
-    document.getElementById("loginScreen")
-        .style.display = "none";
-
-    document.getElementById("dashboard")
-        .style.display = "block";
-
-}
+);
 
 
-// =====================================================
-// AUTO LOGIN
-// =====================================================
+/* =====================================================
+   LOGIN
+===================================================== */
 
-if(
-    localStorage.getItem("adminLogin")
-    === "true"
-){
+if(loginForm){
 
-    showDashboard();
+    loginForm.addEventListener(
+        "submit",
+        async event => {
 
-    loadData();
+            event.preventDefault();
 
-}
+            if(loginError){
 
+                loginError.textContent = "";
 
-// =====================================================
-// PASSWORD VISIBILITY
-// =====================================================
+            }
 
-window.togglePassword = function(){
+            if(loginBtn){
 
-    const password =
-        document.getElementById("password");
+                loginBtn.disabled = true;
 
-    const icon =
-        document.getElementById("passwordIcon");
+                loginBtn.innerHTML = `
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    Signing In...
+                `;
 
-
-    if(password.type === "password"){
-
-        password.type = "text";
-
-        icon.className =
-            "fa-solid fa-eye-slash";
-
-    }else{
-
-        password.type = "password";
-
-        icon.className =
-            "fa-solid fa-eye";
-
-    }
-
-};
+            }
 
 
-// =====================================================
-// LOGOUT
-// =====================================================
+            try{
 
-window.logout = function(){
+                await signInWithEmailAndPassword(
 
-    localStorage.removeItem(
-        "adminLogin"
-    );
+                    auth,
 
-    if(unsubscribeRegistrations){
+                    loginEmail.value.trim(),
 
-        unsubscribeRegistrations();
+                    loginPassword.value
 
-        unsubscribeRegistrations = null;
+                );
 
-    }
+            }
+            catch(error){
 
-    location.reload();
-
-};
+                console.error(
+                    "Login error:",
+                    error
+                );
 
 
-// =====================================================
-// LOAD DATA
-// =====================================================
+                if(loginError){
 
-function loadData(){
-
-    const table =
-        document.getElementById("tableBody");
-
-
-    table.innerHTML = `
-        <tr>
-            <td colspan="9" class="loading-cell">
-                <i class="fa-solid fa-spinner fa-spin"></i>
-                Loading registrations...
-            </td>
-        </tr>
-    `;
-
-
-    const registrationsRef =
-        ref(database,"registrations");
-
-
-    if(unsubscribeRegistrations){
-
-        unsubscribeRegistrations();
-
-    }
-
-
-    unsubscribeRegistrations =
-        onValue(
-            registrationsRef,
-            (snapshot)=>{
-
-                registrations = {};
-
-                let total = 0;
-                let race = 0;
-                let war = 0;
-                let tug = 0;
-                let soccer = 0;
-
-
-                table.innerHTML = "";
-
-
-                if(!snapshot.exists()){
-
-                    table.innerHTML = `
-                        <tr>
-                            <td colspan="9"
-                                class="loading-cell">
-                                <i class="fa-solid fa-inbox"></i>
-                                No registrations found.
-                            </td>
-                        </tr>
-                    `;
-
-                    updateStats(
-                        0,
-                        0,
-                        0,
-                        0,
-                        0
-                    );
-
-                    updateVisibleCount(0);
-
-                    return;
+                    loginError.textContent =
+                        getAuthError(
+                            error.code
+                        );
 
                 }
 
+            }
+            finally{
 
-                let index = 0;
+                if(loginBtn){
 
+                    loginBtn.disabled = false;
 
-                snapshot.forEach(
-                    (child)=>{
+                    loginBtn.innerHTML = `
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        Login to Dashboard
+                    `;
 
-                        const id =
-                            child.key;
+                }
 
-                        const data =
-                            child.val() || {};
+            }
 
+        }
+    );
 
-                        registrations[id] =
-                            data;
-
-
-                        total++;
-
-                        index++;
-
-
-                        const events =
-                            String(
-                                data.Events || ""
-                            );
+}
 
 
-                        const normalized =
-                            events.toLowerCase();
+/* =====================================================
+   AUTH ERROR
+===================================================== */
+
+function getAuthError(code){
+
+    switch(code){
+
+        case "auth/invalid-credential":
+            return "Invalid email or password.";
+
+        case "auth/user-not-found":
+            return "Admin account was not found.";
+
+        case "auth/wrong-password":
+            return "Incorrect password.";
+
+        case "auth/invalid-email":
+            return "Please enter a valid email address.";
+
+        case "auth/too-many-requests":
+            return "Too many attempts. Please try again later.";
+
+        case "auth/network-request-failed":
+            return "Network error. Check your internet connection.";
+
+        case "auth/user-disabled":
+            return "This admin account has been disabled.";
+
+        default:
+            return "Login failed. Please check your credentials.";
+
+    }
+
+}
 
 
-                        if(
-                            normalized.includes(
-                                "robo race"
-                            )
-                        ){
-                            race++;
-                        }
+/* =====================================================
+   PASSWORD TOGGLE
+===================================================== */
+
+if(togglePassword){
+
+    togglePassword.addEventListener(
+        "click",
+        () => {
+
+            const isPassword =
+                loginPassword.type === "password";
 
 
-                        if(
-                            normalized.includes(
-                                "robo war"
-                            )
-                        ){
-                            war++;
-                        }
+            loginPassword.type =
+                isPassword
+                ? "text"
+                : "password";
 
 
-                        if(
-                            normalized.includes(
-                                "robo tug"
-                            )
-                        ){
-                            tug++;
-                        }
+            togglePassword.innerHTML =
+                isPassword
+                ? '<i class="fa-solid fa-eye-slash"></i>'
+                : '<i class="fa-solid fa-eye"></i>';
+
+        }
+    );
+
+}
 
 
-                        if(
-                            normalized.includes(
-                                "robo soccer"
-                            )
-                        ){
-                            soccer++;
-                        }
+/* =====================================================
+   LOGOUT
+===================================================== */
 
+if(logoutBtn){
 
-                        const row =
-                            document.createElement(
-                                "tr"
-                            );
+    logoutBtn.addEventListener(
+        "click",
+        async () => {
 
+            try{
 
-                        row.dataset.search =
-                            (
-                                id + " " +
-                                (data.StudentName || "") + " " +
-                                (data.TeamName || "") + " " +
-                                (data.Class || "") + " " +
-                                (data.Section || "") + " " +
-                                (data.MobileNumber || "") + " " +
-                                (data.Email || "") + " " +
-                                events
-                            ).toLowerCase();
-
-
-                        row.innerHTML = `
-
-                            <td>
-                                ${index}
-                            </td>
-
-                            <td class="id-cell">
-                                ${escapeHTML(id)}
-                            </td>
-
-                            <td class="student-cell">
-                                ${escapeHTML(
-                                    data.StudentName || "-"
-                                )}
-                            </td>
-
-                            <td class="team-cell">
-                                ${escapeHTML(
-                                    data.TeamName || "-"
-                                )}
-                            </td>
-
-                            <td>
-                                ${escapeHTML(
-                                    data.Class || "-"
-                                )}
-                            </td>
-
-                            <td>
-                                ${escapeHTML(
-                                    data.Section || "-"
-                                )}
-                            </td>
-
-                            <td class="event-cell">
-                                ${formatEvents(events)}
-                            </td>
-
-                            <td class="mobile-cell">
-                                ${escapeHTML(
-                                    data.MobileNumber || "-"
-                                )}
-                            </td>
-
-                            <td class="action-cell">
-
-                                <button
-                                    class="table-action edit-btn"
-                                    onclick="editRegistration('${escapeJS(id)}')">
-
-                                    <i class="fa-solid fa-pen"></i>
-                                    Edit
-
-                                </button>
-
-                                <button
-                                    class="table-action delete-btn"
-                                    onclick="deleteRegistration('${escapeJS(id)}')">
-
-                                    <i class="fa-solid fa-trash"></i>
-                                    Delete
-
-                                </button>
-
-                            </td>
-                        `;
-
-
-                        table.appendChild(row);
-
-                    }
-                );
-
-
-                updateStats(
-                    total,
-                    race,
-                    war,
-                    tug,
-                    soccer
-                );
-
-
-                updateVisibleCount(total);
-
-            },
-
-            (error)=>{
-
-                console.error(error);
-
-                table.innerHTML = `
-                    <tr>
-                        <td colspan="9"
-                            class="loading-cell">
-
-                            ❌ Unable to load registrations.
-
-                        </td>
-                    </tr>
-                `;
+                await signOut(auth);
 
                 showToast(
-                    "Could not load Firebase data.",
-                    true
+                    "Logged out successfully.",
+                    "success"
+                );
+
+            }
+            catch(error){
+
+                console.error(
+                    "Logout error:",
+                    error
+                );
+
+
+                showToast(
+                    "Logout failed.",
+                    "error"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+document
+.querySelectorAll(".nav-item")
+.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            const page =
+                button.dataset.page;
+
+
+            if(page){
+
+                showPage(page);
+
+            }
+
+
+            if(sidebar){
+
+                sidebar.classList.remove(
+                    "open"
+                );
+
+            }
+
+        }
+    );
+
+});
+
+
+document
+.querySelectorAll("[data-page-target]")
+.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            const page =
+                button.dataset.pageTarget;
+
+
+            if(page){
+
+                showPage(page);
+
+            }
+
+        }
+    );
+
+});
+
+
+function showPage(pageName){
+
+    document
+    .querySelectorAll(".page")
+    .forEach(page => {
+
+        page.classList.remove(
+            "active-page"
+        );
+
+    });
+
+
+    const target =
+        document.getElementById(
+            pageName + "Page"
+        );
+
+
+    if(target){
+
+        target.classList.add(
+            "active-page"
+        );
+
+    }
+
+
+    document
+    .querySelectorAll(".nav-item")
+    .forEach(item => {
+
+        item.classList.toggle(
+            "active",
+            item.dataset.page === pageName
+        );
+
+    });
+
+
+    const titles = {
+
+        dashboard:
+            "Dashboard",
+
+        registrations:
+            "Registrations",
+
+        events:
+            "Events"
+
+    };
+
+
+    const pageTitle =
+        document.getElementById(
+            "pageTitle"
+        );
+
+
+    if(pageTitle){
+
+        pageTitle.textContent =
+            titles[pageName] ||
+            "Dashboard";
+
+    }
+
+
+    if(pageName === "registrations"){
+
+        renderTable();
+
+    }
+
+}
+
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+if(sidebarToggle){
+
+    sidebarToggle.addEventListener(
+        "click",
+        () => {
+
+            if(sidebar){
+
+                sidebar.classList.toggle(
+                    "open"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   LOAD REGISTRATIONS
+===================================================== */
+
+async function loadRegistrations(){
+
+    if(tableStatus){
+
+        tableStatus.textContent =
+            "Loading...";
+
+    }
+
+
+    try{
+
+        const snapshot =
+            await get(
+                ref(
+                    database,
+                    "registrations"
+                )
+            );
+
+
+        if(snapshot.exists()){
+
+            registrations =
+                snapshot.val();
+
+        }
+        else{
+
+            registrations = {};
+
+        }
+
+
+        filteredRegistrations =
+            {
+                ...registrations
+            };
+
+
+        populateFilters();
+
+        updateDashboard();
+
+        renderRecent();
+
+        renderTable();
+
+        updateEventPage();
+
+
+        if(tableStatus){
+
+            tableStatus.textContent =
+                "Database synced";
+
+        }
+
+    }
+    catch(error){
+
+        console.error(
+            "Database error:",
+            error
+        );
+
+
+        if(tableStatus){
+
+            tableStatus.textContent =
+                "Database error";
+
+        }
+
+
+        showToast(
+            "Unable to load registrations.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   NORMALIZE VALUE
+===================================================== */
+
+function normalize(value){
+
+    if(
+        value === undefined ||
+        value === null
+    ){
+
+        return "";
+
+    }
+
+
+    if(Array.isArray(value)){
+
+        return value.join(", ");
+
+    }
+
+
+    return String(value);
+
+}
+
+
+/* =====================================================
+   GET EVENTS
+===================================================== */
+
+function getEvents(data){
+
+    if(!data){
+
+        return [];
+
+    }
+
+
+    let events =
+        data.Events;
+
+
+    if(!events){
+
+        return [];
+
+    }
+
+
+    if(Array.isArray(events)){
+
+        return events
+            .map(event => normalize(event).trim())
+            .filter(Boolean);
+
+    }
+
+
+    if(typeof events === "string"){
+
+        return events
+            .split(/\s*(?:,|\|)\s*/)
+            .map(event => event.trim())
+            .filter(Boolean);
+
+    }
+
+
+    return [
+        normalize(events)
+    ].filter(Boolean);
+
+}
+
+
+/* =====================================================
+   GET REGISTRATION EMAIL
+===================================================== */
+
+function getRegistrationEmail(data){
+
+    return normalize(
+
+        data.EmailAddress ||
+
+        data.Email ||
+
+        data.email
+
+    ).trim();
+
+}
+
+
+/* =====================================================
+   GET TEAM SIZE
+===================================================== */
+
+function getTeamSize(data){
+
+    if(!data){
+
+        return 0;
+
+    }
+
+
+    if(
+        data.TeamSize !== undefined &&
+        data.TeamSize !== null &&
+        data.TeamSize !== ""
+    ){
+
+        const size =
+            Number(
+                data.TeamSize
+            );
+
+
+        if(
+            Number.isFinite(size) &&
+            size > 0
+        ){
+
+            return size;
+
+        }
+
+    }
+
+
+    let count = 1;
+
+
+    for(
+        let i = 2;
+        i <= 5;
+        i++
+    ){
+
+        if(
+            data[`Member${i}Name`] &&
+            String(
+                data[`Member${i}Name`]
+            ).trim()
+        ){
+
+            count++;
+
+        }
+
+    }
+
+
+    return count;
+
+}
+
+
+/* =====================================================
+   UPDATE DASHBOARD
+===================================================== */
+
+function updateDashboard(){
+
+    const list =
+        Object.values(
+            registrations || {}
+        );
+
+
+    const total =
+        list.length;
+
+
+    setText(
+        "totalRegistrations",
+        total
+    );
+
+
+    setText(
+        "totalTeams",
+        total
+    );
+
+
+    const counts = {
+
+        race: 0,
+
+        war: 0,
+
+        tug: 0,
+
+        soccer: 0
+
+    };
+
+
+    list.forEach(data => {
+
+        getEvents(data)
+        .forEach(event => {
+
+            const eventName =
+                event
+                .trim()
+                .toLowerCase();
+
+
+            if(
+                eventName ===
+                "robo race"
+            ){
+
+                counts.race++;
+
+            }
+
+
+            if(
+                eventName ===
+                "robo war"
+            ){
+
+                counts.war++;
+
+            }
+
+
+            if(
+                eventName ===
+                "robo tug of war"
+            ){
+
+                counts.tug++;
+
+            }
+
+
+            if(
+                eventName ===
+                "robo soccer"
+            ){
+
+                counts.soccer++;
+
+            }
+
+        });
+
+    });
+
+
+    setText(
+        "raceCount",
+        counts.race
+    );
+
+
+    setText(
+        "warCount",
+        counts.war
+    );
+
+
+    setText(
+        "tugCount",
+        counts.tug
+    );
+
+
+    setText(
+        "soccerCount",
+        counts.soccer
+    );
+
+
+    setText(
+        "eventRaceCount",
+        counts.race
+    );
+
+
+    setText(
+        "eventWarCount",
+        counts.war
+    );
+
+
+    setText(
+        "eventTugCount",
+        counts.tug
+    );
+
+
+    setText(
+        "eventSoccerCount",
+        counts.soccer
+    );
+
+}
+
+
+/* =====================================================
+   RECENT REGISTRATIONS
+===================================================== */
+
+function renderRecent(){
+
+    const container =
+        document.getElementById(
+            "recentRegistrations"
+        );
+
+
+    if(!container){
+
+        return;
+
+    }
+
+
+    const entries =
+        Object.entries(
+            registrations || {}
+        )
+        .sort(
+            (a,b) => {
+
+                const dateA =
+                    getTimestamp(
+                        a[1].registrationDate
+                    );
+
+
+                const dateB =
+                    getTimestamp(
+                        b[1].registrationDate
+                    );
+
+
+                return dateB - dateA;
+
+            }
+        )
+        .slice(0,6);
+
+
+    if(entries.length === 0){
+
+        container.innerHTML = `
+            <div class="empty-state">
+
+                <i class="fa-solid fa-folder-open"></i>
+
+                <span>
+                    No registrations found.
+                </span>
+
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        entries
+        .map(
+            ([key,data]) => {
+
+                const id =
+                    normalize(
+                        data.registrationId
+                    ) || key;
+
+
+                const name =
+                    normalize(
+                        data.StudentName
+                    ) || "Unknown";
+
+
+                const team =
+                    normalize(
+                        data.TeamName
+                    ) || "Unnamed Team";
+
+
+                return `
+
+                    <div class="recent-item">
+
+                        <div class="recent-avatar">
+
+                            <i class="fa-solid fa-user"></i>
+
+                        </div>
+
+
+                        <div class="recent-details">
+
+                            <strong>
+                                ${escapeHTML(name)}
+                            </strong>
+
+
+                            <span>
+                                ${escapeHTML(team)}
+                            </span>
+
+
+                            <span class="recent-id">
+                                ${escapeHTML(id)}
+                            </span>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="action-btn view"
+                            title="View Registration"
+                            data-view="${escapeAttr(key)}">
+
+                            <i class="fa-solid fa-eye"></i>
+
+                        </button>
+
+                    </div>
+
+                `;
+
+            }
+        )
+        .join("");
+
+
+    container
+    .querySelectorAll("[data-view]")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                openDetails(
+                    button.dataset.view
                 );
 
             }
         );
 
-}
-
-
-// =====================================================
-// STATISTICS
-// =====================================================
-
-function updateStats(
-    total,
-    race,
-    war,
-    tug,
-    soccer
-){
-
-    document.getElementById("total")
-        .textContent = total;
-
-    document.getElementById("race")
-        .textContent = race;
-
-    document.getElementById("war")
-        .textContent = war;
-
-    document.getElementById("tug")
-        .textContent = tug;
-
-    document.getElementById("soccer")
-        .textContent = soccer;
+    });
 
 }
 
 
-// =====================================================
-// FORMAT EVENTS
-// =====================================================
+/* =====================================================
+   POPULATE FILTERS
+===================================================== */
 
-function formatEvents(events){
+function populateFilters(){
 
-    if(!events){
-        return "-";
+    if(
+        !classFilter ||
+        !sectionFilter
+    ){
+
+        return;
+
     }
 
 
-    return escapeHTML(events)
-        .replace(/Robo Race/gi,"🏁 Robo Race")
-        .replace(/Robo War/gi,"⚔️ Robo War")
-        .replace(/Robo Tug of War/gi,"🤝 Robo Tug of War")
-        .replace(/Robo Soccer/gi,"⚽ Robo Soccer");
+    const classes =
+        new Set();
+
+
+    const sections =
+        new Set();
+
+
+    Object.values(
+        registrations || {}
+    )
+    .forEach(data => {
+
+        const className =
+            normalize(
+                data.Class
+            ).trim();
+
+
+        const section =
+            normalize(
+                data.Section
+            ).trim();
+
+
+        if(className){
+
+            classes.add(
+                className
+            );
+
+        }
+
+
+        if(section){
+
+            sections.add(
+                section
+            );
+
+        }
+
+    });
+
+
+    const currentClass =
+        classFilter.value;
+
+
+    const currentSection =
+        sectionFilter.value;
+
+
+    classFilter.innerHTML =
+        `<option value="all">All Classes</option>`;
+
+
+    [...classes]
+    .sort(
+        naturalSort
+    )
+    .forEach(value => {
+
+        classFilter.innerHTML += `
+            <option value="${escapeAttr(value)}">
+                ${escapeHTML(value)}
+            </option>
+        `;
+
+    });
+
+
+    sectionFilter.innerHTML =
+        `<option value="all">All Sections</option>`;
+
+
+    [...sections]
+    .sort(
+        naturalSort
+    )
+    .forEach(value => {
+
+        sectionFilter.innerHTML += `
+            <option value="${escapeAttr(value)}">
+                ${escapeHTML(value)}
+            </option>
+        `;
+
+    });
+
+
+    if(
+        [...classes]
+        .includes(
+            currentClass
+        )
+    ){
+
+        classFilter.value =
+            currentClass;
+
+    }
+
+
+    if(
+        [...sections]
+        .includes(
+            currentSection
+        )
+    ){
+
+        sectionFilter.value =
+            currentSection;
+
+    }
 
 }
 
 
-// =====================================================
-// EDIT REGISTRATION
-// =====================================================
+/* =====================================================
+   FILTER EVENTS
+===================================================== */
 
-window.editRegistration =
-function(registrationID){
+if(searchInput){
+
+    searchInput.addEventListener(
+        "input",
+        applyFilters
+    );
+
+}
+
+
+if(eventFilter){
+
+    eventFilter.addEventListener(
+        "change",
+        applyFilters
+    );
+
+}
+
+
+if(classFilter){
+
+    classFilter.addEventListener(
+        "change",
+        applyFilters
+    );
+
+}
+
+
+if(sectionFilter){
+
+    sectionFilter.addEventListener(
+        "change",
+        applyFilters
+    );
+
+}
+
+
+if(clearFilters){
+
+    clearFilters.addEventListener(
+        "click",
+        () => {
+
+            if(searchInput){
+
+                searchInput.value = "";
+
+            }
+
+
+            if(eventFilter){
+
+                eventFilter.value =
+                    "all";
+
+            }
+
+
+            if(classFilter){
+
+                classFilter.value =
+                    "all";
+
+            }
+
+
+            if(sectionFilter){
+
+                sectionFilter.value =
+                    "all";
+
+            }
+
+
+            applyFilters();
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   APPLY FILTERS
+===================================================== */
+
+function applyFilters(){
+
+    const search =
+        searchInput
+        ? searchInput.value
+            .trim()
+            .toLowerCase()
+        : "";
+
+
+    const selectedEvent =
+        eventFilter
+        ? eventFilter.value
+        : "all";
+
+
+    const selectedClass =
+        classFilter
+        ? classFilter.value
+        : "all";
+
+
+    const selectedSection =
+        sectionFilter
+        ? sectionFilter.value
+        : "all";
+
+
+    filteredRegistrations = {};
+
+
+    Object.entries(
+        registrations || {}
+    )
+    .forEach(
+        ([key,data]) => {
+
+            const events =
+                getEvents(data);
+
+
+            const searchable = [
+
+                data.registrationId,
+
+                data.StudentName,
+
+                data.TeamName,
+
+                data.Class,
+
+                data.Section,
+
+                data.MobileNumber,
+
+                data.EmailAddress,
+
+                data.Email,
+
+                data.email,
+
+                events.join(" ")
+
+            ]
+            .map(normalize)
+            .join(" ")
+            .toLowerCase();
+
+
+            const matchesSearch =
+                !search ||
+                searchable.includes(
+                    search
+                );
+
+
+            const matchesEvent =
+                selectedEvent === "all" ||
+                events.includes(
+                    selectedEvent
+                );
+
+
+            const matchesClass =
+                selectedClass === "all" ||
+                normalize(
+                    data.Class
+                ).trim() ===
+                selectedClass;
+
+
+            const matchesSection =
+                selectedSection === "all" ||
+                normalize(
+                    data.Section
+                ).trim() ===
+                selectedSection;
+
+
+            if(
+                matchesSearch &&
+                matchesEvent &&
+                matchesClass &&
+                matchesSection
+            ){
+
+                filteredRegistrations[key] =
+                    data;
+
+            }
+
+        }
+    );
+
+
+    renderTable();
+
+}
+
+
+/* =====================================================
+   RENDER TABLE
+===================================================== */
+
+function renderTable(){
+
+    if(
+        !tableBody ||
+        !tableEmpty
+    ){
+
+        return;
+
+    }
+
+
+    const entries =
+        Object.entries(
+            filteredRegistrations || {}
+        );
+
+
+    if(resultCount){
+
+        resultCount.textContent =
+            `${entries.length} registration${entries.length === 1 ? "" : "s"}`;
+
+    }
+
+
+    tableBody.innerHTML = "";
+
+
+    if(entries.length === 0){
+
+        tableEmpty.classList.remove(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    tableEmpty.classList.add(
+        "hidden"
+    );
+
+
+    entries.sort(
+        (a,b) => {
+
+            const dateA =
+                getTimestamp(
+                    a[1].registrationDate
+                );
+
+
+            const dateB =
+                getTimestamp(
+                    b[1].registrationDate
+                );
+
+
+            return dateB - dateA;
+
+        }
+    );
+
+
+    entries.forEach(
+        ([key,data]) => {
+
+            const id =
+                normalize(
+                    data.registrationId
+                ) || key;
+
+
+            const name =
+                normalize(
+                    data.StudentName
+                ) || "-";
+
+
+            const team =
+                normalize(
+                    data.TeamName
+                ) || "Unnamed Team";
+
+
+            const className =
+                normalize(
+                    data.Class
+                ) || "-";
+
+
+            const section =
+                normalize(
+                    data.Section
+                ) || "-";
+
+
+            const mobile =
+                normalize(
+                    data.MobileNumber
+                ) || "-";
+
+
+            const teamSize =
+                getTeamSize(data);
+
+
+            const date =
+                formatDate(
+                    data.registrationDate
+                );
+
+
+            const events =
+                getEvents(data);
+
+
+            const eventHTML =
+                events.length
+                ? events
+                    .map(
+                        event => `
+                            <span class="event-tag">
+                                ${escapeHTML(event)}
+                            </span>
+                        `
+                    )
+                    .join("")
+                : "-";
+
+
+            const row =
+                document.createElement("tr");
+
+
+            row.innerHTML = `
+
+                <td>
+
+                    <span class="registration-id">
+
+                        ${escapeHTML(id)}
+
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    <strong class="team-name">
+
+                        ${escapeHTML(name)}
+
+                    </strong>
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHTML(team)}
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHTML(className)}
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHTML(section)}
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHTML(mobile)}
+
+                </td>
+
+
+                <td>
+
+                    <div class="event-tags">
+
+                        ${eventHTML}
+
+                    </div>
+
+                </td>
+
+
+                <td>
+
+                    ${teamSize}
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHTML(date)}
+
+                </td>
+
+
+                <td>
+
+                    <div class="action-buttons">
+
+                        <button
+                            type="button"
+                            class="action-btn view"
+                            title="View Details"
+                            data-view="${escapeAttr(key)}">
+
+                            <i class="fa-solid fa-eye"></i>
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="action-btn edit"
+                            title="Edit Registration"
+                            data-edit="${escapeAttr(key)}">
+
+                            <i class="fa-solid fa-pen"></i>
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="action-btn delete"
+                            title="Delete Registration"
+                            data-delete="${escapeAttr(key)}">
+
+                            <i class="fa-solid fa-trash"></i>
+
+                        </button>
+
+                    </div>
+
+                </td>
+
+            `;
+
+
+            tableBody.appendChild(row);
+
+        }
+    );
+
+
+    tableBody
+    .querySelectorAll("[data-view]")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                openDetails(
+                    button.dataset.view
+                );
+
+            }
+        );
+
+    });
+
+
+    tableBody
+    .querySelectorAll("[data-edit]")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                openEdit(
+                    button.dataset.edit
+                );
+
+            }
+        );
+
+    });
+
+
+    tableBody
+    .querySelectorAll("[data-delete]")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                deleteRegistration(
+                    button.dataset.delete
+                );
+
+            }
+        );
+
+    });
+
+}
+
+
+/* =====================================================
+   DETAILS MODAL
+===================================================== */
+
+function openDetails(key){
 
     const data =
-        registrations[registrationID];
+        registrations[key];
 
 
     if(!data){
 
         showToast(
             "Registration not found.",
-            true
+            "error"
         );
 
         return;
@@ -538,605 +1887,1155 @@ function(registrationID){
     }
 
 
-    document.getElementById("editID")
-        .textContent =
-        registrationID;
-
-
-    document.getElementById(
-        "editStudentName"
-    ).value =
-        data.StudentName || "";
-
-
-    document.getElementById(
-        "editTeamName"
-    ).value =
-        data.TeamName || "";
-
-
-    document.getElementById(
-        "editClass"
-    ).value =
-        data.Class || "";
-
-
-    document.getElementById(
-        "editSection"
-    ).value =
-        data.Section || "";
-
-
-    document.getElementById(
-        "editMobile"
-    ).value =
-        data.MobileNumber || "";
-
-
-    document.getElementById(
-        "editEmail"
-    ).value =
-        data.Email || "";
-
-
-    // Reset event checkboxes
-
-    document
-        .querySelectorAll(".edit-event")
-        .forEach(
-            checkbox => {
-
-                checkbox.checked = false;
-
-            }
-        );
+    currentRegistrationKey =
+        key;
 
 
     const events =
-        String(data.Events || "")
-            .toLowerCase();
-
-
-    document
-        .querySelectorAll(".edit-event")
-        .forEach(
-            checkbox => {
-
-                if(
-                    events.includes(
-                        checkbox.value.toLowerCase()
-                    )
-                ){
-
-                    checkbox.checked = true;
-
-                }
-
-            }
-        );
-
-
-    document.getElementById("editModal")
-        .classList.add("active");
-
-};
-
-
-// =====================================================
-// SAVE EDIT
-// =====================================================
-
-window.saveEdit = async function(){
-
-    const registrationID =
-        document.getElementById("editID")
-            .textContent
-            .trim();
-
-
-    if(!registrationID){
-
-        showToast(
-            "Registration ID is missing.",
-            true
-        );
-
-        return;
-
-    }
-
-
-    const studentName =
-        document.getElementById(
-            "editStudentName"
-        ).value.trim();
-
-
-    const teamName =
-        document.getElementById(
-            "editTeamName"
-        ).value.trim();
-
-
-    if(!studentName){
-
-        showToast(
-            "Student name is required.",
-            true
-        );
-
-        return;
-
-    }
-
-
-    if(!teamName){
-
-        showToast(
-            "Team name is required.",
-            true
-        );
-
-        return;
-
-    }
-
-
-    const selectedEvents = [];
-
-
-    document
-        .querySelectorAll(".edit-event:checked")
-        .forEach(
-            checkbox => {
-
-                selectedEvents.push(
-                    checkbox.value
-                );
-
-            }
-        );
-
-
-    if(selectedEvents.length === 0){
-
-        showToast(
-            "Select at least one event.",
-            true
-        );
-
-        return;
-
-    }
-
-
-    const updatedData = {
-
-        StudentName:
-            studentName,
-
-        TeamName:
-            teamName,
-
-        Class:
-            document.getElementById(
-                "editClass"
-            ).value.trim(),
-
-        Section:
-            document.getElementById(
-                "editSection"
-            ).value.trim(),
-
-        MobileNumber:
-            document.getElementById(
-                "editMobile"
-            ).value.trim(),
-
-        Email:
-            document.getElementById(
-                "editEmail"
-            ).value.trim(),
-
-        Events:
-            selectedEvents.join(", ")
-
-    };
-
-
-    try{
-
-        const registrationRef =
-            ref(
-                database,
-                "registrations/" +
-                registrationID
-            );
-
-
-        await update(
-            registrationRef,
-            updatedData
-        );
-
-
-        closeEditModal();
-
-
-        showToast(
-            "Registration updated successfully."
-        );
-
-
-    }catch(error){
-
-        console.error(error);
-
-        showToast(
-            "Update failed: " +
-            error.message,
-            true
-        );
-
-    }
-
-};
-
-
-// =====================================================
-// CLOSE EDIT MODAL
-// =====================================================
-
-window.closeEditModal =
-function(){
-
-    document.getElementById(
-        "editModal"
-    ).classList.remove("active");
-
-};
-
-
-// =====================================================
-// DELETE REGISTRATION
-// =====================================================
-
-window.deleteRegistration =
-function(registrationID){
-
-    if(
-        !registrations[registrationID]
-    ){
-
-        showToast(
-            "Registration not found.",
-            true
-        );
-
-        return;
-
-    }
-
-
-    deleteTargetID =
-        registrationID;
-
-
-    document.getElementById(
-        "deleteID"
-    ).textContent =
-        registrationID;
-
-
-    document.getElementById(
-        "deleteModal"
-    ).classList.add("active");
-
-};
-
-
-// =====================================================
-// CONFIRM DELETE
-// =====================================================
-
-window.confirmDelete =
-async function(){
-
-    if(!deleteTargetID){
-
-        return;
-
-    }
+        getEvents(data);
 
 
     const id =
-        deleteTargetID;
+        normalize(
+            data.registrationId
+        ) || key;
 
 
-    try{
+    const email =
+        getRegistrationEmail(data);
 
-        const registrationRef =
-            ref(
-                database,
-                "registrations/" + id
+
+    let membersHTML = "";
+
+
+    for(
+        let i = 2;
+        i <= 5;
+        i++
+    ){
+
+        const name =
+            normalize(
+                data[`Member${i}Name`]
             );
 
 
-        await remove(
-            registrationRef
-        );
+        if(!name){
+
+            continue;
+
+        }
 
 
-        closeDeleteModal();
+        const memberClass =
+            normalize(
+                data[`Member${i}Class`]
+            );
 
 
-        deleteTargetID = null;
+        const memberSection =
+            normalize(
+                data[`Member${i}Section`]
+            );
 
 
-        showToast(
-            "Registration deleted successfully."
-        );
+        membersHTML += `
+
+            <div class="member-detail">
+
+                <strong>
+                    Team Member ${i}
+                </strong>
 
 
-    }catch(error){
+                <div class="detail-grid">
 
-        console.error(error);
+                    <div class="detail-item">
 
-        showToast(
-            "Delete failed: " +
-            error.message,
-            true
-        );
+                        <label>
+                            Name
+                        </label>
+
+                        <strong>
+                            ${escapeHTML(name)}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <label>
+                            Class
+                        </label>
+
+                        <strong>
+                            ${escapeHTML(
+                                memberClass || "-"
+                            )}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <label>
+                            Section
+                        </label>
+
+                        <strong>
+                            ${escapeHTML(
+                                memberSection || "-"
+                            )}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        `;
 
     }
 
-};
+
+    if(!detailsContent){
+
+        return;
+
+    }
 
 
-// =====================================================
-// CLOSE DELETE MODAL
-// =====================================================
+    detailsContent.innerHTML = `
 
-window.closeDeleteModal =
-function(){
+        <div class="detail-section">
 
-    document.getElementById(
-        "deleteModal"
-    ).classList.remove("active");
-
-    deleteTargetID = null;
-
-};
+            <h3>
+                Registration Information
+            </h3>
 
 
-// =====================================================
-// SEARCH
-// =====================================================
+            <div class="detail-grid">
 
-window.searchRegistration =
-function(){
+                <div class="detail-item">
 
-    const value =
-        document.getElementById(
-            "search"
-        ).value
-        .toLowerCase()
-        .trim();
+                    <label>
+                        Registration ID
+                    </label>
 
+                    <strong>
+                        ${escapeHTML(id)}
+                    </strong>
 
-    const rows =
-        document.querySelectorAll(
-            "#tableBody tr"
-        );
+                </div>
 
 
-    let visible = 0;
+                <div class="detail-item">
+
+                    <label>
+                        Registration Date
+                    </label>
+
+                    <strong>
+                        ${escapeHTML(
+                            formatDate(
+                                data.registrationDate
+                            )
+                        )}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
 
 
-    rows.forEach(
-        row => {
+        <div class="detail-section">
 
-            const searchText =
-                row.dataset.search || "";
+            <h3>
+                Team Information
+            </h3>
 
 
-            if(
-                !value ||
-                searchText.includes(value)
-            ){
+            <div class="detail-grid">
 
-                row.style.display = "";
+                <div class="detail-item">
 
-                visible++;
+                    <label>
+                        Team Leader
+                    </label>
 
-            }else{
+                    <strong>
+                        ${escapeHTML(
+                            normalize(
+                                data.StudentName
+                            ) || "-"
+                        )}
+                    </strong>
 
-                row.style.display = "none";
+                </div>
 
-            }
 
+                <div class="detail-item">
+
+                    <label>
+                        Team Name
+                    </label>
+
+                    <strong>
+                        ${escapeHTML(
+                            normalize(
+                                data.TeamName
+                            ) || "-"
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <label>
+                        Class
+                    </label>
+
+                    <strong>
+                        ${escapeHTML(
+                            normalize(
+                                data.Class
+                            ) || "-"
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <label>
+                        Section
+                    </label>
+
+                    <strong>
+                        ${escapeHTML(
+                            normalize(
+                                data.Section
+                            ) || "-"
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <label>
+                        Mobile
+                    </label>
+
+                    <strong>
+                        ${escapeHTML(
+                            normalize(
+                                data.MobileNumber
+                            ) || "-"
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <label>
+                        Email
+                    </label>
+
+                    <strong>
+                        ${escapeHTML(
+                            email || "-"
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <label>
+                        Team Size
+                    </label>
+
+                    <strong>
+                        ${getTeamSize(data)}
+                        Member(s)
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="detail-section">
+
+            <h3>
+                Selected Events
+            </h3>
+
+
+            <div class="event-tags">
+
+                ${
+                    events.length
+                    ? events
+                        .map(
+                            event => `
+                                <span class="event-tag">
+                                    ${escapeHTML(event)}
+                                </span>
+                            `
+                        )
+                        .join("")
+                    : "<span>No event selected</span>"
+                }
+
+            </div>
+
+        </div>
+
+
+        ${
+            membersHTML
+            ? `
+                <div class="detail-section">
+
+                    <h3>
+                        Team Members
+                    </h3>
+
+                    ${membersHTML}
+
+                </div>
+            `
+            : ""
         }
-    );
 
 
-    updateVisibleCount(visible);
+        <div class="detail-section">
 
-};
-
-
-// =====================================================
-// CLEAR SEARCH
-// =====================================================
-
-window.clearSearch =
-function(){
-
-    document.getElementById(
-        "search"
-    ).value = "";
+            <h3>
+                Remarks
+            </h3>
 
 
-    searchRegistration();
+            <div class="detail-item">
 
-};
+                <strong>
+
+                    ${escapeHTML(
+                        normalize(
+                            data.Remarks
+                        ) ||
+                        "No remarks."
+                    )}
+
+                </strong>
+
+            </div>
+
+        </div>
+
+    `;
 
 
-// =====================================================
-// REFRESH
-// =====================================================
+    if(detailsModal){
 
-window.refreshData =
-function(){
-
-    const button =
-        document.querySelector(
-            ".refresh-btn"
+        detailsModal.classList.remove(
+            "hidden"
         );
 
-
-    const icon =
-        button.querySelector("i");
-
-
-    icon.classList.add(
-        "fa-spin"
-    );
-
-
-    setTimeout(
-        ()=>{
-            icon.classList.remove(
-                "fa-spin"
-            );
-        },
-        700
-    );
-
-
-    loadData();
-
-
-    showToast(
-        "Registration data refreshed."
-    );
-
-};
-
-
-// =====================================================
-// UPDATE VISIBLE COUNT
-// =====================================================
-
-function updateVisibleCount(count){
-
-    document.getElementById(
-        "visibleCount"
-    ).textContent = count;
+    }
 
 }
 
 
-// =====================================================
-// CSV EXPORT
-// =====================================================
+/* =====================================================
+   DELETE FROM DETAILS MODAL
+===================================================== */
 
-window.downloadCSV =
-function(){
+if(modalDeleteBtn){
 
-    const rows =
-        document.querySelectorAll(
-            "#tableBody tr"
+    modalDeleteBtn.addEventListener(
+        "click",
+        () => {
+
+            if(
+                currentRegistrationKey
+            ){
+
+                deleteRegistration(
+                    currentRegistrationKey
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   OPEN EDIT MODAL
+===================================================== */
+
+function openEdit(key){
+
+    const data =
+        registrations[key];
+
+
+    if(!data){
+
+        showToast(
+            "Registration not found.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(editKey){
+
+        editKey.value =
+            key;
+
+    }
+
+
+    if(editStudentName){
+
+        editStudentName.value =
+            normalize(
+                data.StudentName
+            );
+
+    }
+
+
+    if(editTeamName){
+
+        editTeamName.value =
+            normalize(
+                data.TeamName
+            );
+
+    }
+
+
+    if(editClass){
+
+        editClass.value =
+            normalize(
+                data.Class
+            );
+
+    }
+
+
+    if(editSection){
+
+        editSection.value =
+            normalize(
+                data.Section
+            );
+
+    }
+
+
+    if(editMobile){
+
+        editMobile.value =
+            normalize(
+                data.MobileNumber
+            );
+
+    }
+
+
+    if(editEmail){
+
+        editEmail.value =
+            getRegistrationEmail(data);
+
+    }
+
+
+    if(editRemarks){
+
+        editRemarks.value =
+            normalize(
+                data.Remarks
+            );
+
+    }
+
+
+    if(editModal){
+
+        editModal.classList.remove(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   SAVE EDIT
+===================================================== */
+
+if(editForm){
+
+    editForm.addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+
+            const key =
+                editKey
+                ? editKey.value
+                : "";
+
+
+            if(!key){
+
+                showToast(
+                    "Invalid registration.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            const saveButton =
+                document.getElementById(
+                    "saveEditBtn"
+                );
+
+
+            if(saveButton){
+
+                saveButton.disabled = true;
+
+                saveButton.innerHTML = `
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    Saving...
+                `;
+
+            }
+
+
+            try{
+
+                const updates = {
+
+                    StudentName:
+                        editStudentName
+                        ? editStudentName.value.trim()
+                        : "",
+
+                    TeamName:
+                        editTeamName
+                        ? editTeamName.value.trim()
+                        : "",
+
+                    Class:
+                        editClass
+                        ? editClass.value.trim()
+                        : "",
+
+                    Section:
+                        editSection
+                        ? editSection.value.trim()
+                        : "",
+
+                    MobileNumber:
+                        editMobile
+                        ? editMobile.value.trim()
+                        : "",
+
+                    EmailAddress:
+                        editEmail
+                        ? editEmail.value.trim()
+                        : "",
+
+                    Remarks:
+                        editRemarks
+                        ? editRemarks.value.trim()
+                        : ""
+
+                };
+
+
+                await update(
+
+                    ref(
+                        database,
+                        `registrations/${key}`
+                    ),
+
+                    updates
+
+                );
+
+
+                registrations[key] = {
+
+                    ...registrations[key],
+
+                    ...updates
+
+                };
+
+
+                filteredRegistrations[key] =
+                    registrations[key];
+
+
+                if(editModal){
+
+                    editModal.classList.add(
+                        "hidden"
+                    );
+
+                }
+
+
+                updateDashboard();
+
+                renderRecent();
+
+                renderTable();
+
+                updateEventPage();
+
+                populateFilters();
+
+
+                showToast(
+                    "Registration updated successfully.",
+                    "success"
+                );
+
+            }
+            catch(error){
+
+                console.error(
+                    "Update error:",
+                    error
+                );
+
+
+                showToast(
+                    "Unable to update registration.",
+                    "error"
+                );
+
+            }
+            finally{
+
+                if(saveButton){
+
+                    saveButton.disabled = false;
+
+                    saveButton.innerHTML = `
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        Save Changes
+                    `;
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   DELETE REGISTRATION
+===================================================== */
+
+async function deleteRegistration(key){
+
+    const data =
+        registrations[key];
+
+
+    if(!data){
+
+        showToast(
+            "Registration not found.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const name =
+        normalize(
+            data.StudentName
+        ) ||
+        "this registration";
+
+
+    const confirmed =
+        confirm(
+            `Are you sure you want to delete the registration for ${name}?\n\nThis action cannot be undone.`
         );
 
 
-    const csv = [];
+    if(!confirmed){
+
+        return;
+
+    }
 
 
-    csv.push([
-        "Registration ID",
-        "Student Name",
-        "Team Name",
-        "Class",
-        "Section",
-        "Events",
-        "Mobile",
-        "Email"
-    ].map(csvEscape).join(","));
+    try{
+
+        await remove(
+
+            ref(
+                database,
+                `registrations/${key}`
+            )
+
+        );
 
 
-    rows.forEach(
-        row => {
+        delete registrations[key];
+
+        delete filteredRegistrations[key];
+
+
+        if(detailsModal){
+
+            detailsModal.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        if(editModal){
+
+            editModal.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        updateDashboard();
+
+        renderRecent();
+
+        renderTable();
+
+        populateFilters();
+
+        updateEventPage();
+
+
+        showToast(
+            "Registration deleted successfully.",
+            "success"
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            "Delete error:",
+            error
+        );
+
+
+        showToast(
+            "Unable to delete registration.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   EVENT PAGE
+===================================================== */
+
+function updateEventPage(){
+
+    const counts = {
+
+        race: 0,
+
+        war: 0,
+
+        tug: 0,
+
+        soccer: 0
+
+    };
+
+
+    Object.values(
+        registrations || {}
+    )
+    .forEach(data => {
+
+        getEvents(data)
+        .forEach(event => {
+
+            const eventName =
+                event
+                .trim()
+                .toLowerCase();
+
 
             if(
-                row.style.display === "none"
+                eventName ===
+                "robo race"
             ){
 
-                return;
+                counts.race++;
 
             }
 
 
-            const cells =
-                row.querySelectorAll("td");
+            if(
+                eventName ===
+                "robo war"
+            ){
 
-
-            if(cells.length < 9){
-
-                return;
+                counts.war++;
 
             }
 
 
-            const id =
-                cells[1].innerText.trim();
+            if(
+                eventName ===
+                "robo tug of war"
+            ){
 
-            const student =
-                cells[2].innerText.trim();
+                counts.tug++;
 
-            const team =
-                cells[3].innerText.trim();
-
-            const className =
-                cells[4].innerText.trim();
-
-            const section =
-                cells[5].innerText.trim();
-
-            const events =
-                cells[6].innerText.trim();
-
-            const mobile =
-                cells[7].innerText.trim();
+            }
 
 
-            const data =
-                registrations[id] || {};
+            if(
+                eventName ===
+                "robo soccer"
+            ){
+
+                counts.soccer++;
+
+            }
+
+        });
+
+    });
 
 
-            const email =
-                data.Email || "";
+    setText(
+        "eventRaceCount",
+        counts.race
+    );
 
 
-            csv.push([
+    setText(
+        "eventWarCount",
+        counts.war
+    );
 
-                id,
-                student,
-                team,
-                className,
-                section,
-                events,
-                mobile,
-                email
 
-            ].map(csvEscape).join(","));
+    setText(
+        "eventTugCount",
+        counts.tug
+    );
+
+
+    setText(
+        "eventSoccerCount",
+        counts.soccer
+    );
+
+}
+
+
+/* =====================================================
+   REFRESH BUTTONS
+===================================================== */
+
+const dashboardRefresh =
+    document.getElementById(
+        "dashboardRefresh"
+    );
+
+
+if(dashboardRefresh){
+
+    dashboardRefresh.addEventListener(
+        "click",
+        loadRegistrations
+    );
+
+}
+
+
+const refreshRegistrations =
+    document.getElementById(
+        "refreshRegistrations"
+    );
+
+
+if(refreshRegistrations){
+
+    refreshRegistrations.addEventListener(
+        "click",
+        loadRegistrations
+    );
+
+}
+
+
+/* =====================================================
+   EXPORT CSV
+===================================================== */
+
+const exportCsv =
+    document.getElementById(
+        "exportCsv"
+    );
+
+
+if(exportCsv){
+
+    exportCsv.addEventListener(
+        "click",
+        () => {
+
+            exportCSV(
+                filteredRegistrations
+            );
+
+        }
+    );
+
+}
+
+
+const exportDashboard =
+    document.getElementById(
+        "exportDashboard"
+    );
+
+
+if(exportDashboard){
+
+    exportDashboard.addEventListener(
+        "click",
+        () => {
+
+            exportCSV(
+                registrations
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   EXPORT CSV FUNCTION
+===================================================== */
+
+function exportCSV(dataObject){
+
+    const entries =
+        Object.entries(
+            dataObject || {}
+        );
+
+
+    if(entries.length === 0){
+
+        showToast(
+            "There are no registrations to export.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const headers = [
+
+        "Registration ID",
+
+        "Team Leader",
+
+        "Team Name",
+
+        "Class",
+
+        "Section",
+
+        "Mobile",
+
+        "Email",
+
+        "Events",
+
+        "Team Size",
+
+        "Member 2",
+
+        "Member 3",
+
+        "Member 4",
+
+        "Member 5",
+
+        "Remarks",
+
+        "Registration Date"
+
+    ];
+
+
+    const rows = [
+
+        headers
+
+    ];
+
+
+    entries.forEach(
+        ([key,data]) => {
+
+            rows.push([
+
+                normalize(
+                    data.registrationId
+                ) || key,
+
+
+                normalize(
+                    data.StudentName
+                ),
+
+
+                normalize(
+                    data.TeamName
+                ),
+
+
+                normalize(
+                    data.Class
+                ),
+
+
+                normalize(
+                    data.Section
+                ),
+
+
+                normalize(
+                    data.MobileNumber
+                ),
+
+
+                getRegistrationEmail(data),
+
+
+                getEvents(data)
+                .join(" | "),
+
+
+                getTeamSize(data),
+
+
+                normalize(
+                    data.Member2Name
+                ),
+
+
+                normalize(
+                    data.Member3Name
+                ),
+
+
+                normalize(
+                    data.Member4Name
+                ),
+
+
+                normalize(
+                    data.Member5Name
+                ),
+
+
+                normalize(
+                    data.Remarks
+                ),
+
+
+                normalize(
+                    data.registrationDate
+                )
+
+            ]);
 
         }
     );
 
 
+    const csv =
+        rows
+        .map(
+            row =>
+                row
+                .map(csvEscape)
+                .join(",")
+        )
+        .join("\n");
+
+
     const blob =
         new Blob(
-            [csv.join("\n")],
+            [
+                "\ufeff" + csv
+            ],
             {
                 type:
                     "text/csv;charset=utf-8;"
@@ -1145,145 +3044,218 @@ function(){
 
 
     const url =
-        URL.createObjectURL(blob);
+        URL.createObjectURL(
+            blob
+        );
 
 
     const link =
-        document.createElement("a");
+        document.createElement(
+            "a"
+        );
 
 
-    link.href = url;
+    link.href =
+        url;
+
 
     link.download =
-        "APS_Robotics_Registrations.csv";
+        "APS_Robotics_Registrations_2026.csv";
 
 
-    document.body.appendChild(link);
+    document.body.appendChild(
+        link
+    );
+
 
     link.click();
 
-    document.body.removeChild(link);
+
+    link.remove();
 
 
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(
+        url
+    );
 
 
     showToast(
-        "CSV exported successfully."
+        "CSV exported successfully.",
+        "success"
     );
 
-};
+}
 
 
-// =====================================================
-// CSV ESCAPE
-// =====================================================
+/* =====================================================
+   CSV ESCAPE
+===================================================== */
 
 function csvEscape(value){
 
-    return `"${String(value)
-        .replace(/"/g,'""')}"`;
+    const string =
+        normalize(value);
+
+
+    return `"${string
+        .replace(
+            /"/g,
+            '""'
+        )}"`;
 
 }
 
 
-// =====================================================
-// HTML ESCAPE
-// =====================================================
+/* =====================================================
+   MODAL CLOSE BUTTONS
+===================================================== */
 
-function escapeHTML(value){
+document
+.querySelectorAll("[data-close-modal]")
+.forEach(button => {
 
-    return String(value)
+    button.addEventListener(
+        "click",
+        () => {
 
-        .replace(/&/g,"&amp;")
+            if(detailsModal){
 
-        .replace(/</g,"&lt;")
+                detailsModal.classList.add(
+                    "hidden"
+                );
 
-        .replace(/>/g,"&gt;")
+            }
 
-        .replace(/"/g,"&quot;")
 
-        .replace(/'/g,"&#039;");
+            if(editModal){
+
+                editModal.classList.add(
+                    "hidden"
+                );
+
+            }
+
+        }
+    );
+
+});
+
+
+/* =====================================================
+   DETAILS MODAL BACKDROP
+===================================================== */
+
+if(detailsModal){
+
+    detailsModal.addEventListener(
+        "click",
+        event => {
+
+            if(
+                event.target ===
+                detailsModal
+            ){
+
+                detailsModal.classList.add(
+                    "hidden"
+                );
+
+            }
+
+        }
+    );
 
 }
 
 
-// =====================================================
-// JAVASCRIPT STRING ESCAPE
-// =====================================================
+/* =====================================================
+   EDIT MODAL BACKDROP
+===================================================== */
 
-function escapeJS(value){
+if(editModal){
 
-    return String(value)
+    editModal.addEventListener(
+        "click",
+        event => {
 
-        .replace(/\\/g,"\\\\")
+            if(
+                event.target ===
+                editModal
+            ){
 
-        .replace(/'/g,"\\'")
+                editModal.classList.add(
+                    "hidden"
+                );
 
-        .replace(/"/g,'\\"')
+            }
 
-        .replace(/\n/g,"\\n")
-
-        .replace(/\r/g,"\\r");
+        }
+    );
 
 }
 
 
-// =====================================================
-// TOAST
-// =====================================================
+/* =====================================================
+   TOAST
+===================================================== */
 
 function showToast(
     message,
-    isError = false
+    type = "success"
 ){
 
-    const toast =
-        document.getElementById(
-            "toast"
-        );
+    if(
+        !toast ||
+        !toastMessage
+    ){
 
-    const toastMessage =
-        document.getElementById(
-            "toastMessage"
-        );
+        return;
 
-    const toastIcon =
-        document.getElementById(
-            "toastIcon"
-        );
+    }
 
 
     toastMessage.textContent =
         message;
 
 
-    toast.classList.toggle(
-        "error",
-        isError
-    );
+    const icon =
+        toast.querySelector("i");
 
 
-    toastIcon.className =
-        isError
+    if(icon){
+
+        icon.className =
+            type === "error"
             ? "fa-solid fa-circle-exclamation"
-            : "fa-solid fa-check";
+            : "fa-solid fa-circle-check";
 
 
-    toast.classList.add("show");
+        icon.style.color =
+            type === "error"
+            ? "#ff6278"
+            : "#00ff99";
+
+    }
+
+
+    toast.classList.add(
+        "show"
+    );
 
 
     clearTimeout(
-        window.toastTimer
+        toastTimer
     );
 
 
-    window.toastTimer =
+    toastTimer =
         setTimeout(
-            ()=>{
+            () => {
+
                 toast.classList.remove(
                     "show"
                 );
+
             },
             3000
         );
@@ -1291,62 +3263,236 @@ function showToast(
 }
 
 
-// =====================================================
-// CLOSE MODAL BY CLICKING OUTSIDE
-// =====================================================
+/* =====================================================
+   DATE FORMAT
+===================================================== */
 
-document.addEventListener(
-    "click",
-    function(event){
+function formatDate(value){
 
-        const editModal =
-            document.getElementById(
-                "editModal"
-            );
+    if(
+        value === undefined ||
+        value === null ||
+        value === ""
+    ){
 
-        const deleteModal =
-            document.getElementById(
-                "deleteModal"
-            );
-
-
-        if(
-            event.target === editModal
-        ){
-
-            closeEditModal();
-
-        }
-
-
-        if(
-            event.target === deleteModal
-        ){
-
-            closeDeleteModal();
-
-        }
+        return "-";
 
     }
-);
 
 
-// =====================================================
-// ESC KEY
-// =====================================================
+    const date =
+        new Date(value);
+
+
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
+
+        return String(value);
+
+    }
+
+
+    return date.toLocaleString(
+        "en-IN",
+        {
+            day:
+                "2-digit",
+
+            month:
+                "short",
+
+            year:
+                "numeric",
+
+            hour:
+                "2-digit",
+
+            minute:
+                "2-digit"
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   TIMESTAMP HELPER
+===================================================== */
+
+function getTimestamp(value){
+
+    if(
+        value === undefined ||
+        value === null ||
+        value === ""
+    ){
+
+        return 0;
+
+    }
+
+
+    const timestamp =
+        new Date(value)
+        .getTime();
+
+
+    return Number.isNaN(
+        timestamp
+    )
+    ? 0
+    : timestamp;
+
+}
+
+
+/* =====================================================
+   TEXT HELPER
+===================================================== */
+
+function setText(
+    elementId,
+    value
+){
+
+    const element =
+        document.getElementById(
+            elementId
+        );
+
+
+    if(element){
+
+        element.textContent =
+            value;
+
+    }
+
+}
+
+
+/* =====================================================
+   NATURAL SORT
+===================================================== */
+
+function naturalSort(a,b){
+
+    return String(a)
+        .localeCompare(
+            String(b),
+            undefined,
+            {
+                numeric: true,
+                sensitivity: "base"
+            }
+        );
+
+}
+
+
+/* =====================================================
+   HTML SECURITY
+===================================================== */
+
+function escapeHTML(value){
+
+    return normalize(value)
+        .replace(
+            /[&<>"']/g,
+            character => {
+
+                const entities = {
+
+                    "&":
+                        "&amp;",
+
+                    "<":
+                        "&lt;",
+
+                    ">":
+                        "&gt;",
+
+                    '"':
+                        "&quot;",
+
+                    "'":
+                        "&#039;"
+
+                };
+
+
+                return entities[
+                    character
+                ];
+
+            }
+        );
+
+}
+
+
+/* =====================================================
+   ATTRIBUTE SECURITY
+===================================================== */
+
+function escapeAttr(value){
+
+    return escapeHTML(value);
+
+}
+
+
+/* =====================================================
+   INITIAL STATE
+===================================================== */
+
+filteredRegistrations = {};
+
+updateDashboard();
+
+updateEventPage();
+
+
+/* =====================================================
+   KEYBOARD ESCAPE
+===================================================== */
 
 document.addEventListener(
     "keydown",
-    function(event){
+    event => {
 
-        if(event.key !== "Escape"){
-            return;
+        if(
+            event.key ===
+            "Escape"
+        ){
+
+            if(detailsModal){
+
+                detailsModal.classList.add(
+                    "hidden"
+                );
+
+            }
+
+
+            if(editModal){
+
+                editModal.classList.add(
+                    "hidden"
+                );
+
+            }
+
         }
-
-
-        closeEditModal();
-
-        closeDeleteModal();
 
     }
 );
+
+
+/* =====================================================
+   END OF ADMIN.JS
+===================================================== */
