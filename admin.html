@@ -3,33 +3,17 @@
 
 <head>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>
-        APS Robotics Championship 2026 | Admin Panel
-    </title>
+<title>APS Robotics Championship 2026 | Admin</title>
 
+<link rel="stylesheet" href="admin.css">
 
-    <!-- CSS -->
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    <link rel="stylesheet" href="admin.css">
-
-
-    <!-- Font Awesome -->
-
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    >
-
-
-    <!-- Google Fonts -->
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap"
-        rel="stylesheet"
-    >
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 </head>
 
@@ -41,54 +25,131 @@
      LOGIN
 ===================================================== -->
 
-<div class="login-box">
+<section class="login-screen" id="loginScreen">
 
-    <h1>
-        APS Robotics Championship
-    </h1>
+    <div class="login-glow"></div>
 
+    <div class="login-card">
 
-    <p>
-        Admin Login
-    </p>
+        <div class="brand-logo">
 
+            <div class="logo-circle">
+                <i class="fa-solid fa-robot"></i>
+            </div>
 
-    <label>
-        Username
-    </label>
-
-    <input
-        id="username"
-        type="text"
-        placeholder="Enter Username"
-        autocomplete="username"
-    >
+        </div>
 
 
-    <label>
-        Password
-    </label>
-
-    <input
-        id="password"
-        type="password"
-        placeholder="Enter Password"
-        autocomplete="current-password"
-    >
+        <span class="small-title">
+            APS TINKERING LAB
+        </span>
 
 
-    <button onclick="login()">
-
-        <i class="fa-solid fa-right-to-bracket"></i>
-
-        Login
-
-    </button>
+        <h1>
+            ROBOTICS
+            <span>CHAMPIONSHIP</span>
+        </h1>
 
 
-    <p id="error"></p>
+        <div class="year">
+            2026
+        </div>
 
-</div>
+
+        <div class="login-line"></div>
+
+
+        <p class="login-heading">
+            <i class="fa-solid fa-shield-halved"></i>
+            ADMIN ACCESS
+        </p>
+
+
+        <div class="input-group">
+
+            <label>
+                Username
+            </label>
+
+            <div class="input-box">
+
+                <i class="fa-solid fa-user"></i>
+
+                <input
+                    id="username"
+                    type="text"
+                    placeholder="Enter username"
+                    autocomplete="username"
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label>
+                Password
+            </label>
+
+            <div class="input-box">
+
+                <i class="fa-solid fa-lock"></i>
+
+                <input
+                    id="password"
+                    type="password"
+                    placeholder="Enter password"
+                    autocomplete="current-password"
+                >
+
+                <button
+                    type="button"
+                    class="password-toggle"
+                    onclick="togglePassword()"
+                >
+
+                    <i
+                        id="passwordIcon"
+                        class="fa-solid fa-eye"
+                    ></i>
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <button
+            class="login-button"
+            onclick="login()"
+        >
+
+            <span>
+                ENTER CONTROL PANEL
+            </span>
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+        </button>
+
+
+        <p id="error"></p>
+
+
+        <div class="login-footer">
+
+            <i class="fa-solid fa-circle-check"></i>
+
+            Authorized Personnel Only
+
+        </div>
+
+    </div>
+
+</section>
 
 
 
@@ -96,39 +157,106 @@
      DASHBOARD
 ===================================================== -->
 
-<div id="dashboard">
+<main id="dashboard">
 
 
-    <!-- HEADER -->
+    <!-- TOP BAR -->
 
-    <header>
+    <header class="topbar">
 
-        <div class="header-content">
+        <div class="brand">
+
+            <div class="brand-icon">
+                <i class="fa-solid fa-microchip"></i>
+            </div>
+
+            <div>
+
+                <h2>
+                    APS <span>ROBOTICS</span>
+                </h2>
+
+                <small>
+                    ADMIN CONTROL PANEL
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="topbar-right">
+
+            <div class="live-status">
+
+                <span></span>
+
+                SYSTEM ONLINE
+
+            </div>
+
+
+            <button
+                class="logout-btn"
+                onclick="logout()"
+            >
+
+                <i class="fa-solid fa-power-off"></i>
+
+                Logout
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- HERO -->
+
+    <section class="dashboard-hero">
+
+        <div>
+
+            <div class="eyebrow">
+                <span></span>
+                APS TINKERING LAB
+            </div>
+
 
             <h1>
-                APS Robotics Championship 2026
+                ROBOTICS
+                <strong>CHAMPIONSHIP 2026</strong>
             </h1>
 
 
             <p>
-                Army Public School Lal Bahadur Shastri Marg
+                Registration management and event monitoring system
             </p>
 
         </div>
 
 
-        <button
-            class="logout-btn"
-            onclick="logout()"
-        >
+        <div class="hero-badge">
 
-            <i class="fa-solid fa-right-from-bracket"></i>
+            <i class="fa-solid fa-satellite-dish"></i>
 
-            Logout
+            <div>
 
-        </button>
+                <strong>
+                    LIVE DATABASE
+                </strong>
 
-    </header>
+                <small>
+                    Firebase Realtime Database
+                </small>
+
+            </div>
+
+        </div>
+
+    </section>
 
 
 
@@ -136,203 +264,287 @@
          STATISTICS
     ================================================== -->
 
-    <div class="cards">
+    <section class="stats-grid">
 
 
-        <div class="card">
+        <div class="stat-card main-stat">
 
-            <i class="fa-solid fa-users card-icon"></i>
+            <div class="stat-icon">
+                <i class="fa-solid fa-users"></i>
+            </div>
 
-            <h2 id="total">
-                0
-            </h2>
+            <div class="stat-info">
 
-            <p>
-                Total Registrations
-            </p>
+                <span>
+                    TOTAL REGISTRATIONS
+                </span>
 
-        </div>
+                <strong id="total">
+                    0
+                </strong>
 
-
-
-        <div class="card">
-
-            <i class="fa-solid fa-flag-checkered card-icon"></i>
-
-            <h2 id="race">
-                0
-            </h2>
-
-            <p>
-                🏁 Robo Race
-            </p>
+            </div>
 
         </div>
 
 
 
-        <div class="card">
+        <div class="stat-card">
 
-            <i class="fa-solid fa-shield-halved card-icon"></i>
+            <div class="event-icon race">
+                🏁
+            </div>
 
-            <h2 id="war">
-                0
-            </h2>
+            <div class="stat-info">
 
-            <p>
-                ⚔️ Robo War
-            </p>
+                <span>
+                    ROBO RACE
+                </span>
 
-        </div>
+                <strong id="race">
+                    0
+                </strong>
 
-
-
-        <div class="card">
-
-            <i class="fa-solid fa-handshake card-icon"></i>
-
-            <h2 id="tug">
-                0
-            </h2>
-
-            <p>
-                🤝 Robo Tug of War
-            </p>
+            </div>
 
         </div>
 
 
 
-        <div class="card">
+        <div class="stat-card">
 
-            <i class="fa-solid fa-futbol card-icon"></i>
+            <div class="event-icon war">
+                ⚔️
+            </div>
 
-            <h2 id="soccer">
-                0
-            </h2>
+            <div class="stat-info">
 
-            <p>
-                ⚽ Robo Soccer
-            </p>
+                <span>
+                    ROBO WAR
+                </span>
+
+                <strong id="war">
+                    0
+                </strong>
+
+            </div>
 
         </div>
 
 
-    </div>
+
+        <div class="stat-card">
+
+            <div class="event-icon tug">
+                🤝
+            </div>
+
+            <div class="stat-info">
+
+                <span>
+                    TUG OF WAR
+                </span>
+
+                <strong id="tug">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="stat-card">
+
+            <div class="event-icon soccer">
+                ⚽
+            </div>
+
+            <div class="stat-info">
+
+                <span>
+                    ROBO SOCCER
+                </span>
+
+                <strong id="soccer">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+    </section>
 
 
 
     <!-- =================================================
-         SEARCH
+         REGISTRATION MANAGEMENT
     ================================================== -->
 
-    <div class="search">
-
-        <input
-            id="search"
-            type="text"
-            placeholder="Search Registration ID / Name / Team / Mobile"
-            onkeyup="searchRegistration()"
-        >
+    <section class="management-panel">
 
 
-        <button onclick="searchRegistration()">
+        <div class="panel-header">
 
-            <i class="fa-solid fa-magnifying-glass"></i>
+            <div>
 
-            Search
+                <span class="panel-label">
+                    DATABASE
+                </span>
 
-        </button>
+                <h2>
+                    Registration Management
+                </h2>
 
-    </div>
+                <p>
+                    View, search, edit and remove registrations
+                </p>
+
+            </div>
 
 
+            <button
+                class="download-btn"
+                onclick="downloadCSV()"
+            >
 
-    <!-- =================================================
-         DOWNLOAD
-    ================================================== -->
+                <i class="fa-solid fa-file-csv"></i>
 
-    <button
-        class="download-btn"
-        onclick="downloadCSV()"
-    >
+                Export CSV
 
-        <i class="fa-solid fa-download"></i>
+            </button>
 
-        Download Registration List
-
-    </button>
+        </div>
 
 
 
-    <!-- =================================================
-         REGISTRATION TABLE
-    ================================================== -->
+        <!-- SEARCH -->
 
-    <div class="table-container">
+        <div class="search-bar">
 
-        <table>
+            <div class="search-input">
 
-            <thead>
+                <i class="fa-solid fa-magnifying-glass"></i>
 
-                <tr>
+                <input
+                    id="search"
+                    type="text"
+                    placeholder="Search registration ID, student, team or mobile..."
+                    onkeyup="searchRegistration()"
+                >
 
-                    <th>
-                        Registration ID
-                    </th>
-
-                    <th>
-                        Student
-                    </th>
-
-                    <th>
-                        Team
-                    </th>
-
-                    <th>
-                        Events
-                    </th>
-
-                    <th>
-                        Mobile
-                    </th>
-
-                    <th>
-                        Actions
-                    </th>
-
-                </tr>
-
-            </thead>
+            </div>
 
 
-            <tbody id="tableBody">
+            <button
+                class="search-button"
+                onclick="searchRegistration()"
+            >
 
-                <tr>
+                Search
 
-                    <td colspan="6">
+            </button>
 
-                        <i class="fa-solid fa-spinner fa-spin"></i>
-
-                        Loading Registrations...
-
-                    </td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
-
-    </div>
+        </div>
 
 
-</div>
+
+        <!-- TABLE -->
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            REGISTRATION
+                        </th>
+
+                        <th>
+                            STUDENT
+                        </th>
+
+                        <th>
+                            TEAM
+                        </th>
+
+                        <th>
+                            EVENTS
+                        </th>
+
+                        <th>
+                            MOBILE
+                        </th>
+
+                        <th>
+                            ACTION
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="tableBody">
+
+                    <tr>
+
+                        <td colspan="6">
+
+                            <div class="loading">
+
+                                <i class="fa-solid fa-spinner fa-spin"></i>
+
+                                Loading registrations...
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <div>
+
+            <i class="fa-solid fa-microchip"></i>
+
+            APS Robotics Championship 2026
+
+        </div>
+
+
+        <span>
+            Admin Control System
+        </span>
+
+    </footer>
+
+
+</main>
 
 
 
 <!-- =====================================================
-     EDIT REGISTRATION MODAL
+     EDIT MODAL
 ===================================================== -->
 
 <div
@@ -344,14 +556,12 @@
     <div class="edit-box">
 
 
-        <!-- MODAL HEADER -->
-
-        <div class="edit-header">
+        <div class="edit-top">
 
             <div>
 
-                <span class="modal-label">
-                    REGISTRATION
+                <span>
+                    REGISTRATION EDITOR
                 </span>
 
                 <h2>
@@ -366,9 +576,8 @@
 
 
             <button
-                class="close-btn"
+                class="modal-close"
                 onclick="closeEditModal()"
-                aria-label="Close"
             >
 
                 <i class="fa-solid fa-xmark"></i>
@@ -379,54 +588,62 @@
 
 
 
-        <!-- REGISTRATION ID -->
+        <div class="edit-id">
 
-        <label>
-            Registration ID
-        </label>
-
-        <input
-            id="editID"
-            type="text"
-            readonly
-        >
-
-
-
-        <!-- STUDENT -->
-
-        <label>
-            Student Name
-        </label>
-
-        <input
-            id="editStudentName"
-            type="text"
-            placeholder="Enter student name"
-        >
-
-
-
-        <!-- TEAM -->
-
-        <label>
-            Team Name
-        </label>
-
-        <input
-            id="editTeamName"
-            type="text"
-            placeholder="Enter team name"
-        >
-
-
-
-        <!-- CLASS + SECTION -->
-
-        <div class="edit-row">
-
+            <i class="fa-solid fa-fingerprint"></i>
 
             <div>
+
+                <small>
+                    REGISTRATION ID
+                </small>
+
+                <strong id="editID">
+                    -
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="form-grid">
+
+
+            <div class="form-field full">
+
+                <label>
+                    Student Name
+                </label>
+
+                <input
+                    id="editStudentName"
+                    type="text"
+                    placeholder="Student name"
+                >
+
+            </div>
+
+
+
+            <div class="form-field full">
+
+                <label>
+                    Team Name
+                </label>
+
+                <input
+                    id="editTeamName"
+                    type="text"
+                    placeholder="Team name"
+                >
+
+            </div>
+
+
+
+            <div class="form-field">
 
                 <label>
                     Class
@@ -442,7 +659,7 @@
 
 
 
-            <div>
+            <div class="form-field">
 
                 <label>
                     Section
@@ -457,72 +674,72 @@
             </div>
 
 
+
+            <div class="form-field">
+
+                <label>
+                    Mobile Number
+                </label>
+
+                <input
+                    id="editMobile"
+                    type="tel"
+                    placeholder="Mobile"
+                >
+
+            </div>
+
+
+
+            <div class="form-field">
+
+                <label>
+                    Email
+                </label>
+
+                <input
+                    id="editEmail"
+                    type="email"
+                    placeholder="Email"
+                >
+
+            </div>
+
+
+
+            <div class="form-field full">
+
+                <label>
+                    Selected Events
+                </label>
+
+                <textarea
+                    id="editEvents"
+                    rows="3"
+                    placeholder="Selected events"
+                ></textarea>
+
+            </div>
+
+
         </div>
 
 
 
-        <!-- MOBILE -->
-
-        <label>
-            Mobile Number
-        </label>
-
-        <input
-            id="editMobile"
-            type="tel"
-            placeholder="Mobile number"
-        >
-
-
-
-        <!-- EMAIL -->
-
-        <label>
-            Email
-        </label>
-
-        <input
-            id="editEmail"
-            type="email"
-            placeholder="Email address"
-        >
-
-
-
-        <!-- EVENTS -->
-
-        <label>
-            Events
-        </label>
-
-        <textarea
-            id="editEvents"
-            rows="3"
-            placeholder="Enter selected events"
-        ></textarea>
-
-
-
-        <!-- MODAL BUTTONS -->
-
-        <div class="edit-actions">
-
+        <div class="modal-actions">
 
             <button
-                class="cancel-btn"
+                class="cancel-button"
                 onclick="closeEditModal()"
             >
-
-                <i class="fa-solid fa-xmark"></i>
 
                 Cancel
 
             </button>
 
 
-
             <button
-                class="save-btn"
+                class="save-button"
                 onclick="saveEdit()"
             >
 
@@ -531,7 +748,6 @@
                 Save Changes
 
             </button>
-
 
         </div>
 
@@ -542,16 +758,40 @@
 
 
 
-<!-- =====================================================
-     JAVASCRIPT
-===================================================== -->
+<script type="module" src="admin.js"></script>
 
-<script
-    type="module"
-    src="admin.js"
-></script>
+
+<script>
+
+function togglePassword(){
+
+    const password =
+        document.getElementById("password");
+
+    const icon =
+        document.getElementById("passwordIcon");
+
+
+    if(password.type === "password"){
+
+        password.type = "text";
+
+        icon.className =
+            "fa-solid fa-eye-slash";
+
+    }else{
+
+        password.type = "password";
+
+        icon.className =
+            "fa-solid fa-eye";
+
+    }
+
+}
+
+</script>
 
 
 </body>
-
 </html>
