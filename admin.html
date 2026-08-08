@@ -22,7 +22,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
 
 <!-- =====================================================
-     LOGIN
+     LOGIN SCREEN
 ===================================================== -->
 
 <section class="login-screen" id="loginScreen">
@@ -67,7 +67,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
         <div class="input-group">
 
-            <label>
+            <label for="username">
                 Username
             </label>
 
@@ -89,7 +89,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
         <div class="input-group">
 
-            <label>
+            <label for="password">
                 Password
             </label>
 
@@ -220,14 +220,22 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         <div>
 
             <div class="eyebrow">
+
                 <span></span>
+
                 APS TINKERING LAB
+
             </div>
 
 
             <h1>
+
                 ROBOTICS
-                <strong>CHAMPIONSHIP 2026</strong>
+
+                <strong>
+                    CHAMPIONSHIP 2026
+                </strong>
+
             </h1>
 
 
@@ -240,7 +248,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
         <div class="hero-badge">
 
-            <i class="fa-solid fa-satellite-dish"></i>
+            <i class="fa-solid fa-database"></i>
 
             <div>
 
@@ -249,7 +257,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                 </strong>
 
                 <small>
-                    Firebase Realtime Database
+                    Firebase Firestore
                 </small>
 
             </div>
@@ -400,7 +408,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                 </h2>
 
                 <p>
-                    View, search, edit and remove registrations
+                    View complete team details, search, edit and remove registrations
                 </p>
 
             </div>
@@ -432,8 +440,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                 <input
                     id="search"
                     type="text"
-                    placeholder="Search registration ID, student, team or mobile..."
-                    onkeyup="searchRegistration()"
+                    placeholder="Search ID, leader, member, team, mobile..."
+                    oninput="searchRegistration()"
                 >
 
             </div>
@@ -443,6 +451,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                 class="search-button"
                 onclick="searchRegistration()"
             >
+
+                <i class="fa-solid fa-search"></i>
 
                 Search
 
@@ -456,35 +466,63 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
         <div class="table-wrapper">
 
-            <table>
+            <table id="registrationTable">
 
                 <thead>
 
                     <tr>
 
-                        <th>
-                            REGISTRATION
-                        </th>
+                        <th>REGISTRATION</th>
 
-                        <th>
-                            STUDENT
-                        </th>
+                        <th>TEAM NAME</th>
 
-                        <th>
-                            TEAM
-                        </th>
+                        <th>TEAM SIZE</th>
 
-                        <th>
-                            EVENTS
-                        </th>
 
-                        <th>
-                            MOBILE
-                        </th>
+                        <!-- LEADER -->
 
-                        <th>
-                            ACTION
-                        </th>
+                        <th>TEAM LEADER</th>
+                        <th>CLASS</th>
+                        <th>SECTION</th>
+
+
+                        <!-- MEMBER 2 -->
+
+                        <th>MEMBER 2</th>
+                        <th>CLASS</th>
+                        <th>SECTION</th>
+
+
+                        <!-- MEMBER 3 -->
+
+                        <th>MEMBER 3</th>
+                        <th>CLASS</th>
+                        <th>SECTION</th>
+
+
+                        <!-- MEMBER 4 -->
+
+                        <th>MEMBER 4</th>
+                        <th>CLASS</th>
+                        <th>SECTION</th>
+
+
+                        <!-- MEMBER 5 -->
+
+                        <th>MEMBER 5</th>
+                        <th>CLASS</th>
+                        <th>SECTION</th>
+
+
+                        <!-- OTHER -->
+
+                        <th>EVENTS</th>
+
+                        <th>MOBILE</th>
+
+                        <th>EMAIL</th>
+
+                        <th>ACTION</th>
 
                     </tr>
 
@@ -495,7 +533,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
                     <tr>
 
-                        <td colspan="6">
+                        <td colspan="22">
 
                             <div class="loading">
 
@@ -611,36 +649,29 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         <div class="form-grid">
 
 
-            <div class="form-field full">
+            <!-- TEAM LEADER -->
 
-                <label>
-                    Student Name
-                </label>
+            <div class="form-section-title">
 
-                <input
-                    id="editStudentName"
-                    type="text"
-                    placeholder="Student name"
-                >
+                <i class="fa-solid fa-user"></i>
+
+                Team Leader
 
             </div>
-
 
 
             <div class="form-field full">
 
                 <label>
-                    Team Name
+                    Team Leader Name
                 </label>
 
                 <input
-                    id="editTeamName"
+                    id="editTeamLeaderName"
                     type="text"
-                    placeholder="Team name"
                 >
 
             </div>
-
 
 
             <div class="form-field">
@@ -650,13 +681,11 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                 </label>
 
                 <input
-                    id="editClass"
+                    id="editTeamLeaderClass"
                     type="text"
-                    placeholder="Class"
                 >
 
             </div>
-
 
 
             <div class="form-field">
@@ -666,13 +695,281 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                 </label>
 
                 <input
-                    id="editSection"
+                    id="editTeamLeaderSection"
                     type="text"
-                    placeholder="Section"
                 >
 
             </div>
 
+
+
+            <!-- TEAM -->
+
+            <div class="form-section-title">
+
+                <i class="fa-solid fa-people-group"></i>
+
+                Team Details
+
+            </div>
+
+
+            <div class="form-field">
+
+                <label>
+                    Team Name
+                </label>
+
+                <input
+                    id="editTeamName"
+                    type="text"
+                >
+
+            </div>
+
+
+            <div class="form-field">
+
+                <label>
+                    Team Size
+                </label>
+
+                <input
+                    id="editTeamSize"
+                    type="number"
+                    min="1"
+                    max="5"
+                >
+
+            </div>
+
+
+
+            <!-- MEMBER 2 -->
+
+            <div class="form-section-title">
+
+                <i class="fa-solid fa-user-group"></i>
+
+                Team Member 2
+
+            </div>
+
+
+            <div class="form-field full">
+
+                <label>
+                    Member 2 Name
+                </label>
+
+                <input
+                    id="editMember2Name"
+                    type="text"
+                >
+
+            </div>
+
+
+            <div class="form-field">
+
+                <label>
+                    Class
+                </label>
+
+                <input
+                    id="editMember2Class"
+                    type="text"
+                >
+
+            </div>
+
+
+            <div class="form-field">
+
+                <label>
+                    Section
+                </label>
+
+                <input
+                    id="editMember2Section"
+                    type="text"
+                >
+
+            </div>
+
+
+
+            <!-- MEMBER 3 -->
+
+            <div class="form-section-title">
+
+                <i class="fa-solid fa-user-group"></i>
+
+                Team Member 3
+
+            </div>
+
+
+            <div class="form-field full">
+
+                <label>
+                    Member 3 Name
+                </label>
+
+                <input
+                    id="editMember3Name"
+                    type="text"
+                >
+
+            </div>
+
+
+            <div class="form-field">
+
+                <label>
+                    Class
+                </label>
+
+                <input
+                    id="editMember3Class"
+                    type="text"
+                >
+
+            </div>
+
+
+            <div class="form-field">
+
+                <label>
+                    Section
+                </label>
+
+                <input
+                    id="editMember3Section"
+                    type="text"
+                >
+
+            </div>
+
+
+
+            <!-- MEMBER 4 -->
+
+            <div class="form-section-title">
+
+                <i class="fa-solid fa-user-group"></i>
+
+                Team Member 4
+
+            </div>
+
+
+            <div class="form-field full">
+
+                <label>
+                    Member 4 Name
+                </label>
+
+                <input
+                    id="editMember4Name"
+                    type="text"
+                >
+
+            </div>
+
+
+            <div class="form-field">
+
+                <label>
+                    Class
+                </label>
+
+                <input
+                    id="editMember4Class"
+                    type="text"
+                >
+
+            </div>
+
+
+            <div class="form-field">
+
+                <label>
+                    Section
+                </label>
+
+                <input
+                    id="editMember4Section"
+                    type="text"
+                >
+
+            </div>
+
+
+
+            <!-- MEMBER 5 -->
+
+            <div class="form-section-title">
+
+                <i class="fa-solid fa-user-group"></i>
+
+                Team Member 5
+
+            </div>
+
+
+            <div class="form-field full">
+
+                <label>
+                    Member 5 Name
+                </label>
+
+                <input
+                    id="editMember5Name"
+                    type="text"
+                >
+
+            </div>
+
+
+            <div class="form-field">
+
+                <label>
+                    Class
+                </label>
+
+                <input
+                    id="editMember5Class"
+                    type="text"
+                >
+
+            </div>
+
+
+            <div class="form-field">
+
+                <label>
+                    Section
+                </label>
+
+                <input
+                    id="editMember5Section"
+                    type="text"
+                >
+
+            </div>
+
+
+
+            <!-- CONTACT -->
+
+            <div class="form-section-title">
+
+                <i class="fa-solid fa-address-card"></i>
+
+                Contact & Events
+
+            </div>
 
 
             <div class="form-field">
@@ -684,11 +981,9 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                 <input
                     id="editMobile"
                     type="tel"
-                    placeholder="Mobile"
                 >
 
             </div>
-
 
 
             <div class="form-field">
@@ -700,11 +995,9 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                 <input
                     id="editEmail"
                     type="email"
-                    placeholder="Email"
                 >
 
             </div>
-
 
 
             <div class="form-field full">
@@ -715,8 +1008,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
                 <textarea
                     id="editEvents"
-                    rows="3"
-                    placeholder="Selected events"
+                    rows="4"
                 ></textarea>
 
             </div>
@@ -779,7 +1071,9 @@ function togglePassword(){
         icon.className =
             "fa-solid fa-eye-slash";
 
-    }else{
+    }
+
+    else{
 
         password.type = "password";
 
@@ -790,8 +1084,23 @@ function togglePassword(){
 
 }
 
+
+document.getElementById("password").addEventListener(
+    "keydown",
+    function(event){
+
+        if(event.key === "Enter"){
+
+            login();
+
+        }
+
+    }
+);
+
 </script>
 
 
 </body>
+
 </html>
