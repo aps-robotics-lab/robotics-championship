@@ -250,7 +250,145 @@ Loading Registrations...
 
 </div>
 
+<!-- EDIT REGISTRATION MODAL -->
 
+<div id="editModal" class="edit-modal">
+
+    <div class="edit-box">
+
+        <div class="edit-header">
+
+            <h2>
+                <i class="fa-solid fa-pen-to-square"></i>
+                Edit Registration
+            </h2>
+
+            <button
+                class="close-btn"
+                onclick="closeEditModal()"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+
+        <label>
+            Registration ID
+        </label>
+
+        <input
+            id="editID"
+            type="text"
+            readonly
+        >
+
+
+        <label>
+            Student Name
+        </label>
+
+        <input
+            id="editStudentName"
+            type="text"
+        >
+
+
+        <label>
+            Team Name
+        </label>
+
+        <input
+            id="editTeamName"
+            type="text"
+        >
+
+
+        <div class="edit-row">
+
+            <div>
+
+                <label>
+                    Class
+                </label>
+
+                <input
+                    id="editClass"
+                    type="text"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Section
+                </label>
+
+                <input
+                    id="editSection"
+                    type="text"
+                >
+
+            </div>
+
+        </div>
+
+
+        <label>
+            Mobile Number
+        </label>
+
+        <input
+            id="editMobile"
+            type="tel"
+        >
+
+
+        <label>
+            Email
+        </label>
+
+        <input
+            id="editEmail"
+            type="email"
+        >
+
+
+        <label>
+            Events
+        </label>
+
+        <textarea
+            id="editEvents"
+            rows="3"
+        ></textarea>
+
+
+        <div class="edit-actions">
+
+            <button
+                class="cancel-btn"
+                onclick="closeEditModal()"
+            >
+                Cancel
+            </button>
+
+
+            <button
+                class="save-btn"
+                onclick="saveEdit()"
+            >
+                <i class="fa-solid fa-floppy-disk"></i>
+                Save Changes
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 
 
 <script type="module" src="admin.js"></script>
