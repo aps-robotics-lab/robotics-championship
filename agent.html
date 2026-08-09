@@ -2,50 +2,90 @@
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#050816">
 
-<title>Admin Dashboard | APS Robotics Championship 2026</title>
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1.0">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<meta
+    name="theme-color"
+    content="#020711">
+
+<title>
+    Support Agent Dashboard | APS Robotics Championship 2026
+</title>
 
 <link
-href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap"
-rel="stylesheet">
+    rel="preconnect"
+    href="https://fonts.googleapis.com">
 
-<link rel="stylesheet" href="admin.css">
+<link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
+<link
+    rel="stylesheet"
+    href="agent.css">
+
 </head>
+
 
 <body>
 
-<div class="page-bg"></div>
+<div class="background"></div>
 
-<!-- ================= HEADER ================= -->
+
+<!-- =====================================================
+     TOPBAR
+===================================================== -->
 
 <header class="topbar">
 
     <div class="brand">
 
         <img
-        src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
-        alt="APS Logo">
+            src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+            alt="APS Logo">
 
         <div class="brand-text">
-            <span>APS TINKERING LAB</span>
-            <strong>ROBOTICS CHAMPIONSHIP 2026</strong>
+
+            <span>
+                APS TINKERING LAB
+            </span>
+
+            <strong>
+                ROBOTICS CHAMPIONSHIP 2026
+            </strong>
+
         </div>
 
     </div>
 
+
     <nav class="nav">
 
-        <a href="index.html">Home</a>
-        <a href="rules.html">Rules</a>
-        <a href="help.html">Help</a>
+        <a href="index.html">
+            Home
+        </a>
 
-        <button id="logoutBtn" class="logout-btn">
+        <a href="rules.html">
+            Rules
+        </a>
+
+        <a href="admin.html">
+            Admin
+        </a>
+
+        <button
+            id="logoutBtn"
+            class="logout-btn">
             Logout
         </button>
 
@@ -54,84 +94,144 @@ rel="stylesheet">
 </header>
 
 
-<!-- ================= MAIN ================= -->
+<!-- =====================================================
+     MAIN
+===================================================== -->
 
 <main class="container">
 
+
+    <!-- HERO -->
+
     <section class="hero">
 
-        <div class="hero-content">
+        <div>
 
-            <span class="hero-badge">
-                ADMIN CONTROL CENTER
+            <span class="eyebrow">
+                SUPPORT OPERATIONS
             </span>
 
             <h1>
-                Registration
+                Agent
                 <span>Dashboard</span>
             </h1>
 
             <p>
-                Manage APS Robotics Championship 2026
-                registrations, teams and participants.
+                Manage participant support tickets
+                for APS Robotics Championship 2026.
             </p>
 
         </div>
 
-        <div class="hero-decoration">
-            <div class="robot-icon">🤖</div>
+
+        <div class="agent-card">
+
+            <div class="agent-avatar">
+                <span>◉</span>
+            </div>
+
+            <div>
+
+                <small>
+                    SIGNED IN AS
+                </small>
+
+                <strong id="agentEmail">
+                    Administrator
+                </strong>
+
+            </div>
+
         </div>
 
     </section>
 
 
-    <!-- ================= STATS ================= -->
+    <!-- =================================================
+         STATISTICS
+    ================================================= -->
 
     <section class="stats-grid">
 
         <div class="stat-card">
 
-            <div class="stat-icon">📋</div>
+            <div class="stat-icon">
+                🎫
+            </div>
 
             <div>
-                <span>Total Registrations</span>
-                <strong id="totalRegistrations">0</strong>
+
+                <small>
+                    TOTAL TICKETS
+                </small>
+
+                <strong id="totalTickets">
+                    0
+                </strong>
+
             </div>
 
         </div>
 
 
-        <div class="stat-card">
+        <div class="stat-card open">
 
-            <div class="stat-icon">👤</div>
+            <div class="stat-icon">
+                🟢
+            </div>
 
             <div>
-                <span>Solo</span>
-                <strong id="soloCount">0</strong>
+
+                <small>
+                    OPEN
+                </small>
+
+                <strong id="openTickets">
+                    0
+                </strong>
+
             </div>
 
         </div>
 
 
-        <div class="stat-card">
+        <div class="stat-card pending">
 
-            <div class="stat-icon">👥</div>
+            <div class="stat-icon">
+                🟡
+            </div>
 
             <div>
-                <span>Teams</span>
-                <strong id="teamCount">0</strong>
+
+                <small>
+                    PENDING
+                </small>
+
+                <strong id="pendingTickets">
+                    0
+                </strong>
+
             </div>
 
         </div>
 
 
-        <div class="stat-card">
+        <div class="stat-card resolved">
 
-            <div class="stat-icon">🎯</div>
+            <div class="stat-icon">
+                🔵
+            </div>
 
             <div>
-                <span>Total Participants</span>
-                <strong id="participantCount">0</strong>
+
+                <small>
+                    RESOLVED
+                </small>
+
+                <strong id="resolvedTickets">
+                    0
+                </strong>
+
             </div>
 
         </div>
@@ -139,44 +239,79 @@ rel="stylesheet">
     </section>
 
 
-    <!-- ================= DASHBOARD ================= -->
+    <!-- =================================================
+         TOOLBAR
+    ================================================= -->
 
-    <section class="dashboard-card">
+    <section class="panel">
 
-        <div class="dashboard-header">
+        <div class="panel-header">
 
             <div>
 
-                <span class="section-label">
-                    REGISTRATION MANAGEMENT
+                <span class="panel-label">
+                    TICKET MANAGEMENT
                 </span>
 
                 <h2>
-                    All Registrations
+                    Support Requests
                 </h2>
 
             </div>
 
-            <div class="dashboard-actions">
 
-                <div class="search-box">
-
-                    <span>⌕</span>
-
-                    <input
-                    id="search"
-                    type="search"
-                    placeholder="Search registration, name, team, email...">
-
-                </div>
-
-                <button
+            <button
                 id="refreshBtn"
                 class="refresh-btn">
 
-                    ↻
-                    <span>Refresh</span>
+                ↻
+                Refresh
 
+            </button>
+
+        </div>
+
+
+        <div class="toolbar">
+
+            <div class="search-box">
+
+                <span>
+                    🔎
+                </span>
+
+                <input
+                    id="searchInput"
+                    type="search"
+                    placeholder="Search ticket, name, email, subject...">
+
+            </div>
+
+
+            <div class="filters">
+
+                <button
+                    class="filter-btn active"
+                    data-filter="all">
+                    All
+                </button>
+
+                <button
+                    class="filter-btn"
+                    data-filter="Open">
+                    Open
+                </button>
+
+                <button
+                    class="filter-btn"
+                    data-filter="Pending">
+                    Pending
+                </button>
+
+                <button
+                    class="filter-btn"
+                    data-filter="Resolved">
+                    Resolved
                 </button>
 
             </div>
@@ -184,33 +319,72 @@ rel="stylesheet">
         </div>
 
 
+        <!-- STATUS -->
+
         <div
-        id="status"
-        class="status">
+            id="status"
+            class="status">
         </div>
 
 
-        <div class="table-container">
+        <!-- =================================================
+             TICKET TABLE
+        ================================================= -->
+
+        <div class="table-wrapper">
 
             <table>
 
                 <thead>
 
                     <tr>
-                        <th>Registration</th>
-                        <th>Leader</th>
-                        <th>Team</th>
-                        <th>Type</th>
-                        <th>Members</th>
-                        <th>Contact</th>
-                        <th>Events</th>
-                        <th>Date</th>
-                        <th>Actions</th>
+
+                        <th>
+                            Ticket
+                        </th>
+
+                        <th>
+                            Student
+                        </th>
+
+                        <th>
+                            Subject
+                        </th>
+
+                        <th>
+                            Category
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
                     </tr>
 
                 </thead>
 
-                <tbody id="registrationBody">
+
+                <tbody id="ticketBody">
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="loading-cell">
+
+                            Connecting to Firebase...
+
+                        </td>
+
+                    </tr>
 
                 </tbody>
 
@@ -223,74 +397,178 @@ rel="stylesheet">
 </main>
 
 
-<!-- ================= EDIT MODAL ================= -->
+<!-- =====================================================
+     TICKET MODAL
+===================================================== -->
 
 <div
-id="editOverlay"
-class="overlay hidden">
+    id="ticketOverlay"
+    class="overlay hidden">
 
-    <div class="edit-modal">
+    <div class="ticket-modal">
 
         <div class="modal-header">
 
             <div>
 
                 <span>
-                    REGISTRATION MANAGEMENT
+                    SUPPORT TICKET
                 </span>
 
-                <h2>
-                    Edit Registration
+                <h2 id="modalTicketId">
+                    Ticket
                 </h2>
 
             </div>
 
+
             <button
-            id="closeEdit"
-            class="close-btn">
+                id="closeModal"
+                class="close-btn">
                 ×
             </button>
 
         </div>
 
 
-        <form id="editForm">
-
-            <input
-            type="hidden"
-            id="editKey">
+        <div class="ticket-content">
 
 
-            <div class="form-grid">
+            <!-- BASIC INFORMATION -->
+
+            <div class="info-grid">
+
+                <div class="info-item">
+
+                    <small>
+                        STUDENT
+                    </small>
+
+                    <strong id="modalName">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <small>
+                        EMAIL
+                    </small>
+
+                    <strong id="modalEmail">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <small>
+                        CLASS
+                    </small>
+
+                    <strong id="modalClass">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <small>
+                        SECTION
+                    </small>
+
+                    <strong id="modalSection">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <small>
+                        REGISTRATION ID
+                    </small>
+
+                    <strong id="modalRegistrationId">
+                        Not provided
+                    </strong>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <small>
+                        CATEGORY
+                    </small>
+
+                    <strong id="modalCategory">
+                        -
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- SUBJECT -->
+
+            <div class="message-box">
+
+                <small>
+                    SUBJECT
+                </small>
+
+                <h3 id="modalSubject">
+                    -
+                </h3>
+
+            </div>
+
+
+            <!-- MESSAGE -->
+
+            <div class="message-box">
+
+                <small>
+                    MESSAGE
+                </small>
+
+                <p id="modalMessage">
+                    -
+                </p>
+
+            </div>
+
+
+            <!-- AGENT RESPONSE -->
+
+            <div class="edit-section">
 
                 <label>
-                    Leader Name
 
-                    <input
-                    id="editStudentName"
-                    required>
+                    Ticket Status
 
-                </label>
+                    <select id="modalStatus">
 
-
-                <label>
-                    Class
-
-                    <select
-                    id="editStudentClass"
-                    required>
-
-                        <option value="">
-                            Select Class
+                        <option value="Open">
+                            Open
                         </option>
 
-                        <option>VI</option>
-                        <option>VII</option>
-                        <option>VIII</option>
-                        <option>IX</option>
-                        <option>X</option>
-                        <option>XI</option>
-                        <option>XII>
+                        <option value="Pending">
+                            Pending
+                        </option>
+
+                        <option value="Resolved">
+                            Resolved
+                        </option>
 
                     </select>
 
@@ -298,116 +576,67 @@ class="overlay hidden">
 
 
                 <label>
-                    Section
 
-                    <input
-                    id="editStudentSection"
-                    required>
+                    Agent Remarks
 
-                </label>
-
-
-                <label>
-                    Mobile Number
-
-                    <input
-                    id="editMobileNumber"
-                    type="tel"
-                    maxlength="10">
-
-                </label>
-
-
-                <label>
-                    Email
-
-                    <input
-                    id="editEmailAddress"
-                    type="email">
-
-                </label>
-
-
-                <label>
-                    Team Name
-
-                    <input
-                    id="editTeamName">
+                    <textarea
+                        id="modalRemarks"
+                        rows="5"
+                        placeholder="Add remarks or resolution notes...">
+                    </textarea>
 
                 </label>
 
             </div>
-
-
-            <div class="members-section">
-
-                <div class="member-heading">
-
-                    <span>
-                        TEAM MEMBERS
-                    </span>
-
-                    <small>
-                        Edit participant details
-                    </small>
-
-                </div>
-
-                <div id="editMembers"></div>
-
-            </div>
-
-
-            <label class="remarks-field">
-
-                Remarks
-
-                <textarea
-                id="editRemarks"
-                rows="4"
-                placeholder="Add internal remarks..."></textarea>
-
-            </label>
 
 
             <div
-            id="editMessage"
-            class="edit-message">
+                id="modalMessageStatus"
+                class="modal-status">
             </div>
 
+
+            <!-- ACTIONS -->
 
             <div class="modal-actions">
 
                 <button
-                type="button"
-                id="cancelEdit"
-                class="cancel-btn">
-
-                    Cancel
-
+                    id="deleteTicketBtn"
+                    class="delete-btn">
+                    Delete Ticket
                 </button>
 
 
-                <button
-                type="submit"
-                class="save-btn">
+                <div>
 
-                    Save Changes
+                    <button
+                        id="cancelModal"
+                        class="secondary-btn">
+                        Cancel
+                    </button>
 
-                </button>
+                    <button
+                        id="saveTicketBtn"
+                        class="save-btn">
+                        Save Changes
+                    </button>
+
+                </div>
 
             </div>
 
-        </form>
+        </div>
 
     </div>
 
 </div>
 
 
-<!-- ================= SCRIPT ================= -->
-
-<script type="module" src="admin.js"></script>
+<script
+    type="module"
+    src="agent.js">
+</script>
 
 </body>
+
 </html>
