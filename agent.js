@@ -12,8 +12,7 @@ import {
     getDatabase,
     ref,
     onValue,
-    update,
-    remove
+    update
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
 
 
@@ -50,14 +49,8 @@ const firebaseConfig = {
 };
 
 
-/* =========================================================
-   FIREBASE INITIALIZATION
-========================================================= */
-
 const app =
-    initializeApp(
-        firebaseConfig
-    );
+    initializeApp(firebaseConfig);
 
 const auth =
     getAuth(app);
@@ -68,26 +61,25 @@ const db =
 
 /* =========================================================
    AGENT UID LIST
-=========================================================
-
-   These are the 5 accounts you supplied.
-
-   This list is ONLY for agent.html.
-
-   It is completely separate from admin.js.
 ========================================================= */
+
+/*
+ * IMPORTANT:
+ *
+ * These are NOT Admin UIDs.
+ *
+ * Put ONLY your support-agent Firebase Auth UIDs here.
+ */
 
 const AGENT_UIDS = new Set([
 
-    "crfLkH7qlofZBea5GEwLMEtL92X2",
-
-    "5lBbcuD2BjRdDya7Lo9uRXdBIp92",
-
-    "jd7b5KYmivhYpCJzLyQ005BFmCn2",
-
-    "spzBLVusBfcqCCSmK923QmhmcAN2",
-
-    "1PhsiGhletVZYliDKKKVKV2G9tu2"
+    /*
+     * Example:
+     *
+     * "YOUR_AGENT_UID_1",
+     * "YOUR_AGENT_UID_2"
+     *
+     */
 
 ]);
 
@@ -121,20 +113,11 @@ const logoutBtn =
         "logoutBtn"
     );
 
-const agentIdentity =
+const agentStatus =
     document.getElementById(
-        "agentIdentity"
+        "agentStatus"
     );
 
-const pageStatus =
-    document.getElementById(
-        "pageStatus"
-    );
-
-
-/* =========================================================
-   STATS
-========================================================= */
 
 const totalTickets =
     document.getElementById(
@@ -171,16 +154,6 @@ const closeTicket =
         "closeTicket"
     );
 
-const cancelTicket =
-    document.getElementById(
-        "cancelTicket"
-    );
-
-const saveTicket =
-    document.getElementById(
-        "saveTicket"
-    );
-
 const modalTicketId =
     document.getElementById(
         "modalTicketId"
@@ -206,16 +179,6 @@ const modalRegistration =
         "modalRegistration"
     );
 
-const modalCategory =
-    document.getElementById(
-        "modalCategory"
-    );
-
-const modalCreated =
-    document.getElementById(
-        "modalCreated"
-    );
-
 const modalSubject =
     document.getElementById(
         "modalSubject"
@@ -226,14 +189,19 @@ const modalMessage =
         "modalMessage"
     );
 
-const agentReply =
-    document.getElementById(
-        "agentReply"
-    );
-
 const modalStatus =
     document.getElementById(
         "modalStatus"
+    );
+
+const modalReply =
+    document.getElementById(
+        "modalReply"
+    );
+
+const saveTicketBtn =
+    document.getElementById(
+        "saveTicketBtn"
     );
 
 const modalMessageStatus =
@@ -248,34 +216,29 @@ const modalMessageStatus =
 
 let tickets = {};
 
-let currentTicketKey =
-    null;
+let selectedTicketId = null;
 
-let currentUser =
-    null;
-
-let ticketsListener =
-    null;
+let ticketListener = null;
 
 
 /* =========================================================
    STATUS
 ========================================================= */
 
-function showPageStatus(
+function showStatus(
     message,
     type = ""
 ) {
 
-    if (!pageStatus) {
+    if (!agentStatus) {
         return;
     }
 
-    pageStatus.textContent =
+    agentStatus.textContent =
         message;
 
-    pageStatus.className =
-        "page-status " + type;
+    agentStatus.className =
+        `agent-status ${type}`;
 
 }
 
@@ -289,141 +252,22 @@ function escapeHTML(value) {
     return String(
         value ?? ""
     )
-
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 
 }
 
 
 /* =========================================================
-   DATE
-========================================================= */
-
-function formatDate(value) {
-
-    if (!value) {
-        return "—";
-    }
-
-
-    let date;
-
-
-    if (
-        typeof value ===
-        "number"
-    ) {
-
-        date =
-            new Date(value);
-
-    }
-
-    else {
-
-        date =
-            new Date(value);
-
-    }
-
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-
-        return String(value);
-
-    }
-
-
-    return date.toLocaleString(
-        "en-IN",
-        {
-            day:
-                "2-digit",
-
-            month:
-                "short",
-
-            year:
-                "numeric",
-
-            hour:
-                "2-digit",
-
-            minute:
-                "2-digit"
-        }
-    );
-
-}
-
-
-/* =========================================================
-   STATUS CLASS
-========================================================= */
-
-function getStatusClass(
-    status
-) {
-
-    switch (
-        String(
-            status || "Open"
-        )
-    ) {
-
-        case "In Progress":
-
-            return "status-progress";
-
-
-        case "Closed":
-
-            return "status-closed";
-
-
-        default:
-
-            return "status-open";
-
-    }
-
-}
-
-
-/* =========================================================
-   FILTER
+   SEARCH
 ========================================================= */
 
 function ticketMatches(
-    ticket,
-    key
+    ticketId,
+    ticket
 ) {
 
     const query =
@@ -437,14 +281,9 @@ function ticketMatches(
         "all";
 
 
-    const ticketStatus =
-        ticket.status ||
-        "Open";
-
-
     if (
         filter !== "all" &&
-        ticketStatus !== filter
+        ticket.status !== filter
     ) {
 
         return false;
@@ -459,7 +298,7 @@ function ticketMatches(
 
     const text = [
 
-        key,
+        ticketId,
 
         ticket.ticketId,
 
@@ -479,110 +318,15 @@ function ticketMatches(
 
         ticket.message,
 
-        ticket.status,
-
-        ticket.agentReply
+        ticket.status
 
     ]
-
         .filter(Boolean)
-
         .join(" ")
-
         .toLowerCase();
 
 
-    return text.includes(
-        query
-    );
-
-}
-
-
-/* =========================================================
-   UPDATE STATS
-========================================================= */
-
-function updateStats() {
-
-    const list =
-        Object.values(
-            tickets
-        );
-
-
-    let open =
-        0;
-
-    let progress =
-        0;
-
-    let closed =
-        0;
-
-
-    list.forEach(ticket => {
-
-        const status =
-            ticket.status ||
-            "Open";
-
-
-        if (
-            status === "Closed"
-        ) {
-
-            closed++;
-
-        }
-
-        else if (
-            status === "In Progress"
-        ) {
-
-            progress++;
-
-        }
-
-        else {
-
-            open++;
-
-        }
-
-    });
-
-
-    if (totalTickets) {
-
-        totalTickets.textContent =
-            list.length;
-
-    }
-
-
-    if (openTickets) {
-
-        openTickets.textContent =
-            open;
-
-    }
-
-
-    if (progressTickets) {
-
-        progressTickets.textContent =
-            progress;
-
-    }
-
-
-    if (closedTickets) {
-
-        closedTickets.textContent =
-            closed;
-
-    }
+    return text.includes(query);
 
 }
 
@@ -593,65 +337,73 @@ function updateStats() {
 
 function renderTickets() {
 
-    updateStats();
-
-
     if (!ticketList) {
         return;
     }
 
 
+    const all =
+        Object.values(tickets);
+
+
+    const open =
+        all.filter(
+            ticket =>
+                ticket.status === "Open"
+        ).length;
+
+
+    const progress =
+        all.filter(
+            ticket =>
+                ticket.status === "In Progress"
+        ).length;
+
+
+    const closed =
+        all.filter(
+            ticket =>
+                ticket.status === "Closed"
+        ).length;
+
+
+    totalTickets.textContent =
+        all.length;
+
+    openTickets.textContent =
+        open;
+
+    progressTickets.textContent =
+        progress;
+
+    closedTickets.textContent =
+        closed;
+
+
     const entries =
-        Object.entries(
-            tickets
-        )
-
-        .filter(
-            ([key, ticket]) =>
-                ticketMatches(
-                    ticket,
-                    key
-                )
-        )
-
-        .sort(
-            (a, b) => {
-
-                const aTime =
-                    Number(
-                        a[1].createdAt ||
-                        0
-                    );
-
-                const bTime =
-                    Number(
-                        b[1].createdAt ||
-                        0
-                    );
-
-                return bTime - aTime;
-
-            }
-        );
+        Object.entries(tickets)
+            .filter(
+                ([id, ticket]) =>
+                    ticketMatches(
+                        id,
+                        ticket
+                    )
+            )
+            .reverse();
 
 
     if (!entries.length) {
 
         ticketList.innerHTML = `
 
-            <div class="empty-state">
+            <div
+                style="
+                    padding:50px;
+                    text-align:center;
+                    color:#8fa4bb;
+                ">
 
-                <div class="empty-icon">
-                    🎫
-                </div>
-
-                <strong>
-                    No support tickets found
-                </strong>
-
-                <p style="margin-top:6px;font-size:11px;">
-                    Try changing your search or filter.
-                </p>
+                No support tickets found.
 
             </div>
 
@@ -663,120 +415,142 @@ function renderTickets() {
 
 
     ticketList.innerHTML =
-        entries.map(
-            ([key, ticket]) => {
+        entries
+            .map(
+                ([id, ticket]) => {
 
-                const status =
-                    ticket.status ||
-                    "Open";
-
-
-                const preview =
-                    ticket.message ||
-                    "No message";
+                    let statusClass =
+                        "status-open";
 
 
-                return `
+                    if (
+                        ticket.status ===
+                        "In Progress"
+                    ) {
 
-                    <article
-                        class="ticket-card"
-                        data-key="${escapeHTML(key)}">
+                        statusClass =
+                            "status-progress";
 
-                        <div class="ticket-top">
+                    }
 
-                            <div>
 
-                                <div class="ticket-id">
+                    if (
+                        ticket.status ===
+                        "Closed"
+                    ) {
+
+                        statusClass =
+                            "status-closed";
+
+                    }
+
+
+                    const registration =
+                        ticket.registrationId ||
+                        "Not provided";
+
+
+                    return `
+
+                        <div
+                            class="ticket-item"
+                            data-ticket="${escapeHTML(id)}">
+
+                            <div
+                                class="ticket-top">
+
+                                <span
+                                    class="ticket-id">
+
                                     ${escapeHTML(
                                         ticket.ticketId ||
-                                        key
+                                        id
                                     )}
-                                </div>
 
-                                <div class="ticket-subject">
+                                </span>
+
+
+                                <span
+                                    class="ticket-status ${statusClass}">
+
                                     ${escapeHTML(
-                                        ticket.subject ||
-                                        "No subject"
+                                        ticket.status ||
+                                        "Open"
                                     )}
-                                </div>
+
+                                </span>
 
                             </div>
 
 
-                            <span
-                                class="status-badge ${getStatusClass(status)}">
+                            <h3>
 
-                                ${escapeHTML(status)}
+                                ${escapeHTML(
+                                    ticket.subject ||
+                                    "No subject"
+                                )}
 
-                            </span>
+                            </h3>
+
+
+                            <div
+                                class="ticket-info">
+
+                                <span>
+                                    👤
+                                    ${escapeHTML(
+                                        ticket.name ||
+                                        "-"
+                                    )}
+                                </span>
+
+                                <span>
+                                    ✉
+                                    ${escapeHTML(
+                                        ticket.email ||
+                                        "-"
+                                    )}
+                                </span>
+
+                                <span>
+                                    ID:
+                                    ${escapeHTML(
+                                        registration
+                                    )}
+                                </span>
+
+                            </div>
+
+
+                            <div
+                                class="ticket-preview">
+
+                                ${escapeHTML(
+                                    ticket.message ||
+                                    ""
+                                )}
+
+                            </div>
 
                         </div>
 
+                    `;
 
-                        <div class="ticket-meta">
-
-                            <span>
-                                👤
-                                ${escapeHTML(
-                                    ticket.name ||
-                                    "Unknown"
-                                )}
-                            </span>
-
-                            <span>
-                                ✉
-                                ${escapeHTML(
-                                    ticket.email ||
-                                    "-"
-                                )}
-                            </span>
-
-                            <span>
-                                📁
-                                ${escapeHTML(
-                                    ticket.category ||
-                                    "Other"
-                                )}
-                            </span>
-
-                            <span>
-                                🕒
-                                ${escapeHTML(
-                                    formatDate(
-                                        ticket.createdAt
-                                    )
-                                )}
-                            </span>
-
-                        </div>
-
-
-                        <div class="ticket-preview">
-
-                            ${escapeHTML(preview)}
-
-                        </div>
-
-                    </article>
-
-                `;
-
-            }
-        ).join("");
+                }
+            )
+            .join("");
 
 
     ticketList
-        .querySelectorAll(
-            ".ticket-card"
-        )
-        .forEach(card => {
+        .querySelectorAll(".ticket-item")
+        .forEach(item => {
 
-            card.addEventListener(
+            item.addEventListener(
                 "click",
                 () => {
 
                     openTicket(
-                        card.dataset.key
+                        item.dataset.ticket
                     );
 
                 }
@@ -793,7 +567,7 @@ function renderTickets() {
 
 function loadTickets() {
 
-    showPageStatus(
+    showStatus(
         "Connecting to Firebase..."
     );
 
@@ -805,17 +579,12 @@ function loadTickets() {
         );
 
 
-    if (ticketsListener) {
-
-        ticketsListener();
-
-        ticketsListener =
-            null;
-
+    if (ticketListener) {
+        ticketListener();
     }
 
 
-    ticketsListener =
+    ticketListener =
         onValue(
 
             ticketsRef,
@@ -823,30 +592,28 @@ function loadTickets() {
             snapshot => {
 
                 tickets =
-                    snapshot.val() ||
-                    {};
+                    snapshot.val() || {};
 
                 renderTickets();
 
 
-                showPageStatus(
+                showStatus(
                     `${Object.keys(tickets).length} ticket(s) loaded.`,
-                    ""
+                    "success"
                 );
 
             },
 
-
             error => {
 
                 console.error(
-                    "Ticket Firebase error:",
+                    "Firebase ticket error:",
                     error
                 );
 
 
-                showPageStatus(
-                    "Unable to load tickets. Check your Firebase Rules.",
+                showStatus(
+                    "Permission denied. Check the Agent Firebase Rules.",
                     "error"
                 );
 
@@ -861,10 +628,10 @@ function loadTickets() {
    OPEN TICKET
 ========================================================= */
 
-function openTicket(key) {
+function openTicket(ticketId) {
 
     const ticket =
-        tickets[key];
+        tickets[ticketId];
 
 
     if (!ticket) {
@@ -872,13 +639,13 @@ function openTicket(key) {
     }
 
 
-    currentTicketKey =
-        key;
+    selectedTicketId =
+        ticketId;
 
 
     modalTicketId.textContent =
         ticket.ticketId ||
-        key;
+        ticketId;
 
 
     modalName.textContent =
@@ -887,7 +654,9 @@ function openTicket(key) {
 
 
     modalClass.textContent =
-        `${ticket.className || "-"} / ${ticket.section || "-"}`;
+        `${ticket.className || "-"} / ${
+            ticket.section || "-"
+        }`;
 
 
     modalEmail.textContent =
@@ -900,35 +669,24 @@ function openTicket(key) {
         "Not provided";
 
 
-    modalCategory.textContent =
-        ticket.category ||
-        "Other";
-
-
-    modalCreated.textContent =
-        formatDate(
-            ticket.createdAt
-        );
-
-
     modalSubject.textContent =
         ticket.subject ||
-        "No subject";
+        "-";
 
 
     modalMessage.textContent =
         ticket.message ||
-        "No message";
-
-
-    agentReply.value =
-        ticket.agentReply ||
-        "";
+        "-";
 
 
     modalStatus.value =
         ticket.status ||
         "Open";
+
+
+    modalReply.value =
+        ticket.agentReply ||
+        "";
 
 
     modalMessageStatus.textContent =
@@ -943,7 +701,7 @@ function openTicket(key) {
 
 
 /* =========================================================
-   CLOSE TICKET
+   CLOSE
 ========================================================= */
 
 function closeTicketModal() {
@@ -952,19 +710,13 @@ function closeTicketModal() {
         "hidden"
     );
 
-    currentTicketKey =
+    selectedTicketId =
         null;
 
 }
 
 
 closeTicket?.addEventListener(
-    "click",
-    closeTicketModal
-);
-
-
-cancelTicket?.addEventListener(
     "click",
     closeTicketModal
 );
@@ -991,48 +743,30 @@ ticketOverlay?.addEventListener(
    SAVE TICKET
 ========================================================= */
 
-saveTicket?.addEventListener(
+saveTicketBtn?.addEventListener(
     "click",
     async () => {
 
-        if (!currentTicketKey) {
+        if (!selectedTicketId) {
             return;
         }
 
 
-        if (
-            !currentUser
-        ) {
+        const ticket =
+            tickets[selectedTicketId];
 
-            modalMessageStatus.textContent =
-                "Authentication expired. Please log in again.";
 
-            modalMessageStatus.className =
-                "modal-status error";
-
+        if (!ticket) {
             return;
-
         }
 
 
-        const status =
-            modalStatus.value;
-
-
-        const reply =
-            agentReply.value.trim();
-
-
-        saveTicket.disabled =
+        saveTicketBtn.disabled =
             true;
 
 
-        modalMessageStatus.className =
-            "modal-status";
-
-
         modalMessageStatus.textContent =
-            "Saving ticket...";
+            "Saving...";
 
 
         try {
@@ -1040,48 +774,26 @@ saveTicket?.addEventListener(
             const updates = {
 
                 status:
-                    status,
+                    modalStatus.value,
 
                 agentReply:
-                    reply,
+                    modalReply.value.trim(),
 
                 updatedAt:
                     Date.now(),
 
-                assignedTo:
-                    currentUser.uid
+                updatedBy:
+                    auth.currentUser?.uid ||
+                    ""
 
             };
-
-
-            if (
-                status === "Closed"
-            ) {
-
-                updates.closedAt =
-                    Date.now();
-
-                updates.closedBy =
-                    currentUser.uid;
-
-            }
-
-            else {
-
-                updates.closedAt =
-                    "";
-
-                updates.closedBy =
-                    "";
-
-            }
 
 
             await update(
 
                 ref(
                     db,
-                    `tickets/${currentTicketKey}`
+                    `tickets/${selectedTicketId}`
                 ),
 
                 updates
@@ -1092,12 +804,10 @@ saveTicket?.addEventListener(
             modalMessageStatus.textContent =
                 "✓ Ticket updated successfully.";
 
-            modalMessageStatus.className =
-                "modal-status";
 
-
-            showPageStatus(
-                "Ticket updated successfully."
+            showStatus(
+                "Ticket updated successfully.",
+                "success"
             );
 
 
@@ -1106,102 +816,30 @@ saveTicket?.addEventListener(
                 700
             );
 
-        }
 
-        catch (error) {
+        } catch (error) {
 
-            console.error(
-                "Ticket update error:",
-                error
-            );
+            console.error(error);
 
 
             modalMessageStatus.textContent =
-                "Unable to update ticket. Check Firebase Rules.";
+                "Unable to save ticket.";
 
-            modalMessageStatus.className =
-                "modal-status error";
 
-        }
+            showStatus(
+                "Permission denied while updating ticket.",
+                "error"
+            );
 
-        finally {
+        } finally {
 
-            saveTicket.disabled =
+            saveTicketBtn.disabled =
                 false;
 
         }
 
     }
 );
-
-
-/* =========================================================
-   DELETE TICKET
-=========================================================
-
-   Not shown as a button in the UI by default.
-
-   Function retained for future use.
-========================================================= */
-
-async function deleteTicket(key) {
-
-    const ticket =
-        tickets[key];
-
-
-    if (!ticket) {
-        return;
-    }
-
-
-    const confirmed =
-        confirm(
-
-            `Delete ticket ${ticket.ticketId || key}?\n\n` +
-            `This action cannot be undone.`
-
-        );
-
-
-    if (!confirmed) {
-        return;
-    }
-
-
-    try {
-
-        await remove(
-
-            ref(
-                db,
-                `tickets/${key}`
-            )
-
-        );
-
-
-        showPageStatus(
-            "Ticket deleted successfully."
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(
-            error
-        );
-
-
-        showPageStatus(
-            "Unable to delete ticket.",
-            "error"
-        );
-
-    }
-
-}
 
 
 /* =========================================================
@@ -1230,8 +868,9 @@ refreshBtn?.addEventListener(
 
         renderTickets();
 
-        showPageStatus(
-            "Dashboard refreshed."
+        showStatus(
+            "Ticket list refreshed.",
+            "success"
         );
 
     }
@@ -1248,21 +887,14 @@ logoutBtn?.addEventListener(
 
         try {
 
-            await signOut(
-                auth
-            );
-
+            await signOut(auth);
 
             window.location.href =
                 "login.html";
 
-        }
+        } catch (error) {
 
-        catch (error) {
-
-            console.error(
-                error
-            );
+            console.error(error);
 
         }
 
@@ -1271,7 +903,7 @@ logoutBtn?.addEventListener(
 
 
 /* =========================================================
-   AUTHENTICATION
+   AUTH
 ========================================================= */
 
 onAuthStateChanged(
@@ -1290,9 +922,10 @@ onAuthStateChanged(
         }
 
 
-        /* ================================================
-           AGENT ONLY
-        ================================================ */
+        /*
+         * Agent page is intentionally separate
+         * from the Admin page.
+         */
 
         if (
             !AGENT_UIDS.has(
@@ -1301,31 +934,22 @@ onAuthStateChanged(
         ) {
 
             alert(
-                "Access denied. This account is not an authorized support agent."
+                "Access denied. This account is not a support agent."
             );
 
 
-            signOut(
-                auth
-            );
-
+            signOut(auth);
 
             return;
 
         }
 
 
-        currentUser =
-            user;
-
-
-        agentIdentity.textContent =
-            user.email ||
-            "Authorized Agent";
-
-
-        showPageStatus(
-            "Agent authenticated."
+        showStatus(
+            `Agent authenticated: ${
+                user.email || "Support Agent"
+            }`,
+            "success"
         );
 
 
