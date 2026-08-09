@@ -75,70 +75,23 @@ function normalizeText(value) {
 }
 
 /* Supports the field names used by different versions of the registration form. */
-function studentName(r) {
-  return r.student_name ?? r.studentName ?? r.name ?? r.leaderName ?? r.leader_name ?? "";
+function cleanKey(k){return String(k??"").toLowerCase().replace(/[^a-z0-9]/g,"");}
+function field(r, names){
+  if(!r || typeof r!=="object") return "";
+  const map={}; Object.keys(r).forEach(k=>map[cleanKey(k)]=r[k]);
+  for(const n of names){ const v=map[cleanKey(n)]; if(v!==undefined && v!==null && v!=="") return v; }
+  return "";
 }
-
-function teamName(r) {
-  return r.team_name ?? r.teamName ?? r.team ?? "";
-}
-
-function className(r) {
-  return r.class ?? r.className ?? r.studentClass ?? "";
-}
-
-function sectionName(r) {
-  return r.section ?? r.sectionName ?? "";
-}
-
-function mobile(r) {
-  return r.mobile ?? r.mobileNumber ?? r.phone ?? r.phoneNumber ?? "";
-}
-
-function email(r) {
-  return r.email ?? r.emailAddress ?? "";
-}
-
-function registrationId(r) {
-  return r.registration_id ?? r.registrationId ?? r.id ?? r.registrationID ?? r.key ?? "";
-}
-
-function eventsText(r) {
-  return normalizeText(
-    r.events ??
-    r.event ??
-    r.selectedEvents ??
-    r.selectedEvent ??
-    r.eventSelection ??
-    ""
-  );
-}
-
-function membersText(r) {
-  return normalizeText(
-    r.members ??
-    r.teamMembers ??
-    r.memberNames ??
-    r.team_members ??
-    r.membersName ??
-    ""
-  );
-}
-
-function dateText(r) {
-  const v =
-    r.registration_date ??
-    r.registrationDate ??
-    r.date ??
-    r.createdAt ??
-    r.timestamp ??
-    "";
-  if (!v) return "";
-  if (typeof v === "number") {
-    try { return new Date(v).toLocaleString(); } catch {}
-  }
-  return String(v);
-}
+function studentName(r){return field(r,["student_name","studentName","student name","name","leaderName","leader_name","leader name"])}
+function teamName(r){return field(r,["team_name","teamName","team name","team"])}
+function className(r){return field(r,["class","className","class name","studentClass","student class"])}
+function sectionName(r){return field(r,["section","sectionName","section name"])}
+function mobile(r){return field(r,["mobile","mobileNumber","mobile number","phone","phoneNumber","phone number"])}
+function email(r){return field(r,["email","emailAddress","email address"])}
+function registrationId(r){return field(r,["registration_id","registrationId","registration id","id","registrationID"]) || r.key || ""}
+function eventsText(r){return normalizeText(field(r,["events","event","selectedEvents","selected Event","selectedEvent","eventSelection","event selection","selectEvent","select events"]))}
+function membersText(r){return normalizeText(field(r,["members","teamMembers","team members","memberNames","member names","team_members","membersName","teamMember","team member"]))}
+function dateText(r){const v=field(r,["registration_date","registrationDate","registration date","date","createdAt","created at","timestamp","submittedAt","submitted at"]); if(!v)return ""; if(typeof v==="number")return new Date(v).toLocaleString(); return String(v)}
 
 function pageName(page) {
   return ({
