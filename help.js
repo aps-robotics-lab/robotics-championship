@@ -16,6 +16,10 @@ const EMAILJS_TEMPLATE_ID =
 "template_5qb8b2p";
 
 
+/* =========================================================
+   LOAD EMAILJS
+========================================================= */
+
 const emailScript =
 document.createElement("script");
 
@@ -24,13 +28,13 @@ emailScript.src =
 
 emailScript.onload = function () {
 
-  if (window.emailjs) {
+    if (window.emailjs) {
 
-    window.emailjs.init({
-      publicKey: EMAILJS_PUBLIC_KEY
-    });
+        window.emailjs.init({
+            publicKey: EMAILJS_PUBLIC_KEY
+        });
 
-  }
+    }
 
 };
 
@@ -58,462 +62,550 @@ document.getElementById("formStatus");
 
 
 /* =========================================================
+   VALUE HELPER
+========================================================= */
+
+function getValue(id) {
+
+    const element =
+        document.getElementById(id);
+
+    if (!element) {
+        return "";
+    }
+
+    return String(
+        element.value || ""
+    ).trim();
+
+}
+
+
+/* =========================================================
    STATUS
 ========================================================= */
 
-function showStatus(message, type) {
+function showStatus(
+    message,
+    type = "error"
+) {
 
-  formStatus.textContent =
-    message;
+    if (!formStatus) {
+        return;
+    }
 
-  formStatus.className =
-    "form-status " +
-    (type || "error");
+    formStatus.textContent =
+        message;
+
+    formStatus.className =
+        "form-status " + type;
 
 }
 
 
 function clearStatus() {
 
-  formStatus.textContent =
-    "";
+    if (!formStatus) {
+        return;
+    }
 
-  formStatus.className =
-    "form-status";
+    formStatus.textContent =
+        "";
 
-}
-
-
-/* =========================================================
-   GET VALUE
-========================================================= */
-
-function getValue(id) {
-
-  const element =
-    document.getElementById(id);
-
-  if (!element) {
-    return "";
-  }
-
-  return String(
-    element.value || ""
-  ).trim();
+    formStatus.className =
+        "form-status";
 
 }
 
 
 /* =========================================================
-   EMAILJS LOADER
+   EMAILJS READY
 ========================================================= */
 
 async function waitForEmailJS() {
 
-  for (
-    let i = 0;
-    i < 40;
-    i++
-  ) {
+    for (
+        let i = 0;
+        i < 40;
+        i++
+    ) {
 
-    if (window.emailjs) {
-      return true;
+        if (window.emailjs) {
+            return true;
+        }
+
+        await new Promise(
+            resolve =>
+                setTimeout(resolve, 250)
+        );
+
     }
 
-    await new Promise(
-      resolve =>
-        setTimeout(resolve, 250)
-    );
-
-  }
-
-  return false;
+    return false;
 
 }
 
 
 /* =========================================================
-   SEND EMAIL TO ADMIN
+   EMAIL ADMIN
 ========================================================= */
 
 async function sendAdminEmail(data) {
 
-  const loaded =
-    await waitForEmailJS();
+    const ready =
+        await waitForEmailJS();
 
-  if (!loaded) {
+    if (!ready) {
 
-    throw new Error(
-      "EmailJS could not be loaded."
-    );
-
-  }
-
-
-  return window.emailjs.send(
-
-    EMAILJS_SERVICE_ID,
-
-    EMAILJS_TEMPLATE_ID,
-
-    {
-
-      to_email:
-        "ayusshh@outlook.in",
-
-      StudentName:
-        data.name,
-
-      EmailAddress:
-        data.email,
-
-      registrationId:
-        data.registrationId ||
-        "Not provided",
-
-      TicketID:
-        data.ticketId,
-
-      Class:
-        data.className,
-
-      Section:
-        data.section,
-
-      Category:
-        data.category,
-
-      Subject:
-        data.subject,
-
-      Message:
-        data.message,
-
-      ticketStatus:
-        "Open"
+        throw new Error(
+            "EmailJS is not available."
+        );
 
     }
 
-  );
+
+    return window.emailjs.send(
+
+        EMAILJS_SERVICE_ID,
+
+        EMAILJS_TEMPLATE_ID,
+
+        {
+
+            to_email:
+                "ayusshh@outlook.in",
+
+            StudentName:
+                data.name,
+
+            EmailAddress:
+                data.email,
+
+            registrationId:
+                data.registrationId ||
+                "Not provided",
+
+            TicketID:
+                data.ticketId,
+
+            Class:
+                data.className,
+
+            Section:
+                data.section,
+
+            Category:
+                data.category,
+
+            Subject:
+                data.subject,
+
+            Message:
+                data.message,
+
+            ticketStatus:
+                "Open"
+
+        }
+
+    );
 
 }
 
 
 /* =========================================================
-   SUBMIT FORM
+   FORM
 ========================================================= */
 
-form.addEventListener(
-  "submit",
-  async function (event) {
+form?.addEventListener(
+    "submit",
+    async function (event) {
 
-    event.preventDefault();
+        event.preventDefault();
 
-    clearStatus();
+        clearStatus();
 
-
-    /*
-     * IMPORTANT:
-     *
-     * Registration ID is NOT checked here.
-     */
-
-    if (
-      !getValue("name") ||
-      !getValue("className") ||
-      !getValue("section") ||
-      !getValue("email") ||
-      !getValue("subject") ||
-      !getValue("message")
-    ) {
-
-      showStatus(
-        "Please fill in all required fields.",
-        "error"
-      );
-
-      return;
-
-    }
-
-
-    if (
-      !submitBtn ||
-      submitBtn.disabled
-    ) {
-
-      return;
-
-    }
-
-
-    const data = {
-
-      /*
-       * OPTIONAL
-       */
-      registrationId:
-        getValue("registrationId"),
-
-      name:
-        getValue("name"),
-
-      className:
-        getValue("className"),
-
-      section:
-        getValue("section"),
-
-      email:
-        getValue("email")
-          .toLowerCase(),
-
-      category:
-        getValue("category") ||
-        "Other",
-
-      subject:
-        getValue("subject"),
-
-      message:
-        getValue("message")
-
-    };
-
-
-    submitBtn.disabled =
-      true;
-
-
-    if (submitText) {
-
-      submitText.classList.add(
-        "hidden"
-      );
-
-    }
-
-
-    if (submitLoading) {
-
-      submitLoading.classList.remove(
-        "hidden"
-      );
-
-    }
-
-
-    try {
-
-
-      /*
-       * Build API parameters.
-       *
-       * Registration ID is allowed
-       * to be completely empty.
-       */
-
-      const params =
-        new URLSearchParams();
-
-
-      params.set(
-        "action",
-        "createTicket"
-      );
-
-
-      params.set(
-        "name",
-        data.name
-      );
-
-
-      params.set(
-        "className",
-        data.className
-      );
-
-
-      params.set(
-        "section",
-        data.section
-      );
-
-
-      params.set(
-        "email",
-        data.email
-      );
-
-
-      params.set(
-        "category",
-        data.category
-      );
-
-
-      params.set(
-        "subject",
-        data.subject
-      );
-
-
-      params.set(
-        "message",
-        data.message
-      );
-
-
-      /*
-       * Only send registrationId if
-       * the user actually entered one.
-       */
-
-      if (data.registrationId) {
-
-        params.set(
-          "registrationId",
-          data.registrationId
-        );
-
-      }
-
-
-      const response =
-        await fetch(
-
-          HELP_API_URL +
-          "?" +
-          params.toString(),
-
-          {
-            method: "GET",
-            cache: "no-store"
-          }
-
-        );
-
-
-      if (!response.ok) {
-
-        throw new Error(
-          "Unable to connect to the support server."
-        );
-
-      }
-
-
-      const result =
-        await response.json();
-
-
-      if (!result.success) {
-
-        throw new Error(
-          result.message ||
-          "Unable to submit support request."
-        );
-
-      }
-
-
-      /*
-       * Send EmailJS notification.
-       */
-
-      try {
-
-        await sendAdminEmail({
-
-          ...data,
-
-          ticketId:
-            result.ticketId
-
-        });
-
-      } catch (emailError) {
-
-        console.error(
-          "EmailJS error:",
-          emailError
-        );
 
         /*
-         * Ticket is already saved.
-         * Email failure does not cancel it.
+         * Browser validation.
+         *
+         * Registration ID is NOT required.
          */
 
-      }
+        if (!form.checkValidity()) {
+
+            form.reportValidity();
+
+            return;
+
+        }
 
 
-      /*
-       * Save ticket information.
-       */
+        if (
+            submitBtn &&
+            submitBtn.disabled
+        ) {
 
-      sessionStorage.setItem(
-        "apsHelpTicketId",
-        result.ticketId
-      );
+            return;
 
-
-      sessionStorage.setItem(
-        "apsHelpRegistrationId",
-        data.registrationId
-      );
+        }
 
 
-      /*
-       * Redirect to sorry page.
-       */
+        const data = {
 
-      window.location.href =
-        "sorry.html?ticket=" +
-        encodeURIComponent(
-          result.ticketId
-        );
+            /*
+             * OPTIONAL
+             */
+
+            registrationId:
+                getValue(
+                    "registrationId"
+                ),
+
+            name:
+                getValue(
+                    "name"
+                ),
+
+            className:
+                getValue(
+                    "className"
+                ),
+
+            section:
+                getValue(
+                    "section"
+                ),
+
+            email:
+                getValue(
+                    "email"
+                ).toLowerCase(),
+
+            category:
+                getValue(
+                    "category"
+                ) || "Other",
+
+            subject:
+                getValue(
+                    "subject"
+                ),
+
+            message:
+                getValue(
+                    "message"
+                )
+
+        };
 
 
-    } catch (error) {
+        /*
+         * Extra validation.
+         */
 
-      console.error(
-        "HELP FORM ERROR:",
-        error
-      );
+        if (!data.name) {
+
+            showStatus(
+                "Please enter your name.",
+                "error"
+            );
+
+            return;
+
+        }
+
+        if (!data.className) {
+
+            showStatus(
+                "Please enter your class.",
+                "error"
+            );
+
+            return;
+
+        }
+
+        if (!data.section) {
+
+            showStatus(
+                "Please enter your section.",
+                "error"
+            );
+
+            return;
+
+        }
+
+        if (!data.email) {
+
+            showStatus(
+                "Please enter your email address.",
+                "error"
+            );
+
+            return;
+
+        }
+
+        if (!data.subject) {
+
+            showStatus(
+                "Please enter a subject.",
+                "error"
+            );
+
+            return;
+
+        }
+
+        if (!data.message) {
+
+            showStatus(
+                "Please describe your issue.",
+                "error"
+            );
+
+            return;
+
+        }
 
 
-      showStatus(
-        error.message ||
-        "Something went wrong. Please try again.",
-        "error"
-      );
+        /* =================================================
+           LOADING
+        ================================================= */
+
+        if (submitBtn) {
+
+            submitBtn.disabled =
+                true;
+
+        }
+
+        if (submitText) {
+
+            submitText.classList.add(
+                "hidden"
+            );
+
+        }
+
+        if (submitLoading) {
+
+            submitLoading.classList.remove(
+                "hidden"
+            );
+
+        }
 
 
-    } finally {
+        try {
 
-      submitBtn.disabled =
-        false;
+            /*
+             * Send request to Google Apps Script.
+             */
 
-
-      if (submitText) {
-
-        submitText.classList.remove(
-          "hidden"
-        );
-
-      }
+            const params =
+                new URLSearchParams();
 
 
-      if (submitLoading) {
+            params.set(
+                "action",
+                "createTicket"
+            );
 
-        submitLoading.classList.add(
-          "hidden"
-        );
 
-      }
+            /*
+             * Registration ID is optional.
+             *
+             * Empty string is intentionally sent.
+             */
+
+            params.set(
+                "registrationId",
+                data.registrationId
+            );
+
+
+            params.set(
+                "name",
+                data.name
+            );
+
+            params.set(
+                "className",
+                data.className
+            );
+
+            params.set(
+                "section",
+                data.section
+            );
+
+            params.set(
+                "email",
+                data.email
+            );
+
+            params.set(
+                "category",
+                data.category
+            );
+
+            params.set(
+                "subject",
+                data.subject
+            );
+
+            params.set(
+                "message",
+                data.message
+            );
+
+
+            const response =
+                await fetch(
+
+                    HELP_API_URL +
+                    "?" +
+                    params.toString(),
+
+                    {
+                        method: "GET",
+                        cache: "no-store"
+                    }
+
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to connect to support server."
+                );
+
+            }
+
+
+            const result =
+                await response.json();
+
+
+            if (!result.success) {
+
+                throw new Error(
+                    result.message ||
+                    "Unable to submit support request."
+                );
+
+            }
+
+
+            /* =================================================
+               EMAILJS
+            ================================================= */
+
+            try {
+
+                await sendAdminEmail({
+
+                    ...data,
+
+                    ticketId:
+                        result.ticketId
+
+                });
+
+            } catch (emailError) {
+
+                console.error(
+                    "EmailJS error:",
+                    emailError
+                );
+
+                /*
+                 * Ticket has already been created.
+                 * Do not show an error to the user.
+                 */
+
+            }
+
+
+            /* =================================================
+               SAVE TICKET
+            ================================================= */
+
+            sessionStorage.setItem(
+                "apsHelpTicketId",
+                result.ticketId
+            );
+
+
+            sessionStorage.setItem(
+                "apsHelpRegistrationId",
+                result.registrationId || ""
+            );
+
+
+            /* =================================================
+               SUCCESS PAGE
+            ================================================= */
+
+            window.location.href =
+                "sorry.html?ticket=" +
+                encodeURIComponent(
+                    result.ticketId
+                );
+
+        }
+
+
+        catch (error) {
+
+            console.error(
+                "Support error:",
+                error
+            );
+
+
+            showStatus(
+
+                error.message ||
+                "Something went wrong. Please try again.",
+
+                "error"
+
+            );
+
+        }
+
+
+        finally {
+
+            if (submitBtn) {
+
+                submitBtn.disabled =
+                    false;
+
+            }
+
+            if (submitText) {
+
+                submitText.classList.remove(
+                    "hidden"
+                );
+
+            }
+
+            if (submitLoading) {
+
+                submitLoading.classList.add(
+                    "hidden"
+                );
+
+            }
+
+        }
 
     }
-
-  }
 );
