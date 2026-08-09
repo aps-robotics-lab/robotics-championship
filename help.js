@@ -3,6 +3,11 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 
 import {
+    getAuth,
+    signInAnonymously
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+
+import {
     getDatabase,
     ref,
     push,
@@ -45,11 +50,14 @@ const firebaseConfig = {
 
 
 /* =========================================================
-   INITIALIZE FIREBASE
+   FIREBASE
 ========================================================= */
 
 const app =
     initializeApp(firebaseConfig);
+
+const auth =
+    getAuth(app);
 
 const db =
     getDatabase(app);
@@ -82,21 +90,25 @@ const messageCount =
 
 
 /* =========================================================
-   VALUE
+   AGENT NAV
+=========================================================
+
+   IMPORTANT:
+   This does NOT give anyone Agent access.
+
+   It is intentionally hidden.
+
+   Actual Agent authorization happens inside
+   agent.js using Firebase Authentication.
 ========================================================= */
 
-function getValue(id) {
+const agentNavLink =
+    document.getElementById("agentNavLink");
 
-    const element =
-        document.getElementById(id);
+if (agentNavLink) {
 
-    if (!element) {
-        return "";
-    }
-
-    return String(
-        element.value || ""
-    ).trim();
+    agentNavLink.hidden =
+        true;
 
 }
 
@@ -139,60 +151,167 @@ function clearStatus() {
 
 
 /* =========================================================
-   TICKET ID
+   GET VALUE
 ========================================================= */
 
-function generateTicketId() {
+function getValue(id) {
 
-    const chars =
-        "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    const element =
+        document.getElementById(id);
 
-    let random =
-        "";
-
-    for (
-        let i = 0;
-        i < 6;
-        i++
-    ) {
-
-        random +=
-            chars[
-                Math.floor(
-                    Math.random() *
-                    chars.length
-                )
-            ];
-
+    if (!element) {
+        return "";
     }
 
-    return (
-        "APS-" +
-        new Date().getFullYear() +
-        "-" +
-        random
-    );
+    return String(
+        element.value || ""
+    ).trim();
 
 }
 
 
 /* =========================================================
-   CHARACTER COUNT
+   TICKET ID
 ========================================================= */
+
+function createTicketId() {
+
+    const now =
+        new Date();
+
+    const year =
+        now.getFullYear();
+
+    const random =
+        Math.floor(
+            100000 +
+            Math.random() * 900000
+        );
+
+    return `APS-${year}-${random}`;
+
+}
+
+
+/* =========================================================
+   MESSAGE COUNTER
+========================================================= */
+
+function updateMessageCount() {
+
+    if (!message || !messageCount) {
+        return;
+    }
+
+    messageCount.textContent =
+        message.value.length;
+
+}
+
 
 message?.addEventListener(
     "input",
-    () => {
+    updateMessageCount
+);
 
-        if (messageCount) {
 
-            messageCount.textContent =
-                message.value.length;
+/* =========================================================
+   VALIDATION
+========================================================= */
 
-        }
+function validateForm(data) {
+
+    if (!data.name) {
+
+        return "Please enter your name.";
 
     }
-);
+
+
+    if (!data.className) {
+
+        return "Please select your class.";
+
+    }
+
+
+    if (!data.section) {
+
+        return "Please enter your section.";
+
+    }
+
+
+    if (!data.email) {
+
+        return "Please enter your email address.";
+
+    }
+
+
+    const emailPattern =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+    if (
+        !emailPattern.test(
+            data.email
+        )
+    ) {
+
+        return "Please enter a valid email address.";
+
+    }
+
+
+    if (!data.subject) {
+
+        return "Please enter a subject.";
+
+    }
+
+
+    if (!data.message) {
+
+        return "Please describe your issue.";
+
+    }
+
+
+    if (
+        data.message.length < 5
+    ) {
+
+        return "Please provide a little more detail.";
+
+    }
+
+
+    return "";
+
+}
+
+
+/* =========================================================
+   AUTHENTICATE PUBLIC USER
+========================================================= */
+
+async function ensureAnonymousUser() {
+
+    if (auth.currentUser) {
+
+        return auth.currentUser;
+
+    }
+
+
+    const credential =
+        await signInAnonymously(auth);
+
+
+    return credential.user;
+
+}
 
 
 /* =========================================================
@@ -208,23 +327,23 @@ form?.addEventListener(
         clearStatus();
 
 
-        /* =================================================
-           COLLECT DATA
-        ================================================= */
+        if (
+            submitBtn &&
+            submitBtn.disabled
+        ) {
+
+            return;
+
+        }
+
 
         const data = {
 
-            /*
-             * OPTIONAL
-             */
             registrationId:
                 getValue(
                     "registrationId"
                 ),
 
-            /*
-             * REQUIRED
-             */
             name:
                 getValue(
                     "name"
@@ -245,17 +364,11 @@ form?.addEventListener(
                     "email"
                 ).toLowerCase(),
 
-            /*
-             * OPTIONAL
-             */
             category:
                 getValue(
                     "category"
-                ) || "General",
+                ) || "Other",
 
-            /*
-             * REQUIRED
-             */
             subject:
                 getValue(
                     "subject"
@@ -269,82 +382,19 @@ form?.addEventListener(
         };
 
 
-        /* =================================================
-           VALIDATION
-        ================================================= */
+        /* ================================================
+           VALIDATE
+        ================================================ */
 
-        if (!data.name) {
-
-            showStatus(
-                "Please enter your name."
-            );
-
-            document
-                .getElementById("name")
-                ?.focus();
-
-            return;
-
-        }
+        const validationError =
+            validateForm(data);
 
 
-        if (!data.className) {
+        if (validationError) {
 
             showStatus(
-                "Please select your class."
-            );
-
-            document
-                .getElementById("className")
-                ?.focus();
-
-            return;
-
-        }
-
-
-        if (!data.section) {
-
-            showStatus(
-                "Please enter your section."
-            );
-
-            document
-                .getElementById("section")
-                ?.focus();
-
-            return;
-
-        }
-
-
-        if (!data.email) {
-
-            showStatus(
-                "Please enter your email address."
-            );
-
-            document
-                .getElementById("email")
-                ?.focus();
-
-            return;
-
-        }
-
-
-        const emailPattern =
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-
-        if (
-            !emailPattern.test(
-                data.email
-            )
-        ) {
-
-            showStatus(
-                "Please enter a valid email address."
+                validationError,
+                "error"
             );
 
             return;
@@ -352,51 +402,9 @@ form?.addEventListener(
         }
 
 
-        if (!data.subject) {
-
-            showStatus(
-                "Please enter a subject."
-            );
-
-            document
-                .getElementById("subject")
-                ?.focus();
-
-            return;
-
-        }
-
-
-        if (!data.message) {
-
-            showStatus(
-                "Please describe your issue."
-            );
-
-            message?.focus();
-
-            return;
-
-        }
-
-
-        if (
-            data.message.length >
-            2000
-        ) {
-
-            showStatus(
-                "Message must be 2000 characters or less."
-            );
-
-            return;
-
-        }
-
-
-        /* =================================================
+        /* ================================================
            LOADING
-        ================================================= */
+        ================================================ */
 
         if (submitBtn) {
 
@@ -406,98 +414,159 @@ form?.addEventListener(
         }
 
 
-        if (submitText) {
+        submitText?.classList.add(
+            "hidden"
+        );
 
-            submitText.classList.add(
-                "hidden"
-            );
-
-        }
-
-
-        if (submitLoading) {
-
-            submitLoading.classList.remove(
-                "hidden"
-            );
-
-        }
+        submitLoading?.classList.remove(
+            "hidden"
+        );
 
 
         try {
 
-            /* =================================================
-               CREATE FIREBASE KEY
-            ================================================= */
+            /* ============================================
+               ANONYMOUS FIREBASE LOGIN
+            ============================================ */
 
-            const ticketRef =
-                push(
-                    ref(
-                        db,
-                        "tickets"
-                    )
+            const user =
+                await ensureAnonymousUser();
+
+
+            if (!user) {
+
+                throw new Error(
+                    "Unable to authenticate with Firebase."
+                );
+
+            }
+
+
+            /* ============================================
+               CREATE TICKET
+            ============================================ */
+
+            const ticketsRef =
+                ref(
+                    db,
+                    "tickets"
                 );
 
 
-            /* =================================================
-               GENERATE TICKET ID
-            ================================================= */
+            const ticketRef =
+                push(
+                    ticketsRef
+                );
+
 
             const ticketId =
-                generateTicketId();
+                createTicketId();
 
 
-            /* =================================================
-               SAVE TICKET
-            ================================================= */
+            const ticketData = {
+
+                ticketId:
+
+                    ticketId,
+
+
+                registrationId:
+
+                    data.registrationId ||
+                    "",
+
+
+                name:
+
+                    data.name,
+
+
+                className:
+
+                    data.className,
+
+
+                section:
+
+                    data.section,
+
+
+                email:
+
+                    data.email,
+
+
+                category:
+
+                    data.category,
+
+
+                subject:
+
+                    data.subject,
+
+
+                message:
+
+                    data.message,
+
+
+                status:
+
+                    "Open",
+
+
+                priority:
+
+                    "Normal",
+
+
+                createdAt:
+
+                    serverTimestamp(),
+
+
+                updatedAt:
+
+                    serverTimestamp(),
+
+
+                createdBy:
+
+                    user.uid,
+
+
+                assignedTo:
+
+                    "",
+
+
+                agentReply:
+
+                    "",
+
+
+                closedAt:
+
+                    "",
+
+
+                closedBy:
+
+                    ""
+
+            };
+
 
             await set(
                 ticketRef,
-                {
-
-                    ticketId:
-                        ticketId,
-
-                    registrationId:
-                        data.registrationId || "",
-
-                    name:
-                        data.name,
-
-                    className:
-                        data.className,
-
-                    section:
-                        data.section,
-
-                    email:
-                        data.email,
-
-                    category:
-                        data.category,
-
-                    subject:
-                        data.subject,
-
-                    message:
-                        data.message,
-
-                    status:
-                        "Open",
-
-                    createdAt:
-                        serverTimestamp(),
-
-                    updatedAt:
-                        serverTimestamp()
-
-                }
+                ticketData
             );
 
 
-            /* =================================================
-               SAVE SESSION
-            ================================================= */
+            /* ============================================
+               SAVE LOCALLY
+            ============================================ */
 
             sessionStorage.setItem(
                 "apsHelpTicketId",
@@ -511,9 +580,9 @@ form?.addEventListener(
             );
 
 
-            /* =================================================
-               SUCCESS
-            ================================================= */
+            /* ============================================
+               REDIRECT
+            ============================================ */
 
             window.location.href =
                 "sorry.html?ticket=" +
@@ -523,16 +592,15 @@ form?.addEventListener(
 
         }
 
-
         catch (error) {
 
             console.error(
-                "Firebase Help Error:",
+                "Firebase support error:",
                 error
             );
 
 
-            let message =
+            let messageText =
                 "Unable to submit your request.";
 
 
@@ -541,14 +609,33 @@ form?.addEventListener(
                 "PERMISSION_DENIED"
             ) {
 
-                message =
-                    "Permission denied. Please check your Firebase Realtime Database Rules.";
+                messageText =
+                    "Unable to submit your request. Please check Firebase Rules.";
+
+            }
+
+            else if (
+                error?.code ===
+                "auth/operation-not-allowed"
+            ) {
+
+                messageText =
+                    "Anonymous sign-in is disabled. Enable Anonymous Authentication in Firebase.";
+
+            }
+
+            else if (
+                error?.message
+            ) {
+
+                messageText =
+                    error.message;
 
             }
 
 
             showStatus(
-                message,
+                messageText,
                 "error"
             );
 
@@ -565,24 +652,23 @@ form?.addEventListener(
             }
 
 
-            if (submitText) {
-
-                submitText.classList.remove(
-                    "hidden"
-                );
-
-            }
+            submitText?.classList.remove(
+                "hidden"
+            );
 
 
-            if (submitLoading) {
-
-                submitLoading.classList.add(
-                    "hidden"
-                );
-
-            }
+            submitLoading?.classList.add(
+                "hidden"
+            );
 
         }
 
     }
 );
+
+
+/* =========================================================
+   INITIAL
+========================================================= */
+
+updateMessageCount();
