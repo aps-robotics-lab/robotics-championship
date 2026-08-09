@@ -34,4 +34,3 @@ projectId:
 
 storageBucket:
 
-Its mine js file double check code you provide me
