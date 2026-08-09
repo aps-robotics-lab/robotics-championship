@@ -4,235 +4,297 @@
 <head>
 
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#020711">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | APS Robotics Championship 2026</title>
 
-<meta
-    name="theme-color"
-    content="#020711">
-
-<title>
-    Admin | APS Robotics Championship 2026
-</title>
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <link
-    rel="preconnect"
-    href="https://fonts.googleapis.com">
+href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Poppins:wght@400;500;600&display=swap"
+rel="stylesheet">
 
 <link
-    rel="preconnect"
-    href="https://fonts.gstatic.com"
-    crossorigin>
-
-
-<link
-    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Poppins:wght@400;500;600&display=swap"
-    rel="stylesheet">
-
-
-<link
-    rel="stylesheet"
-    href="admin.css">
+rel="stylesheet"
+href="admin.css">
 
 </head>
 
-
 <body>
-
 
 <div class="bg"></div>
 
+<header class="topbar">
 
-<main class="wrap">
+    <div class="brand">
 
+        <img
+        src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+        alt="APS">
 
-    <!-- =================================================
-         LOGIN CARD
-    ================================================== -->
-
-    <section
-        id="loginCard"
-        class="card">
-
-        <div class="logo">
-            APS
+        <div>
+            <span>APS TINKERING LAB</span>
+            <strong>ROBOTICS CHAMPIONSHIP 2026</strong>
         </div>
 
-        <div class="tag">
-            ROBOTICS CHAMPIONSHIP 2026
-        </div>
+    </div>
+
+    <nav>
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a href="rules.html">
+            Rules
+        </a>
+
+        <button id="logoutBtn">
+            Logout
+        </button>
+
+    </nav>
+
+</header>
+
+
+<main>
+
+<section class="hero">
+
+    <div>
+
+        <span class="badge">
+            ADMIN CONTROL PANEL
+        </span>
 
         <h1>
-            Admin Login
+            Registration
+            <span>Dashboard</span>
         </h1>
 
         <p>
-            Please sign in through the admin login page.
+            Manage APS Robotics Championship 2026 registrations.
         </p>
 
-        <button
-            type="button"
-            onclick="window.location.href='login.html'">
+    </div>
 
-            GO TO LOGIN
-
-        </button>
-
-    </section>
+</section>
 
 
-    <!-- =================================================
-         DASHBOARD
-    ================================================== -->
+<section class="dashboard">
 
-    <section
-        id="dashboard"
-        class="dashboard hidden">
+    <div class="toolbar">
 
+        <div class="stats">
 
-        <!-- TOP -->
-
-        <header class="top">
-
-            <div>
-
-                <div class="tag">
-                    APS TINKERING LAB
-                </div>
-
-                <h1>
-                    Registration Dashboard
-                </h1>
-
+            <div class="stat">
+                <small>REGISTRATIONS</small>
+                <strong id="totalRegistrations">0</strong>
             </div>
 
+            <div class="stat">
+                <small>SOLO</small>
+                <strong id="soloCount">0</strong>
+            </div>
 
-            <button
-                id="logoutBtn"
-                class="secondary"
-                type="button">
+            <div class="stat">
+                <small>TEAMS</small>
+                <strong id="teamCount">0</strong>
+            </div>
 
-                Logout
-
-            </button>
-
-        </header>
-
-
-        <!-- STATUS -->
-
-        <div
-            id="status"
-            class="status">
         </div>
 
 
-        <!-- TOOLBAR -->
-
-        <div class="toolbar">
+        <div class="actions">
 
             <input
                 id="search"
                 type="search"
                 placeholder="Search name, team, email, event...">
 
-
             <button
                 id="refreshBtn"
-                class="secondary"
-                type="button">
-
+                class="secondary">
                 Refresh
-
             </button>
 
         </div>
 
-
-        <!-- TABLE -->
-
-        <div class="table-wrap">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            Registration ID
-                        </th>
-
-                        <th>
-                            Leader
-                        </th>
-
-                        <th>
-                            Team
-                        </th>
-
-                        <th>
-                            Size
-                        </th>
-
-                        <th>
-                            Class
-                        </th>
-
-                        <th>
-                            Section
-                        </th>
-
-                        <th>
-                            Mobile
-                        </th>
-
-                        <th>
-                            Email
-                        </th>
-
-                        <th>
-                            Events
-                        </th>
-
-                        <th>
-                            Members
-                        </th>
-
-                        <th>
-                            Date
-                        </th>
-
-                    </tr>
-
-                </thead>
+    </div>
 
 
-                <tbody
-                    id="registrationBody">
-
-                </tbody>
-
-            </table>
-
-        </div>
+    <div
+        id="status"
+        class="status">
+    </div>
 
 
-    </section>
+    <div class="table-wrap">
 
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Leader</th>
+                    <th>Team</th>
+                    <th>Type</th>
+                    <th>Members</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Events</th>
+                    <th>Date</th>
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="registrationBody"></tbody>
+
+        </table>
+
+    </div>
+
+</section>
 
 </main>
 
 
-<script
-    type="module"
-    src="admin.js">
-</script>
+<!-- EDIT MODAL -->
 
+<div
+id="editOverlay"
+class="overlay hidden">
+
+<div class="edit-card">
+
+    <div class="edit-header">
+
+        <div>
+            <span>EDIT REGISTRATION</span>
+            <h2>Registration Details</h2>
+        </div>
+
+        <button
+        id="closeEdit"
+        class="close-btn">
+            ×
+        </button>
+
+    </div>
+
+
+    <form id="editForm">
+
+        <input
+        type="hidden"
+        id="editKey">
+
+
+        <div class="edit-grid">
+
+            <label>
+                Leader Name
+                <input id="editStudentName" required>
+            </label>
+
+            <label>
+                Class
+                <select id="editStudentClass" required>
+                    <option value="">Select Class</option>
+                    <option>VI</option>
+                    <option>VII</option>
+                    <option>VIII</option>
+                    <option>IX</option>
+                    <option>X</option>
+                    <option>XI</option>
+                    <option>XII</option>
+                </select>
+            </label>
+
+            <label>
+                Section
+                <input id="editStudentSection" required>
+            </label>
+
+            <label>
+                Mobile
+                <input
+                id="editMobileNumber"
+                maxlength="10">
+            </label>
+
+            <label>
+                Email
+                <input
+                id="editEmailAddress"
+                type="email">
+            </label>
+
+            <label>
+                Team Name
+                <input id="editTeamName">
+            </label>
+
+        </div>
+
+
+        <h3 class="member-title">
+            Team Members
+        </h3>
+
+        <div id="editMembers"></div>
+
+
+        <label class="remarks-label">
+
+            Remarks
+
+            <textarea
+            id="editRemarks"
+            rows="4">
+            </textarea>
+
+        </label>
+
+
+        <div
+        id="editMessage"
+        class="edit-message">
+        </div>
+
+
+        <div class="edit-actions">
+
+            <button
+            type="button"
+            id="cancelEdit"
+            class="secondary">
+                Cancel
+            </button>
+
+            <button
+            type="submit"
+            class="save-btn">
+                Save Changes
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+</div>
+
+
+<script type="module" src="admin.js"></script>
 
 </body>
-
 </html>
