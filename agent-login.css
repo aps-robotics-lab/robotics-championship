@@ -1,401 +1,520 @@
-import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-
-import {
-    getAuth,
-    signInWithEmailAndPassword,
-    onAuthStateChanged,
-    signOut
-} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
 
-/* =====================================================
-   FIREBASE CONFIG
-===================================================== */
+:root {
 
-const firebaseConfig = {
+    --bg: #020711;
+    --card: rgba(8, 17, 32, 0.92);
 
-    apiKey:
-        "AIzaSyCVfkLAc5EKDRUoHf4LgVhBFwTNmq2GMI0",
+    --border: rgba(95, 180, 255, 0.18);
 
-    authDomain:
-        "robotics-championship-ab248.firebaseapp.com",
+    --text: #f4f8ff;
+    --muted: #8fa4bd;
 
-    databaseURL:
-        "https://robotics-championship-ab248-default-rtdb.asia-southeast1.firebasedatabase.app",
+    --accent: #36a9ff;
+    --accent-two: #7b61ff;
 
-    projectId:
-        "robotics-championship-ab248",
-
-    storageBucket:
-        "robotics-championship-ab248.firebasestorage.app",
-
-    messagingSenderId:
-        "521981495733",
-
-    appId:
-        "1:521981495733:web:ecec2bc677a4450f19f1fc",
-
-    measurementId:
-        "G-NTBPB3MJ0E"
-
-};
-
-
-/* =====================================================
-   FIREBASE
-===================================================== */
-
-const app =
-    initializeApp(firebaseConfig);
-
-const auth =
-    getAuth(app);
-
-
-/* =====================================================
-   AGENT UID LIST
-=====================================================
-
-   Put ONLY the users who should have Agent access here.
-
-   Do NOT automatically give every Firebase user
-   access to the Agent panel.
-===================================================== */
-
-const AGENT_UIDS = new Set([
-
-    "crfLkH7qlofZBea5GEwLMEtL92X2",
-
-    "5lBbcuD2BjRdDya7Lo9uRXdBIp92",
-
-    "jd7b5KYmivhYpCJzLyQ005BFmCn2",
-
-    "spzBLVusBfcqCCSmK923QmhmcAN2",
-
-    "1PhsiGhletVZYliDKKKVKV2G9tu2"
-
-]);
-
-
-/* =====================================================
-   ELEMENTS
-===================================================== */
-
-const form =
-    document.getElementById(
-        "agentLoginForm"
-    );
-
-const email =
-    document.getElementById(
-        "email"
-    );
-
-const password =
-    document.getElementById(
-        "password"
-    );
-
-const loginBtn =
-    document.getElementById(
-        "loginBtn"
-    );
-
-const loginText =
-    document.getElementById(
-        "loginText"
-    );
-
-const loginLoading =
-    document.getElementById(
-        "loginLoading"
-    );
-
-const loginStatus =
-    document.getElementById(
-        "loginStatus"
-    );
-
-const togglePassword =
-    document.getElementById(
-        "togglePassword"
-    );
-
-
-/* =====================================================
-   STATUS
-===================================================== */
-
-function showStatus(
-    message,
-    type = "error"
-) {
-
-    loginStatus.textContent =
-        message;
-
-    loginStatus.className =
-        "login-status " + type;
+    --danger: #ff5f6d;
+    --success: #35e6a1;
 
 }
 
 
-/* =====================================================
-   PASSWORD TOGGLE
-===================================================== */
+body {
 
-togglePassword?.addEventListener(
-    "click",
-    () => {
+    min-height: 100vh;
 
-        const isPassword =
-            password.type === "password";
+    background:
+        radial-gradient(
+            circle at 15% 20%,
+            rgba(54,169,255,.14),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 85% 80%,
+            rgba(123,97,255,.12),
+            transparent 30%
+        ),
+        var(--bg);
 
+    color: var(--text);
 
-        password.type =
-            isPassword
-                ? "text"
-                : "password";
+    font-family: Poppins, sans-serif;
 
+    overflow-x: hidden;
 
-        togglePassword.textContent =
-            isPassword
-                ? "◉"
-                : "◉";
-
-    }
-);
-
-
-/* =====================================================
-   AUTH STATE
-===================================================== */
-
-onAuthStateChanged(
-    auth,
-    user => {
-
-        if (!user) {
-            return;
-        }
+}
 
 
-        /*
-         * If a previously logged-in account
-         * is not an Agent, immediately remove
-         * its session.
-         */
+.background-grid {
 
-        if (!AGENT_UIDS.has(user.uid)) {
+    position: fixed;
 
-            signOut(auth);
+    inset: 0;
 
-            showStatus(
-                "This account is not authorized for the Agent Portal.",
-                "error"
-            );
+    pointer-events: none;
 
-            return;
+    opacity: .25;
 
-        }
-
-
-        /*
-         * Already authenticated Agent.
-         */
-
-        window.location.href =
-            "agent.html";
-
-    }
-);
-
-
-/* =====================================================
-   LOGIN
-===================================================== */
-
-form?.addEventListener(
-    "submit",
-    async event => {
-
-        event.preventDefault();
-
-
-        const emailValue =
-            email.value
-                .trim()
-                .toLowerCase();
-
-
-        const passwordValue =
-            password.value;
-
-
-        if (!emailValue ||
-            !passwordValue) {
-
-            showStatus(
-                "Please enter your email and password.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-        loginBtn.disabled =
-            true;
-
-        loginText.classList.add(
-            "hidden"
+    background-image:
+        linear-gradient(
+            rgba(255,255,255,.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.025) 1px,
+            transparent 1px
         );
 
-        loginLoading.classList.remove(
-            "hidden"
+    background-size: 40px 40px;
+
+}
+
+
+.glow {
+
+    position: fixed;
+
+    width: 350px;
+    height: 350px;
+
+    border-radius: 50%;
+
+    filter: blur(100px);
+
+    pointer-events: none;
+
+}
+
+
+.glow-one {
+
+    top: -180px;
+    left: -120px;
+
+    background: rgba(54,169,255,.12);
+
+}
+
+
+.glow-two {
+
+    right: -150px;
+    bottom: -180px;
+
+    background: rgba(123,97,255,.13);
+
+}
+
+
+.login-wrapper {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 25px;
+
+}
+
+
+.login-card {
+
+    width: min(450px, 100%);
+
+    padding: 38px 32px;
+
+    background: var(--card);
+
+    border: 1px solid var(--border);
+
+    border-radius: 28px;
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.5),
+        inset 0 1px rgba(255,255,255,.03);
+
+    backdrop-filter: blur(20px);
+
+}
+
+
+.logo-box {
+
+    width: 100px;
+    height: 100px;
+
+    margin: 0 auto 22px;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 24px;
+
+    background: rgba(255,255,255,.035);
+
+    border: 1px solid var(--border);
+
+}
+
+
+.logo-box img {
+
+    width: 82px;
+    height: 82px;
+
+    object-fit: contain;
+
+}
+
+
+.heading {
+
+    text-align: center;
+
+    margin-bottom: 30px;
+
+}
+
+
+.eyebrow {
+
+    color: var(--accent);
+
+    font-family: Orbitron, sans-serif;
+
+    font-size: 11px;
+
+    letter-spacing: 2px;
+
+}
+
+
+.heading h1 {
+
+    margin-top: 10px;
+
+    font-family: Orbitron, sans-serif;
+
+    font-size: 32px;
+
+    line-height: 1.2;
+
+}
+
+
+.heading h1 span {
+
+    display: block;
+
+    color: var(--accent);
+
+}
+
+
+.heading p {
+
+    margin-top: 8px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+}
+
+
+.field {
+
+    margin-bottom: 20px;
+
+}
+
+
+.field label {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #d9e5f5;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+}
+
+
+.input-box {
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+}
+
+
+.input-icon {
+
+    position: absolute;
+
+    left: 15px;
+
+    opacity: .65;
+
+}
+
+
+.input-box input {
+
+    width: 100%;
+
+    height: 52px;
+
+    padding:
+        0 48px 0 45px;
+
+    border-radius: 14px;
+
+    border: 1px solid var(--border);
+
+    outline: none;
+
+    background: rgba(255,255,255,.035);
+
+    color: white;
+
+    font-family: Poppins, sans-serif;
+
+    transition: .2s;
+
+}
+
+
+.input-box input:focus {
+
+    border-color: var(--accent);
+
+    box-shadow:
+        0 0 0 3px rgba(54,169,255,.09);
+
+}
+
+
+.input-box input::placeholder {
+
+    color: #657991;
+
+}
+
+
+.password-toggle {
+
+    position: absolute;
+
+    right: 10px;
+
+    border: none;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    color: white;
+
+    padding: 8px;
+
+}
+
+
+.login-btn {
+
+    width: 100%;
+
+    height: 54px;
+
+    border: none;
+
+    border-radius: 15px;
+
+    cursor: pointer;
+
+    margin-top: 8px;
+
+    color: white;
+
+    font-family: Orbitron, sans-serif;
+
+    font-size: 12px;
+
+    letter-spacing: 1px;
+
+    font-weight: 700;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--accent),
+            var(--accent-two)
         );
 
+    box-shadow:
+        0 12px 30px rgba(54,169,255,.18);
 
-        try {
+    transition: .2s;
 
-            const credential =
-                await signInWithEmailAndPassword(
-                    auth,
-                    emailValue,
-                    passwordValue
-                );
+}
 
 
-            const user =
-                credential.user;
+.login-btn:hover {
+
+    transform: translateY(-2px);
+
+}
 
 
-            /*
-             * Firebase login succeeded,
-             * but UID authorization is checked
-             * separately.
-             */
+.login-btn:disabled {
 
-            if (
-                !AGENT_UIDS.has(
-                    user.uid
-                )
-            ) {
+    opacity: .6;
 
-                await signOut(auth);
+    cursor: not-allowed;
 
-                throw new Error(
-                    "This account is not authorized for the Agent Portal."
-                );
+    transform: none;
 
-            }
+}
 
 
-            showStatus(
-                "Authentication successful. Opening Agent Portal...",
-                "success"
-            );
+.login-message {
+
+    min-height: 24px;
+
+    margin: 5px 0 5px;
+
+    text-align: center;
+
+    font-size: 12px;
+
+}
 
 
-            setTimeout(
-                () => {
+.login-message.error {
 
-                    window.location.href =
-                        "agent.html";
+    color: var(--danger);
 
-                },
-                500
-            );
+}
 
 
-        } catch (error) {
+.login-message.success {
 
-            console.error(
-                "Agent login error:",
-                error
-            );
+    color: var(--success);
 
-
-            let message =
-                "Unable to sign in.";
+}
 
 
-            switch (
-                error.code
-            ) {
+.security-note {
 
-                case "auth/invalid-credential":
+    display: flex;
 
-                    message =
-                        "Incorrect email or password.";
+    align-items: center;
 
-                    break;
+    gap: 12px;
 
+    margin-top: 25px;
 
-                case "auth/user-not-found":
+    padding: 14px;
 
-                    message =
-                        "No account exists with this email.";
+    border-radius: 14px;
 
-                    break;
+    background: rgba(255,255,255,.025);
 
+    border: 1px solid rgba(255,255,255,.05);
 
-                case "auth/wrong-password":
-
-                    message =
-                        "Incorrect password.";
-
-                    break;
+}
 
 
-                case "auth/invalid-email":
+.security-note > span {
 
-                    message =
-                        "Please enter a valid email address.";
+    font-size: 20px;
 
-                    break;
-
-
-                case "auth/too-many-requests":
-
-                    message =
-                        "Too many attempts. Please try again later.";
-
-                    break;
+}
 
 
-                default:
+.security-note strong {
 
-                    message =
-                        error.message ||
-                        message;
+    display: block;
 
-            }
+    font-size: 12px;
 
-
-            showStatus(
-                message,
-                "error"
-            );
+}
 
 
-        } finally {
+.security-note small {
 
-            loginBtn.disabled =
-                false;
+    display: block;
 
-            loginText.classList.remove(
-                "hidden"
-            );
+    margin-top: 2px;
 
-            loginLoading.classList.add(
-                "hidden"
-            );
+    color: var(--muted);
 
-        }
+    font-size: 10px;
+
+}
+
+
+.footer {
+
+    margin-top: 25px;
+
+    text-align: center;
+
+    color: #64768b;
+
+    font-size: 10px;
+
+}
+
+
+.footer span {
+
+    margin: 0 5px;
+
+}
+
+
+.hidden {
+
+    display: none !important;
+
+}
+
+
+@media (max-width: 480px) {
+
+    .login-card {
+
+        padding: 30px 22px;
+
+        border-radius: 23px;
 
     }
-);
+
+    .heading h1 {
+
+        font-size: 27px;
+
+    }
+
+}
