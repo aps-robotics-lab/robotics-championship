@@ -10,9 +10,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
 
-/* =====================================================
+/* =========================================================
    FIREBASE CONFIG
-===================================================== */
+========================================================= */
 
 const firebaseConfig = {
 
@@ -43,9 +43,9 @@ const firebaseConfig = {
 };
 
 
-/* =====================================================
-   FIREBASE
-===================================================== */
+/* =========================================================
+   INITIALIZE
+========================================================= */
 
 const app =
     initializeApp(firebaseConfig);
@@ -54,17 +54,11 @@ const auth =
     getAuth(app);
 
 
-/* =====================================================
-   AGENT UID LIST
-=====================================================
+/* =========================================================
+   ADMIN UID LIST
+========================================================= */
 
-   Put ONLY the users who should have Agent access here.
-
-   Do NOT automatically give every Firebase user
-   access to the Agent panel.
-===================================================== */
-
-const AGENT_UIDS = new Set([
+const ADMIN_UIDS = new Set([
 
     "crfLkH7qlofZBea5GEwLMEtL92X2",
 
@@ -79,13 +73,13 @@ const AGENT_UIDS = new Set([
 ]);
 
 
-/* =====================================================
+/* =========================================================
    ELEMENTS
-===================================================== */
+========================================================= */
 
 const form =
     document.getElementById(
-        "agentLoginForm"
+        "adminLoginForm"
     );
 
 const email =
@@ -113,9 +107,9 @@ const loginLoading =
         "loginLoading"
     );
 
-const loginStatus =
+const loginMessage =
     document.getElementById(
-        "loginStatus"
+        "loginMessage"
     );
 
 const togglePassword =
@@ -124,54 +118,60 @@ const togglePassword =
     );
 
 
-/* =====================================================
-   STATUS
-===================================================== */
+/* =========================================================
+   MESSAGE
+========================================================= */
 
-function showStatus(
+function showMessage(
     message,
     type = "error"
 ) {
 
-    loginStatus.textContent =
+    loginMessage.textContent =
         message;
 
-    loginStatus.className =
-        "login-status " + type;
+    loginMessage.className =
+        "login-message " + type;
 
 }
 
 
-/* =====================================================
+/* =========================================================
    PASSWORD TOGGLE
-===================================================== */
+========================================================= */
 
 togglePassword?.addEventListener(
     "click",
     () => {
 
-        const isPassword =
-            password.type === "password";
+        if (
+            password.type ===
+            "password"
+        ) {
 
+            password.type =
+                "text";
 
-        password.type =
-            isPassword
-                ? "text"
-                : "password";
+            togglePassword.textContent =
+                "🙈";
 
+        } else {
 
-        togglePassword.textContent =
-            isPassword
-                ? "◉"
-                : "◉";
+            password.type =
+                "password";
+
+            togglePassword.textContent =
+                "👁";
+
+        }
 
     }
 );
 
 
-/* =====================================================
+/* =========================================================
    AUTH STATE
-===================================================== */
+========================================================= */
 
 onAuthStateChanged(
     auth,
@@ -183,39 +183,43 @@ onAuthStateChanged(
 
 
         /*
-         * If a previously logged-in account
-         * is not an Agent, immediately remove
-         * its session.
+         * If already signed in,
+         * verify UID before entering admin.
          */
 
-        if (!AGENT_UIDS.has(user.uid)) {
+        if (
+            ADMIN_UIDS.has(
+                user.uid
+            )
+        ) {
+
+            window.location.replace(
+                "admin.html"
+            );
+
+        } else {
+
+            /*
+             * User is authenticated
+             * but is NOT an admin.
+             */
 
             signOut(auth);
 
-            showStatus(
-                "This account is not authorized for the Agent Portal.",
+            showMessage(
+                "This account is not authorized for the Admin Panel.",
                 "error"
             );
 
-            return;
-
         }
-
-
-        /*
-         * Already authenticated Agent.
-         */
-
-        window.location.href =
-            "agent.html";
 
     }
 );
 
 
-/* =====================================================
+/* =========================================================
    LOGIN
-===================================================== */
+========================================================= */
 
 form?.addEventListener(
     "submit",
@@ -224,22 +228,33 @@ form?.addEventListener(
         event.preventDefault();
 
 
+        showMessage("");
+
+
         const emailValue =
             email.value
                 .trim()
                 .toLowerCase();
 
-
         const passwordValue =
             password.value;
 
 
-        if (!emailValue ||
-            !passwordValue) {
+        if (!emailValue) {
 
-            showStatus(
-                "Please enter your email and password.",
-                "error"
+            showMessage(
+                "Please enter your administrator email."
+            );
+
+            return;
+
+        }
+
+
+        if (!passwordValue) {
+
+            showMessage(
+                "Please enter your password."
             );
 
             return;
@@ -261,6 +276,10 @@ form?.addEventListener(
 
         try {
 
+            /*
+             * Firebase Email/Password login.
+             */
+
             const credential =
                 await signInWithEmailAndPassword(
                     auth,
@@ -274,13 +293,13 @@ form?.addEventListener(
 
 
             /*
-             * Firebase login succeeded,
-             * but UID authorization is checked
-             * separately.
+             * UID authorization.
+             *
+             * Email alone is NOT enough.
              */
 
             if (
-                !AGENT_UIDS.has(
+                !ADMIN_UIDS.has(
                     user.uid
                 )
             ) {
@@ -288,14 +307,14 @@ form?.addEventListener(
                 await signOut(auth);
 
                 throw new Error(
-                    "This account is not authorized for the Agent Portal."
+                    "This account is not an authorized administrator."
                 );
 
             }
 
 
-            showStatus(
-                "Authentication successful. Opening Agent Portal...",
+            showMessage(
+                "Authentication successful. Opening Admin Panel...",
                 "success"
             );
 
@@ -303,8 +322,9 @@ form?.addEventListener(
             setTimeout(
                 () => {
 
-                    window.location.href =
-                        "agent.html";
+                    window.location.replace(
+                        "admin.html"
+                    );
 
                 },
                 500
@@ -314,7 +334,7 @@ form?.addEventListener(
         } catch (error) {
 
             console.error(
-                "Agent login error:",
+                "Admin login error:",
                 error
             );
 
@@ -327,7 +347,8 @@ form?.addEventListener(
                 error.code
             ) {
 
-                case "auth/invalid-credential":
+                case
+                "auth/invalid-credential":
 
                     message =
                         "Incorrect email or password.";
@@ -335,23 +356,8 @@ form?.addEventListener(
                     break;
 
 
-                case "auth/user-not-found":
-
-                    message =
-                        "No account exists with this email.";
-
-                    break;
-
-
-                case "auth/wrong-password":
-
-                    message =
-                        "Incorrect password.";
-
-                    break;
-
-
-                case "auth/invalid-email":
+                case
+                "auth/invalid-email":
 
                     message =
                         "Please enter a valid email address.";
@@ -359,10 +365,38 @@ form?.addEventListener(
                     break;
 
 
-                case "auth/too-many-requests":
+                case
+                "auth/user-disabled":
+
+                    message =
+                        "This administrator account has been disabled.";
+
+                    break;
+
+
+                case
+                "auth/too-many-requests":
 
                     message =
                         "Too many attempts. Please try again later.";
+
+                    break;
+
+
+                case
+                "auth/network-request-failed":
+
+                    message =
+                        "Network error. Check your internet connection.";
+
+                    break;
+
+
+                case
+                "auth/admin-restricted-operation":
+
+                    message =
+                        "Email/password authentication is not enabled in Firebase.";
 
                     break;
 
@@ -376,7 +410,7 @@ form?.addEventListener(
             }
 
 
-            showStatus(
+            showMessage(
                 message,
                 "error"
             );
