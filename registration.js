@@ -1,141 +1,22 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
-
-const firebaseConfig = {
-    apiKey: "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
-    authDomain: "aps-robotics-championship.firebaseapp.com",
-    databaseURL: "https://aps-robotics-championship-default-rtdb.firebaseio.com",
-    projectId: "aps-robotics-championship",
-    storageBucket: "aps-robotics-championship.firebasestorage.app",
-    messagingSenderId: "1063542904891",
-    appId: "1:1063542904891:web:82ff9bb3fba0b87384a41e"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-const form = document.getElementById("registrationForm");
-const submitBtn = document.getElementById("submitBtn");
-const formMessage = document.getElementById("formMessage");
-const successOverlay = document.getElementById("successOverlay");
-const successRegistrationId = document.getElementById("successRegistrationId");
-const continueBtn = document.getElementById("continueBtn");
-const eventError = document.getElementById("eventError");
-const remarks = document.getElementById("remarks");
-const characterCount = document.getElementById("characterCount");
-const participationType = document.getElementById("participationType");
-const memberInstruction = document.getElementById("memberInstruction");
-
-const getValue = id => document.getElementById(id)?.value.trim() || "";
-
-function getTeamSize() {
-  const selected = document.querySelector('input[name="TeamSize"]:checked');
-  return selected ? Number(selected.value) : 1;
-}
-
-function getSelectedEvents() {
-  return [...document.querySelectorAll('input[name="Events"]:checked')].map(x => x.value);
-}
-
-function generateRegistrationId() {
-  return `APS-RBC-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-}
-
-function showMessage(message, type="error") {
-  formMessage.textContent = message;
-  formMessage.className = `form-message show ${type}`;
-}
-
-function updateTeamSize() {
-  const size = getTeamSize();
-  document.querySelectorAll(".additional-member").forEach(card => {
-    const n = Number(card.dataset.memberCard);
-    const active = n <= size;
-    card.classList.toggle("hidden-member", !active);
-    [ `member${n}Name`, `member${n}Class`, `member${n}Section` ].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.required = active;
-      if (!active && el) el.value = "";
-    });
-  });
-  participationType.value = size === 1 ? "Solo" : `Team of ${size}`;
-  const text = {
-    1:"Solo participation selected. No additional members required.",
-    2:"Team of 2 selected. Please enter details for Participant 02.",
-    3:"Team of 3 selected. Please enter details for Participants 02 and 03.",
-    4:"Team of 4 selected. Please enter details for Participants 02–04.",
-    5:"Team of 5 selected. Please enter details for Participants 02–05."
-  };
-  memberInstruction.textContent = text[size];
-}
-
-document.querySelectorAll('input[name="TeamSize"]').forEach(x => x.addEventListener("change", updateTeamSize));
-updateTeamSize();
-
-document.querySelectorAll('input[name="Events"]').forEach(x => x.addEventListener("change", () => {
-  eventError.textContent = getSelectedEvents().length ? "" : "Please select at least one event.";
-}));
-
-remarks?.addEventListener("input", () => characterCount.textContent = remarks.value.length);
-
-document.getElementById("mobileNumber")?.addEventListener("input", e => {
-  e.target.value = e.target.value.replace(/\D/g,"").slice(0,10);
-});
-
-document.getElementById("emailAddress")?.addEventListener("blur", e => {
-  e.target.value = e.target.value.trim().toLowerCase();
-});
-
-function collectData() {
-  const d = {
-    registrationId: generateRegistrationId(),
-    TeamSize: getTeamSize(),
-    ParticipationType: participationType.value,
-    StudentName: getValue("studentName"),
-    Class: getValue("studentClass"),
-    Section: getValue("studentSection"),
-    MobileNumber: getValue("mobileNumber"),
-    EmailAddress: getValue("emailAddress"),
-    TeamName: getValue("teamName"),
-    Events: getSelectedEvents(),
-    Remarks: getValue("remarks"),
-    registrationDate: new Date().toLocaleString("en-IN", {dateStyle:"medium", timeStyle:"short"})
-  };
-  for (let i=2;i<=5;i++) {
-    d[`Member${i}Name`] = getValue(`member${i}Name`);
-    d[`Member${i}Class`] = getValue(`member${i}Class`);
-    d[`Member${i}Section`] = getValue(`member${i}Section`);
-  }
-  return d;
-}
-
-form?.addEventListener("submit", async e => {
-  e.preventDefault();
-  formMessage.className = "form-message";
-  if (!form.checkValidity()) { form.reportValidity(); return; }
-  if (!getSelectedEvents().length) { eventError.textContent="Please select at least one event."; return; }
-  if (submitBtn.disabled) return;
-
-  const data = collectData();
-  submitBtn.disabled = true;
-  submitBtn.classList.add("loading");
-
-  try {
-    const r = push(ref(db, "registrations"));
-    await set(r, data);
-
-    sessionStorage.setItem("apsRegistrationId", data.registrationId);
-    sessionStorage.setItem("apsRegistrationName", data.StudentName);
-
-    successRegistrationId.textContent = data.registrationId;
-    successOverlay.classList.remove("hidden");
-  } catch (error) {
-    console.error(error);
-    showMessage("Registration could not be completed. Please try again.","error");
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.classList.remove("loading");
-  }
-});
-
-continueBtn?.addEventListener("click", () => location.href="thankyou.html");
+const firebaseConfig={apiKey:"AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",authDomain:"aps-robotics-championship.firebaseapp.com",databaseURL:"https://aps-robotics-championship-default-rtdb.firebaseio.com",projectId:"aps-robotics-championship",storageBucket:"aps-robotics-championship.firebasestorage.app",messagingSenderId:"1063542904891",appId:"1:1063542904891:web:82ff9bb3fba0b87384a41e"};
+const app=initializeApp(firebaseConfig),db=getDatabase(app);
+const EMAILJS_PUBLIC_KEY="GnxniZ70ndujyjDpe",EMAILJS_SERVICE_ID="service_5m4uzhb",EMAILJS_TEMPLATE_ID="template_5qb8b2p";
+const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";s.onload=()=>window.emailjs&&window.emailjs.init({publicKey:EMAILJS_PUBLIC_KEY});document.head.appendChild(s);
+const form=document.getElementById("registrationForm"),submitBtn=document.getElementById("submitBtn"),formMessage=document.getElementById("formMessage"),successOverlay=document.getElementById("successOverlay"),successRegistrationId=document.getElementById("successRegistrationId"),continueBtn=document.getElementById("continueBtn"),eventError=document.getElementById("eventError"),remarks=document.getElementById("remarks"),characterCount=document.getElementById("characterCount"),participationType=document.getElementById("participationType"),memberInstruction=document.getElementById("memberInstruction");
+const getValue=id=>(document.getElementById(id)?.value||"").trim(),getTeamSize=()=>Number(document.querySelector('input[name="TeamSize"]:checked')?.value||1),getSelectedEvents=()=>Array.from(document.querySelectorAll('input[name="Events"]:checked')).map(x=>x.value),generateRegistrationId=()=>`APS-RBC-${new Date().getFullYear()}-${Math.floor(1000+Math.random()*9000)}`;
+function showMessage(m,t="error"){formMessage.textContent=m;formMessage.className=`form-message ${t}`};function clearMessage(){formMessage.textContent="";formMessage.className="form-message";}
+function clearMemberFields(n){[`member${n}Name`,`member${n}Class`,`member${n}Section`].forEach(id=>{const e=document.getElementById(id);if(e)e.value=""})}
+function updateTeamSize(){const size=getTeamSize();document.querySelectorAll(".additional-member").forEach(c=>{const n=Number(c.dataset.memberCard);c.classList.toggle("hidden-member",n>size);if(n>size)clearMemberFields(n)});if(participationType)participationType.value=size===1?"Solo":`Team of ${size}`;if(memberInstruction)memberInstruction.textContent={1:"Solo participation selected. No additional members required.",2:"Team of 2 selected. Please enter details for Participant 02.",3:"Team of 3 selected. Please enter details for Participants 02 and 03.",4:"Team of 4 selected. Please enter details for Participants 02–04.",5:"Team of 5 selected. Please enter details for Participants 02–05."}[size];for(let i=2;i<=5;i++){document.getElementById(`member${i}Name`).required=i<=size;document.getElementById(`member${i}Class`).required=i<=size;document.getElementById(`member${i}Section`).required=i<=size}}
+document.querySelectorAll('input[name="TeamSize"]').forEach(x=>x.addEventListener("change",updateTeamSize));updateTeamSize();
+remarks?.addEventListener("input",()=>characterCount.textContent=remarks.value.length);
+document.getElementById("mobileNumber")?.addEventListener("input",e=>e.target.value=e.target.value.replace(/\D/g,"").slice(0,10));
+document.getElementById("emailAddress")?.addEventListener("blur",e=>e.target.value=e.target.value.trim().toLowerCase());
+function validateEvents(){const ok=getSelectedEvents().length>0;if(eventError)eventError.textContent=ok?"":"Please select at least one event.";return ok}document.querySelectorAll('input[name="Events"]').forEach(x=>x.addEventListener("change",validateEvents));
+function collectRegistrationData(){const now=new Date();return{registrationId:generateRegistrationId(),TeamSize:getTeamSize(),ParticipationType:getValue("participationType"),StudentName:getValue("studentName"),Class:getValue("studentClass"),Section:getValue("studentSection"),MobileNumber:getValue("mobileNumber"),EmailAddress:getValue("emailAddress"),TeamName:getValue("teamName"),Events:getSelectedEvents(),Member2Name:getValue("member2Name"),Member2Class:getValue("member2Class"),Member2Section:getValue("member2Section"),Member3Name:getValue("member3Name"),Member3Class:getValue("member3Class"),Member3Section:getValue("member3Section"),Member4Name:getValue("member4Name"),Member4Class:getValue("member4Class"),Member4Section:getValue("member4Section"),Member5Name:getValue("member5Name"),Member5Class:getValue("member5Class"),Member5Section:getValue("member5Section"),Remarks:getValue("remarks"),registrationDate:now.toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short"})}}
+async function saveRegistration(d){const r=push(ref(db,"registrations"));await set(r,d);return r.key}
+async function waitForEmailJS(){for(let i=0;!window.emailjs&&i<40;i++)await new Promise(r=>setTimeout(r,250));if(!window.emailjs)throw Error("EmailJS SDK failed to load.")}
+async function sendConfirmationEmail(d){await waitForEmailJS();return window.emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{StudentName:d.StudentName,EmailAddress:d.EmailAddress,registrationId:d.registrationId,TeamName:d.TeamName||"Not specified",TeamSize:String(d.TeamSize),ParticipationType:d.ParticipationType,Class:d.Class,Section:d.Section,MobileNumber:d.MobileNumber,Events:d.Events.join(", "),Member2Name:d.Member2Name||"Not applicable",Member2Class:d.Member2Class||"",Member2Section:d.Member2Section||"",Member3Name:d.Member3Name||"Not applicable",Member3Class:d.Member3Class||"",Member3Section:d.Member3Section||"",Member4Name:d.Member4Name||"Not applicable",Member4Class:d.Member4Class||"",Member4Section:d.Member4Section||"",Member5Name:d.Member5Name||"Not applicable",Member5Class:d.Member5Class||"",Member5Section:d.Member5Section||"",Remarks:d.Remarks||"No additional remarks.",registrationDate:d.registrationDate})}
+form?.addEventListener("submit",async e=>{e.preventDefault();clearMessage();if(!form.checkValidity()){form.reportValidity();return}if(!validateEvents())return;if(submitBtn?.disabled)return;const d=collectRegistrationData();submitBtn.disabled=true;submitBtn.classList.add("loading");try{await saveRegistration(d);try{await sendConfirmationEmail(d)}catch(err){console.error("EmailJS failed:",err)}sessionStorage.setItem("apsRegistrationId",d.registrationId);sessionStorage.setItem("apsRegistrationName",d.StudentName);showSuccess(d.registrationId)}catch(err){console.error(err);showMessage("Registration could not be completed. Please try again.","error")}finally{submitBtn.disabled=false;submitBtn.classList.remove("loading")}})
+function showSuccess(id){successRegistrationId.textContent=id;successOverlay.classList.remove("hidden")}continueBtn?.addEventListener("click",()=>location.href="thankyou.html");
