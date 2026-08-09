@@ -1,0 +1,270 @@
+/* =========================================================
+   APS ROBOTICS CHAMPIONSHIP 2026
+   PUBLIC HELP / ISSUE SUBMISSION
+   Firebase Realtime Database
+========================================================= */
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+
+import {
+    getDatabase,
+    ref,
+    push,
+    set
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+
+
+/* =========================================================
+   FIREBASE CONFIGURATION
+========================================================= */
+
+const firebaseConfig = {
+
+    apiKey: "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
+
+    authDomain:
+        "aps-robotics-championship.firebaseapp.com",
+
+    databaseURL:
+        "https://aps-robotics-championship-default-rtdb.firebaseio.com",
+
+    projectId:
+        "aps-robotics-championship",
+
+    storageBucket:
+        "aps-robotics-championship.firebasestorage.app",
+
+    messagingSenderId:
+        "YOUR_MESSAGING_SENDER_ID",
+
+    appId:
+        "YOUR_APP_ID"
+
+};
+
+
+/* =========================================================
+   INITIALIZE FIREBASE
+========================================================= */
+
+const app = initializeApp(firebaseConfig);
+
+const db = getDatabase(app);
+
+
+/* =========================================================
+   DOM ELEMENTS
+========================================================= */
+
+const form =
+    document.getElementById("helpForm");
+
+const nameInput =
+    document.getElementById("name");
+
+const emailInput =
+    document.getElementById("email");
+
+const categoryInput =
+    document.getElementById("category");
+
+const registrationIdInput =
+    document.getElementById("registrationId");
+
+const messageInput =
+    document.getElementById("message");
+
+const submitButton =
+    document.getElementById("submitButton");
+
+const formMessage =
+    document.getElementById("formMessage");
+
+const characterCount =
+    document.getElementById("characterCount");
+
+
+/* =========================================================
+   CHARACTER COUNTER
+========================================================= */
+
+messageInput.addEventListener("input", () => {
+
+    characterCount.textContent =
+        messageInput.value.length;
+
+});
+
+
+/* =========================================================
+   SHOW MESSAGE
+========================================================= */
+
+function showMessage(message, type) {
+
+    formMessage.textContent = message;
+
+    formMessage.className =
+        "form-message show " + type;
+
+}
+
+
+/* =========================================================
+   CREATE ISSUE ID
+========================================================= */
+
+function createIssueId() {
+
+    const now = new Date();
+
+    const year =
+        now.getFullYear();
+
+    const random =
+        Math.floor(
+            1000 + Math.random() * 9000
+        );
+
+    return `ISS-${year}-${random}`;
+
+}
+
+
+/* =========================================================
+   FORM SUBMISSION
+========================================================= */
+
+form.addEventListener("submit", async (event) => {
+
+    event.preventDefault();
+
+
+    const name =
+        nameInput.value.trim();
+
+    const email =
+        emailInput.value.trim();
+
+    const category =
+        categoryInput.value;
+
+    const registrationId =
+        registrationIdInput.value.trim();
+
+    const message =
+        messageInput.value.trim();
+
+
+    if (!name || !email || !category || !message) {
+
+        showMessage(
+            "Please complete all required fields.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (message.length < 10) {
+
+        showMessage(
+            "Please provide a little more detail about the issue.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    submitButton.disabled = true;
+
+    submitButton.querySelector("span").textContent =
+        "SUBMITTING...";
+
+
+    try {
+
+        const issueRef =
+            push(ref(db, "issues"));
+
+        const issueId =
+            createIssueId();
+
+        const issueData = {
+
+            issueId: issueId,
+
+            name: name,
+
+            email: email,
+
+            category: category,
+
+            registrationId:
+                registrationId || "",
+
+            message: message,
+
+            status: "Open",
+
+            createdAt:
+                Date.now(),
+
+            createdDate:
+                new Date().toLocaleString(
+                    "en-IN",
+                    {
+                        dateStyle: "medium",
+                        timeStyle: "short"
+                    }
+                )
+
+        };
+
+
+        await set(
+            issueRef,
+            issueData
+        );
+
+
+        showMessage(
+            `Your issue has been submitted successfully. Issue ID: ${issueId}`,
+            "success"
+        );
+
+
+        form.reset();
+
+        characterCount.textContent = "0";
+
+
+    } catch (error) {
+
+        console.error(
+            "Issue submission error:",
+            error
+        );
+
+
+        showMessage(
+            "Unable to submit your issue right now. Please try again.",
+            "error"
+        );
+
+    } finally {
+
+        submitButton.disabled = false;
+
+        submitButton.querySelector("span").textContent =
+            "SEND SUPPORT REQUEST";
+
+    }
+
+});
