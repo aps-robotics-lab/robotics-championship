@@ -3,50 +3,35 @@
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="theme-color"
-        content="#050914">
+<meta name="theme-color"
+      content="#030612">
 
-    <meta
-        name="robots"
-        content="noindex,nofollow">
+<title>
+APS Robotics Championship 2026 | Admin
+</title>
 
-    <title>
-        APS Robotics Championship 2026 | Admin
-    </title>
+<link rel="preconnect"
+      href="https://fonts.googleapis.com">
 
-    <!-- Fonts -->
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com">
+<link rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin>
 
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet">
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    <!-- Font Awesome -->
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-    <!-- Admin CSS -->
-    <link
-        rel="stylesheet"
-        href="admin.css">
+<link rel="stylesheet"
+      href="admin.css">
 
 </head>
-
 
 <body>
 
@@ -55,14 +40,12 @@
      LOGIN
 ===================================================== -->
 
-<section
-    id="loginScreen"
-    class="login-screen">
+<section id="loginScreen"
+         class="login-screen">
 
-    <div class="background-grid"></div>
+    <div class="login-grid"></div>
 
-    <div class="background-glow glow-one"></div>
-    <div class="background-glow glow-two"></div>
+    <div class="login-glow"></div>
 
 
     <div class="login-card">
@@ -70,7 +53,7 @@
         <div class="login-logo">
 
             <img
-                src="https://i.ibb.co/spL8t7cv/Army-Welfare-Education-Society-logo-1.png"
+                src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
                 alt="APS Logo">
 
         </div>
@@ -78,102 +61,82 @@
 
         <div class="login-title">
 
-            <span class="login-badge">
-                <i class="fa-solid fa-shield-halved"></i>
-                ADMIN ACCESS
-            </span>
+            <span>SECURE ACCESS</span>
 
             <h1>
-                APS ROBOTICS
+                ADMIN
             </h1>
 
             <h2>
-                CHAMPIONSHIP 2026
+                CONTROL CENTER
             </h2>
 
             <p>
-                Secure Administration Portal
+                APS Robotics Championship 2026
             </p>
 
         </div>
 
 
-        <form
-            id="loginForm"
-            class="login-form">
+        <form id="loginForm">
 
-            <div class="input-group">
+            <label>
+                Admin Email
+            </label>
 
-                <label for="loginEmail">
-                    <i class="fa-solid fa-envelope"></i>
-                    Admin Email
-                </label>
+            <div class="login-input">
 
-                <div class="input-box">
+                <i class="fa-solid fa-envelope"></i>
 
-                    <i class="fa-solid fa-user"></i>
-
-                    <input
-                        type="email"
-                        id="loginEmail"
-                        placeholder="Enter admin email"
-                        autocomplete="email"
-                        required>
-
-                </div>
+                <input
+                    type="email"
+                    id="loginEmail"
+                    placeholder="Admin email"
+                    autocomplete="email"
+                    required>
 
             </div>
 
 
-            <div class="input-group">
+            <label>
+                Password
+            </label>
 
-                <label for="loginPassword">
-                    <i class="fa-solid fa-lock"></i>
-                    Password
-                </label>
+            <div class="login-input">
 
-                <div class="input-box">
+                <i class="fa-solid fa-lock"></i>
 
-                    <i class="fa-solid fa-key"></i>
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Password"
+                    autocomplete="current-password"
+                    required>
 
-                    <input
-                        type="password"
-                        id="loginPassword"
-                        placeholder="Enter password"
-                        autocomplete="current-password"
-                        required>
+                <button
+                    type="button"
+                    id="togglePassword">
 
-                    <button
-                        type="button"
-                        id="togglePassword"
-                        class="password-toggle"
-                        aria-label="Show password">
+                    <i class="fa-solid fa-eye"></i>
 
-                        <i class="fa-solid fa-eye"></i>
-
-                    </button>
-
-                </div>
+                </button>
 
             </div>
 
 
-            <div
-                id="loginError"
-                class="login-error">
+            <div id="loginError"
+                 class="login-error">
             </div>
 
 
             <button
                 type="submit"
                 id="loginBtn"
-                class="login-button">
+                class="login-submit">
 
                 <i class="fa-solid fa-right-to-bracket"></i>
 
-                <span>
-                    Login to Dashboard
-                </span>
+                Login
 
             </button>
 
@@ -182,9 +145,9 @@
 
         <div class="login-security">
 
-            <i class="fa-solid fa-lock"></i>
+            <i class="fa-solid fa-shield-halved"></i>
 
-            Authorized administrators only
+            Firebase secured administration portal
 
         </div>
 
@@ -193,131 +156,106 @@
 </section>
 
 
-
 <!-- =====================================================
-     ADMIN APPLICATION
+     ADMIN APP
 ===================================================== -->
 
-<div
-    id="adminApp"
-    class="admin-app hidden">
+<div id="adminApp"
+     class="admin-app hidden">
 
 
-    <!-- =================================================
-         SIDEBAR
-    ================================================== -->
-
-    <aside
-        id="sidebar"
-        class="sidebar">
-
-        <div class="sidebar-top">
+    <aside id="sidebar"
+           class="sidebar">
 
 
-            <div class="brand">
+        <div class="admin-brand">
 
-                <div class="brand-logo">
+            <img
+                src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+                alt="APS Logo">
 
-                    <img
-                        src="https://i.ibb.co/spL8t7cv/Army-Welfare-Education-Society-logo-1.png"
-                        alt="APS Logo">
+            <div>
+                <strong>
+                    APS ROBOTICS
+                </strong>
 
-                </div>
-
-
-                <div class="brand-text">
-
-                    <strong>
-                        APS ROBOTICS
-                    </strong>
-
-                    <span>
-                        ADMIN PANEL
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <div class="connection-status">
-
-                <span class="status-dot"></span>
-
-                <span id="connectionText">
-                    Firebase Connecting...
+                <span>
+                    ADMIN CENTER
                 </span>
-
             </div>
-
-
-            <nav class="sidebar-nav">
-
-
-                <button
-                    class="nav-item active"
-                    data-page="dashboard">
-
-                    <i class="fa-solid fa-chart-line"></i>
-
-                    <span>
-                        Dashboard
-                    </span>
-
-                </button>
-
-
-                <button
-                    class="nav-item"
-                    data-page="registrations">
-
-                    <i class="fa-solid fa-users"></i>
-
-                    <span>
-                        Registrations
-                    </span>
-
-                </button>
-
-
-                <button
-                    class="nav-item"
-                    data-page="events">
-
-                    <i class="fa-solid fa-trophy"></i>
-
-                    <span>
-                        Events
-                    </span>
-
-                </button>
-
-
-            </nav>
 
         </div>
 
 
-        <div class="sidebar-bottom">
+        <div class="connection-status">
+
+            <span></span>
+
+            Firebase Online
+
+        </div>
 
 
-            <div class="admin-profile">
+        <nav class="admin-nav">
 
-                <div class="admin-avatar">
+            <button class="nav-item active"
+                    data-page="dashboard">
 
+                <i class="fa-solid fa-chart-pie"></i>
+
+                Dashboard
+
+            </button>
+
+
+            <button class="nav-item"
+                    data-page="registrations">
+
+                <i class="fa-solid fa-users"></i>
+
+                Registrations
+
+            </button>
+
+
+            <button class="nav-item"
+                    data-page="events">
+
+                <i class="fa-solid fa-trophy"></i>
+
+                Events
+
+            </button>
+
+
+            <a href="index.html"
+               class="nav-item nav-home">
+
+                <i class="fa-solid fa-globe"></i>
+
+                Public Website
+
+            </a>
+
+        </nav>
+
+
+        <div class="admin-sidebar-bottom">
+
+            <div class="admin-user">
+
+                <div class="admin-user-icon">
                     <i class="fa-solid fa-user-shield"></i>
-
                 </div>
 
-
-                <div class="admin-info">
+                <div>
 
                     <strong>
                         Administrator
                     </strong>
 
                     <span id="adminEmail">
-                        Not authenticated
+                        Authenticated
                     </span>
 
                 </div>
@@ -325,9 +263,8 @@
             </div>
 
 
-            <button
-                id="logoutBtn"
-                class="logout-button">
+            <button id="logoutBtn"
+                    class="logout-btn">
 
                 <i class="fa-solid fa-right-from-bracket"></i>
 
@@ -340,33 +277,23 @@
     </aside>
 
 
-
-    <!-- =================================================
-         MAIN
-    ================================================== -->
-
-    <main class="main-content">
+    <main class="admin-main">
 
 
-        <!-- TOPBAR -->
-
-        <header class="topbar">
-
+        <header class="admin-topbar">
 
             <div class="topbar-left">
 
-                <button
-                    id="sidebarToggle"
-                    class="mobile-menu">
+                <button id="sidebarToggle"
+                        class="sidebar-toggle">
 
                     <i class="fa-solid fa-bars"></i>
 
                 </button>
 
-
                 <div>
 
-                    <span class="topbar-small">
+                    <span>
                         APS ROBOTICS CHAMPIONSHIP 2026
                     </span>
 
@@ -381,14 +308,9 @@
 
             <div class="topbar-right">
 
-                <div
-                    id="topConnection"
-                    class="top-connection">
-
+                <div class="live-badge">
                     <span></span>
-
                     LIVE
-
                 </div>
 
             </div>
@@ -396,66 +318,18 @@
         </header>
 
 
-
-        <!-- =================================================
-             DATABASE ERROR PANEL
-        ================================================== -->
-
-        <div
-            id="databaseError"
-            class="database-error hidden">
-
-            <div class="database-error-icon">
-
-                <i class="fa-solid fa-triangle-exclamation"></i>
-
-            </div>
-
-
-            <div class="database-error-content">
-
-                <strong>
-                    Firebase Database Error
-                </strong>
-
-                <p id="databaseErrorText">
-                    Unable to load registrations.
-                </p>
-
-                <small id="databaseErrorCode">
-                </small>
-
-            </div>
-
-
-            <button
-                id="databaseRetry"
-                class="error-retry">
-
-                <i class="fa-solid fa-rotate"></i>
-
-                Retry
-
-            </button>
-
-        </div>
-
-
-
         <!-- =================================================
              DASHBOARD
         ================================================== -->
 
-        <section
-            id="dashboardPage"
-            class="page active-page">
-
+        <section id="dashboardPage"
+                 class="admin-page active-page">
 
             <div class="page-heading">
 
                 <div>
 
-                    <span class="section-kicker">
+                    <span>
                         CONTROL CENTER
                     </span>
 
@@ -470,9 +344,8 @@
                 </div>
 
 
-                <button
-                    id="dashboardRefresh"
-                    class="primary-btn">
+                <button id="dashboardRefresh"
+                        class="admin-primary-btn">
 
                     <i class="fa-solid fa-rotate"></i>
 
@@ -483,176 +356,99 @@
             </div>
 
 
-
-            <!-- STATISTICS -->
-
-            <div class="stats-grid">
-
+            <div class="stat-grid">
 
                 <div class="stat-card">
+                    <i class="fa-solid fa-clipboard-list"></i>
 
-                    <div class="stat-icon blue">
+                    <span>
+                        Registrations
+                    </span>
 
-                        <i class="fa-solid fa-clipboard-list"></i>
-
-                    </div>
-
-                    <div class="stat-content">
-
-                        <span>
-                            Total Registrations
-                        </span>
-
-                        <strong id="totalRegistrations">
-                            0
-                        </strong>
-
-                    </div>
-
+                    <strong id="totalRegistrations">
+                        0
+                    </strong>
                 </div>
 
 
                 <div class="stat-card">
+                    <i class="fa-solid fa-people-group"></i>
 
-                    <div class="stat-icon purple">
+                    <span>
+                        Teams
+                    </span>
 
-                        <i class="fa-solid fa-people-group"></i>
-
-                    </div>
-
-                    <div class="stat-content">
-
-                        <span>
-                            Total Teams
-                        </span>
-
-                        <strong id="totalTeams">
-                            0
-                        </strong>
-
-                    </div>
-
+                    <strong id="totalTeams">
+                        0
+                    </strong>
                 </div>
 
 
                 <div class="stat-card">
+                    <i class="fa-solid fa-flag-checkered"></i>
 
-                    <div class="stat-icon cyan">
+                    <span>
+                        Robo Race
+                    </span>
 
-                        <i class="fa-solid fa-flag-checkered"></i>
-
-                    </div>
-
-                    <div class="stat-content">
-
-                        <span>
-                            Robo Race
-                        </span>
-
-                        <strong id="raceCount">
-                            0
-                        </strong>
-
-                    </div>
-
+                    <strong id="raceCount">
+                        0
+                    </strong>
                 </div>
 
 
                 <div class="stat-card">
+                    <i class="fa-solid fa-shield-halved"></i>
 
-                    <div class="stat-icon red">
+                    <span>
+                        Robo War
+                    </span>
 
-                        <i class="fa-solid fa-shield-halved"></i>
-
-                    </div>
-
-                    <div class="stat-content">
-
-                        <span>
-                            Robo War
-                        </span>
-
-                        <strong id="warCount">
-                            0
-                        </strong>
-
-                    </div>
-
+                    <strong id="warCount">
+                        0
+                    </strong>
                 </div>
 
 
                 <div class="stat-card">
+                    <i class="fa-solid fa-handshake"></i>
 
-                    <div class="stat-icon orange">
+                    <span>
+                        Robo Tug
+                    </span>
 
-                        <i class="fa-solid fa-handshake"></i>
-
-                    </div>
-
-                    <div class="stat-content">
-
-                        <span>
-                            Robo Tug of War
-                        </span>
-
-                        <strong id="tugCount">
-                            0
-                        </strong>
-
-                    </div>
-
+                    <strong id="tugCount">
+                        0
+                    </strong>
                 </div>
 
 
                 <div class="stat-card">
+                    <i class="fa-solid fa-futbol"></i>
 
-                    <div class="stat-icon green">
+                    <span>
+                        Robo Soccer
+                    </span>
 
-                        <i class="fa-solid fa-futbol"></i>
-
-                    </div>
-
-                    <div class="stat-content">
-
-                        <span>
-                            Robo Soccer
-                        </span>
-
-                        <strong id="soccerCount">
-                            0
-                        </strong>
-
-                    </div>
-
+                    <strong id="soccerCount">
+                        0
+                    </strong>
                 </div>
-
 
             </div>
 
 
+            <div class="admin-card">
 
-            <!-- RECENT -->
-
-            <div class="content-card">
-
-                <div class="card-heading">
+                <div class="card-title">
 
                     <div>
-
-                        <span class="section-kicker">
-                            LATEST ACTIVITY
-                        </span>
-
-                        <h3>
-                            Recent Registrations
-                        </h3>
-
+                        <span>RECENT ACTIVITY</span>
+                        <h3>Latest Registrations</h3>
                     </div>
 
-
-                    <button
-                        class="outline-btn"
-                        data-page-target="registrations">
+                    <button class="outline-btn"
+                            data-page-target="registrations">
 
                         View All
 
@@ -663,15 +459,14 @@
                 </div>
 
 
-                <div
-                    id="recentRegistrations"
-                    class="recent-list">
+                <div id="recentRegistrations"
+                     class="recent-list">
 
-                    <div class="loading-state">
+                    <div class="admin-loading">
 
                         <i class="fa-solid fa-spinner fa-spin"></i>
 
-                        Loading registrations...
+                        Loading...
 
                     </div>
 
@@ -680,40 +475,34 @@
             </div>
 
 
+            <div class="action-row">
 
-            <div class="dashboard-actions">
-
-                <button
-                    id="exportDashboard"
-                    class="secondary-btn">
+                <button id="exportDashboard"
+                        class="admin-secondary-btn">
 
                     <i class="fa-solid fa-file-csv"></i>
 
-                    Export All Registrations
+                    Export All
 
                 </button>
 
             </div>
 
-
         </section>
-
 
 
         <!-- =================================================
              REGISTRATIONS
         ================================================== -->
 
-        <section
-            id="registrationsPage"
-            class="page">
-
+        <section id="registrationsPage"
+                 class="admin-page">
 
             <div class="page-heading">
 
                 <div>
 
-                    <span class="section-kicker">
+                    <span>
                         REGISTRATION MANAGEMENT
                     </span>
 
@@ -722,15 +511,14 @@
                     </h2>
 
                     <p>
-                        Search, review, edit and manage participants.
+                        Search and manage championship registrations.
                     </p>
 
                 </div>
 
 
-                <button
-                    id="refreshRegistrations"
-                    class="primary-btn">
+                <button id="refreshRegistrations"
+                        class="admin-primary-btn">
 
                     <i class="fa-solid fa-rotate"></i>
 
@@ -741,37 +529,24 @@
             </div>
 
 
-
-            <!-- FILTER -->
-
             <div class="filter-card">
-
-                <div class="filter-heading">
-
-                    <i class="fa-solid fa-filter"></i>
-
-                    Filter Registrations
-
-                </div>
-
 
                 <div class="filter-grid">
 
-
-                    <div class="filter-field search-field">
+                    <div class="filter-field wide">
 
                         <label>
                             Search
                         </label>
 
-                        <div class="filter-input">
+                        <div class="search-box">
 
                             <i class="fa-solid fa-magnifying-glass"></i>
 
                             <input
                                 type="search"
                                 id="searchInput"
-                                placeholder="Name, team, ID, mobile or email">
+                                placeholder="Search name, team, ID, mobile or email">
 
                         </div>
 
@@ -847,24 +622,19 @@
 
                     <div class="filter-actions">
 
-                        <button
-                            id="clearFilters"
-                            class="clear-btn">
-
-                            <i class="fa-solid fa-filter-circle-xmark"></i>
+                        <button id="clearFilters"
+                                class="clear-btn">
 
                             Clear
 
                         </button>
 
-
-                        <button
-                            id="exportCsv"
-                            class="export-btn">
+                        <button id="exportCsv"
+                                class="admin-secondary-btn">
 
                             <i class="fa-solid fa-file-csv"></i>
 
-                            Export CSV
+                            CSV
 
                         </button>
 
@@ -875,13 +645,9 @@
             </div>
 
 
+            <div class="admin-card table-card">
 
-            <!-- TABLE -->
-
-            <div class="content-card table-card">
-
-
-                <div class="table-heading">
+                <div class="table-top">
 
                     <div>
 
@@ -896,11 +662,10 @@
                     </div>
 
 
-                    <div
-                        id="tableStatus"
-                        class="table-status">
+                    <div id="tableStatus"
+                         class="table-status">
 
-                        Waiting for data
+                        Waiting
 
                     </div>
 
@@ -916,52 +681,36 @@
                             <tr>
 
                                 <th>ID</th>
-
-                                <th>Team Leader</th>
-
-                                <th>Team Name</th>
-
+                                <th>Leader</th>
+                                <th>Team</th>
                                 <th>Class</th>
-
                                 <th>Section</th>
-
                                 <th>Mobile</th>
-
                                 <th>Events</th>
-
                                 <th>Members</th>
-
                                 <th>Date</th>
-
                                 <th>Actions</th>
 
                             </tr>
 
                         </thead>
 
-
-                        <tbody id="registrationTableBody">
-                        </tbody>
+                        <tbody id="registrationTableBody"></tbody>
 
                     </table>
 
 
-                    <div
-                        id="tableEmpty"
-                        class="table-empty hidden">
+                    <div id="tableEmpty"
+                         class="table-empty hidden">
 
-                        <div class="empty-icon">
-
-                            <i class="fa-solid fa-folder-open"></i>
-
-                        </div>
+                        <i class="fa-solid fa-folder-open"></i>
 
                         <h3>
                             No Registrations Found
                         </h3>
 
                         <p>
-                            No registration matches the current filters.
+                            Try changing your filters.
                         </p>
 
                     </div>
@@ -973,21 +722,18 @@
         </section>
 
 
-
         <!-- =================================================
              EVENTS
         ================================================== -->
 
-        <section
-            id="eventsPage"
-            class="page">
-
+        <section id="eventsPage"
+                 class="admin-page">
 
             <div class="page-heading">
 
                 <div>
 
-                    <span class="section-kicker">
+                    <span>
                         COMPETITION EVENTS
                     </span>
 
@@ -996,7 +742,7 @@
                     </h2>
 
                     <p>
-                        View registration counts for each championship event.
+                        Registration count for every event.
                     </p>
 
                 </div>
@@ -1004,16 +750,11 @@
             </div>
 
 
-            <div class="event-grid">
+            <div class="event-admin-grid">
 
+                <div class="event-admin-card">
 
-                <div class="event-card race">
-
-                    <div class="event-icon">
-
-                        <i class="fa-solid fa-flag-checkered"></i>
-
-                    </div>
+                    <i class="fa-solid fa-flag-checkered"></i>
 
                     <span>
                         EVENT 01
@@ -1034,13 +775,9 @@
                 </div>
 
 
-                <div class="event-card war">
+                <div class="event-admin-card">
 
-                    <div class="event-icon">
-
-                        <i class="fa-solid fa-shield-halved"></i>
-
-                    </div>
+                    <i class="fa-solid fa-shield-halved"></i>
 
                     <span>
                         EVENT 02
@@ -1061,13 +798,9 @@
                 </div>
 
 
-                <div class="event-card tug">
+                <div class="event-admin-card">
 
-                    <div class="event-icon">
-
-                        <i class="fa-solid fa-handshake"></i>
-
-                    </div>
+                    <i class="fa-solid fa-handshake"></i>
 
                     <span>
                         EVENT 03
@@ -1088,13 +821,9 @@
                 </div>
 
 
-                <div class="event-card soccer">
+                <div class="event-admin-card">
 
-                    <div class="event-icon">
-
-                        <i class="fa-solid fa-futbol"></i>
-
-                    </div>
+                    <i class="fa-solid fa-futbol"></i>
 
                     <span>
                         EVENT 04
@@ -1114,7 +843,6 @@
 
                 </div>
 
-
             </div>
 
         </section>
@@ -1124,14 +852,12 @@
 </div>
 
 
-
 <!-- =====================================================
      DETAILS MODAL
 ===================================================== -->
 
-<div
-    id="detailsModal"
-    class="modal-overlay hidden">
+<div id="detailsModal"
+     class="modal-overlay hidden">
 
     <div class="modal">
 
@@ -1139,20 +865,18 @@
 
             <div>
 
-                <span class="section-kicker">
-                    REGISTRATION
+                <span>
+                    REGISTRATION DETAILS
                 </span>
 
                 <h2>
-                    Registration Details
+                    Participant Record
                 </h2>
 
             </div>
 
-
-            <button
-                class="modal-close"
-                data-close-modal>
+            <button data-close-modal
+                    class="modal-close">
 
                 <i class="fa-solid fa-xmark"></i>
 
@@ -1161,17 +885,15 @@
         </div>
 
 
-        <div
-            id="detailsContent"
-            class="modal-body">
+        <div id="detailsContent"
+             class="modal-body">
         </div>
 
 
         <div class="modal-footer">
 
-            <button
-                id="modalDeleteBtn"
-                class="danger-btn">
+            <button id="modalDeleteBtn"
+                    class="danger-btn">
 
                 <i class="fa-solid fa-trash"></i>
 
@@ -1179,10 +901,8 @@
 
             </button>
 
-
-            <button
-                class="secondary-btn"
-                data-close-modal>
+            <button data-close-modal
+                    class="admin-secondary-btn">
 
                 Close
 
@@ -1195,22 +915,20 @@
 </div>
 
 
-
 <!-- =====================================================
      EDIT MODAL
 ===================================================== -->
 
-<div
-    id="editModal"
-    class="modal-overlay hidden">
+<div id="editModal"
+     class="modal-overlay hidden">
 
-    <div class="modal edit-modal">
+    <div class="modal">
 
         <div class="modal-header">
 
             <div>
 
-                <span class="section-kicker">
+                <span>
                     EDIT RECORD
                 </span>
 
@@ -1220,10 +938,8 @@
 
             </div>
 
-
-            <button
-                class="modal-close"
-                data-close-modal>
+            <button data-close-modal
+                    class="modal-close">
 
                 <i class="fa-solid fa-xmark"></i>
 
@@ -1236,105 +952,48 @@
 
             <div class="modal-body">
 
-                <input
-                    type="hidden"
-                    id="editKey">
+                <input type="hidden"
+                       id="editKey">
 
 
                 <div class="edit-grid">
 
-
-                    <div class="input-group">
-
-                        <label>
-                            Team Leader
-                        </label>
-
-                        <input
-                            type="text"
-                            id="editStudentName"
-                            required>
-
+                    <div>
+                        <label>Team Leader</label>
+                        <input id="editStudentName"
+                               required>
                     </div>
 
-
-                    <div class="input-group">
-
-                        <label>
-                            Team Name
-                        </label>
-
-                        <input
-                            type="text"
-                            id="editTeamName">
-
+                    <div>
+                        <label>Team Name</label>
+                        <input id="editTeamName">
                     </div>
 
-
-                    <div class="input-group">
-
-                        <label>
-                            Class
-                        </label>
-
-                        <input
-                            type="text"
-                            id="editClass">
-
+                    <div>
+                        <label>Class</label>
+                        <input id="editClass">
                     </div>
 
-
-                    <div class="input-group">
-
-                        <label>
-                            Section
-                        </label>
-
-                        <input
-                            type="text"
-                            id="editSection">
-
+                    <div>
+                        <label>Section</label>
+                        <input id="editSection">
                     </div>
 
-
-                    <div class="input-group">
-
-                        <label>
-                            Mobile
-                        </label>
-
-                        <input
-                            type="tel"
-                            id="editMobile">
-
+                    <div>
+                        <label>Mobile</label>
+                        <input id="editMobile">
                     </div>
 
-
-                    <div class="input-group">
-
-                        <label>
-                            Email
-                        </label>
-
-                        <input
-                            type="email"
-                            id="editEmail">
-
+                    <div>
+                        <label>Email</label>
+                        <input id="editEmail"
+                               type="email">
                     </div>
 
-
-                    <div class="input-group full">
-
-                        <label>
-                            Remarks
-                        </label>
-
-                        <textarea
-                            id="editRemarks"
-                            rows="4"></textarea>
-
+                    <div class="full">
+                        <label>Remarks</label>
+                        <textarea id="editRemarks"></textarea>
                     </div>
-
 
                 </div>
 
@@ -1343,24 +1002,21 @@
 
             <div class="modal-footer">
 
-                <button
-                    type="button"
-                    class="secondary-btn"
-                    data-close-modal>
+                <button type="button"
+                        data-close-modal
+                        class="admin-secondary-btn">
 
                     Cancel
 
                 </button>
 
-
-                <button
-                    type="submit"
-                    id="saveEditBtn"
-                    class="primary-btn">
+                <button type="submit"
+                        id="saveEditBtn"
+                        class="admin-primary-btn">
 
                     <i class="fa-solid fa-floppy-disk"></i>
 
-                    Save Changes
+                    Save
 
                 </button>
 
@@ -1373,14 +1029,8 @@
 </div>
 
 
-
-<!-- =====================================================
-     TOAST
-===================================================== -->
-
-<div
-    id="toast"
-    class="toast">
+<div id="toast"
+     class="admin-toast">
 
     <i class="fa-solid fa-circle-check"></i>
 
@@ -1391,14 +1041,8 @@
 </div>
 
 
-
-<!-- Firebase/Admin JS -->
-
-<script
-    type="module"
-    src="admin.js">
-</script>
-
+<script type="module"
+        src="admin.js"></script>
 
 </body>
-    </html>
+                    </html>
