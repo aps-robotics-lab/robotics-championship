@@ -15,9 +15,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 
-/* =========================================================
-   FIREBASE CONFIG
-========================================================= */
+/* =========================
+   FIREBASE
+========================= */
 
 const firebaseConfig = {
     apiKey: "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
@@ -29,55 +29,41 @@ const firebaseConfig = {
     appId: "1:1063542904891:web:82ff9bb3fba0b87384a41e"
 };
 
-
 const app = initializeApp(firebaseConfig);
-
 const auth = getAuth(app);
-
 const db = getDatabase(app);
 
 
-/* =========================================================
+/* =========================
    EMAILJS
-========================================================= */
+========================= */
 
 const EMAILJS_PUBLIC_KEY = "GnxniZ70ndujyjDpe";
 const EMAILJS_SERVICE_ID = "service_5m4uzhb";
 const EMAILJS_TEMPLATE_ID = "template_5qb8b2p";
 
-
 const emailScript = document.createElement("script");
-
 emailScript.src =
     "https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";
 
 emailScript.onload = () => {
-
     if (window.emailjs) {
-
         window.emailjs.init({
             publicKey: EMAILJS_PUBLIC_KEY
         });
-
     }
-
 };
 
 document.head.appendChild(emailScript);
 
 
-/* =========================================================
-   DOM ELEMENTS
-========================================================= */
+/* =========================
+   ELEMENTS
+========================= */
 
-const form =
-    document.getElementById("registrationForm");
-
-const submitBtn =
-    document.getElementById("submitBtn");
-
-const formMessage =
-    document.getElementById("formMessage");
+const form = document.getElementById("registrationForm");
+const submitBtn = document.getElementById("submitBtn");
+const formMessage = document.getElementById("formMessage");
 
 const successOverlay =
     document.getElementById("successOverlay");
@@ -104,44 +90,36 @@ const memberInstruction =
     document.getElementById("memberInstruction");
 
 
-/* =========================================================
+/* =========================
    HELPERS
-========================================================= */
+========================= */
 
-const getValue = (id) => {
-
-    const element = document.getElementById(id);
-
-    return element
-        ? element.value.trim()
-        : "";
-
-};
+function getValue(id) {
+    return (
+        document.getElementById(id)?.value || ""
+    ).trim();
+}
 
 
-const getTeamSize = () => {
-
+function getTeamSize() {
     return Number(
         document.querySelector(
             'input[name="TeamSize"]:checked'
         )?.value || 1
     );
+}
 
-};
 
-
-const getSelectedEvents = () => {
-
+function getSelectedEvents() {
     return Array.from(
         document.querySelectorAll(
             'input[name="Events"]:checked'
         )
     ).map(input => input.value);
+}
 
-};
 
-
-const generateRegistrationId = () => {
+function generateRegistrationId() {
 
     const year = new Date().getFullYear();
 
@@ -151,13 +129,12 @@ const generateRegistrationId = () => {
         );
 
     return `APS-RBC-${year}-${random}`;
+}
 
-};
 
-
-/* =========================================================
-   MESSAGE
-========================================================= */
+/* =========================
+   MESSAGES
+========================= */
 
 function showMessage(message, type = "error") {
 
@@ -167,7 +144,6 @@ function showMessage(message, type = "error") {
 
     formMessage.className =
         `form-message ${type}`;
-
 }
 
 
@@ -179,13 +155,12 @@ function clearMessage() {
 
     formMessage.className =
         "form-message";
-
 }
 
 
-/* =========================================================
-   CLEAR MEMBER FIELDS
-========================================================= */
+/* =========================
+   TEAM SIZE
+========================= */
 
 function clearMemberFields(number) {
 
@@ -203,13 +178,8 @@ function clearMemberFields(number) {
         }
 
     });
-
 }
 
-
-/* =========================================================
-   TEAM SIZE
-========================================================= */
 
 function updateTeamSize() {
 
@@ -233,7 +203,6 @@ function updateTeamSize() {
             if (hidden) {
                 clearMemberFields(number);
             }
-
         });
 
 
@@ -243,35 +212,21 @@ function updateTeamSize() {
             size === 1
                 ? "Solo"
                 : `Team of ${size}`;
-
     }
 
 
-    const instructions = {
-
-        1:
-            "Solo participation selected. No additional members required.",
-
-        2:
-            "Team of 2 selected. Please enter details for Participant 02.",
-
-        3:
-            "Team of 3 selected. Please enter details for Participants 02 and 03.",
-
-        4:
-            "Team of 4 selected. Please enter details for Participants 02–04.",
-
-        5:
-            "Team of 5 selected. Please enter details for Participants 02–05."
-
+    const messages = {
+        1: "Solo participation selected. No additional members required.",
+        2: "Team of 2 selected. Please enter details for Participant 02.",
+        3: "Team of 3 selected. Please enter details for Participants 02 and 03.",
+        4: "Team of 4 selected. Please enter details for Participants 02–04.",
+        5: "Team of 5 selected. Please enter details for Participants 02–05."
     };
 
 
     if (memberInstruction) {
-
         memberInstruction.textContent =
-            instructions[size];
-
+            messages[size];
     }
 
 
@@ -292,7 +247,6 @@ function updateTeamSize() {
                 `member${i}Section`
             );
 
-
         if (name) {
             name.required = i <= size;
         }
@@ -304,9 +258,7 @@ function updateTeamSize() {
         if (section) {
             section.required = i <= size;
         }
-
     }
-
 }
 
 
@@ -321,32 +273,25 @@ document
 
     });
 
-
 updateTeamSize();
 
 
-/* =========================================================
-   REMARKS COUNTER
-========================================================= */
+/* =========================
+   INPUTS
+========================= */
 
 remarks?.addEventListener(
     "input",
     () => {
 
         if (characterCount) {
-
             characterCount.textContent =
                 remarks.value.length;
-
         }
 
     }
 );
 
-
-/* =========================================================
-   MOBILE
-========================================================= */
 
 document
     .getElementById("mobileNumber")
@@ -363,10 +308,6 @@ document
     );
 
 
-/* =========================================================
-   EMAIL
-========================================================= */
-
 document
     .getElementById("emailAddress")
     ?.addEventListener(
@@ -382,9 +323,9 @@ document
     );
 
 
-/* =========================================================
+/* =========================
    EVENTS
-========================================================= */
+========================= */
 
 function validateEvents() {
 
@@ -394,19 +335,14 @@ function validateEvents() {
     const valid =
         selected.length > 0;
 
-
     if (eventError) {
-
         eventError.textContent =
             valid
                 ? ""
                 : "Please select at least one event.";
-
     }
 
-
     return valid;
-
 }
 
 
@@ -422,9 +358,9 @@ document
     });
 
 
-/* =========================================================
+/* =========================
    COLLECT DATA
-========================================================= */
+========================= */
 
 function collectRegistrationData() {
 
@@ -511,59 +447,33 @@ function collectRegistrationData() {
             )
 
     };
-
 }
 
 
-/* =========================================================
-   FIREBASE AUTHENTICATION
-========================================================= */
+/* =========================
+   FIREBASE AUTH
+========================= */
 
-async function ensureFirebaseLogin() {
+async function ensureAnonymousLogin() {
 
     if (auth.currentUser) {
-
         return auth.currentUser;
-
     }
 
+    const result =
+        await signInAnonymously(auth);
 
-    try {
-
-        const result =
-            await signInAnonymously(auth);
-
-        console.log(
-            "Firebase anonymous authentication successful:",
-            result.user.uid
-        );
-
-        return result.user;
-
-    } catch (error) {
-
-        console.error(
-            "Firebase authentication error:",
-            error
-        );
-
-        throw new Error(
-            "Firebase authentication failed. Please enable Anonymous Authentication in Firebase."
-        );
-
-    }
-
+    return result.user;
 }
 
 
-/* =========================================================
-   SAVE REGISTRATION
-========================================================= */
+/* =========================
+   SAVE
+========================= */
 
 async function saveRegistration(data) {
 
-    await ensureFirebaseLogin();
-
+    await ensureAnonymousLogin();
 
     const registrationRef =
         push(
@@ -573,21 +483,18 @@ async function saveRegistration(data) {
             )
         );
 
-
     await set(
         registrationRef,
         data
     );
 
-
     return registrationRef.key;
-
 }
 
 
-/* =========================================================
-   WAIT FOR EMAILJS
-========================================================= */
+/* =========================
+   EMAILJS
+========================= */
 
 async function waitForEmailJS() {
 
@@ -604,26 +511,17 @@ async function waitForEmailJS() {
 
     }
 
-
     if (!window.emailjs) {
-
         throw new Error(
             "EmailJS SDK failed to load."
         );
-
     }
-
 }
 
-
-/* =========================================================
-   SEND CONFIRMATION EMAIL
-========================================================= */
 
 async function sendConfirmationEmail(data) {
 
     await waitForEmailJS();
-
 
     return window.emailjs.send(
         EMAILJS_SERVICE_ID,
@@ -707,41 +605,33 @@ async function sendConfirmationEmail(data) {
 
             registrationDate:
                 data.registrationDate
-
         }
     );
-
 }
 
 
-/* =========================================================
+/* =========================
    SUCCESS
-========================================================= */
+========================= */
 
 function showSuccess(id) {
 
     if (successRegistrationId) {
-
         successRegistrationId.textContent =
             id;
-
     }
 
-
     if (successOverlay) {
-
         successOverlay.classList.remove(
             "hidden"
         );
-
     }
-
 }
 
 
-/* =========================================================
-   FORM SUBMISSION
-========================================================= */
+/* =========================
+   SUBMIT
+========================= */
 
 form?.addEventListener(
     "submit",
@@ -751,77 +641,35 @@ form?.addEventListener(
 
         clearMessage();
 
-
-        /* Browser validation */
-
         if (!form.checkValidity()) {
 
             form.reportValidity();
 
             return;
-
         }
-
-
-        /* Event validation */
 
         if (!validateEvents()) {
-
             return;
-
         }
-
-
-        /* Prevent double submission */
 
         if (submitBtn?.disabled) {
-
             return;
-
         }
-
 
         const data =
             collectRegistrationData();
 
-
-        if (submitBtn) {
-
-            submitBtn.disabled = true;
-
-            submitBtn.classList.add(
-                "loading"
-            );
-
-        }
-
+        submitBtn.disabled = true;
+        submitBtn.classList.add("loading");
 
         try {
 
-            /*
-             * FIRST:
-             * Save registration to Firebase.
-             */
-
             await saveRegistration(data);
-
-
-            /*
-             * SECOND:
-             * Send confirmation email.
-             *
-             * Email failure does NOT cancel
-             * the registration.
-             */
 
             try {
 
                 await sendConfirmationEmail(
                     data
-                );
-
-                console.log(
-                    "Confirmation email sent."
                 );
 
             } catch (emailError) {
@@ -833,9 +681,6 @@ form?.addEventListener(
 
             }
 
-
-            /* Store local information */
-
             sessionStorage.setItem(
                 "apsRegistrationId",
                 data.registrationId
@@ -846,13 +691,9 @@ form?.addEventListener(
                 data.StudentName
             );
 
-
-            /* Show success */
-
             showSuccess(
                 data.registrationId
             );
-
 
         } catch (error) {
 
@@ -861,72 +702,49 @@ form?.addEventListener(
                 error
             );
 
-
-            let message =
-                "Registration could not be completed. Please try again.";
-
-
-            if (
-                error?.code ===
-                "PERMISSION_DENIED"
-            ) {
-
-                message =
-                    "Registration access was denied by Firebase. Please check your Firebase Realtime Database rules.";
-
-            }
-
-
             if (
                 error?.code ===
                 "auth/operation-not-allowed"
             ) {
 
-                message =
-                    "Firebase Anonymous Authentication is not enabled. Please enable Anonymous Authentication in Firebase.";
+                showMessage(
+                    "Registration authentication is disabled in Firebase. Enable Anonymous Authentication in Firebase Console.",
+                    "error"
+                );
 
-            }
-
-
-            if (
-                error?.message?.includes(
-                    "authentication failed"
-                )
+            } else if (
+                error?.code ===
+                "PERMISSION_DENIED"
             ) {
 
-                message =
-                    error.message;
+                showMessage(
+                    "Firebase denied the registration. Please check your Realtime Database rules.",
+                    "error"
+                );
 
+            } else {
+
+                showMessage(
+                    "Registration could not be completed. Please try again.",
+                    "error"
+                );
             }
-
-
-            showMessage(
-                message,
-                "error"
-            );
-
 
         } finally {
 
-            if (submitBtn) {
-
-                submitBtn.disabled = false;
-
-                submitBtn.classList.remove(
-                    "loading"
-                );
-
-            }
+            submitBtn.disabled = false;
+            submitBtn.classList.remove(
+                "loading"
+            );
 
         }
-
     }
 );
 
 
-/* =========================================================
-   CONTINUE BUTTON
-========================================================= */
+/* =========================
+   CONTINUE
+========================= */
 
 continueBtn?.addEventListener(
     "click",
