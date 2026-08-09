@@ -2,366 +2,50 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#020711">
-<title>APS Robotics Championship 2026 | Admin Panel</title>
+<title>Admin | APS Robotics Championship 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#020711;color:#f5f9ff;font-family:Poppins,sans-serif}
+.wrap{width:min(1400px,94%);margin:30px auto}.top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:25px}
+h1{font-family:Orbitron;color:#00eaff;margin:0}.sub{color:#8fa5bf}.panel{background:rgba(8,18,34,.92);border:1px solid rgba(83,161,255,.18);border-radius:20px;padding:22px;box-shadow:0 25px 70px rgba(0,0,0,.45);margin-bottom:20px}
+input,button{font:inherit;padding:11px 13px;border-radius:10px;border:1px solid rgba(83,161,255,.25);background:#07111f;color:#fff}
+button{cursor:pointer;background:#00eaff;color:#001018;font-weight:700}button.danger{background:#ff5874;color:#fff}
+.login{max-width:430px;margin:10vh auto}.login h1{font-size:1.6rem;margin-bottom:20px}.login input{width:100%;margin-bottom:12px}
+.hidden{display:none}.stats{display:flex;gap:12px;flex-wrap:wrap}.stat{padding:14px 18px;border:1px solid rgba(0,234,255,.2);border-radius:12px;background:rgba(0,234,255,.04)}.stat b{color:#00eaff;font-size:1.25rem}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}.toolbar input{flex:1;min-width:220px}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:1100px}th,td{padding:11px;border-bottom:1px solid rgba(83,161,255,.12);text-align:left;font-size:.78rem;vertical-align:top}th{color:#00eaff;font-family:Orbitron;font-size:.65rem}td{color:#dbe7f5}
+.badge{padding:4px 8px;border-radius:999px;background:rgba(0,234,255,.08);color:#00eaff}
+#error{color:#ff9dad;margin-top:10px}
+</style>
 </head>
 <body>
-
-<section id="loginScreen" class="login-screen">
-  <div class="login-glow glow-one"></div>
-  <div class="login-glow glow-two"></div>
-
-  <div class="login-card">
-    <div class="login-logo">
-      <img src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png" alt="AWES Logo">
-    </div>
-
-    <span class="login-label">SECURE ADMIN ACCESS</span>
-    <h1>APS ROBOTICS</h1>
-    <p>Championship 2026<br>Control Center</p>
-
-    <form id="loginForm">
-      <div class="input-group">
-        <label>Admin Email</label>
-        <input id="loginEmail" type="email" placeholder="Enter admin email" autocomplete="username" required>
-      </div>
-
-      <div class="input-group">
-        <label>Password</label>
-        <div class="password-wrapper">
-          <input id="loginPassword" type="password" placeholder="Enter password" autocomplete="current-password" required>
-          <button type="button" id="togglePassword" aria-label="Show password">👁</button>
-        </div>
-      </div>
-
-      <div id="loginError" class="login-error"></div>
-
-      <button type="submit" id="loginBtn" class="login-button">
-        LOGIN TO DASHBOARD
-      </button>
-    </form>
-
-    <div class="login-security">
-      <span>🔒</span>
-      <small>Protected by Firebase Authentication</small>
-    </div>
-  </div>
-</section>
-
-<div id="adminApp" class="admin-app hidden">
-
-<aside id="sidebar" class="sidebar">
-  <div class="sidebar-brand">
-    <img src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png" alt="AWES Logo">
-    <div>
-      <strong>APS ROBOTICS</strong>
-      <small>ADMIN PANEL</small>
-    </div>
-  </div>
-
-  <div class="sidebar-divider"></div>
-
-  <nav class="sidebar-nav">
-    <button class="nav-item active" data-page="dashboard"><span>📊</span><strong>Dashboard</strong></button>
-    <button class="nav-item" data-page="registrations"><span>📝</span><strong>Registrations</strong></button>
-    <button class="nav-item" data-page="events"><span>🤖</span><strong>Events</strong></button>
-
-    <div class="nav-heading">WEBSITE</div>
-    <button class="nav-item" data-page="home"><span>🏠</span><strong>Home</strong></button>
-    <button class="nav-item" data-page="about"><span>ℹ️</span><strong>About</strong></button>
-    <button class="nav-item" data-page="eventContent"><span>🎯</span><strong>Events Content</strong></button>
-    <button class="nav-item" data-page="team"><span>👥</span><strong>Our Team</strong></button>
-    <button class="nav-item" data-page="contact"><span>📞</span><strong>Contact</strong></button>
-    <button class="nav-item" data-page="rules"><span>📜</span><strong>Rules</strong></button>
-
-    <div class="nav-heading">SUPPORT</div>
-    <button class="nav-item" data-page="issues">
-      <span>🆘</span><strong>Help / Issues</strong>
-      <span id="issueBadge" class="nav-badge">0</span>
-    </button>
-  </nav>
-
-  <div class="sidebar-bottom">
-    <div class="admin-user">
-      <div class="admin-avatar">A</div>
-      <div>
-        <strong id="adminEmail">Admin</strong>
-        <small>Administrator</small>
-      </div>
-    </div>
-    <button id="logoutBtn" class="logout-button">🚪 Logout</button>
-  </div>
-</aside>
-
-<main class="main-content">
-
-<header class="topbar">
-  <button id="sidebarToggle" class="menu-button">☰</button>
-  <div class="page-heading">
-    <small>APS ROBOTICS CHAMPIONSHIP 2026</small>
-    <h1 id="pageTitle">Dashboard</h1>
-  </div>
-  <div class="topbar-right">
-    <span class="live-indicator"><i></i> LIVE</span>
-  </div>
-</header>
-
-<section id="dashboardPage" class="page active">
-  <div class="page-intro">
-    <div>
-      <span>CONTROL CENTER</span>
-      <h2>Championship Overview</h2>
-      <p>Manage registrations, website content and support issues.</p>
-    </div>
-    <button id="dashboardRefresh" class="primary-button">🔄 Refresh</button>
-  </div>
-
-  <div class="stats-grid">
-    <div class="stat-card"><span>📝</span><small>TOTAL REGISTRATIONS</small><strong id="totalRegistrations">0</strong></div>
-    <div class="stat-card"><span>👥</span><small>TOTAL TEAMS</small><strong id="totalTeams">0</strong></div>
-    <div class="stat-card"><span>🏁</span><small>ROBO RACE</small><strong id="raceCount">0</strong></div>
-    <div class="stat-card"><span>⚔️</span><small>ROBO WAR</small><strong id="warCount">0</strong></div>
-    <div class="stat-card"><span>🤝</span><small>ROBO TUG OF WAR</small><strong id="tugCount">0</strong></div>
-    <div class="stat-card"><span>⚽</span><small>ROBO SOCCER</small><strong id="soccerCount">0</strong></div>
-  </div>
-
-  <div class="database-status">
-    <div>
-      <strong>Registration Database</strong>
-      <span>Realtime Database path: <code>/registrations</code></span>
-    </div>
-    <button class="small-button" data-page-target="registrations">Open Registrations</button>
-  </div>
-
-  <div class="dashboard-two-column">
-    <div class="content-card">
-      <div class="card-header">
-        <div><span>LATEST</span><h3>Recent Registrations</h3></div>
-        <button class="small-button" data-page-target="registrations">View All</button>
-      </div>
-      <div id="recentRegistrations"><div class="loading">Loading registrations...</div></div>
-    </div>
-
-    <div class="content-card">
-      <div class="card-header">
-        <div><span>SUPPORT</span><h3>Recent Issues</h3></div>
-        <button class="small-button" data-page-target="issues">View Issues</button>
-      </div>
-      <div id="recentIssues"><div class="loading">Loading issues...</div></div>
-    </div>
-  </div>
-
-  <button id="exportDashboard" class="secondary-button">📥 Export All Registrations</button>
-</section>
-
-<section id="registrationsPage" class="page">
-  <div class="page-intro">
-    <div>
-      <span>REGISTRATION MANAGEMENT</span>
-      <h2>All Registrations</h2>
-      <p>Records are loaded directly from Firebase Realtime Database.</p>
-    </div>
-    <button id="refreshRegistrations" class="primary-button">🔄 Refresh</button>
-  </div>
-
-  <div class="registration-info">
-    <span>📡 LIVE DATABASE</span>
-    <strong id="resultCount">0 registrations</strong>
-    <small>Source: <code>/registrations</code></small>
-  </div>
-
-  <div class="filter-panel">
-    <input id="searchInput" type="search" placeholder="Search name, team, ID, mobile or email">
-
-    <select id="eventFilter">
-      <option value="all">All Events</option>
-      <option>Robo Race</option>
-      <option>Robo War</option>
-      <option>Robo Tug of War</option>
-      <option>Robo Soccer</option>
-    </select>
-
-    <select id="classFilter"><option value="all">All Classes</option></select>
-    <select id="sectionFilter"><option value="all">All Sections</option></select>
-
-    <button id="clearFilters" class="secondary-button">Clear</button>
-    <button id="exportCsv" class="primary-button">📥 CSV</button>
-  </div>
-
-  <div class="content-card table-card">
-    <div class="card-header">
-      <div><span>DATABASE</span><h3>Registration Records</h3></div>
-      <span id="recordSource" class="record-count">Realtime Database</span>
-    </div>
-
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>LEADER</th>
-            <th>TEAM</th>
-            <th>CLASS</th>
-            <th>SECTION</th>
-            <th>MOBILE</th>
-            <th>EVENTS</th>
-            <th>MEMBERS</th>
-            <th>DATE</th>
-            <th>ACTIONS</th>
-          </tr>
-        </thead>
-        <tbody id="registrationTableBody">
-          <tr><td colspan="10" class="table-loading">Login to load registrations...</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div id="tableEmpty" class="empty-state hidden">
-      <span>📭</span>
-      <h3>No registrations found</h3>
-      <p>Check Firebase Realtime Database → Data → <strong>registrations</strong>.</p>
-    </div>
-  </div>
-</section>
-
-<section id="eventsPage" class="page">
-  <div class="page-intro">
-    <div><span>COMPETITION</span><h2>Event Participation</h2><p>Live participation statistics from registrations.</p></div>
-  </div>
-
-  <div class="event-grid">
-    <div class="event-card"><span class="event-number">01</span><div class="event-icon">🏁</div><h3>Robo Race</h3><strong id="eventRaceCount">0</strong><small>Registrations</small></div>
-    <div class="event-card"><span class="event-number">02</span><div class="event-icon">⚔️</div><h3>Robo War</h3><strong id="eventWarCount">0</strong><small>Registrations</small></div>
-    <div class="event-card"><span class="event-number">03</span><div class="event-icon">🤝</div><h3>Robo Tug of War</h3><strong id="eventTugCount">0</strong><small>Registrations</small></div>
-    <div class="event-card"><span class="event-number">04</span><div class="event-icon">⚽</div><h3>Robo Soccer</h3><strong id="eventSoccerCount">0</strong><small>Registrations</small></div>
-  </div>
-</section>
-
-<section id="homePage" class="page content-editor-page">
-  <div class="page-intro"><div><span>WEBSITE MANAGEMENT</span><h2>Home Page</h2><p>Edit the main homepage content.</p></div></div>
-  <div class="editor-card">
-    <div class="editor-title">🏠 Homepage Content</div>
-    <label>Hero Badge</label><input id="homeBadge">
-    <label>Hero Heading</label><input id="homeTitle">
-    <label>Hero Description</label><textarea id="homeDescription" rows="5"></textarea>
-    <label>Event Date</label><input id="homeDate">
-    <label>Venue</label><input id="homeVenue">
-    <button class="save-button" data-content-save="home">💾 Save Home Content</button>
-  </div>
-</section>
-
-<section id="aboutPage" class="page content-editor-page">
-  <div class="page-intro"><div><span>WEBSITE MANAGEMENT</span><h2>About Section</h2><p>Manage the About section.</p></div></div>
-  <div class="editor-card">
-    <div class="editor-title">ℹ️ About APS Robotics</div>
-    <label>Section Label</label><input id="aboutLabel">
-    <label>Heading</label><input id="aboutTitle">
-    <label>Description</label><textarea id="aboutDescription" rows="8"></textarea>
-    <button class="save-button" data-content-save="about">💾 Save About Content</button>
-  </div>
-</section>
-
-<section id="eventContentPage" class="page content-editor-page">
-  <div class="page-intro"><div><span>WEBSITE MANAGEMENT</span><h2>Events Content</h2><p>Edit event names and descriptions.</p></div></div>
-  <div class="event-editor-grid">
-    <div class="editor-card"><h3>🏁 Robo Race</h3><label>Title</label><input id="eventRaceTitle"><label>Description</label><textarea id="eventRaceDescription" rows="4"></textarea></div>
-    <div class="editor-card"><h3>⚔️ Robo War</h3><label>Title</label><input id="eventWarTitle"><label>Description</label><textarea id="eventWarDescription" rows="4"></textarea></div>
-    <div class="editor-card"><h3>🤝 Robo Tug of War</h3><label>Title</label><input id="eventTugTitle"><label>Description</label><textarea id="eventTugDescription" rows="4"></textarea></div>
-    <div class="editor-card"><h3>⚽ Robo Soccer</h3><label>Title</label><input id="eventSoccerTitle"><label>Description</label><textarea id="eventSoccerDescription" rows="4"></textarea></div>
-  </div>
-  <button class="save-button" data-content-save="events">💾 Save Events Content</button>
-</section>
-
-<section id="teamPage" class="page content-editor-page">
-  <div class="page-intro"><div><span>WEBSITE MANAGEMENT</span><h2>Our Team</h2><p>Manage team member information.</p></div></div>
-  <div class="team-editor-grid">
-    <div class="editor-card"><h3>Team Member 01</h3><label>Name</label><input id="team1Name"><label>Role</label><input id="team1Role"><label>Description</label><textarea id="team1Description" rows="4"></textarea></div>
-    <div class="editor-card"><h3>Team Member 02</h3><label>Name</label><input id="team2Name"><label>Role</label><input id="team2Role"><label>Description</label><textarea id="team2Description" rows="4"></textarea></div>
-    <div class="editor-card"><h3>Team Member 03</h3><label>Name</label><input id="team3Name"><label>Role</label><input id="team3Role"><label>Description</label><textarea id="team3Description" rows="4"></textarea></div>
-    <div class="editor-card"><h3>Team Member 04</h3><label>Name</label><input id="team4Name"><label>Role</label><input id="team4Role"><label>Description</label><textarea id="team4Description" rows="4"></textarea></div>
-  </div>
-  <button class="save-button" data-content-save="team">💾 Save Team Content</button>
-</section>
-
-<section id="contactPage" class="page content-editor-page">
-  <div class="page-intro"><div><span>WEBSITE MANAGEMENT</span><h2>Contact Information</h2><p>Update contact information.</p></div></div>
-  <div class="editor-card">
-    <label>Address</label><textarea id="contactAddress" rows="3"></textarea>
-    <label>Phone</label><input id="contactPhone">
-    <label>Email</label><input id="contactEmail" type="email">
-    <label>Facebook</label><input id="contactFacebook">
-    <label>Instagram</label><input id="contactInstagram">
-    <label>YouTube</label><input id="contactYoutube">
-    <button class="save-button" data-content-save="contact">💾 Save Contact Information</button>
-  </div>
-</section>
-
-<section id="rulesPage" class="page content-editor-page">
-  <div class="page-intro"><div><span>COMPETITION MANAGEMENT</span><h2>Rules & Technical Specifications</h2><p>Edit official competition rules and robot specifications.</p></div></div>
-
-  <div class="rules-editor-grid">
-    <div class="editor-card"><h3>🏁 Robo Race</h3><label>Weight Limit</label><input id="ruleRaceWeight"><label>Maximum Dimensions</label><input id="ruleRaceDimension"><label>Operating Voltage</label><input id="ruleRaceVoltage"></div>
-    <div class="editor-card"><h3>⚽ Robo Soccer</h3><label>Weight Limit</label><input id="ruleSoccerWeight"><label>Maximum Dimensions</label><input id="ruleSoccerDimension"><label>Operating Voltage</label><input id="ruleSoccerVoltage"></div>
-    <div class="editor-card"><h3>⚔️ Robo War</h3><label>Weight Limit</label><input id="ruleWarWeight"><label>Maximum Dimensions</label><input id="ruleWarDimension"><label>Operating Voltage</label><input id="ruleWarVoltage"></div>
-    <div class="editor-card"><h3>🤝 Robo Tug of War</h3><label>Weight Limit</label><input id="ruleTugWeight"><label>Maximum Dimensions</label><input id="ruleTugDimension"><label>Operating Voltage</label><input id="ruleTugVoltage"></div>
-  </div>
-
-  <div class="editor-card">
-    <h3>📜 General Rules</h3>
-    <textarea id="generalRules" rows="10"></textarea>
-    <button class="save-button" data-content-save="rules">💾 Save Rules</button>
-  </div>
-</section>
-
-<section id="issuesPage" class="page">
-  <div class="page-intro">
-    <div><span>SUPPORT CENTER</span><h2>Help / Issues</h2><p>Review and resolve submitted issues.</p></div>
-    <button id="refreshIssues" class="primary-button">🔄 Refresh</button>
-  </div>
-
-  <div class="support-actions">
-    <a class="secondary-button link-button" href="help.html" target="_blank" rel="noopener">🆘 Open Public Help Page</a>
-  </div>
-
-  <div class="issue-summary">
-    <div><small>OPEN</small><strong id="openIssues">0</strong></div>
-    <div><small>IN PROGRESS</small><strong id="progressIssues">0</strong></div>
-    <div><small>RESOLVED</small><strong id="resolvedIssues">0</strong></div>
-    <div><small>TOTAL</small><strong id="totalIssues">0</strong></div>
-  </div>
-
-  <div class="issue-filter-panel">
-    <input id="issueSearch" type="search" placeholder="Search name, email, subject, issue ID...">
-    <select id="issueStatusFilter"><option value="all">All Status</option><option>Open</option><option>In Progress</option><option>Resolved</option></select>
-    <select id="issueCategoryFilter"><option value="all">All Categories</option><option>Registration</option><option>Website</option><option>Payment</option><option>Technical</option><option>Other</option></select>
-  </div>
-
-  <div id="issuesContainer" class="issues-container"><div class="loading">Loading issues...</div></div>
-</section>
-
-</main>
+<div id="loginView" class="panel login">
+<h1>APS ADMIN</h1><p class="sub">APS Robotics Championship 2026 registration dashboard</p>
+<input id="email" type="email" placeholder="Admin email" autocomplete="username">
+<input id="password" type="password" placeholder="Password" autocomplete="current-password">
+<button id="loginBtn">Sign in</button><div id="error"></div>
 </div>
 
-<div id="modal" class="modal hidden">
-  <div class="modal-box">
-    <button id="closeModal" class="modal-close">×</button>
-    <div id="modalContent"></div>
-  </div>
+<div id="appView" class="wrap hidden">
+<div class="top"><div><h1>REGISTRATION ADMIN</h1><div class="sub">APS Robotics Championship 2026</div></div><button id="logoutBtn">Logout</button></div>
+<div class="panel">
+<div class="stats">
+<div class="stat">Registrations <b id="count">0</b></div>
+<div class="stat">Solo <b id="solo">0</b></div>
+<div class="stat">Teams <b id="teams">0</b></div>
 </div>
-
-<div id="issueModal" class="modal hidden">
-  <div class="modal-box issue-modal-box">
-    <button id="closeIssueModal" class="modal-close">×</button>
-    <div id="issueModalContent"></div>
-  </div>
 </div>
-
-<div id="toast" class="toast"></div>
+<div class="panel">
+<div class="toolbar"><input id="search" placeholder="Search name, email, team, ID, mobile..."><button id="refreshBtn">Refresh</button><button id="exportBtn">Export CSV</button></div>
+<div class="table-wrap"><table><thead><tr>
+<th>Registration ID</th><th>Date</th><th>Participation</th><th>Leader</th><th>Class/Section</th><th>Contact</th><th>Team</th><th>Members</th><th>Events</th><th>Remarks</th>
+</tr></thead><tbody id="rows"></tbody></table></div>
+</div>
+</div>
 
 <script type="module" src="admin.js"></script>
 </body>
