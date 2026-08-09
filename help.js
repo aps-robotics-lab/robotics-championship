@@ -491,3 +491,33 @@ form?.addEventListener(
 
     }
 );
+let footerClicks = 0;
+let footerTimer = null;
+
+const agentSecret =
+    document.getElementById("agentSecret");
+
+agentSecret?.addEventListener("click", () => {
+
+    footerClicks++;
+
+    clearTimeout(footerTimer);
+
+    footerTimer = setTimeout(() => {
+        footerClicks = 0;
+    }, 2000);
+
+    /*
+     * Click the footer 5 times
+     * to open Agent Portal.
+     */
+
+    if (footerClicks >= 5) {
+
+        footerClicks = 0;
+
+        window.location.href =
+            "agent.html";
+    }
+
+});
