@@ -70,7 +70,7 @@ const db =
 
 const ADMIN_UIDS = new Set([
 
-    "crfLkH7qlofZBea5GEwLMEtL92X2",
+    "HgWiHPRx9gcXZtDTl0pDCpZlokt2",
 
     "5lBbcuD2BjRdDya7Lo9uRXdBIp92",
 
