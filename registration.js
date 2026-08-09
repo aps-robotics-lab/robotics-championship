@@ -17,7 +17,7 @@ import {
 
 
 /* =========================================================
-   FIREBASE CONFIGURATION
+   FIREBASE CONFIG
 ========================================================= */
 
 const firebaseConfig = {
@@ -50,15 +50,28 @@ const firebaseConfig = {
    INITIALIZE FIREBASE
 ========================================================= */
 
-const app =
-    initializeApp(firebaseConfig);
+let app;
+let db;
 
-const db =
-    getDatabase(app);
+try {
+
+    app = initializeApp(firebaseConfig);
+    db = getDatabase(app);
+
+    console.log("Firebase initialized successfully.");
+
+} catch (error) {
+
+    console.error(
+        "Firebase initialization failed:",
+        error
+    );
+
+}
 
 
 /* =========================================================
-   EMAILJS CONFIGURATION
+   EMAILJS CONFIG
 ========================================================= */
 
 const EMAILJS_PUBLIC_KEY =
@@ -83,17 +96,26 @@ emailScript.src =
 
 emailScript.onload = () => {
 
-    if (window.emailjs) {
+    try {
 
-        window.emailjs.init({
+        if (window.emailjs) {
 
-            publicKey:
-                EMAILJS_PUBLIC_KEY
+            window.emailjs.init({
+                publicKey:
+                    EMAILJS_PUBLIC_KEY
+            });
 
-        });
+            console.log(
+                "EmailJS initialized successfully."
+            );
 
-        console.log(
-            "EmailJS initialized successfully."
+        }
+
+    } catch (error) {
+
+        console.error(
+            "EmailJS initialization error:",
+            error
         );
 
     }
@@ -102,8 +124,8 @@ emailScript.onload = () => {
 
 emailScript.onerror = () => {
 
-    console.error(
-        "Unable to load EmailJS."
+    console.warn(
+        "EmailJS could not be loaded. Registration will still work."
     );
 
 };
@@ -174,7 +196,7 @@ const memberInstruction =
 
 
 /* =========================================================
-   UTILITY
+   BASIC UTILITY
 ========================================================= */
 
 function getValue(id) {
@@ -183,15 +205,17 @@ function getValue(id) {
         document.getElementById(id);
 
     if (!element) {
-
         return "";
-
     }
 
-    return element.value.trim();
+    return String(element.value || "").trim();
 
 }
 
+
+/* =========================================================
+   GET TEAM SIZE
+========================================================= */
 
 function getTeamSize() {
 
@@ -201,17 +225,17 @@ function getTeamSize() {
         );
 
     if (!selected) {
-
         return 1;
-
     }
 
-    return Number(
-        selected.value
-    );
+    return Number(selected.value);
 
 }
 
+
+/* =========================================================
+   GET SELECTED EVENTS
+========================================================= */
 
 function getSelectedEvents() {
 
@@ -226,6 +250,10 @@ function getSelectedEvents() {
 }
 
 
+/* =========================================================
+   GENERATE REGISTRATION ID
+========================================================= */
+
 function generateRegistrationId() {
 
     const now =
@@ -236,8 +264,8 @@ function generateRegistrationId() {
 
     const random =
         Math.floor(
-            1000 +
-            Math.random() * 9000
+            10000 +
+            Math.random() * 90000
         );
 
     return `APS-RBC-${year}-${random}`;
@@ -245,15 +273,17 @@ function generateRegistrationId() {
 }
 
 
+/* =========================================================
+   MESSAGE
+========================================================= */
+
 function showMessage(
     message,
     type = "error"
 ) {
 
     if (!formMessage) {
-
         return;
-
     }
 
     formMessage.textContent =
@@ -262,15 +292,18 @@ function showMessage(
     formMessage.className =
         `form-message ${type}`;
 
+    formMessage.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+
 }
 
 
 function clearMessage() {
 
     if (!formMessage) {
-
         return;
-
     }
 
     formMessage.textContent =
@@ -283,7 +316,35 @@ function clearMessage() {
 
 
 /* =========================================================
-   TEAM SIZE
+   TEAM MEMBER FIELD HELPERS
+========================================================= */
+
+function clearMemberFields(number) {
+
+    const fields = [
+
+        `member${number}Name`,
+        `member${number}Class`,
+        `member${number}Section`
+
+    ];
+
+    fields.forEach(id => {
+
+        const element =
+            document.getElementById(id);
+
+        if (element) {
+            element.value = "";
+        }
+
+    });
+
+}
+
+
+/* =========================================================
+   UPDATE TEAM SIZE
 ========================================================= */
 
 function updateTeamSize() {
@@ -292,43 +353,8 @@ function updateTeamSize() {
         getTeamSize();
 
 
-    const memberCards =
-        document.querySelectorAll(
-            ".additional-member"
-        );
-
-
-    memberCards.forEach(card => {
-
-        const memberNumber =
-            Number(
-                card.dataset.memberCard
-            );
-
-
-        if (memberNumber <= size) {
-
-            card.classList.remove(
-                "hidden-member"
-            );
-
-        } else {
-
-            card.classList.add(
-                "hidden-member"
-            );
-
-            clearMemberFields(
-                memberNumber
-            );
-
-        }
-
-    });
-
-
     /*
-       Update participation type.
+       PARTICIPATION TYPE
     */
 
     if (participationType) {
@@ -342,7 +368,7 @@ function updateTeamSize() {
 
 
     /*
-       Update instruction text.
+       INSTRUCTION
     */
 
     if (memberInstruction) {
@@ -353,74 +379,109 @@ function updateTeamSize() {
                 "Solo participation selected. No additional members required.",
 
             2:
-                "Team of 2 selected. Please enter details for Participant 02.",
+                "Team of 2 selected. Participant 02 details are required.",
 
             3:
-                "Team of 3 selected. Please enter details for Participants 02 and 03.",
+                "Team of 3 selected. Participants 02 and 03 details are required.",
 
             4:
-                "Team of 4 selected. Please enter details for Participants 02–04.",
+                "Team of 4 selected. Participants 02, 03 and 04 details are required.",
 
             5:
-                "Team of 5 selected. Please enter details for Participants 02–05."
+                "Team of 5 selected. Participants 02, 03, 04 and 05 details are required."
 
         };
 
         memberInstruction.textContent =
-            instructions[size] || "";
+            instructions[size];
 
     }
 
 
     /*
-       Required fields.
+       SHOW/HIDE MEMBER CARDS
+    */
+
+    document
+        .querySelectorAll(
+            ".additional-member"
+        )
+        .forEach(card => {
+
+            const number =
+                Number(
+                    card.dataset.memberCard
+                );
+
+
+            const shouldShow =
+                number <= size;
+
+
+            if (shouldShow) {
+
+                card.classList.remove(
+                    "hidden-member"
+                );
+
+            } else {
+
+                card.classList.add(
+                    "hidden-member"
+                );
+
+                clearMemberFields(
+                    number
+                );
+
+            }
+
+        });
+
+
+    /*
+       REQUIRED FIELDS
     */
 
     for (
-        let i = 2;
-        i <= 5;
-        i++
+        let number = 2;
+        number <= 5;
+        number++
     ) {
 
         const name =
             document.getElementById(
-                `member${i}Name`
+                `member${number}Name`
             );
 
         const memberClass =
             document.getElementById(
-                `member${i}Class`
+                `member${number}Class`
             );
 
         const section =
             document.getElementById(
-                `member${i}Section`
+                `member${number}Section`
             );
 
 
         const required =
-            i <= size;
+            number <= size;
 
 
         if (name) {
-
             name.required =
                 required;
-
         }
 
         if (memberClass) {
-
             memberClass.required =
                 required;
-
         }
 
         if (section) {
-
             section.required =
                 required;
-
         }
 
     }
@@ -428,38 +489,8 @@ function updateTeamSize() {
 }
 
 
-function clearMemberFields(number) {
-
-    const fields = [
-
-        `member${number}Name`,
-
-        `member${number}Class`,
-
-        `member${number}Section`
-
-    ];
-
-
-    fields.forEach(id => {
-
-        const element =
-            document.getElementById(id);
-
-        if (element) {
-
-            element.value =
-                "";
-
-        }
-
-    });
-
-}
-
-
 /* =========================================================
-   TEAM SIZE EVENTS
+   TEAM SIZE LISTENERS
 ========================================================= */
 
 document
@@ -476,11 +507,15 @@ document
     });
 
 
+/*
+   Run immediately.
+*/
+
 updateTeamSize();
 
 
 /* =========================================================
-   REMARKS CHARACTER COUNTER
+   REMARKS COUNTER
 ========================================================= */
 
 if (
@@ -502,7 +537,7 @@ if (
 
 
 /* =========================================================
-   MOBILE NUMBER
+   MOBILE VALIDATION
 ========================================================= */
 
 const mobileInput =
@@ -541,12 +576,11 @@ const emailInput =
 if (emailInput) {
 
     emailInput.addEventListener(
-        "blur",
+        "input",
         () => {
 
             emailInput.value =
                 emailInput.value
-                    .trim()
                     .toLowerCase();
 
         }
@@ -609,21 +643,110 @@ document
 
 
 /* =========================================================
-   COLLECT REGISTRATION DATA
+   VALIDATE TEAM MEMBERS
+========================================================= */
+
+function validateTeamMembers() {
+
+    const size =
+        getTeamSize();
+
+
+    for (
+        let number = 2;
+        number <= size;
+        number++
+    ) {
+
+        const name =
+            getValue(
+                `member${number}Name`
+            );
+
+        const memberClass =
+            getValue(
+                `member${number}Class`
+            );
+
+        const section =
+            getValue(
+                `member${number}Section`
+            );
+
+
+        if (!name) {
+
+            showMessage(
+                `Please enter Participant ${number} name.`,
+                "error"
+            );
+
+            document
+                .getElementById(
+                    `member${number}Name`
+                )
+                ?.focus();
+
+            return false;
+
+        }
+
+
+        if (!memberClass) {
+
+            showMessage(
+                `Please select the class for Participant ${number}.`,
+                "error"
+            );
+
+            document
+                .getElementById(
+                    `member${number}Class`
+                )
+                ?.focus();
+
+            return false;
+
+        }
+
+
+        if (!section) {
+
+            showMessage(
+                `Please enter the section for Participant ${number}.`,
+                "error"
+            );
+
+            document
+                .getElementById(
+                    `member${number}Section`
+                )
+                ?.focus();
+
+            return false;
+
+        }
+
+    }
+
+
+    return true;
+
+}
+
+
+/* =========================================================
+   COLLECT DATA
 ========================================================= */
 
 function collectRegistrationData() {
 
-    const selectedEvents =
-        getSelectedEvents();
+    const now =
+        new Date();
 
 
     const registrationId =
         generateRegistrationId();
-
-
-    const now =
-        new Date();
 
 
     const registrationDate =
@@ -639,7 +762,7 @@ function collectRegistrationData() {
         );
 
 
-    return {
+    const data = {
 
         registrationId:
 
@@ -702,91 +825,7 @@ function collectRegistrationData() {
 
         Events:
 
-            selectedEvents,
-
-
-        Member2Name:
-
-            getValue(
-                "member2Name"
-            ),
-
-
-        Member2Class:
-
-            getValue(
-                "member2Class"
-            ),
-
-
-        Member2Section:
-
-            getValue(
-                "member2Section"
-            ),
-
-
-        Member3Name:
-
-            getValue(
-                "member3Name"
-            ),
-
-
-        Member3Class:
-
-            getValue(
-                "member3Class"
-            ),
-
-
-        Member3Section:
-
-            getValue(
-                "member3Section"
-            ),
-
-
-        Member4Name:
-
-            getValue(
-                "member4Name"
-            ),
-
-
-        Member4Class:
-
-            getValue(
-                "member4Class"
-            ),
-
-
-        Member4Section:
-
-            getValue(
-                "member4Section"
-            ),
-
-
-        Member5Name:
-
-            getValue(
-                "member5Name"
-            ),
-
-
-        Member5Class:
-
-            getValue(
-                "member5Class"
-            ),
-
-
-        Member5Section:
-
-            getValue(
-                "member5Section"
-            ),
+            getSelectedEvents(),
 
 
         Remarks:
@@ -798,9 +837,45 @@ function collectRegistrationData() {
 
         registrationDate:
 
-            registrationDate
+            registrationDate,
+
+
+        timestamp:
+
+            Date.now()
 
     };
+
+
+    /*
+       Add members dynamically.
+    */
+
+    for (
+        let number = 2;
+        number <= 5;
+        number++
+    ) {
+
+        data[`Member${number}Name`] =
+            getValue(
+                `member${number}Name`
+            );
+
+        data[`Member${number}Class`] =
+            getValue(
+                `member${number}Class`
+            );
+
+        data[`Member${number}Section`] =
+            getValue(
+                `member${number}Section`
+            );
+
+    }
+
+
+    return data;
 
 }
 
@@ -810,8 +885,17 @@ function collectRegistrationData() {
 ========================================================= */
 
 async function saveRegistration(
-    registrationData
+    data
 ) {
+
+    if (!db) {
+
+        throw new Error(
+            "Firebase is not initialized."
+        );
+
+    }
+
 
     const registrationsRef =
         ref(
@@ -828,7 +912,7 @@ async function saveRegistration(
 
     await set(
         newRegistrationRef,
-        registrationData
+        data
     );
 
 
@@ -864,26 +948,34 @@ async function waitForEmailJS() {
     }
 
 
-    if (!window.emailjs) {
-
-        throw new Error(
-            "EmailJS SDK failed to load."
-        );
-
-    }
+    return Boolean(
+        window.emailjs
+    );
 
 }
 
 
 /* =========================================================
-   SEND CONFIRMATION EMAIL
+   SEND EMAIL
 ========================================================= */
 
 async function sendConfirmationEmail(
     data
 ) {
 
-    await waitForEmailJS();
+    const emailReady =
+        await waitForEmailJS();
+
+
+    if (!emailReady) {
+
+        console.warn(
+            "EmailJS unavailable. Skipping email."
+        );
+
+        return;
+
+    }
 
 
     const templateParams = {
@@ -891,112 +983,87 @@ async function sendConfirmationEmail(
         StudentName:
             data.StudentName,
 
-
         EmailAddress:
             data.EmailAddress,
-
 
         registrationId:
             data.registrationId,
 
-
         TeamName:
             data.TeamName ||
             "Not specified",
-
 
         TeamSize:
             String(
                 data.TeamSize
             ),
 
-
         ParticipationType:
             data.ParticipationType,
-
 
         Class:
             data.Class,
 
-
         Section:
             data.Section,
-
 
         MobileNumber:
             data.MobileNumber,
 
-
         Events:
-            data.Events.join(
-                ", "
-            ),
-
+            data.Events.join(", "),
 
         Member2Name:
             data.Member2Name ||
             "Not applicable",
 
-
         Member2Class:
             data.Member2Class ||
             "",
-
 
         Member2Section:
             data.Member2Section ||
             "",
 
-
         Member3Name:
             data.Member3Name ||
             "Not applicable",
-
 
         Member3Class:
             data.Member3Class ||
             "",
 
-
         Member3Section:
             data.Member3Section ||
             "",
-
 
         Member4Name:
             data.Member4Name ||
             "Not applicable",
 
-
         Member4Class:
             data.Member4Class ||
             "",
-
 
         Member4Section:
             data.Member4Section ||
             "",
 
-
         Member5Name:
             data.Member5Name ||
             "Not applicable",
-
 
         Member5Class:
             data.Member5Class ||
             "",
 
-
         Member5Section:
             data.Member5Section ||
             "",
 
-
         Remarks:
             data.Remarks ||
             "No additional remarks.",
-
 
         registrationDate:
             data.registrationDate
@@ -1004,37 +1071,54 @@ async function sendConfirmationEmail(
     };
 
 
-    const result =
-        await window.emailjs.send(
-            EMAILJS_SERVICE_ID,
-            EMAILJS_TEMPLATE_ID,
-            templateParams
-        );
-
-
-    console.log(
-        "EmailJS:",
-        result.status,
-        result.text
+    return window.emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        templateParams
     );
-
-
-    return result;
 
 }
 
 
 /* =========================================================
-   SHOW SUCCESS
+   SAVE SESSION INFORMATION
+========================================================= */
+
+function saveSessionData(data) {
+
+    sessionStorage.setItem(
+        "apsRegistrationId",
+        data.registrationId
+    );
+
+    sessionStorage.setItem(
+        "apsRegistrationName",
+        data.StudentName
+    );
+
+    sessionStorage.setItem(
+        "apsRegistrationEmail",
+        data.EmailAddress
+    );
+
+    sessionStorage.setItem(
+        "apsRegistrationTeam",
+        data.TeamName ||
+        ""
+    );
+
+}
+
+
+/* =========================================================
+   SHOW SUCCESS MODAL
 ========================================================= */
 
 function showSuccess(
     registrationId
 ) {
 
-    if (
-        successRegistrationId
-    ) {
+    if (successRegistrationId) {
 
         successRegistrationId.textContent =
             registrationId;
@@ -1042,9 +1126,7 @@ function showSuccess(
     }
 
 
-    if (
-        successOverlay
-    ) {
+    if (successOverlay) {
 
         successOverlay.classList.remove(
             "hidden"
@@ -1056,7 +1138,7 @@ function showSuccess(
 
 
 /* =========================================================
-   SUBMIT FORM
+   FORM SUBMISSION
 ========================================================= */
 
 if (form) {
@@ -1072,12 +1154,10 @@ if (form) {
 
 
             /*
-               Browser validation.
+               HTML validation.
             */
 
-            if (
-                !form.checkValidity()
-            ) {
+            if (!form.checkValidity()) {
 
                 form.reportValidity();
 
@@ -1090,9 +1170,7 @@ if (form) {
                Event validation.
             */
 
-            if (
-                !validateEvents()
-            ) {
+            if (!validateEvents()) {
 
                 return;
 
@@ -1100,7 +1178,18 @@ if (form) {
 
 
             /*
-               Prevent double submission.
+               Team member validation.
+            */
+
+            if (!validateTeamMembers()) {
+
+                return;
+
+            }
+
+
+            /*
+               Prevent double-click.
             */
 
             if (
@@ -1118,7 +1207,7 @@ if (form) {
 
 
             /*
-               Disable submit.
+               Loading state.
             */
 
             if (submitBtn) {
@@ -1135,10 +1224,15 @@ if (form) {
 
             try {
 
-                /* -----------------------------------------
-                   STEP 1
-                   SAVE TO FIREBASE
-                ----------------------------------------- */
+                /* =========================================
+                   FIREBASE
+                ========================================= */
+
+                console.log(
+                    "Saving registration...",
+                    registrationData
+                );
+
 
                 await saveRegistration(
                     registrationData
@@ -1146,14 +1240,22 @@ if (form) {
 
 
                 console.log(
-                    "Registration saved to Firebase."
+                    "Registration successfully saved."
                 );
 
 
-                /* -----------------------------------------
-                   STEP 2
-                   SEND EMAIL
-                ----------------------------------------- */
+                /*
+                   Save ID for thankyou.html
+                */
+
+                saveSessionData(
+                    registrationData
+                );
+
+
+                /* =========================================
+                   EMAILJS
+                ========================================= */
 
                 try {
 
@@ -1166,28 +1268,24 @@ if (form) {
                         "Confirmation email sent."
                     );
 
-
                 } catch (emailError) {
 
                     /*
-                       IMPORTANT:
-                       Firebase registration has already
-                       succeeded. Do NOT delete it just
-                       because EmailJS failed.
+                       Email failure must NOT
+                       cancel registration.
                     */
 
-                    console.error(
-                        "EmailJS failed:",
+                    console.warn(
+                        "EmailJS failed, but registration was saved:",
                         emailError
                     );
 
                 }
 
 
-                /* -----------------------------------------
-                   STEP 3
-                   SHOW SUCCESS
-                ----------------------------------------- */
+                /* =========================================
+                   SUCCESS
+                ========================================= */
 
                 showSuccess(
                     registrationData.registrationId
@@ -1197,13 +1295,54 @@ if (form) {
             } catch (error) {
 
                 console.error(
-                    "Registration failed:",
+                    "REGISTRATION ERROR:",
                     error
                 );
 
 
+                /*
+                   Display the actual reason.
+                */
+
+                let message =
+                    "Registration failed. ";
+
+
+                if (
+                    error &&
+                    error.code ===
+                    "PERMISSION_DENIED"
+                ) {
+
+                    message +=
+                        "Firebase denied permission. Please check your Realtime Database Rules.";
+
+                } else if (
+                    error &&
+                    error.code
+                ) {
+
+                    message +=
+                        `Error: ${error.code}`;
+
+                } else if (
+                    error &&
+                    error.message
+                ) {
+
+                    message +=
+                        error.message;
+
+                } else {
+
+                    message +=
+                        "Please check your internet connection and try again.";
+
+                }
+
+
                 showMessage(
-                    "Registration could not be completed. Please try again.",
+                    message,
                     "error"
                 );
 
@@ -1238,6 +1377,11 @@ if (continueBtn) {
     continueBtn.addEventListener(
         "click",
         () => {
+
+            /*
+               Registration ID has already
+               been stored in sessionStorage.
+            */
 
             window.location.href =
                 "thankyou.html";
