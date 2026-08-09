@@ -124,5 +124,65 @@ const menu=document.getElementById('menuBtn'),nav=document.getElementById('mainN
 menu.addEventListener('click',()=>nav.classList.toggle('open'));
 nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>nav.classList.remove('open')));
 </script>
+  <!-- NAVIGATION -->
+<nav class="navbar">
+
+    <a href="#home" class="nav-link active">
+        Home
+    </a>
+
+    <a href="#about" class="nav-link">
+        About
+    </a>
+
+    <a href="#events" class="nav-link">
+        Events
+    </a>
+
+    <a href="rules.html" class="nav-link">
+        Rules
+    </a>
+
+    <a href="#message" class="nav-link">
+        Message
+    </a>
+
+    <a href="#contact" class="nav-link">
+        Contact
+    </a>
+
+    <a href="#team" class="nav-link">
+        Our Team
+    </a>
+
+    <!-- ADMIN -->
+    <a href="admin.html" class="nav-admin">
+        <i class="fa-solid fa-shield-halved"></i>
+        Admin
+    </a>
+
+</nav>
+  <div class="mobile-menu" id="mobileMenu">
+
+    <a href="#home">Home</a>
+
+    <a href="#about">About</a>
+
+    <a href="#events">Events</a>
+
+    <a href="rules.html">Rules</a>
+
+    <a href="#message">Message</a>
+
+    <a href="#contact">Contact</a>
+
+    <a href="#team">Our Team</a>
+
+    <a href="admin.html" class="mobile-admin">
+        <i class="fa-solid fa-shield-halved"></i>
+        Admin Panel
+    </a>
+
+  </div>
 </body>
 </html>
