@@ -1,48 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
 <meta name="theme-color" content="#050914">
 
-<title>APS Robotics Championship 2026 | Help Center</title>
+<title>Help Center | APS Robotics Championship 2026</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link
+href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
 
 <link rel="stylesheet" href="help.css">
+
 </head>
 
 <body>
 
 <header class="help-header">
 
-    <a href="index.html" class="brand">
+<a href="index.html" class="brand">
 
-        <img
-        src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
-        alt="APS Logo">
+<img
+src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+alt="APS Logo">
 
-        <span>
-            <b>APS ROBOTICS</b>
-            <small>CHAMPIONSHIP 2026</small>
-        </span>
+<span>
+<b>APS ROBOTICS</b>
+<small>CHAMPIONSHIP 2026</small>
+</span>
 
-    </a>
+</a>
 
-    <div class="header-actions">
-
-        <a href="agent.html" class="agent-link">
-            🤖 Agent
-        </a>
-
-        <a href="index.html" class="back-link">
-            ← Back to Website
-        </a>
-
-    </div>
+<a href="index.html" class="back-link">
+← Back to Website
+</a>
 
 </header>
 
@@ -51,16 +48,16 @@
 
 <section class="help-hero">
 
-    <span>SUPPORT CENTER</span>
+<span>SUPPORT CENTER</span>
 
-    <h1>
-        How Can We <b>Help?</b>
-    </h1>
+<h1>
+How Can We <b>Help?</b>
+</h1>
 
-    <p>
-        Having a problem with registration or the championship website?
-        Send the organising team a support request.
-    </p>
+<p>
+Having a problem with registration or the championship website?
+Send the organising team a support request.
+</p>
 
 </section>
 
@@ -68,327 +65,242 @@
 <section class="help-grid">
 
 
-<!-- SUPPORT FORM -->
-
 <div class="help-card">
 
-    <h2>🆘 Submit an Issue</h2>
+<div class="card-heading">
 
-    <p class="muted">
-        Please provide accurate information so our organising team
-        can identify and resolve your issue.
-    </p>
+<span class="number">01</span>
 
+<div>
+<small>SUPPORT REQUEST</small>
+<h2>Submit an Issue</h2>
+</div>
 
-    <form
-    id="helpForm"
-    action="https://formsubmit.co/ayusshh@outlook.in"
-    method="POST">
+</div>
 
+<p class="muted">
+Please provide accurate details so our support team can help you quickly.
+</p>
 
-        <!-- FORMSUBMIT CONFIGURATION -->
 
-        <input
-        type="hidden"
-        name="_subject"
-        value="APS Robotics Championship 2026 - Support Request">
+<form id="helpForm">
 
-        <input
-        type="hidden"
-        name="_captcha"
-        value="false">
 
-        <input
-        type="hidden"
-        name="_template"
-        value="table">
+<label>
+Registration ID
 
-        <!-- Replace this after uploading sorry.html -->
-        <input
-        type="hidden"
-        name="_next"
-        value="sorry.html">
+<input
+id="registrationId"
+required
+maxlength="30"
+placeholder="e.g. APS-RBC-2026-0001"
+autocomplete="off">
 
+<small class="field-note">
+Your Registration ID is required to verify your registration.
+</small>
 
-        <!-- NAME -->
+</label>
 
-        <label>
 
-            Your Name
+<label>
+Your Name
 
-            <input
-            type="text"
-            id="name"
-            name="Student Name"
-            required
-            maxlength="80"
-            autocomplete="name"
-            placeholder="Enter your name">
+<input
+id="name"
+required
+maxlength="80"
+placeholder="Enter your name"
+autocomplete="name">
 
-        </label>
+</label>
 
 
-        <!-- CLASS -->
+<div class="two-column">
 
-        <label>
+<label>
+Class
 
-            Class
+<select id="className" required>
 
-            <select
-            id="class"
-            name="Class"
-            required>
+<option value="">Select Class</option>
+<option value="VI">VI</option>
+<option value="VII">VII</option>
+<option value="VIII">VIII</option>
+<option value="IX">IX</option>
+<option value="X">X</option>
+<option value="XI">XI</option>
+<option value="XII">XII</option>
 
-                <option value="">
-                    Select Class
-                </option>
+</select>
 
-                <option value="VI">VI</option>
-                <option value="VII">VII</option>
-                <option value="VIII">VIII</option>
-                <option value="IX">IX</option>
-                <option value="X">X</option>
-                <option value="XI">XI</option>
-                <option value="XII">XII</option>
+</label>
 
-            </select>
 
-        </label>
+<label>
+Section
 
+<input
+id="section"
+required
+maxlength="5"
+placeholder="e.g. A">
 
-        <!-- SECTION -->
-
-        <label>
-
-            Section
-
-            <input
-            type="text"
-            id="section"
-            name="Section"
-            required
-            maxlength="5"
-            placeholder="e.g. A">
-
-        </label>
-
-
-        <!-- EMAIL -->
-
-        <label>
-
-            Email Address
-
-            <input
-            type="email"
-            id="email"
-            name="Email"
-            required
-            maxlength="120"
-            autocomplete="email"
-            placeholder="you@example.com">
-
-        </label>
-
-
-        <!-- REGISTRATION ID -->
-
-        <label>
-
-            Registration ID
-
-            <input
-            type="text"
-            id="registrationId"
-            name="Registration ID"
-            required
-            maxlength="50"
-            placeholder="e.g. APS-RBC-2026-1234">
-
-            <small class="field-note">
-                Your Registration ID is required so we can identify your registration.
-            </small>
-
-        </label>
-
-
-        <!-- CATEGORY -->
-
-        <label>
-
-            Category
-
-            <select
-            id="category"
-            name="Category"
-            required>
-
-                <option value="Registration">
-                    Registration
-                </option>
-
-                <option value="Website">
-                    Website
-                </option>
-
-                <option value="Payment">
-                    Payment
-                </option>
-
-                <option value="Technical">
-                    Technical
-                </option>
-
-                <option value="Other">
-                    Other
-                </option>
-
-            </select>
-
-        </label>
-
-
-        <!-- SUBJECT -->
-
-        <label>
-
-            Subject
-
-            <input
-            type="text"
-            id="subject"
-            name="Subject"
-            required
-            maxlength="120"
-            placeholder="Briefly describe the issue">
-
-        </label>
-
-
-        <!-- MESSAGE -->
-
-        <label>
-
-            Message
-
-            <textarea
-            id="message"
-            name="Message"
-            required
-            maxlength="2000"
-            rows="7"
-            placeholder="Explain the issue clearly..."></textarea>
-
-        </label>
-
-
-        <button
-        class="submit-btn"
-        type="submit"
-        id="submitBtn">
-
-            <span id="submitText">
-                Send Support Request →
-            </span>
-
-        </button>
-
-
-        <div
-        id="formStatus"
-        class="form-status">
-        </div>
-
-    </form>
+</label>
 
 </div>
 
 
-<!-- INFORMATION CARD -->
+<label>
+Email Address
+
+<input
+id="email"
+type="email"
+required
+maxlength="120"
+placeholder="you@example.com"
+autocomplete="email">
+
+</label>
+
+
+<label>
+Category
+
+<select id="category" required>
+
+<option value="Registration">Registration</option>
+<option value="Website">Website</option>
+<option value="Payment">Payment</option>
+<option value="Technical">Technical</option>
+<option value="Other">Other</option>
+
+</select>
+
+</label>
+
+
+<label>
+Subject
+
+<input
+id="subject"
+required
+maxlength="120"
+placeholder="Briefly describe the issue">
+
+</label>
+
+
+<label>
+Message
+
+<textarea
+id="message"
+required
+maxlength="2000"
+rows="7"
+placeholder="Explain the issue clearly..."></textarea>
+
+</label>
+
+
+<button
+class="submit-btn"
+type="submit"
+id="submitBtn">
+
+<span id="submitText">
+Send Support Request →
+</span>
+
+<span id="submitLoading" class="hidden">
+Submitting...
+</span>
+
+</button>
+
+
+<div
+id="formStatus"
+class="form-status"
+role="alert">
+</div>
+
+
+</form>
+
+</div>
+
 
 <div class="help-card side">
 
-    <h2>
-        Before You Submit
-    </h2>
+<div class="card-heading">
+
+<span class="number">02</span>
+
+<div>
+<small>QUICK GUIDANCE</small>
+<h2>Before You Submit</h2>
+</div>
+
+</div>
 
 
-    <div class="tip">
+<div class="tip">
 
-        <b>
-            Registration problem?
-        </b>
+<b>Registration problem?</b>
 
-        <span>
-            Keep your Registration ID ready. It helps us locate
-            your registration quickly.
-        </span>
+<span>
+Keep your Registration ID ready.
+</span>
 
-    </div>
+</div>
 
 
-    <div class="tip">
+<div class="tip">
 
-        <b>
-            Website problem?
-        </b>
+<b>Website problem?</b>
 
-        <span>
-            Mention the page and what you clicked when the
-            problem occurred.
-        </span>
+<span>
+Mention the page and what you clicked when the problem occurred.
+</span>
 
-    </div>
+</div>
 
 
-    <div class="tip">
+<div class="tip">
 
-        <b>
-            Technical issue?
-        </b>
+<b>Technical issue?</b>
 
-        <span>
-            Tell us your device, browser and the exact error
-            message if possible.
-        </span>
+<span>
+Tell us your device/browser and the exact error message if possible.
+</span>
 
-    </div>
+</div>
 
 
-    <div class="tip">
+<div class="contact-box">
 
-        <b>
-            Need urgent assistance?
-        </b>
+<small>ORGANISING TEAM</small>
 
-        <span>
-            Include your Registration ID and describe the
-            problem clearly.
-        </span>
+<strong>APS Tinkering Lab</strong>
 
-    </div>
+<span>
+Army Public School, Lal Bahadur Shastri Marg, Lucknow
+</span>
+
+</div>
 
 
-    <div class="contact-box">
+<a
+href="agent.html"
+class="agent-link">
 
-        <small>
-            ORGANISING TEAM
-        </small>
+Agent Login →
 
-        <strong>
-            APS Tinkering Lab
-        </strong>
-
-        <span>
-            Army Public School, Lal Bahadur Shastri Marg,
-            Lucknow
-        </span>
-
-        <a href="mailto:ayusshh@outlook.in">
-            ayusshh@outlook.in
-        </a>
-
-    </div>
+</a>
 
 </div>
 
@@ -396,8 +308,6 @@
 
 </main>
 
-
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <script type="module" src="help.js"></script>
 
