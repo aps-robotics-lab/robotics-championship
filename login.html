@@ -1,169 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#020711">
 
-    <title>Admin Login | APS Robotics Championship 2026</title>
+<title>Admin Login | APS Robotics Championship 2026</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<style>
+* {
+    box-sizing: border-box;
+}
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            display: grid;
-            place-items: center;
-            padding: 20px;
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 20px;
 
-            background:
-                radial-gradient(
-                    circle at 20% 10%,
-                    rgba(0, 234, 255, 0.10),
-                    transparent 30%
-                ),
-                radial-gradient(
-                    circle at 80% 80%,
-                    rgba(155, 108, 255, 0.10),
-                    transparent 30%
-                ),
-                #020711;
+    background:
+        radial-gradient(
+            circle at 20% 10%,
+            rgba(0, 234, 255, 0.10),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 80% 80%,
+            rgba(155, 108, 255, 0.10),
+            transparent 30%
+        ),
+        #020711;
 
-            color: #f5f9ff;
-            font-family: "Poppins", sans-serif;
-        }
+    color: #f5f9ff;
+    font-family: "Poppins", sans-serif;
+}
 
-        .login-card {
-            width: min(430px, 100%);
-            padding: 38px 28px;
+.login-card {
+    width: min(430px, 100%);
+    padding: 38px 28px;
 
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(10, 25, 45, 0.96),
-                    rgba(3, 10, 21, 0.96)
-                );
+    background:
+        linear-gradient(
+            145deg,
+            rgba(10, 25, 45, 0.96),
+            rgba(3, 10, 21, 0.96)
+        );
 
-            border: 1px solid rgba(0, 234, 255, 0.22);
-            border-radius: 24px;
+    border: 1px solid rgba(0, 234, 255, 0.22);
+    border-radius: 24px;
 
-            box-shadow: 0 25px 80px rgba(0,0,0,.55);
-        }
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.55);
+}
 
-        .logo {
-            display: block;
-            width: 75px;
-            height: 75px;
-            object-fit: contain;
-            margin: 0 auto 20px;
-        }
+.logo {
+    display: block;
+    width: 75px;
+    height: 75px;
+    object-fit: contain;
+    margin: 0 auto 20px;
+}
 
-        .badge {
-            text-align: center;
-            color: #00eaff;
-            font-size: .65rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-        }
+.badge {
+    text-align: center;
+    color: #00eaff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
 
-        h1 {
-            margin: 8px 0;
-            text-align: center;
-            font-family: "Orbitron", sans-serif;
-            font-size: 1.8rem;
-        }
+h1 {
+    margin: 8px 0;
+    text-align: center;
+    font-family: "Orbitron", sans-serif;
+    font-size: 1.8rem;
+}
 
-        h1 span {
-            color: #00eaff;
-        }
+h1 span {
+    color: #00eaff;
+}
 
-        .subtitle {
-            text-align: center;
-            color: #8fa5bf;
-            font-size: .8rem;
-            margin-bottom: 28px;
-        }
+.subtitle {
+    text-align: center;
+    color: #8fa5bf;
+    font-size: 0.8rem;
+    margin-bottom: 28px;
+}
 
-        label {
-            display: block;
-            margin-bottom: 7px;
-            color: #c7d7e9;
-            font-size: .78rem;
-            font-weight: 600;
-        }
+label {
+    display: block;
+    margin-bottom: 7px;
+    color: #c7d7e9;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
 
-        input {
-            width: 100%;
-            padding: 13px 14px;
-            margin-bottom: 17px;
+input {
+    width: 100%;
+    padding: 13px 14px;
+    margin-bottom: 17px;
 
-            border: 1px solid rgba(83,161,255,.18);
-            border-radius: 11px;
-            outline: none;
+    border: 1px solid rgba(83, 161, 255, 0.18);
+    border-radius: 11px;
+    outline: none;
 
-            background: rgba(1,8,18,.8);
-            color: #fff;
-        }
+    background: rgba(1, 8, 18, 0.8);
+    color: #fff;
+}
 
-        input:focus {
-            border-color: #00eaff;
-            box-shadow: 0 0 0 3px rgba(0,234,255,.07);
-        }
+input::placeholder {
+    color: #526981;
+}
 
-        button {
-            width: 100%;
-            padding: 14px;
+input:focus {
+    border-color: #00eaff;
+    box-shadow: 0 0 0 3px rgba(0, 234, 255, 0.07);
+}
 
-            border: 0;
-            border-radius: 12px;
+button {
+    width: 100%;
+    padding: 14px;
 
-            background: linear-gradient(
-                100deg,
-                #00eaff,
-                #4f8cff
-            );
+    border: 0;
+    border-radius: 12px;
 
-            color: #001018;
+    background: linear-gradient(
+        100deg,
+        #00eaff,
+        #4f8cff
+    );
 
-            font-family: "Orbitron", sans-serif;
-            font-weight: 800;
+    color: #001018;
 
-            cursor: pointer;
-        }
+    font-family: "Orbitron", sans-serif;
+    font-weight: 800;
 
-        button:disabled {
-            opacity: .6;
-            cursor: not-allowed;
-        }
+    cursor: pointer;
+    transition: 0.25s ease;
+}
 
-        #loginMessage {
-            min-height: 22px;
-            margin-top: 15px;
-            text-align: center;
-            color: #ff9dad;
-            font-size: .75rem;
-        }
+button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(0, 234, 255, 0.18);
+}
 
-        .back {
-            display: block;
-            margin-top: 20px;
-            text-align: center;
-            color: #8fa5bf;
-            font-size: .75rem;
-            text-decoration: none;
-        }
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
 
-        .back:hover {
-            color: #00eaff;
-        }
-    </style>
+#loginMessage {
+    min-height: 22px;
+    margin-top: 15px;
+    text-align: center;
+    color: #ff9dad;
+    font-size: 0.75rem;
+}
+
+.back {
+    display: block;
+    margin-top: 20px;
+    text-align: center;
+    color: #8fa5bf;
+    font-size: 0.75rem;
+    text-decoration: none;
+}
+
+.back:hover {
+    color: #00eaff;
+}
+</style>
 </head>
 
 <body>
@@ -229,18 +240,17 @@
 
 </div>
 
+
 <script type="module">
 
 import {
     initializeApp
-} from
-"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 
 import {
     getAuth,
     signInWithEmailAndPassword
-} from
-"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
 
 const firebaseConfig = {
@@ -269,11 +279,9 @@ const firebaseConfig = {
 };
 
 
-const app =
-    initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-const auth =
-    getAuth(app);
+const auth = getAuth(app);
 
 
 const form =
@@ -292,86 +300,79 @@ const message =
     document.getElementById("loginMessage");
 
 
-form.addEventListener(
-    "submit",
-    async event => {
+form.addEventListener("submit", async (event) => {
 
-        event.preventDefault();
+    event.preventDefault();
 
-        message.textContent = "";
+    message.textContent = "";
 
-        loginBtn.disabled = true;
-        loginBtn.textContent = "LOGGING IN...";
+    loginBtn.disabled = true;
+    loginBtn.textContent = "LOGGING IN...";
 
 
-        try {
+    try {
 
-            await signInWithEmailAndPassword(
-                auth,
-                email.value.trim(),
-                password.value
-            );
+        await signInWithEmailAndPassword(
+            auth,
+            email.value.trim(),
+            password.value
+        );
 
-            window.location.replace(
-                "admin.html"
-            );
+        window.location.replace("admin.html");
 
+    } catch (error) {
 
-        } catch (error) {
-
-            console.error(
-                "Firebase login error:",
-                error
-            );
+        console.error(
+            "Firebase Login Error:",
+            error
+        );
 
 
-            if (
-                error.code ===
-                "auth/invalid-credential"
-            ) {
+        switch (error.code) {
 
+            case "auth/invalid-credential":
                 message.textContent =
                     "Invalid email or password.";
+                break;
 
-            } else if (
-                error.code ===
-                "auth/invalid-email"
-            ) {
-
+            case "auth/invalid-email":
                 message.textContent =
                     "Please enter a valid email.";
+                break;
 
-            } else if (
-                error.code ===
-                "auth/user-not-found"
-            ) {
-
+            case "auth/user-not-found":
                 message.textContent =
                     "Admin account does not exist.";
+                break;
 
-            } else if (
-                error.code ===
-                "auth/wrong-password"
-            ) {
-
+            case "auth/wrong-password":
                 message.textContent =
                     "Incorrect password.";
+                break;
 
-            } else {
-
+            case "auth/too-many-requests":
                 message.textContent =
-                    error.message;
+                    "Too many attempts. Try again later.";
+                break;
 
-            }
+            case "auth/network-request-failed":
+                message.textContent =
+                    "Network error. Check your internet.";
+                break;
 
-
-            loginBtn.disabled = false;
-            loginBtn.textContent = "LOGIN";
-
+            default:
+                message.textContent =
+                    error.message ||
+                    "Login failed.";
         }
 
+
+        loginBtn.disabled = false;
+        loginBtn.textContent = "LOGIN";
+
     }
-);
+
+});
 
 </script>
 
