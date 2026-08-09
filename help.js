@@ -22,7 +22,7 @@ document.createElement("script");
 emailScript.src =
 "https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";
 
-emailScript.onload = () => {
+emailScript.onload = function () {
 
   if (window.emailjs) {
 
@@ -61,61 +61,79 @@ document.getElementById("formStatus");
    STATUS
 ========================================================= */
 
-function showStatus(message, type = "error") {
+function showStatus(message, type) {
 
   formStatus.textContent =
     message;
 
   formStatus.className =
-    `form-status ${type}`;
+    "form-status " +
+    (type || "error");
+
 }
 
 
 function clearStatus() {
 
-  formStatus.textContent = "";
+  formStatus.textContent =
+    "";
 
   formStatus.className =
     "form-status";
+
 }
 
 
 /* =========================================================
-   VALUE
+   GET VALUE
 ========================================================= */
 
-function value(id) {
+function getValue(id) {
 
-  return (
-    document.getElementById(id)?.value || ""
+  const element =
+    document.getElementById(id);
+
+  if (!element) {
+    return "";
+  }
+
+  return String(
+    element.value || ""
   ).trim();
+
 }
 
 
 /* =========================================================
-   EMAILJS WAIT
+   EMAILJS LOADER
 ========================================================= */
 
 async function waitForEmailJS() {
 
   for (
     let i = 0;
-    i < 40 && !window.emailjs;
+    i < 40;
     i++
   ) {
 
+    if (window.emailjs) {
+      return true;
+    }
+
     await new Promise(
-      resolve => setTimeout(resolve, 250)
+      resolve =>
+        setTimeout(resolve, 250)
     );
 
   }
 
-  return !!window.emailjs;
+  return false;
+
 }
 
 
 /* =========================================================
-   SEND ADMIN EMAIL
+   SEND EMAIL TO ADMIN
 ========================================================= */
 
 async function sendAdminEmail(data) {
@@ -133,8 +151,11 @@ async function sendAdminEmail(data) {
 
 
   return window.emailjs.send(
+
     EMAILJS_SERVICE_ID,
+
     EMAILJS_TEMPLATE_ID,
+
     {
 
       to_email:
@@ -145,11 +166,6 @@ async function sendAdminEmail(data) {
 
       EmailAddress:
         data.email,
-
-      /*
-       * Registration ID is OPTIONAL.
-       * If empty, EmailJS receives "Not provided".
-       */
 
       registrationId:
         data.registrationId ||
@@ -177,34 +193,57 @@ async function sendAdminEmail(data) {
         "Open"
 
     }
+
   );
+
 }
 
 
 /* =========================================================
-   SUBMIT
+   SUBMIT FORM
 ========================================================= */
 
-form?.addEventListener(
+form.addEventListener(
   "submit",
-  async event => {
+  async function (event) {
 
     event.preventDefault();
 
     clearStatus();
 
 
-    if (!form.checkValidity()) {
+    /*
+     * IMPORTANT:
+     *
+     * Registration ID is NOT checked here.
+     */
 
-      form.reportValidity();
+    if (
+      !getValue("name") ||
+      !getValue("className") ||
+      !getValue("section") ||
+      !getValue("email") ||
+      !getValue("subject") ||
+      !getValue("message")
+    ) {
+
+      showStatus(
+        "Please fill in all required fields.",
+        "error"
+      );
 
       return;
+
     }
 
 
-    if (submitBtn.disabled) {
+    if (
+      !submitBtn ||
+      submitBtn.disabled
+    ) {
 
       return;
+
     }
 
 
@@ -212,95 +251,157 @@ form?.addEventListener(
 
       /*
        * OPTIONAL
-       *
-       * Empty value is allowed.
        */
-
       registrationId:
-        value("registrationId"),
+        getValue("registrationId"),
 
       name:
-        value("name"),
+        getValue("name"),
 
       className:
-        value("className"),
+        getValue("className"),
 
       section:
-        value("section"),
+        getValue("section"),
 
       email:
-        value("email").toLowerCase(),
+        getValue("email")
+          .toLowerCase(),
 
       category:
-        value("category"),
+        getValue("category") ||
+        "Other",
 
       subject:
-        value("subject"),
+        getValue("subject"),
 
       message:
-        value("message")
+        getValue("message")
 
     };
 
 
-    submitBtn.disabled = true;
+    submitBtn.disabled =
+      true;
 
-    submitText.classList.add(
-      "hidden"
-    );
 
-    submitLoading.classList.remove(
-      "hidden"
-    );
+    if (submitText) {
+
+      submitText.classList.add(
+        "hidden"
+      );
+
+    }
+
+
+    if (submitLoading) {
+
+      submitLoading.classList.remove(
+        "hidden"
+      );
+
+    }
 
 
     try {
 
+
+      /*
+       * Build API parameters.
+       *
+       * Registration ID is allowed
+       * to be completely empty.
+       */
+
       const params =
-        new URLSearchParams({
+        new URLSearchParams();
 
-          action:
-            "createTicket",
 
-          /*
-           * Can be empty.
-           */
+      params.set(
+        "action",
+        "createTicket"
+      );
 
-          registrationId:
-            data.registrationId,
 
-          name:
-            data.name,
+      params.set(
+        "name",
+        data.name
+      );
 
-          className:
-            data.className,
 
-          section:
-            data.section,
+      params.set(
+        "className",
+        data.className
+      );
 
-          email:
-            data.email,
 
-          category:
-            data.category,
+      params.set(
+        "section",
+        data.section
+      );
 
-          subject:
-            data.subject,
 
-          message:
-            data.message
+      params.set(
+        "email",
+        data.email
+      );
 
-        });
+
+      params.set(
+        "category",
+        data.category
+      );
+
+
+      params.set(
+        "subject",
+        data.subject
+      );
+
+
+      params.set(
+        "message",
+        data.message
+      );
+
+
+      /*
+       * Only send registrationId if
+       * the user actually entered one.
+       */
+
+      if (data.registrationId) {
+
+        params.set(
+          "registrationId",
+          data.registrationId
+        );
+
+      }
 
 
       const response =
         await fetch(
-          `${HELP_API_URL}?${params.toString()}`,
+
+          HELP_API_URL +
+          "?" +
+          params.toString(),
+
           {
             method: "GET",
             cache: "no-store"
           }
+
         );
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          "Unable to connect to the support server."
+        );
+
+      }
 
 
       const result =
@@ -317,9 +418,9 @@ form?.addEventListener(
       }
 
 
-      /* ---------------------------------------------
-         EMAIL ADMIN
-      --------------------------------------------- */
+      /*
+       * Send EmailJS notification.
+       */
 
       try {
 
@@ -334,22 +435,22 @@ form?.addEventListener(
 
       } catch (emailError) {
 
-        /*
-         * Do not block ticket creation if
-         * EmailJS has a temporary problem.
-         */
-
         console.error(
-          "EmailJS admin notification failed:",
+          "EmailJS error:",
           emailError
         );
+
+        /*
+         * Ticket is already saved.
+         * Email failure does not cancel it.
+         */
 
       }
 
 
-      /* ---------------------------------------------
-         SAVE TICKET INFORMATION
-      --------------------------------------------- */
+      /*
+       * Save ticket information.
+       */
 
       sessionStorage.setItem(
         "apsHelpTicketId",
@@ -359,23 +460,28 @@ form?.addEventListener(
 
       sessionStorage.setItem(
         "apsHelpRegistrationId",
-        result.registrationId || ""
+        data.registrationId
       );
 
 
-      /* ---------------------------------------------
-         REDIRECT
-      --------------------------------------------- */
+      /*
+       * Redirect to sorry page.
+       */
 
       window.location.href =
-        `sorry.html?ticket=${encodeURIComponent(
+        "sorry.html?ticket=" +
+        encodeURIComponent(
           result.ticketId
-        )}`;
+        );
 
 
     } catch (error) {
 
-      console.error(error);
+      console.error(
+        "HELP FORM ERROR:",
+        error
+      );
+
 
       showStatus(
         error.message ||
@@ -383,17 +489,29 @@ form?.addEventListener(
         "error"
       );
 
+
     } finally {
 
-      submitBtn.disabled = false;
+      submitBtn.disabled =
+        false;
 
-      submitText.classList.remove(
-        "hidden"
-      );
 
-      submitLoading.classList.add(
-        "hidden"
-      );
+      if (submitText) {
+
+        submitText.classList.remove(
+          "hidden"
+        );
+
+      }
+
+
+      if (submitLoading) {
+
+        submitLoading.classList.add(
+          "hidden"
+        );
+
+      }
 
     }
 
