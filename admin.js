@@ -4,16 +4,16 @@
    Firebase Authentication + Realtime Database
 ========================================================= */
 
-import { initializeApp } from
-    "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 
 import {
     getAuth,
     signInWithEmailAndPassword,
     onAuthStateChanged,
     signOut
-} from
-    "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
 import {
     getDatabase,
@@ -21,8 +21,7 @@ import {
     get,
     update,
     remove
-} from
-    "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 
 /* =========================================================
@@ -58,111 +57,99 @@ const firebaseConfig = {
    INITIALIZE FIREBASE
 ========================================================= */
 
-const app = initializeApp(firebaseConfig);
+const firebaseApp = initializeApp(firebaseConfig);
 
-const auth = getAuth(app);
+const auth = getAuth(firebaseApp);
 
-const db = getDatabase(app);
-
-
-/* =========================================================
-   ELEMENTS
-========================================================= */
-
-const loginScreen =
-    document.getElementById("loginScreen");
-
-const adminApp =
-    document.getElementById("adminApp");
-
-const loginForm =
-    document.getElementById("loginForm");
-
-const loginEmail =
-    document.getElementById("loginEmail");
-
-const loginPassword =
-    document.getElementById("loginPassword");
-
-const loginBtn =
-    document.getElementById("loginBtn");
-
-const loginError =
-    document.getElementById("loginError");
-
-const adminEmail =
-    document.getElementById("adminEmail");
+const database = getDatabase(firebaseApp);
 
 
 /* =========================================================
-   DATA
+   GLOBAL STATE
 ========================================================= */
 
 let registrations = {};
 
-let filtered = {};
+let filteredRegistrations = {};
 
-let currentKey = null;
+let currentRegistrationKey = null;
 
 
 /* =========================================================
    HELPER
 ========================================================= */
 
-const $ = id =>
-    document.getElementById(id);
+function $(id) {
+    return document.getElementById(id);
+}
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const loginScreen = $("loginScreen");
+
+const adminApp = $("adminApp");
+
+const loginForm = $("loginForm");
+
+const loginEmail = $("loginEmail");
+
+const loginPassword = $("loginPassword");
+
+const loginBtn = $("loginBtn");
+
+const loginButtonText = $("loginButtonText");
+
+const loginSpinner = $("loginSpinner");
+
+const loginError = $("loginError");
 
 
 /* =========================================================
    AUTH STATE
 ========================================================= */
 
-onAuthStateChanged(auth, async user => {
+/*
+   THIS IS IMPORTANT.
+
+   Firebase decides whether the user is logged in.
+
+   If logged in:
+       Login screen hidden
+       Admin panel shown
+       Registrations loaded
+
+   If logged out:
+       Admin panel hidden
+       Login screen shown
+*/
+
+onAuthStateChanged(auth, async (user) => {
 
     console.log("Firebase auth state:", user);
 
     if (user) {
 
-        /*
-         * USER IS LOGGED IN
-         */
-
         loginScreen.classList.add("hidden");
 
         adminApp.classList.remove("hidden");
 
-        adminApp.style.display = "flex";
+        $("adminEmail").textContent =
+            user.email || "Authenticated Admin";
 
-        if (adminEmail) {
-
-            adminEmail.textContent =
-                user.email || "Authenticated Admin";
-
-        }
-
-        /*
-         * Load registrations after login.
-         */
+        showToast("Admin login successful.");
 
         await loadRegistrations();
 
-        /*
-         * Make dashboard visible.
-         */
-
-        showPage("dashboard");
-
     } else {
-
-        /*
-         * USER IS NOT LOGGED IN
-         */
-
-        loginScreen.classList.remove("hidden");
 
         adminApp.classList.add("hidden");
 
-        adminApp.style.display = "none";
+        loginScreen.classList.remove("hidden");
+
+        $("adminEmail").textContent = "Admin";
 
     }
 
@@ -173,7 +160,7 @@ onAuthStateChanged(auth, async user => {
    LOGIN
 ========================================================= */
 
-loginForm.addEventListener("submit", async event => {
+loginForm.addEventListener("submit", async (event) => {
 
     event.preventDefault();
 
@@ -185,57 +172,58 @@ loginForm.addEventListener("submit", async event => {
     const password =
         loginPassword.value;
 
+
     if (!email || !password) {
 
         loginError.textContent =
-            "Enter your admin email and password.";
+            "Please enter your email and password.";
 
         return;
 
     }
 
+
     loginBtn.disabled = true;
 
-    loginBtn.textContent =
+    loginButtonText.textContent =
         "Signing in...";
+
+    loginSpinner.classList.remove("hidden");
+
 
     try {
 
-        const credential =
-            await signInWithEmailAndPassword(
-                auth,
-                email,
-                password
-            );
-
-        console.log(
-            "Login successful:",
-            credential.user.email
+        await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
         );
 
         /*
-         * DO NOT manually redirect here.
-         *
-         * onAuthStateChanged() above will open
-         * the admin dashboard.
-         */
+           DO NOT manually open dashboard here.
+
+           onAuthStateChanged() will open
+           the admin panel automatically.
+        */
 
     } catch (error) {
 
         console.error(
-            "Login error:",
+            "Firebase login error:",
             error
         );
 
         loginError.textContent =
-            getAuthError(error.code);
+            getAuthErrorMessage(error);
 
     } finally {
 
         loginBtn.disabled = false;
 
-        loginBtn.textContent =
+        loginButtonText.textContent =
             "Login to Dashboard";
+
+        loginSpinner.classList.add("hidden");
 
     }
 
@@ -243,38 +231,44 @@ loginForm.addEventListener("submit", async event => {
 
 
 /* =========================================================
-   AUTH ERROR
+   AUTH ERROR MESSAGES
 ========================================================= */
 
-function getAuthError(code) {
+function getAuthErrorMessage(error) {
 
-    const errors = {
+    const code = error?.code || "";
 
-        "auth/invalid-credential":
-            "Invalid email or password.",
+    switch (code) {
 
-        "auth/user-not-found":
-            "Admin account was not found.",
+        case "auth/invalid-credential":
+            return "Invalid email or password.";
 
-        "auth/wrong-password":
-            "Incorrect password.",
+        case "auth/invalid-email":
+            return "Please enter a valid email address.";
 
-        "auth/invalid-email":
-            "Please enter a valid email address.",
+        case "auth/user-not-found":
+            return "No Firebase admin account exists with this email.";
 
-        "auth/too-many-requests":
-            "Too many login attempts. Please try again later.",
+        case "auth/wrong-password":
+            return "Incorrect password.";
 
-        "auth/network-request-failed":
-            "Network error. Check your internet connection.",
+        case "auth/too-many-requests":
+            return "Too many login attempts. Please wait and try again.";
 
-        "auth/user-disabled":
-            "This admin account has been disabled."
+        case "auth/network-request-failed":
+            return "Network error. Check your internet connection.";
 
-    };
+        case "auth/operation-not-allowed":
+            return "Email/Password login is not enabled in Firebase Authentication.";
 
-    return errors[code] ||
-        "Login failed. Please check Firebase Authentication.";
+        case "auth/user-disabled":
+            return "This Firebase admin account has been disabled.";
+
+        default:
+            return "Login failed: " + code;
+
+    }
+
 }
 
 
@@ -282,106 +276,86 @@ function getAuthError(code) {
    PASSWORD VISIBILITY
 ========================================================= */
 
-const togglePassword =
-    $("togglePassword");
+$("togglePassword").addEventListener(
+    "click",
+    () => {
 
-if (togglePassword) {
+        if (
+            loginPassword.type ===
+            "password"
+        ) {
 
-    togglePassword.addEventListener(
-        "click",
-        () => {
+            loginPassword.type =
+                "text";
 
-            if (
-                loginPassword.type ===
-                "password"
-            ) {
+            $("togglePassword").textContent =
+                "🙈";
 
-                loginPassword.type =
-                    "text";
+        } else {
 
-                togglePassword.textContent =
-                    "🙈";
+            loginPassword.type =
+                "password";
 
-            } else {
-
-                loginPassword.type =
-                    "password";
-
-                togglePassword.textContent =
-                    "👁";
-
-            }
+            $("togglePassword").textContent =
+                "👁";
 
         }
-    );
 
-}
+    }
+);
 
 
 /* =========================================================
    LOGOUT
 ========================================================= */
 
-const logoutBtn =
-    $("logoutBtn");
+$("logoutBtn").addEventListener(
+    "click",
+    async () => {
 
-if (logoutBtn) {
+        try {
 
-    logoutBtn.addEventListener(
-        "click",
-        async () => {
+            await signOut(auth);
 
-            try {
+            showToast(
+                "You have been logged out."
+            );
 
-                await signOut(auth);
+        } catch (error) {
 
-            } catch (error) {
-
-                console.error(
-                    "Logout error:",
-                    error
-                );
-
-            }
+            console.error(
+                "Logout error:",
+                error
+            );
 
         }
-    );
 
-}
+    }
+);
 
 
 /* =========================================================
    SIDEBAR
 ========================================================= */
 
-const sidebarToggle =
-    $("sidebarToggle");
+$("sidebarToggle").addEventListener(
+    "click",
+    () => {
 
-const sidebar =
-    $("sidebar");
+        $("sidebar").classList.toggle(
+            "open"
+        );
 
-if (sidebarToggle && sidebar) {
-
-    sidebarToggle.addEventListener(
-        "click",
-        () => {
-
-            sidebar.classList.toggle(
-                "open"
-            );
-
-        }
-    );
-
-}
+    }
+);
 
 
 /* =========================================================
-   PAGE NAVIGATION
+   NAVIGATION
 ========================================================= */
 
 document
-    .querySelectorAll(".nav")
+    .querySelectorAll(".nav-item")
     .forEach(button => {
 
         button.addEventListener(
@@ -399,7 +373,7 @@ document
 
 
 document
-    .querySelectorAll("[data-page-target]")
+    .querySelectorAll("[data-open-page]")
     .forEach(button => {
 
         button.addEventListener(
@@ -407,7 +381,7 @@ document
             () => {
 
                 showPage(
-                    button.dataset.pageTarget
+                    button.dataset.openPage
                 );
 
             }
@@ -430,21 +404,17 @@ function showPage(page) {
 
 
     const target =
-        document.getElementById(
-            page + "Page"
-        );
+        $(page + "Page");
 
-    if (target) {
-
-        target.classList.add(
-            "active"
-        );
-
+    if (!target) {
+        return;
     }
+
+    target.classList.add("active");
 
 
     document
-        .querySelectorAll(".nav")
+        .querySelectorAll(".nav-item")
         .forEach(button => {
 
             button.classList.toggle(
@@ -455,30 +425,19 @@ function showPage(page) {
         });
 
 
-    const pageTitle =
-        $("pageTitle");
-
-    if (pageTitle) {
-
-        pageTitle.textContent =
-            page.charAt(0).toUpperCase() +
-            page.slice(1);
-
-    }
+    $("pageTitle").textContent =
+        page.charAt(0).toUpperCase() +
+        page.slice(1);
 
 
-    if (sidebar) {
-
-        sidebar.classList.remove(
-            "open"
-        );
-
-    }
+    $("sidebar").classList.remove(
+        "open"
+    );
 
 
     if (page === "registrations") {
 
-        renderTable();
+        renderRegistrationTable();
 
     }
 
@@ -491,19 +450,23 @@ function showPage(page) {
 
 async function loadRegistrations() {
 
+    showToast(
+        "Loading registrations..."
+    );
+
     try {
 
         console.log(
-            "Loading registrations..."
+            "Reading Firebase path: /registrations"
         );
 
+
+        const registrationRef =
+            ref(database, "registrations");
+
+
         const snapshot =
-            await get(
-                ref(
-                    db,
-                    "registrations"
-                )
-            );
+            await get(registrationRef);
 
 
         if (
@@ -513,11 +476,19 @@ async function loadRegistrations() {
             const data =
                 snapshot.val();
 
-            registrations =
+
+            if (
                 data &&
                 typeof data === "object"
-                    ? data
-                    : {};
+            ) {
+
+                registrations = data;
+
+            } else {
+
+                registrations = {};
+
+            }
 
         } else {
 
@@ -526,9 +497,8 @@ async function loadRegistrations() {
         }
 
 
-        filtered = {
-            ...registrations
-        };
+        filteredRegistrations =
+            { ...registrations };
 
 
         console.log(
@@ -541,23 +511,36 @@ async function loadRegistrations() {
 
         updateDashboard();
 
-        renderRecent();
+        renderRecentRegistrations();
 
-        renderTable();
+        renderRegistrationTable();
 
-        updateEvents();
+        updateEventStatistics();
+
+
+        showToast(
+            `${Object.keys(registrations).length} registration(s) loaded.`
+        );
 
 
     } catch (error) {
 
         console.error(
-            "Database error:",
+            "DATABASE ERROR:",
             error
         );
 
+
+        registrations = {};
+
+        filteredRegistrations = {};
+
+
+        renderRegistrationTable();
+
+
         showToast(
-            "Unable to load registrations. Check Firebase Realtime Database rules.",
-            "error"
+            getDatabaseErrorMessage(error)
         );
 
     }
@@ -566,17 +549,52 @@ async function loadRegistrations() {
 
 
 /* =========================================================
-   VALUE NORMALIZER
+   DATABASE ERROR
 ========================================================= */
 
-function norm(value) {
+function getDatabaseErrorMessage(error) {
 
-    if (value === null ||
-        value === undefined) {
+    if (
+        error?.code ===
+        "PERMISSION_DENIED"
+    ) {
+
+        return "Database permission denied. Check Firebase Realtime Database Rules.";
+
+    }
+
+    if (
+        error?.code ===
+        "NETWORK_ERROR"
+    ) {
+
+        return "Database network error.";
+
+    }
+
+    return (
+        "Could not load registrations: " +
+        (error?.message || "Unknown error")
+    );
+
+}
+
+
+/* =========================================================
+   NORMALIZE VALUES
+========================================================= */
+
+function normalize(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
 
         return "";
 
     }
+
 
     if (Array.isArray(value)) {
 
@@ -584,13 +602,62 @@ function norm(value) {
 
     }
 
-    if (typeof value === "object") {
+
+    if (
+        typeof value ===
+        "object"
+    ) {
 
         return Object.values(value).join(", ");
 
     }
 
+
     return String(value);
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(value) {
+
+    return normalize(value)
+        .replace(
+            /[&<>"']/g,
+            character => {
+
+                const map = {
+
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#039;"
+
+                };
+
+                return map[character];
+
+            }
+        );
+
+}
+
+
+/* =========================================================
+   EMAIL
+========================================================= */
+
+function getEmail(data) {
+
+    return normalize(
+        data.EmailAddress ??
+        data.Email ??
+        data.email
+    );
 
 }
 
@@ -602,55 +669,43 @@ function norm(value) {
 function getEvents(data) {
 
     const value =
-        data?.Events ??
-        data?.events ??
-        data?.Event ??
-        data?.event;
+        data.Events ??
+        data.events ??
+        data.Event ??
+        data.event;
+
 
     if (!value) {
-
         return [];
-
     }
 
 
     if (Array.isArray(value)) {
 
         return value
-            .map(norm)
+            .map(normalize)
             .filter(Boolean);
 
     }
 
 
-    if (typeof value === "object") {
+    if (
+        typeof value ===
+        "object"
+    ) {
 
-        return Object
-            .values(value)
-            .map(norm)
+        return Object.values(value)
+            .map(normalize)
             .filter(Boolean);
 
     }
 
 
-    return norm(value)
-        .split(/\s*(?:,|\||;)\s*/)
+    return normalize(value)
+        .split(
+            /\s*(?:,|\||;)\s*/
+        )
         .filter(Boolean);
-
-}
-
-
-/* =========================================================
-   EMAIL
-========================================================= */
-
-function getEmail(data) {
-
-    return norm(
-        data?.EmailAddress ||
-        data?.Email ||
-        data?.email
-    );
 
 }
 
@@ -661,20 +716,22 @@ function getEmail(data) {
 
 function getTeamSize(data) {
 
-    const teamSize =
-        Number(data?.TeamSize);
+    const saved =
+        Number(data.TeamSize);
+
 
     if (
-        teamSize >= 1 &&
-        teamSize <= 5
+        saved >= 1 &&
+        saved <= 5
     ) {
 
-        return teamSize;
+        return saved;
 
     }
 
 
     let count = 1;
+
 
     for (
         let i = 2;
@@ -683,8 +740,8 @@ function getTeamSize(data) {
     ) {
 
         if (
-            norm(
-                data?.[`Member${i}Name`]
+            normalize(
+                data[`Member${i}Name`]
             )
         ) {
 
@@ -693,6 +750,7 @@ function getTeamSize(data) {
         }
 
     }
+
 
     return count;
 
@@ -705,34 +763,35 @@ function getTeamSize(data) {
 
 function getDate(data) {
 
-    return new Date(
-        data?.registrationDate ||
-        data?.createdAt ||
-        0
-    );
-
-}
+    const value =
+        data.registrationDate ??
+        data.createdAt ??
+        data.timestamp;
 
 
-/* =========================================================
-   HTML ESCAPE
-========================================================= */
+    if (!value) {
 
-function safe(value) {
+        return null;
 
-    return norm(value)
-        .replace(
-            /[&<>"']/g,
-            character => ({
+    }
 
-                "&": "&amp;",
-                "<": "&lt;",
-                ">": "&gt;",
-                '"': "&quot;",
-                "'": "&#039;"
 
-            }[character])
-        );
+    const date =
+        new Date(value);
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return null;
+
+    }
+
+
+    return date;
 
 }
 
@@ -744,38 +803,47 @@ function safe(value) {
 function updateDashboard() {
 
     const list =
-        Object.values(
-            registrations
-        );
+        Object.values(registrations);
+
+
+    $("totalRegistrations")
+        .textContent =
+        list.length;
+
+
+    $("totalTeams")
+        .textContent =
+        list.length;
 
 
     const counts =
         countEvents();
 
 
-    $("totalRegistrations").textContent =
-        list.length;
-
-    $("totalTeams").textContent =
-        list.length;
-
-    $("raceCount").textContent =
+    $("raceCount")
+        .textContent =
         counts.race;
 
-    $("warCount").textContent =
+
+    $("warCount")
+        .textContent =
         counts.war;
 
-    $("tugCount").textContent =
+
+    $("tugCount")
+        .textContent =
         counts.tug;
 
-    $("soccerCount").textContent =
+
+    $("soccerCount")
+        .textContent =
         counts.soccer;
 
 }
 
 
 /* =========================================================
-   EVENT COUNTS
+   EVENT COUNT
 ========================================================= */
 
 function countEvents() {
@@ -793,58 +861,61 @@ function countEvents() {
     };
 
 
-    Object.values(
-        registrations
-    ).forEach(data => {
+    Object
+        .values(registrations)
+        .forEach(data => {
 
-        getEvents(data)
-            .forEach(event => {
+            getEvents(data)
+                .forEach(event => {
 
-                const value =
-                    event
-                        .toLowerCase()
-                        .trim();
+                    const name =
+                        event
+                            .toLowerCase()
+                            .trim();
 
 
-                if (
-                    value ===
-                    "robo race"
-                ) {
+                    if (
+                        name ===
+                        "robo race"
+                    ) {
 
-                    counts.race++;
+                        counts.race++;
 
-                }
+                    }
 
-                else if (
-                    value ===
-                    "robo war"
-                ) {
 
-                    counts.war++;
+                    else if (
+                        name ===
+                        "robo war"
+                    ) {
 
-                }
+                        counts.war++;
 
-                else if (
-                    value ===
-                    "robo tug of war"
-                ) {
+                    }
 
-                    counts.tug++;
 
-                }
+                    else if (
+                        name ===
+                        "robo tug of war"
+                    ) {
 
-                else if (
-                    value ===
-                    "robo soccer"
-                ) {
+                        counts.tug++;
 
-                    counts.soccer++;
+                    }
 
-                }
 
-            });
+                    else if (
+                        name ===
+                        "robo soccer"
+                    ) {
 
-    });
+                        counts.soccer++;
+
+                    }
+
+                });
+
+        });
 
 
     return counts;
@@ -853,25 +924,32 @@ function countEvents() {
 
 
 /* =========================================================
-   EVENT PAGE
+   EVENT STATISTICS
 ========================================================= */
 
-function updateEvents() {
+function updateEventStatistics() {
 
     const counts =
         countEvents();
 
 
-    $("eventRaceCount").textContent =
+    $("eventRaceCount")
+        .textContent =
         counts.race;
 
-    $("eventWarCount").textContent =
+
+    $("eventWarCount")
+        .textContent =
         counts.war;
 
-    $("eventTugCount").textContent =
+
+    $("eventTugCount")
+        .textContent =
         counts.tug;
 
-    $("eventSoccerCount").textContent =
+
+    $("eventSoccerCount")
+        .textContent =
         counts.soccer;
 
 }
@@ -881,12 +959,10 @@ function updateEvents() {
    RECENT REGISTRATIONS
 ========================================================= */
 
-function renderRecent() {
+function renderRecentRegistrations() {
 
-    const box =
+    const container =
         $("recentRegistrations");
-
-    if (!box) return;
 
 
     const entries =
@@ -895,71 +971,105 @@ function renderRecent() {
         )
         .sort(
             (a, b) =>
-                getDate(b[1]) -
-                getDate(a[1])
+                getDate(b[1])?.getTime() || 0 -
+                (getDate(a[1])?.getTime() || 0)
         )
         .slice(0, 6);
 
 
     if (!entries.length) {
 
-        box.innerHTML =
-            "No registrations found.";
+        container.innerHTML = `
+            <div class="empty-state">
+                <div>📭</div>
+                <h3>No registrations yet</h3>
+                <p>New registrations will appear here.</p>
+            </div>
+        `;
 
         return;
 
     }
 
 
-    box.innerHTML =
+    container.innerHTML =
         entries
             .map(
-                ([key, data]) => `
+                ([key, data]) => {
 
-                <div class="recent">
+                    const id =
+                        data.registrationId ||
+                        key;
 
-                    <div>
+                    return `
 
-                        <b>
-                            ${safe(
-                                data.StudentName ||
-                                "Unknown"
-                            )}
-                        </b>
+                        <div class="recent-item">
 
-                        <span>
-                            ${safe(
-                                data.TeamName ||
-                                "Unnamed Team"
-                            )}
-                            •
-                            ${safe(
-                                data.registrationId ||
-                                key
-                            )}
-                        </span>
+                            <div>
 
-                    </div>
+                                <div class="recent-name">
+                                    ${escapeHTML(
+                                        data.StudentName ||
+                                        "Unknown Student"
+                                    )}
+                                </div>
 
-                    <button
-                        type="button"
-                        onclick="window.viewRegistration('${key}')">
+                                <div class="recent-meta">
 
-                        View
+                                    ${escapeHTML(
+                                        data.TeamName ||
+                                        "Unnamed Team"
+                                    )}
 
-                    </button>
+                                    •
 
-                </div>
+                                    ${escapeHTML(id)}
 
-            `
+                                </div>
+
+                            </div>
+
+                            <button
+                                class="small-button"
+                                data-view-key="${escapeHTML(key)}">
+
+                                View
+
+                            </button>
+
+                        </div>
+
+                    `;
+
+                }
             )
             .join("");
 
-    }
+
+    container
+        .querySelectorAll(
+            "[data-view-key]"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    viewRegistration(
+                        button.dataset.viewKey
+                    );
+
+                }
+            );
+
+        });
+
+}
 
 
 /* =========================================================
-   FILTER DROPDOWNS
+   FILTER OPTIONS
 ========================================================= */
 
 function populateFilters() {
@@ -967,14 +1077,12 @@ function populateFilters() {
     const classes =
         [
             ...new Set(
-                Object.values(
-                    registrations
-                )
-                .map(
-                    data =>
-                        norm(data.Class)
-                )
-                .filter(Boolean)
+                Object.values(registrations)
+                    .map(
+                        data =>
+                            normalize(data.Class)
+                    )
+                    .filter(Boolean)
             )
         ].sort();
 
@@ -982,86 +1090,78 @@ function populateFilters() {
     const sections =
         [
             ...new Set(
-                Object.values(
-                    registrations
-                )
-                .map(
-                    data =>
-                        norm(data.Section)
-                )
-                .filter(Boolean)
+                Object.values(registrations)
+                    .map(
+                        data =>
+                            normalize(data.Section)
+                    )
+                    .filter(Boolean)
             )
         ].sort();
 
 
-    const classFilter =
-        $("classFilter");
-
-    const sectionFilter =
-        $("sectionFilter");
-
-
-    if (classFilter) {
-
-        classFilter.innerHTML =
-            '<option value="all">All Classes</option>' +
-
-            classes
-                .map(
-                    value =>
-                        `<option value="${safe(value)}">${safe(value)}</option>`
-                )
-                .join("");
-
-    }
+    $("classFilter").innerHTML =
+        `<option value="all">
+            All Classes
+        </option>` +
+        classes
+            .map(
+                value =>
+                    `<option value="${escapeHTML(value)}">
+                        ${escapeHTML(value)}
+                    </option>`
+            )
+            .join("");
 
 
-    if (sectionFilter) {
-
-        sectionFilter.innerHTML =
-            '<option value="all">All Sections</option>' +
-
-            sections
-                .map(
-                    value =>
-                        `<option value="${safe(value)}">${safe(value)}</option>`
-                )
-                .join("");
-
-    }
+    $("sectionFilter").innerHTML =
+        `<option value="all">
+            All Sections
+        </option>` +
+        sections
+            .map(
+                value =>
+                    `<option value="${escapeHTML(value)}">
+                        ${escapeHTML(value)}
+                    </option>`
+            )
+            .join("");
 
 }
 
 
 /* =========================================================
-   FILTER REGISTRATIONS
+   FILTERING
 ========================================================= */
 
 function applyFilters() {
 
-    const query =
+    const search =
         $("searchInput")
             .value
             .toLowerCase()
             .trim();
 
 
-    const eventFilter =
+    const selectedEvent =
         $("eventFilter").value;
 
-    const classFilter =
+
+    const selectedClass =
         $("classFilter").value;
 
-    const sectionFilter =
+
+    const selectedSection =
         $("sectionFilter").value;
 
 
-    filtered = {};
+    filteredRegistrations = {};
 
 
     Object.entries(
         registrations
-    ).forEach(
+    )
+    .forEach(
         ([key, data]) => {
 
             const eventList =
@@ -1087,35 +1187,35 @@ function applyFilters() {
                 ...eventList
 
             ]
-                .map(norm)
-                .join(" ")
-                .toLowerCase();
+            .map(normalize)
+            .join(" ")
+            .toLowerCase();
 
 
             const matchesSearch =
-                !query ||
-                searchable.includes(query);
+                !search ||
+                searchable.includes(search);
 
 
             const matchesEvent =
-                eventFilter === "all" ||
+                selectedEvent === "all" ||
                 eventList.some(
                     event =>
                         event.toLowerCase() ===
-                        eventFilter.toLowerCase()
+                        selectedEvent.toLowerCase()
                 );
 
 
             const matchesClass =
-                classFilter === "all" ||
-                norm(data.Class) ===
-                classFilter;
+                selectedClass === "all" ||
+                normalize(data.Class) ===
+                selectedClass;
 
 
             const matchesSection =
-                sectionFilter === "all" ||
-                norm(data.Section) ===
-                sectionFilter;
+                selectedSection === "all" ||
+                normalize(data.Section) ===
+                selectedSection;
 
 
             if (
@@ -1125,7 +1225,8 @@ function applyFilters() {
                 matchesSection
             ) {
 
-                filtered[key] = data;
+                filteredRegistrations[key] =
+                    data;
 
             }
 
@@ -1133,127 +1234,123 @@ function applyFilters() {
     );
 
 
-    renderTable();
+    renderRegistrationTable();
 
 }
 
 
 /* =========================================================
-   FILTER EVENTS
+   FILTER LISTENERS
 ========================================================= */
 
-[
-    "searchInput",
-    "eventFilter",
-    "classFilter",
-    "sectionFilter"
-]
-.forEach(id => {
-
-    const element =
-        $(id);
-
-    if (!element) return;
-
-
-    element.addEventListener(
-        id === "searchInput"
-            ? "input"
-            : "change",
+$("searchInput")
+    .addEventListener(
+        "input",
         applyFilters
     );
 
-});
+
+$("eventFilter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+
+$("classFilter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+
+$("sectionFilter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+
+$("clearFilters")
+    .addEventListener(
+        "click",
+        () => {
+
+            $("searchInput").value =
+                "";
+
+            $("eventFilter").value =
+                "all";
+
+            $("classFilter").value =
+                "all";
+
+            $("sectionFilter").value =
+                "all";
+
+
+            filteredRegistrations =
+                { ...registrations };
+
+
+            renderRegistrationTable();
+
+        }
+    );
 
 
 /* =========================================================
-   CLEAR FILTERS
+   REGISTRATION TABLE
 ========================================================= */
 
-$("clearFilters")?.addEventListener(
-    "click",
-    () => {
+function renderRegistrationTable() {
 
-        $("searchInput").value = "";
-
-        $("eventFilter").value =
-            "all";
-
-        $("classFilter").value =
-            "all";
-
-        $("sectionFilter").value =
-            "all";
-
-        applyFilters();
-
-    }
-);
-
-
-/* =========================================================
-   RENDER TABLE
-========================================================= */
-
-function renderTable() {
-
-    const body =
+    const tbody =
         $("registrationTableBody");
-
-    if (!body) return;
 
 
     const entries =
         Object.entries(
-            filtered
+            filteredRegistrations
         )
         .sort(
-            (a, b) =>
-                getDate(b[1]) -
-                getDate(a[1])
+            (a, b) => {
+
+                const dateA =
+                    getDate(a[1])?.getTime() || 0;
+
+                const dateB =
+                    getDate(b[1])?.getTime() || 0;
+
+                return dateB - dateA;
+
+            }
         );
 
 
-    const resultCount =
-        $("resultCount");
-
-    if (resultCount) {
-
-        resultCount.textContent =
-            `${entries.length} registration${
-                entries.length === 1
-                    ? ""
-                    : "s"
-            }`;
-
-    }
+    $("resultCount")
+        .textContent =
+        `${entries.length} registration${
+            entries.length === 1
+                ? ""
+                : "s"
+        }`;
 
 
-    const empty =
-        $("tableEmpty");
-
-    if (empty) {
-
-        empty.classList.toggle(
+    $("tableEmpty")
+        .classList.toggle(
             "hidden",
             entries.length > 0
         );
 
-    }
 
-
-    body.innerHTML =
+    tbody.innerHTML =
         entries
             .map(
                 ([key, data]) => {
 
-                    const eventHTML =
-                        getEvents(data)
-                            .map(
-                                event =>
-                                    `<span class="tag">${safe(event)}</span>`
-                            )
-                            .join("");
+                    const eventList =
+                        getEvents(data);
 
 
                     const date =
@@ -1261,13 +1358,12 @@ function renderTable() {
 
 
                     const formattedDate =
-                        date.getTime()
+                        date
                             ? date.toLocaleString(
                                 "en-IN",
                                 {
                                     dateStyle:
                                         "medium",
-
                                     timeStyle:
                                         "short"
                                 }
@@ -1280,49 +1376,64 @@ function renderTable() {
                         <tr>
 
                             <td>
-                                ${safe(
+                                ${escapeHTML(
                                     data.registrationId ||
                                     key
                                 )}
                             </td>
 
                             <td>
-                                ${safe(
+                                ${escapeHTML(
                                     data.StudentName ||
                                     "-"
                                 )}
                             </td>
 
                             <td>
-                                ${safe(
+                                ${escapeHTML(
                                     data.TeamName ||
                                     "-"
                                 )}
                             </td>
 
                             <td>
-                                ${safe(
+                                ${escapeHTML(
                                     data.Class ||
                                     "-"
                                 )}
                             </td>
 
                             <td>
-                                ${safe(
+                                ${escapeHTML(
                                     data.Section ||
                                     "-"
                                 )}
                             </td>
 
                             <td>
-                                ${safe(
+                                ${escapeHTML(
                                     data.MobileNumber ||
                                     "-"
                                 )}
                             </td>
 
                             <td>
-                                ${eventHTML || "-"}
+
+                                ${
+                                    eventList.length
+
+                                        ? eventList
+                                            .map(
+                                                event =>
+                                                    `<span class="tag">
+                                                        ${escapeHTML(event)}
+                                                    </span>`
+                                            )
+                                            .join("")
+
+                                        : "-"
+                                }
+
                             </td>
 
                             <td>
@@ -1330,7 +1441,9 @@ function renderTable() {
                             </td>
 
                             <td>
-                                ${formattedDate}
+                                ${escapeHTML(
+                                    formattedDate
+                                )}
                             </td>
 
                             <td>
@@ -1338,28 +1451,21 @@ function renderTable() {
                                 <div class="actions">
 
                                     <button
-                                        type="button"
-                                        onclick="window.viewRegistration('${key}')">
-
+                                        class="action-button"
+                                        data-view="${escapeHTML(key)}">
                                         👁
-
                                     </button>
 
                                     <button
-                                        type="button"
-                                        onclick="window.editRegistration('${key}')">
-
+                                        class="action-button"
+                                        data-edit="${escapeHTML(key)}">
                                         ✎
-
                                     </button>
 
                                     <button
-                                        type="button"
-                                        class="del"
-                                        onclick="window.deleteRegistration('${key}')">
-
+                                        class="action-button delete"
+                                        data-delete="${escapeHTML(key)}">
                                         ×
-
                                     </button>
 
                                 </div>
@@ -1374,6 +1480,57 @@ function renderTable() {
             )
             .join("");
 
+
+    tbody
+        .querySelectorAll(
+            "[data-view]"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () =>
+                    viewRegistration(
+                        button.dataset.view
+                    )
+            );
+
+        });
+
+
+    tbody
+        .querySelectorAll(
+            "[data-edit]"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () =>
+                    editRegistration(
+                        button.dataset.edit
+                    )
+            );
+
+        });
+
+
+    tbody
+        .querySelectorAll(
+            "[data-delete]"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () =>
+                    deleteRegistration(
+                        button.dataset.delete
+                    )
+            );
+
+        });
+
 }
 
 
@@ -1381,271 +1538,366 @@ function renderTable() {
    VIEW REGISTRATION
 ========================================================= */
 
-window.viewRegistration =
-    key => {
+function viewRegistration(key) {
 
-        const data =
-            registrations[key];
-
-        if (!data) return;
+    const data =
+        registrations[key];
 
 
-        currentKey =
-            key;
+    if (!data) {
+
+        showToast(
+            "Registration not found."
+        );
+
+        return;
+
+    }
 
 
-        const content =
-            $("modalContent");
+    currentRegistrationKey =
+        key;
 
 
-        content.innerHTML = `
-
-            <h2>
-                ${safe(
-                    data.TeamName ||
-                    "Registration"
-                )}
-            </h2>
-
-            <p>
-                <b>Registration ID:</b>
-                ${safe(
-                    data.registrationId ||
-                    key
-                )}
-            </p>
-
-            <div class="detail">
-
-                ${Object.entries(data)
-                    .map(
-                        ([name, value]) => `
-
-                            <div>
-
-                                <small>
-                                    ${safe(name)}
-                                </small>
-
-                                <b>
-                                    ${safe(
-                                        norm(value) ||
-                                        "-"
-                                    )}
-                                </b>
-
-                            </div>
-
-                        `
-                    )
-                    .join("")}
-
-            </div>
-
-        `;
+    const title =
+        data.TeamName ||
+        data.StudentName ||
+        "Registration";
 
 
-        $("modal")
-            .classList
-            .remove("hidden");
+    let fields = "";
 
-    };
+
+    Object.entries(data)
+        .forEach(
+            ([name, value]) => {
+
+                if (
+                    name === "createdAt"
+                ) {
+
+                    return;
+
+                }
+
+
+                fields += `
+
+                    <div class="detail-item">
+
+                        <small>
+                            ${escapeHTML(name)}
+                        </small>
+
+                        <strong>
+                            ${escapeHTML(
+                                normalize(value) ||
+                                "-"
+                            )}
+                        </strong>
+
+                    </div>
+
+                `;
+
+            }
+        );
+
+
+    $("modalContent").innerHTML = `
+
+        <h2 class="modal-title">
+            ${escapeHTML(title)}
+        </h2>
+
+        <p class="modal-subtitle">
+            Registration ID:
+            ${escapeHTML(
+                data.registrationId ||
+                key
+            )}
+        </p>
+
+        <div class="detail-grid">
+            ${fields}
+        </div>
+
+    `;
+
+
+    $("modal")
+        .classList.remove("hidden");
+
+}
 
 
 /* =========================================================
    EDIT REGISTRATION
 ========================================================= */
 
-window.editRegistration =
-    async key => {
+async function editRegistration(key) {
 
-        const data =
+    const data =
+        registrations[key];
+
+
+    if (!data) {
+
+        return;
+
+    }
+
+
+    const studentName =
+        prompt(
+            "Team Leader Name:",
+            data.StudentName || ""
+        );
+
+
+    if (
+        studentName === null
+    ) {
+
+        return;
+
+    }
+
+
+    const teamName =
+        prompt(
+            "Team Name:",
+            data.TeamName || ""
+        );
+
+
+    if (
+        teamName === null
+    ) {
+
+        return;
+
+    }
+
+
+    const mobile =
+        prompt(
+            "Mobile Number:",
+            data.MobileNumber || ""
+        );
+
+
+    if (
+        mobile === null
+    ) {
+
+        return;
+
+    }
+
+
+    const email =
+        prompt(
+            "Email Address:",
+            getEmail(data)
+        );
+
+
+    if (
+        email === null
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const updates = {
+
+            StudentName:
+                studentName.trim(),
+
+            TeamName:
+                teamName.trim(),
+
+            MobileNumber:
+                mobile.trim(),
+
+            EmailAddress:
+                email.trim()
+
+        };
+
+
+        await update(
+            ref(
+                database,
+                `registrations/${key}`
+            ),
+            updates
+        );
+
+
+        registrations[key] = {
+
+            ...registrations[key],
+
+            ...updates
+
+        };
+
+
+        filteredRegistrations[key] =
             registrations[key];
 
-        if (!data) return;
+
+        updateDashboard();
+
+        renderRecentRegistrations();
+
+        renderRegistrationTable();
+
+        showToast(
+            "Registration updated successfully."
+        );
 
 
-        const name =
-            prompt(
-                "Team Leader:",
-                data.StudentName || ""
-            );
+    } catch (error) {
+
+        console.error(
+            "Edit error:",
+            error
+        );
 
 
-        if (name === null) return;
+        showToast(
+            "Update failed. Check Firebase database permissions."
+        );
 
+    }
 
-        const team =
-            prompt(
-                "Team Name:",
-                data.TeamName || ""
-            );
-
-
-        if (team === null) return;
-
-
-        try {
-
-            await update(
-                ref(
-                    db,
-                    `registrations/${key}`
-                ),
-                {
-
-                    StudentName:
-                        name.trim(),
-
-                    TeamName:
-                        team.trim()
-
-                }
-            );
-
-
-            registrations[key]
-                .StudentName =
-                    name.trim();
-
-
-            registrations[key]
-                .TeamName =
-                    team.trim();
-
-
-            filtered[key] =
-                registrations[key];
-
-
-            renderTable();
-
-            renderRecent();
-
-            showToast(
-                "Registration updated successfully."
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                error
-            );
-
-            showToast(
-                "Unable to update registration.",
-                "error"
-            );
-
-        }
-
-    };
+}
 
 
 /* =========================================================
    DELETE REGISTRATION
 ========================================================= */
 
-window.deleteRegistration =
-    async key => {
+async function deleteRegistration(key) {
 
-        const data =
-            registrations[key];
-
-        if (!data) return;
+    const data =
+        registrations[key];
 
 
-        const confirmed =
-            confirm(
-                `Delete ${
-                    data.StudentName ||
-                    "this registration"
-                }?`
-            );
+    if (!data) {
+
+        return;
+
+    }
 
 
-        if (!confirmed) return;
+    const name =
+        data.StudentName ||
+        "this registration";
 
 
-        try {
-
-            await remove(
-                ref(
-                    db,
-                    `registrations/${key}`
-                )
-            );
+    const confirmed =
+        confirm(
+            `Delete registration for ${name}?`
+        );
 
 
-            delete registrations[key];
+    if (!confirmed) {
 
-            delete filtered[key];
+        return;
 
-
-            updateDashboard();
-
-            renderRecent();
-
-            renderTable();
-
-            updateEvents();
+    }
 
 
-            showToast(
-                "Registration deleted successfully."
-            );
+    try {
+
+        await remove(
+            ref(
+                database,
+                `registrations/${key}`
+            )
+        );
 
 
-        } catch (error) {
+        delete registrations[key];
 
-            console.error(
-                error
-            );
+        delete filteredRegistrations[key];
 
-            showToast(
-                "Delete failed. Check Firebase database permissions.",
-                "error"
-            );
 
-        }
+        updateDashboard();
 
-    };
+        updateEventStatistics();
+
+        renderRecentRegistrations();
+
+        renderRegistrationTable();
+
+        showToast(
+            "Registration deleted."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Delete error:",
+            error
+        );
+
+
+        showToast(
+            "Delete failed. Check Firebase database permissions."
+        );
+
+    }
+
+}
 
 
 /* =========================================================
    MODAL
 ========================================================= */
 
-$("closeModal")?.addEventListener(
-    "click",
-    () => {
-
-        $("modal")
-            .classList
-            .add("hidden");
-
-    }
-);
-
-
-$("modal")?.addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target.id ===
-            "modal"
-        ) {
+$("closeModal")
+    .addEventListener(
+        "click",
+        () => {
 
             $("modal")
-                .classList
-                .add("hidden");
+                .classList.add(
+                    "hidden"
+                );
 
         }
+    );
 
-    }
-);
+
+$("modal")
+    .addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target.id ===
+                "modal"
+            ) {
+
+                $("modal")
+                    .classList.add(
+                        "hidden"
+                    );
+
+            }
+
+        }
+    );
 
 
 document.addEventListener(
@@ -1658,8 +1910,9 @@ document.addEventListener(
         ) {
 
             $("modal")
-                ?.classList
-                .add("hidden");
+                .classList.add(
+                    "hidden"
+                );
 
         }
 
@@ -1671,137 +1924,130 @@ document.addEventListener(
    REFRESH
 ========================================================= */
 
-$("dashboardRefresh")?.addEventListener(
-    "click",
-    loadRegistrations
-);
+$("dashboardRefresh")
+    .addEventListener(
+        "click",
+        loadRegistrations
+    );
 
 
-$("refreshRegistrations")?.addEventListener(
-    "click",
-    loadRegistrations
-);
+$("refreshRegistrations")
+    .addEventListener(
+        "click",
+        loadRegistrations
+    );
 
 
 /* =========================================================
-   CSV EXPORT
+   CSV
 ========================================================= */
 
 function csvEscape(value) {
 
-    return `"${norm(value)
-        .replace(/"/g, '""')}"`;
+    return `"${normalize(value)
+        .replace(
+            /"/g,
+            '""'
+        )}"`;
 
 }
 
 
-function exportCSV(data) {
+function exportCSV(dataObject) {
 
     const rows = [
 
         [
-
             "Registration ID",
-
             "Team Leader",
-
             "Team Name",
-
             "Class",
-
             "Section",
-
             "Mobile",
-
             "Email",
-
             "Events",
-
             "Team Size",
-
             "Member 2",
-
             "Member 3",
-
             "Member 4",
-
             "Member 5",
-
             "Remarks",
-
             "Registration Date"
-
         ]
 
     ];
 
 
-    Object.entries(data)
-        .forEach(
-            ([key, record]) => {
+    Object.entries(
+        dataObject
+    )
+    .forEach(
+        ([key, data]) => {
 
-                rows.push([
+            rows.push([
 
-                    record.registrationId ||
-                        key,
+                data.registrationId ||
+                    key,
 
-                    record.StudentName,
+                data.StudentName,
 
-                    record.TeamName,
+                data.TeamName,
 
-                    record.Class,
+                data.Class,
 
-                    record.Section,
+                data.Section,
 
-                    record.MobileNumber,
+                data.MobileNumber,
 
-                    getEmail(record),
+                getEmail(data),
 
-                    getEvents(record)
-                        .join(" | "),
+                getEvents(data).join(
+                    " | "
+                ),
 
-                    getTeamSize(record),
+                getTeamSize(data),
 
-                    record.Member2Name,
+                data.Member2Name,
 
-                    record.Member3Name,
+                data.Member3Name,
 
-                    record.Member4Name,
+                data.Member4Name,
 
-                    record.Member5Name,
+                data.Member5Name,
 
-                    record.Remarks,
+                data.Remarks,
 
-                    record.registrationDate
+                data.registrationDate ||
+                    data.createdAt
 
-                ].map(csvEscape));
+            ].map(csvEscape));
 
-            }
-        );
+        }
+    );
+
+
+    const csv =
+        "\ufeff" +
+        rows
+            .map(
+                row =>
+                    row.join(",")
+            )
+            .join("\n");
 
 
     const blob =
         new Blob(
-            [
-                "\ufeff" +
-                rows
-                    .map(
-                        row =>
-                            row.join(",")
-                    )
-                    .join("\n")
-            ],
+            [csv],
             {
                 type:
-                    "text/csv;charset=utf-8"
+                    "text/csv;charset=utf-8;"
             }
         );
 
 
     const url =
-        URL.createObjectURL(
-            blob
-        );
+        URL.createObjectURL(blob);
 
 
     const link =
@@ -1814,7 +2060,6 @@ function exportCSV(data) {
 
     link.download =
         "APS_Robotics_Registrations_2026.csv";
-
 
     document.body.appendChild(link);
 
@@ -1831,45 +2076,41 @@ function exportCSV(data) {
    EXPORT BUTTONS
 ========================================================= */
 
-$("exportCsv")?.addEventListener(
-    "click",
-    () => exportCSV(filtered)
-);
+$("exportCsv")
+    .addEventListener(
+        "click",
+        () =>
+            exportCSV(
+                filteredRegistrations
+            )
+    );
 
 
-$("exportDashboard")?.addEventListener(
-    "click",
-    () => exportCSV(registrations)
-);
+$("exportDashboard")
+    .addEventListener(
+        "click",
+        () =>
+            exportCSV(
+                registrations
+            )
+    );
 
 
 /* =========================================================
    TOAST
 ========================================================= */
 
-function showToast(
-    message,
-    type = "success"
-) {
+let toastTimer;
+
+
+function showToast(message) {
 
     const toast =
         $("toast");
 
-    if (!toast) {
-
-        alert(message);
-
-        return;
-
-    }
-
 
     toast.textContent =
         message;
-
-
-    toast.className =
-        type;
 
 
     toast.classList.add(
@@ -1877,15 +2118,21 @@ function showToast(
     );
 
 
-    setTimeout(
-        () => {
-
-            toast.classList.remove(
-                "show"
-            );
-
-        },
-        3000
+    clearTimeout(
+        toastTimer
     );
+
+
+    toastTimer =
+        setTimeout(
+            () => {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            3000
+        );
 
 }
