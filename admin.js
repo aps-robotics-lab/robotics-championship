@@ -1,3 +1,9 @@
+/* =====================================================
+   APS ROBOTICS CHAMPIONSHIP 2026
+   ADMIN DASHBOARD
+   Firebase Authentication + Realtime Database
+===================================================== */
+
 import {
     initializeApp
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
@@ -11,13 +17,12 @@ import {
 import {
     getDatabase,
     ref,
-    get,
-    update
+    onValue
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 
 /* =====================================================
-   FIREBASE
+   FIREBASE CONFIG
 ===================================================== */
 
 const firebaseConfig = {
@@ -45,221 +50,316 @@ const firebaseConfig = {
 };
 
 
+/* =====================================================
+   INITIALIZE FIREBASE
+===================================================== */
+
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 
-const db = getDatabase(app);
+const database = getDatabase(app);
+
+
+/* =====================================================
+   APPROVED ADMIN UID LIST
+   ALL SIX USERS
+===================================================== */
+
+const ADMIN_UIDS = new Set([
+
+    "7pHSV8jhyBQHAGErYbALg5NqGCE2",
+
+    "8645cVYSFQQZeS9GDZuguc3W46y1",
+
+    "uGBclDQGTEYKahRKZaLYXz8Dk8y2",
+
+    "7MRUvQS043fA1nFwcJAyUWRxjiu1",
+
+    "nxAJHhZ93hZmtsDEnjWKn4nPCUH2",
+
+    "BrSfKmoCkWd40jVhUfWs3SO2fCE3"
+
+]);
 
 
 /* =====================================================
    ELEMENTS
+   Matches your admin.html exactly
 ===================================================== */
 
-const body =
-    document.getElementById("registrationBody");
+const loginCard =
+    document.getElementById("loginCard");
 
-const status =
-    document.getElementById("status");
+const dashboard =
+    document.getElementById("dashboard");
 
-const search =
+const logoutBtn =
+    document.getElementById("logoutBtn");
+
+const searchInput =
     document.getElementById("search");
 
 const refreshBtn =
     document.getElementById("refreshBtn");
 
-const logoutBtn =
-    document.getElementById("logoutBtn");
+const registrationBody =
+    document.getElementById("registrationBody");
 
-const totalRegistrations =
-    document.getElementById("totalRegistrations");
-
-const soloCount =
-    document.getElementById("soloCount");
-
-const teamCount =
-    document.getElementById("teamCount");
-
-const editOverlay =
-    document.getElementById("editOverlay");
-
-const editForm =
-    document.getElementById("editForm");
-
-const editKey =
-    document.getElementById("editKey");
-
-const editStudentName =
-    document.getElementById("editStudentName");
-
-const editStudentClass =
-    document.getElementById("editStudentClass");
-
-const editStudentSection =
-    document.getElementById("editStudentSection");
-
-const editMobileNumber =
-    document.getElementById("editMobileNumber");
-
-const editEmailAddress =
-    document.getElementById("editEmailAddress");
-
-const editTeamName =
-    document.getElementById("editTeamName");
-
-const editMembers =
-    document.getElementById("editMembers");
-
-const editRemarks =
-    document.getElementById("editRemarks");
-
-const editMessage =
-    document.getElementById("editMessage");
-
-const closeEdit =
-    document.getElementById("closeEdit");
-
-const cancelEdit =
-    document.getElementById("cancelEdit");
-
-
-let registrations = {};
-
-let currentUser = null;
+const statusBox =
+    document.getElementById("status");
 
 
 /* =====================================================
-   AUTH
+   DATA
+===================================================== */
+
+let registrations = {};
+
+let databaseListenerAttached = false;
+
+
+/* =====================================================
+   AUTHENTICATION
 ===================================================== */
 
 onAuthStateChanged(auth, async user => {
 
     if (!user) {
 
-        window.location.replace("login.html");
+        showLogin();
 
         return;
     }
 
-    currentUser = user;
 
-    await loadRegistrations();
+    console.log(
+        "Signed-in Firebase user:",
+        user.uid
+    );
+
+
+    /* ---------------------------------------------
+       CHECK ADMIN UID
+    --------------------------------------------- */
+
+    if (!ADMIN_UIDS.has(user.uid)) {
+
+        console.warn(
+            "Unauthorized admin attempt:",
+            user.uid
+        );
+
+        showStatus(
+            "Access denied. This account is not authorized as an administrator.",
+            "error"
+        );
+
+        try {
+
+            await signOut(auth);
+
+        } catch (error) {
+
+            console.error(
+                "Sign-out error:",
+                error
+            );
+        }
+
+        showLogin();
+
+        return;
+    }
+
+
+    /* ---------------------------------------------
+       AUTHORIZED ADMIN
+    --------------------------------------------- */
+
+    showDashboard();
+
+    showStatus(
+        "Admin authenticated successfully.",
+        "success"
+    );
+
+
+    loadRegistrations();
 
 });
 
 
 /* =====================================================
-   LOAD DATA
+   SHOW LOGIN
 ===================================================== */
 
-async function loadRegistrations(){
+function showLogin() {
 
-    status.textContent =
-        "Loading registrations...";
+    if (loginCard) {
+        loginCard.classList.remove("hidden");
+    }
 
-    body.innerHTML = "";
-
-    try {
-
-        const snapshot =
-            await get(ref(db, "registrations"));
-
-        if (!snapshot.exists()) {
-
-            registrations = {};
-
-            renderRegistrations();
-
-            status.textContent =
-                "No registrations found.";
-
-            return;
-        }
-
-        registrations =
-            snapshot.val();
-
-        renderRegistrations();
-
-        status.textContent =
-            `Loaded ${Object.keys(registrations).length} registration(s).`;
-
-    } catch(error) {
-
-        console.error(error);
-
-        status.textContent =
-            getFirebaseError(error);
-
+    if (dashboard) {
+        dashboard.classList.add("hidden");
     }
 }
 
 
 /* =====================================================
-   RENDER
+   SHOW DASHBOARD
 ===================================================== */
 
-function renderRegistrations(){
+function showDashboard() {
 
-    body.innerHTML = "";
+    if (loginCard) {
+        loginCard.classList.add("hidden");
+    }
+
+    if (dashboard) {
+        dashboard.classList.remove("hidden");
+    }
+}
+
+
+/* =====================================================
+   STATUS MESSAGE
+===================================================== */
+
+function showStatus(message, type = "") {
+
+    if (!statusBox) {
+        return;
+    }
+
+    statusBox.textContent = message;
+
+    statusBox.className = "status";
+
+    if (type) {
+        statusBox.classList.add(type);
+    }
+}
+
+
+/* =====================================================
+   LOAD REGISTRATIONS
+===================================================== */
+
+function loadRegistrations() {
+
+    if (databaseListenerAttached) {
+        return;
+    }
+
+    databaseListenerAttached = true;
+
+
+    /*
+       IMPORTANT:
+
+       This expects registrations to be stored at:
+
+       registrations/
+
+       Example:
+
+       registrations/
+           APS-2026-001/
+           APS-2026-002/
+           APS-2026-003/
+    */
+
+    const registrationsRef =
+        ref(database, "registrations");
+
+
+    onValue(
+        registrationsRef,
+
+        snapshot => {
+
+            if (!snapshot.exists()) {
+
+                registrations = {};
+
+                renderRegistrations();
+
+                showStatus(
+                    "No registrations found.",
+                    "success"
+                );
+
+                return;
+            }
+
+
+            registrations =
+                snapshot.val() || {};
+
+
+            renderRegistrations();
+
+
+            const count =
+                Object.keys(registrations).length;
+
+
+            showStatus(
+                `${count} registration${count === 1 ? "" : "s"} loaded.`,
+                "success"
+            );
+
+        },
+
+        error => {
+
+            console.error(
+                "Realtime Database error:",
+                error
+            );
+
+
+            showStatus(
+                "Could not load registrations. Check your Firebase Realtime Database rules.",
+                "error"
+            );
+
+        }
+    );
+}
+
+
+/* =====================================================
+   RENDER REGISTRATIONS
+===================================================== */
+
+function renderRegistrations() {
+
+    if (!registrationBody) {
+        return;
+    }
+
+
+    registrationBody.innerHTML = "";
+
+
+    const search =
+        (searchInput?.value || "")
+            .trim()
+            .toLowerCase();
+
 
     const entries =
         Object.entries(registrations);
 
-    let filtered =
-        entries;
 
-    const query =
-        search.value.trim().toLowerCase();
+    if (!entries.length) {
 
-    if(query){
-
-        filtered =
-            entries.filter(
-                ([key, data]) =>
-                    searchableText(key, data)
-                    .includes(query)
-            );
-    }
-
-
-    let solo = 0;
-    let teams = 0;
-
-    entries.forEach(([key, data]) => {
-
-        const size =
-            Number(
-                data.TeamSize ||
-                data.teamSize ||
-                1
-            );
-
-        if(size === 1){
-            solo++;
-        }else{
-            teams++;
-        }
-
-    });
-
-
-    totalRegistrations.textContent =
-        entries.length;
-
-    soloCount.textContent =
-        solo;
-
-    teamCount.textContent =
-        teams;
-
-
-    if(filtered.length === 0){
-
-        body.innerHTML = `
+        registrationBody.innerHTML = `
             <tr>
-                <td colspan="10" style="text-align:center;padding:30px;">
-                    No matching registrations.
+                <td colspan="11" style="text-align:center;padding:30px;">
+                    No registrations found.
                 </td>
             </tr>
         `;
@@ -268,280 +368,229 @@ function renderRegistrations(){
     }
 
 
-    filtered.sort(
-        (a,b) =>
-            getDateValue(b[1]) -
-            getDateValue(a[1])
-    );
+    let visibleCount = 0;
 
 
-    filtered.forEach(([key,data]) => {
+    entries.forEach(([key, registration]) => {
 
-        const row =
-            document.createElement("tr");
+        const data =
+            registration || {};
 
-        const members =
-            getMembers(data);
+
+        const registrationId =
+            value(
+                data.registrationId,
+                data.RegistrationId,
+                data.id,
+                key
+            );
+
+
+        const leader =
+            value(
+                data.studentName,
+                data.StudentName,
+                data.leaderName,
+                data.LeaderName
+            );
+
+
+        const team =
+            value(
+                data.teamName,
+                data.TeamName
+            );
+
+
+        const size =
+            value(
+                data.teamSize,
+                data.TeamSize,
+                data.ParticipationType
+            );
+
+
+        const studentClass =
+            value(
+                data.studentClass,
+                data.Class
+            );
+
+
+        const section =
+            value(
+                data.studentSection,
+                data.Section
+            );
+
+
+        const mobile =
+            value(
+                data.mobileNumber,
+                data.MobileNumber,
+                data.mobile,
+                data.phone
+            );
+
+
+        const email =
+            value(
+                data.emailAddress,
+                data.EmailAddress,
+                data.email
+            );
+
 
         const events =
             getEvents(data);
 
-        const size =
-            Number(
-                data.TeamSize ||
-                data.teamSize ||
-                members.length ||
-                1
-            );
+
+        const members =
+            getMembers(data);
+
+
+        const date =
+            getDate(data);
+
+
+        /*
+           Search across all important fields
+        */
+
+        const searchableText = [
+
+            registrationId,
+            leader,
+            team,
+            size,
+            studentClass,
+            section,
+            mobile,
+            email,
+            events,
+            members,
+            date
+
+        ]
+            .join(" ")
+            .toLowerCase();
+
+
+        if (
+            search &&
+            !searchableText.includes(search)
+        ) {
+
+            return;
+        }
+
+
+        visibleCount++;
+
+
+        const row =
+            document.createElement("tr");
 
 
         row.innerHTML = `
 
             <td>
-                <span class="id">
-                    ${escapeHtml(
-                        data.RegistrationId ||
-                        data.registrationId ||
-                        key
-                    )}
-                </span>
-            </td>
-
-            <td>
                 <strong>
-                    ${escapeHtml(
-                        data.StudentName ||
-                        data.studentName ||
-                        ""
-                    )}
+                    ${escapeHtml(registrationId)}
                 </strong>
-
-                <div style="color:#607892;font-size:.62rem">
-                    ${escapeHtml(
-                        data.Class ||
-                        data.class ||
-                        ""
-                    )}
-                    -
-                    ${escapeHtml(
-                        data.Section ||
-                        data.section ||
-                        ""
-                    )}
-                </div>
             </td>
 
             <td>
-                ${escapeHtml(
-                    data.TeamName ||
-                    data.teamName ||
-                    "—"
-                )}
+                ${escapeHtml(leader)}
             </td>
 
             <td>
-                <span class="type">
-                    ${size === 1 ? "SOLO" : "TEAM OF " + size}
-                </span>
+                ${escapeHtml(team)}
             </td>
 
             <td>
-                <div class="member-list">
-                    ${members.map(
-                        member => `
-                        <div class="member">
-
-                            <strong>
-                                ${escapeHtml(member.name)}
-                            </strong>
-
-                            <span>
-                                Class:
-                                ${escapeHtml(member.className || "—")}
-                                &nbsp; | &nbsp;
-                                Section:
-                                ${escapeHtml(member.section || "—")}
-                            </span>
-
-                        </div>
-                        `
-                    ).join("")}
-                </div>
+                ${escapeHtml(size)}
             </td>
 
             <td>
-                ${escapeHtml(
-                    data.MobileNumber ||
-                    data.mobileNumber ||
-                    "—"
-                )}
+                ${escapeHtml(studentClass)}
             </td>
 
             <td>
-                ${escapeHtml(
-                    data.EmailAddress ||
-                    data.emailAddress ||
-                    "—"
-                )}
+                ${escapeHtml(section)}
             </td>
 
             <td>
-                <div class="events">
-                    ${events.map(
-                        event =>
-                            `<span class="event">
-                                ${escapeHtml(event)}
-                            </span>`
-                    ).join("")}
-                </div>
+                ${escapeHtml(mobile)}
             </td>
 
             <td>
-                ${formatDate(data)}
+                ${escapeHtml(email)}
             </td>
 
             <td>
-                <button
-                    class="edit-btn"
-                    data-edit="${escapeHtml(key)}">
-                    Edit
-                </button>
+                ${escapeHtml(events)}
             </td>
+
+            <td>
+                ${escapeHtml(members)}
+            </td>
+
+            <td>
+                ${escapeHtml(date)}
+            </td>
+
         `;
 
 
-        body.appendChild(row);
+        registrationBody.appendChild(row);
 
     });
 
 
-    document
-        .querySelectorAll("[data-edit]")
-        .forEach(button => {
+    if (visibleCount === 0) {
 
-            button.addEventListener(
-                "click",
-                () => {
+        registrationBody.innerHTML = `
 
-                    openEditor(
-                        button.dataset.edit
-                    );
+            <tr>
 
-                }
-            );
+                <td
+                    colspan="11"
+                    style="text-align:center;padding:30px;"
+                >
+                    No matching registrations found.
+                </td>
 
-        });
+            </tr>
+
+        `;
+
+    }
 
 }
 
 
 /* =====================================================
-   MEMBERS
+   GET VALUE
 ===================================================== */
 
-function getMembers(data){
+function value(...values) {
 
-    const result = [];
+    for (const item of values) {
 
+        if (
+            item !== undefined &&
+            item !== null &&
+            String(item).trim() !== ""
+        ) {
 
-    result.push({
-
-        name:
-            data.StudentName ||
-            data.studentName ||
-            "",
-
-        className:
-            data.Class ||
-            data.class ||
-            "",
-
-        section:
-            data.Section ||
-            data.section ||
-            ""
-
-    });
-
-
-    for(let i = 2; i <= 5; i++){
-
-        const name =
-            data[`Member${i}Name`] ||
-            data[`member${i}Name`];
-
-        const className =
-            data[`Member${i}Class`] ||
-            data[`member${i}Class`];
-
-        const section =
-            data[`Member${i}Section`] ||
-            data[`member${i}Section`];
-
-
-        if(name || className || section){
-
-            result.push({
-
-                name: name || "",
-
-                className: className || "",
-
-                section: section || ""
-
-            });
+            return String(item);
 
         }
 
     }
 
-
-    /*
-       Also support a members array/object
-       if your registration.js stores it that way.
-    */
-
-    if(
-        result.length === 1 &&
-        data.members
-    ){
-
-        const members =
-            Array.isArray(data.members)
-                ? data.members
-                : Object.values(data.members);
-
-
-        members.forEach(member => {
-
-            if(!member) return;
-
-            result.push({
-
-                name:
-                    member.name ||
-                    member.Name ||
-                    "",
-
-                className:
-                    member.class ||
-                    member.Class ||
-                    "",
-
-                section:
-                    member.section ||
-                    member.Section ||
-                    ""
-
-            });
-
-        });
-
-    }
-
-
-    return result;
-
+    return "—";
 }
 
 
@@ -549,557 +598,405 @@ function getMembers(data){
    EVENTS
 ===================================================== */
 
-function getEvents(data){
+function getEvents(data) {
 
-    const value =
-        data.Events ||
-        data.events ||
-        [];
-
-
-    if(Array.isArray(value)){
-        return value;
-    }
+    let events =
+        data.events ??
+        data.Events ??
+        data.selectedEvents ??
+        "";
 
 
-    if(typeof value === "string"){
+    if (Array.isArray(events)) {
 
-        return value
-            .split(",")
-            .map(x => x.trim())
-            .filter(Boolean);
+        return events.join(", ");
 
     }
 
 
-    if(typeof value === "object"){
+    if (typeof events === "object" && events !== null) {
 
-        return Object.values(value);
+        return Object.values(events).join(", ");
 
     }
 
 
-    return [];
+    return value(events);
 
 }
 
 
 /* =====================================================
-   EDITOR
+   TEAM MEMBERS
 ===================================================== */
 
-function openEditor(key){
+function getMembers(data) {
 
-    const data =
-        registrations[key];
-
-    if(!data) return;
+    const members = [];
 
 
-    editKey.value =
-        key;
+    /*
+       Member 2
+    */
 
-    editStudentName.value =
-        data.StudentName ||
-        data.studentName ||
-        "";
-
-    editStudentClass.value =
-        data.Class ||
-        data.class ||
-        "";
-
-    editStudentSection.value =
-        data.Section ||
-        data.section ||
-        "";
-
-    editMobileNumber.value =
-        data.MobileNumber ||
-        data.mobileNumber ||
-        "";
-
-    editEmailAddress.value =
-        data.EmailAddress ||
-        data.emailAddress ||
-        "";
-
-    editTeamName.value =
-        data.TeamName ||
-        data.teamName ||
-        "";
-
-    editRemarks.value =
-        data.Remarks ||
-        data.remarks ||
-        "";
+    addMember(
+        members,
+        data.member2Name,
+        data.Member2Name,
+        data.member2Class,
+        data.Member2Class,
+        data.member2Section,
+        data.Member2Section
+    );
 
 
-    editMembers.innerHTML = "";
+    /*
+       Member 3
+    */
+
+    addMember(
+        members,
+        data.member3Name,
+        data.Member3Name,
+        data.member3Class,
+        data.Member3Class,
+        data.member3Section,
+        data.Member3Section
+    );
 
 
-    const members =
-        getMembers(data);
+    /*
+       Member 4
+    */
+
+    addMember(
+        members,
+        data.member4Name,
+        data.Member4Name,
+        data.member4Class,
+        data.Member4Class,
+        data.member4Section,
+        data.Member4Section
+    );
 
 
-    members.forEach((member,index) => {
+    /*
+       Member 5
+    */
 
-        if(index === 0) return;
-
-
-        const number =
-            index + 1;
-
-
-        const wrapper =
-            document.createElement("div");
-
-        wrapper.className =
-            "edit-member";
-
-
-        wrapper.innerHTML = `
-
-            <label>
-                Member ${number} Name
-                <input
-                    data-member-name="${number}"
-                    value="${escapeAttribute(member.name)}">
-            </label>
-
-            <label>
-                Class
-                <select
-                    data-member-class="${number}">
-
-                    <option value="">Select</option>
-                    <option value="VI">VI</option>
-                    <option value="VII">VII</option>
-                    <option value="VIII">VIII</option>
-                    <option value="IX">IX</option>
-                    <option value="X">X</option>
-                    <option value="XI">XI</option>
-                    <option value="XII">XII</option>
-
-                </select>
-            </label>
-
-            <label>
-                Section
-                <input
-                    data-member-section="${number}"
-                    value="${escapeAttribute(member.section)}">
-            </label>
-        `;
+    addMember(
+        members,
+        data.member5Name,
+        data.Member5Name,
+        data.member5Class,
+        data.Member5Class,
+        data.member5Section,
+        data.Member5Section
+    );
 
 
-        editMembers.appendChild(wrapper);
+    /*
+       Alternative structure:
+
+       members: [
+           {
+               name,
+               class,
+               section
+           }
+       ]
+    */
+
+    const arrayMembers =
+        data.members ??
+        data.Members;
 
 
-        const select =
-            wrapper.querySelector(
-                `[data-member-class="${number}"]`
-            );
+    if (Array.isArray(arrayMembers)) {
+
+        arrayMembers.forEach(member => {
+
+            if (!member) {
+                return;
+            }
 
 
-        select.value =
-            member.className || "";
-
-    });
-
-
-    editMessage.textContent = "";
-
-    editOverlay.classList.remove("hidden");
-
-}
-
-
-/* =====================================================
-   SAVE EDIT
-===================================================== */
-
-editForm.addEventListener(
-    "submit",
-    async event => {
-
-        event.preventDefault();
-
-        const key =
-            editKey.value;
-
-        if(!key) return;
-
-
-        const updates = {};
-
-
-        /*
-          Keep the same field names as your
-          registration form.
-        */
-
-        updates[`registrations/${key}/StudentName`] =
-            editStudentName.value.trim();
-
-        updates[`registrations/${key}/Class`] =
-            editStudentClass.value;
-
-        updates[`registrations/${key}/Section`] =
-            editStudentSection.value.trim();
-
-        updates[`registrations/${key}/MobileNumber`] =
-            editMobileNumber.value.trim();
-
-        updates[`registrations/${key}/EmailAddress`] =
-            editEmailAddress.value.trim();
-
-        updates[`registrations/${key}/TeamName`] =
-            editTeamName.value.trim();
-
-        updates[`registrations/${key}/Remarks`] =
-            editRemarks.value.trim();
-
-
-        for(let i = 2; i <= 5; i++){
-
-            const nameInput =
-                document.querySelector(
-                    `[data-member-name="${i}"]`
-                );
-
-            const classInput =
-                document.querySelector(
-                    `[data-member-class="${i}"]`
-                );
-
-            const sectionInput =
-                document.querySelector(
-                    `[data-member-section="${i}"]`
+            const name =
+                value(
+                    member.name,
+                    member.Name,
+                    member.studentName,
+                    member.StudentName
                 );
 
 
-            if(nameInput){
+            const studentClass =
+                value(
+                    member.class,
+                    member.Class
+                );
 
-                updates[
-                    `registrations/${key}/Member${i}Name`
-                ] =
-                    nameInput.value.trim();
 
-                updates[
-                    `registrations/${key}/Member${i}Class`
-                ] =
-                    classInput.value;
+            const section =
+                value(
+                    member.section,
+                    member.Section
+                );
 
-                updates[
-                    `registrations/${key}/Member${i}Section`
-                ] =
-                    sectionInput.value.trim();
+
+            if (name !== "—") {
+
+                members.push(
+                    `${name} (${studentClass}, ${section})`
+                );
 
             }
 
-        }
-
-
-        const saveButton =
-            editForm.querySelector(
-                ".save-btn"
-            );
-
-
-        saveButton.disabled = true;
-
-        saveButton.textContent =
-            "SAVING...";
-
-        editMessage.textContent = "";
-
-
-        try{
-
-            await update(
-                ref(db),
-                updates
-            );
-
-
-            /*
-              Update local copy immediately.
-            */
-
-            Object.entries(updates)
-                .forEach(([path,value]) => {
-
-                    const parts =
-                        path.split("/");
-
-                    const field =
-                        parts[2];
-
-                    registrations[key][field] =
-                        value;
-
-                });
-
-
-            renderRegistrations();
-
-            closeEditor();
-
-            status.textContent =
-                "Registration updated successfully.";
-
-
-        }catch(error){
-
-            console.error(error);
-
-            editMessage.textContent =
-                getFirebaseError(error);
-
-        }
-
-
-        saveButton.disabled = false;
-
-        saveButton.textContent =
-            "Save Changes";
+        });
 
     }
-);
+
+
+    return members.length
+        ? members.join(" | ")
+        : "—";
+}
 
 
 /* =====================================================
-   CLOSE EDITOR
+   ADD MEMBER
 ===================================================== */
 
-function closeEditor(){
+function addMember(
+    members,
+    name1,
+    name2,
+    class1,
+    class2,
+    section1,
+    section2
+) {
 
-    editOverlay.classList.add("hidden");
+    const name =
+        value(name1, name2);
 
-    editForm.reset();
 
-    editMembers.innerHTML = "";
+    if (name === "—") {
+        return;
+    }
+
+
+    const studentClass =
+        value(class1, class2);
+
+
+    const section =
+        value(section1, section2);
+
+
+    members.push(
+        `${name} (${studentClass}, ${section})`
+    );
 
 }
 
 
-closeEdit.addEventListener(
-    "click",
-    closeEditor
-);
+/* =====================================================
+   DATE
+===================================================== */
+
+function getDate(data) {
+
+    const raw =
+        data.timestamp ??
+        data.Timestamp ??
+        data.createdAt ??
+        data.CreatedAt ??
+        data.date ??
+        data.Date;
 
 
-cancelEdit.addEventListener(
-    "click",
-    closeEditor
-);
+    if (!raw) {
+        return "—";
+    }
 
 
-editOverlay.addEventListener(
-    "click",
-    event => {
+    /*
+       Firebase timestamp number
+    */
 
-        if(event.target === editOverlay){
+    if (
+        typeof raw === "number" ||
+        /^\d+$/.test(String(raw))
+    ) {
 
-            closeEditor();
+        const date =
+            new Date(Number(raw));
+
+
+        if (!isNaN(date.getTime())) {
+
+            return formatDate(date);
 
         }
 
     }
-);
+
+
+    /*
+       Firebase timestamp object
+    */
+
+    if (
+        typeof raw === "object" &&
+        raw.seconds
+    ) {
+
+        const date =
+            new Date(
+                Number(raw.seconds) * 1000
+            );
+
+
+        return formatDate(date);
+
+    }
+
+
+    /*
+       Normal date string
+    */
+
+    const date =
+        new Date(raw);
+
+
+    if (!isNaN(date.getTime())) {
+
+        return formatDate(date);
+
+    }
+
+
+    return String(raw);
+
+}
+
+
+/* =====================================================
+   FORMAT DATE
+===================================================== */
+
+function formatDate(date) {
+
+    return date.toLocaleString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        }
+    );
+
+}
+
+
+/* =====================================================
+   HTML ESCAPE
+===================================================== */
+
+function escapeHtml(valueToEscape) {
+
+    const text =
+        String(valueToEscape ?? "");
+
+
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
 
 
 /* =====================================================
    SEARCH
 ===================================================== */
 
-search.addEventListener(
-    "input",
-    renderRegistrations
-);
+if (searchInput) {
+
+    searchInput.addEventListener(
+        "input",
+        renderRegistrations
+    );
+
+}
 
 
 /* =====================================================
    REFRESH
 ===================================================== */
 
-refreshBtn.addEventListener(
-    "click",
-    loadRegistrations
-);
+if (refreshBtn) {
+
+    refreshBtn.addEventListener(
+        "click",
+        () => {
+
+            renderRegistrations();
+
+            showStatus(
+                "Dashboard refreshed.",
+                "success"
+            );
+
+        }
+    );
+
+}
 
 
 /* =====================================================
    LOGOUT
 ===================================================== */
 
-logoutBtn.addEventListener(
-    "click",
-    async () => {
+if (logoutBtn) {
 
-        try{
+    logoutBtn.addEventListener(
+        "click",
+        async () => {
 
-            await signOut(auth);
+            logoutBtn.disabled = true;
 
-            window.location.replace(
-                "login.html"
-            );
+            try {
 
-        }catch(error){
+                await signOut(auth);
 
-            console.error(error);
+                window.location.replace(
+                    "login.html"
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Logout error:",
+                    error
+                );
+
+                logoutBtn.disabled = false;
+
+                showStatus(
+                    "Could not log out. Please try again.",
+                    "error"
+                );
+
+            }
 
         }
-
-    }
-);
-
-
-/* =====================================================
-   HELPERS
-===================================================== */
-
-function searchableText(key,data){
-
-    const members =
-        getMembers(data);
-
-    const events =
-        getEvents(data);
-
-
-    return [
-
-        key,
-
-        data.RegistrationId,
-
-        data.StudentName,
-
-        data.Class,
-
-        data.Section,
-
-        data.TeamName,
-
-        data.ParticipationType,
-
-        data.TeamSize,
-
-        data.MobileNumber,
-
-        data.EmailAddress,
-
-        data.Remarks,
-
-        ...events,
-
-        ...members.flatMap(member => [
-
-            member.name,
-
-            member.className,
-
-            member.section
-
-        ])
-
-    ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
+    );
 
 }
-
-
-function getDateValue(data){
-
-    const value =
-        data.Timestamp ||
-        data.timestamp ||
-        data.CreatedAt ||
-        data.createdAt ||
-        data.Date ||
-        data.date;
-
-
-    if(typeof value === "number"){
-        return value;
-    }
-
-
-    const parsed =
-        Date.parse(value || "");
-
-    return Number.isNaN(parsed)
-        ? 0
-        : parsed;
-
-}
-
-
-function formatDate(data){
-
-    const value =
-        getDateValue(data);
-
-    if(!value){
-        return "—";
-    }
-
-
-    return new Date(value)
-        .toLocaleString(
-            "en-IN",
-            {
-                dateStyle:"medium",
-                timeStyle:"short"
-            }
-        );
-
-}
-
-
-function escapeHtml(value){
-
-    return String(value ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-
-}
-
-
-function escapeAttribute(value){
-
-    return escapeHtml(value);
-
-}
-
-
-function getFirebaseError(error){
-
-    if(!error){
-        return "Unknown Firebase error.";
-    }
-
-
-    switch(error.code){
-
-        case "PERMISSION_DENIED":
-        case "permission-denied":
-            return "Permission denied. Check Firebase Authentication and Realtime Database rules.";
-
-        case "auth/network-request-failed":
-            return "Network error. Check your internet connection.";
-
-        default:
-            return error.message ||
-                "Unable to complete the request.";
-
-    }
-
-           }
