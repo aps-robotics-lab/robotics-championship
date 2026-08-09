@@ -16,25 +16,25 @@ import {
 const firebaseConfig = {
 
     apiKey:
-        "YOUR_HELP_FIREBASE_API_KEY",
+        "AIzaSyCVfkLAc5EKDRUoHf4LgVhBFwTNmq2GMI0",
 
     authDomain:
-        "YOUR_HELP_PROJECT.firebaseapp.com",
+        "robotics-championship-ab248.firebaseapp.com",
 
     databaseURL:
-        "YOUR_HELP_DATABASE_URL",
+        "https://robotics-championship-ab248-default-rtdb.asia-southeast1.firebasedatabase.app",
 
     projectId:
-        "YOUR_HELP_PROJECT_ID",
+        "robotics-championship",
 
     storageBucket:
-        "YOUR_HELP_STORAGE_BUCKET",
+        "robotics-championship-ab248.firebasestorage.app",
 
     messagingSenderId:
-        "YOUR_HELP_SENDER_ID",
+        "521981495733",
 
     appId:
-        "YOUR_HELP_APP_ID"
+        "1:521981495733:web:ecec2bc677a4450f19f1fc"
 
 };
 
