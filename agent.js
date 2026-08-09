@@ -17,44 +17,47 @@ import {
 
 
 /* =========================================================
-   FIREBASE
+   HELP FIREBASE
 ========================================================= */
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCVfkLAc5EKDRUoHf4LgVhBFwTNmq2GMI0",
+
+    apiKey:
+        "YOUR_HELP_FIREBASE_API_KEY",
 
     authDomain:
-        "robotics-championship-ab248.firebaseapp.com",
+        "YOUR_HELP_PROJECT.firebaseapp.com",
 
     databaseURL:
-        "https://robotics-championship-ab248-default-rtdb.asia-southeast1.firebasedatabase.app",
+        "YOUR_HELP_DATABASE_URL",
 
     projectId:
-        "robotics-championship-ab248",
+        "YOUR_HELP_PROJECT_ID",
 
     storageBucket:
-        "robotics-championship-ab248.firebasestorage.app",
+        "YOUR_HELP_STORAGE_BUCKET",
 
     messagingSenderId:
-        "521981495733",
+        "YOUR_HELP_SENDER_ID",
 
     appId:
-        "1:521981495733:web:ecec2bc677a4450f19f1fc",
+        "YOUR_HELP_APP_ID"
 
-    measurementId:
-        "G-NTBPB3MJ0E"
 };
 
 
-const app = initializeApp(firebaseConfig);
+const app =
+    initializeApp(firebaseConfig);
 
-const auth = getAuth(app);
+const auth =
+    getAuth(app);
 
-const db = getDatabase(app);
+const db =
+    getDatabase(app);
 
 
 /* =========================================================
-   ONLY THIS AGENT CAN ACCESS AGENT PANEL
+   ONLY AGENT
 ========================================================= */
 
 const AGENT_UID =
@@ -90,27 +93,24 @@ const solvedTickets =
     document.getElementById("solvedTickets");
 
 
-/* =========================================================
-   DATA
-========================================================= */
-
 let tickets = {};
-
-let unsubscribe = null;
 
 
 /* =========================================================
    STATUS
 ========================================================= */
 
-function showStatus(message, type = "") {
+function showStatus(
+    message,
+    type = ""
+) {
 
-    if (!status) return;
-
-    status.textContent = message;
+    status.textContent =
+        message;
 
     status.className =
         "status " + type;
+
 }
 
 
@@ -130,26 +130,36 @@ function escapeHTML(value) {
 
 
 /* =========================================================
-   DATE
+   DATE / TIME
 ========================================================= */
 
 function formatDate(value) {
 
-    if (!value) return "—";
+    if (!value) {
+        return "—";
+    }
 
-    const date = new Date(value);
+    const date =
+        new Date(value);
 
-    if (Number.isNaN(date.getTime())) {
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
         return String(value);
     }
 
-    return date.toLocaleString("en-IN", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-    });
+    return date.toLocaleString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        }
+    );
 }
 
 
@@ -157,53 +167,45 @@ function formatDate(value) {
    SEARCH
 ========================================================= */
 
-function matchesSearch(data, key) {
+function matchesSearch(
+    data,
+    key
+) {
 
     const query =
-        search?.value
-            ?.trim()
-            .toLowerCase() || "";
+        search.value
+            .trim()
+            .toLowerCase();
 
-    if (!query) return true;
+    if (!query) {
+        return true;
+    }
 
-    const searchable = [
+    const text = [
 
         key,
 
-        data.ticketId,
-
         data.registrationId,
 
-        data.RegistrationID,
-
         data.StudentName,
-
         data.studentName,
 
-        data.Name,
-
         data.Class,
-
         data.Section,
 
         data.EmailAddress,
-
         data.Email,
 
         data.Category,
-
         data.category,
 
         data.Subject,
-
         data.subject,
 
         data.Message,
-
         data.message,
 
         data.Status,
-
         data.status
 
     ]
@@ -211,7 +213,7 @@ function matchesSearch(data, key) {
         .join(" ")
         .toLowerCase();
 
-    return searchable.includes(query);
+    return text.includes(query);
 }
 
 
@@ -221,34 +223,37 @@ function matchesSearch(data, key) {
 
 function renderTickets() {
 
-    if (!body) return;
-
-
-    const all =
+    const entries =
         Object.entries(tickets);
 
 
     const filtered =
-        all.filter(
-            ([key, data]) =>
-                matchesSearch(data, key)
-        )
-        .reverse();
+        entries
+            .filter(
+                ([key, data]) =>
+                    matchesSearch(
+                        data,
+                        key
+                    )
+            )
+            .reverse();
 
 
     /* COUNTS */
 
-    const total = all.length;
+    const total =
+        entries.length;
 
 
     const solved =
-        all.filter(
+        entries.filter(
             ([, data]) =>
                 String(
                     data.Status ||
                     data.status ||
-                    ""
-                ).toLowerCase() === "solved"
+                    "Open"
+                ).toLowerCase() ===
+                "solved"
         ).length;
 
 
@@ -256,16 +261,14 @@ function renderTickets() {
         total - solved;
 
 
-    if (totalTickets)
-        totalTickets.textContent = total;
+    totalTickets.textContent =
+        total;
 
+    openTickets.textContent =
+        open;
 
-    if (openTickets)
-        openTickets.textContent = open;
-
-
-    if (solvedTickets)
-        solvedTickets.textContent = solved;
+    solvedTickets.textContent =
+        solved;
 
 
     /* EMPTY */
@@ -277,16 +280,15 @@ function renderTickets() {
             <tr>
 
                 <td
-                    colspan="9"
+                    colspan="8"
                     style="
                         text-align:center;
-                        padding:60px 20px;
+                        padding:60px;
                     "
                 >
 
                     <div style="
-                        font-size:42px;
-                        margin-bottom:12px;
+                        font-size:40px;
                     ">
                         🎫
                     </div>
@@ -296,10 +298,10 @@ function renderTickets() {
                     </strong>
 
                     <div style="
-                        margin-top:7px;
+                        margin-top:8px;
                         color:#71859c;
                     ">
-                        New requests will appear here automatically.
+                        New Help submissions will appear here.
                     </div>
 
                 </td>
@@ -316,209 +318,204 @@ function renderTickets() {
 
     body.innerHTML =
         filtered
-            .map(([key, data]) => {
+            .map(
+                ([key, data]) => {
 
-                const registrationId =
-                    data.registrationId ||
-                    data.RegistrationID ||
-                    "—";
-
-
-                const student =
-                    data.StudentName ||
-                    data.studentName ||
-                    data.Name ||
-                    "—";
+                    const id =
+                        data.registrationId ||
+                        data.RegistrationID ||
+                        "—";
 
 
-                const className =
-                    data.Class ||
-                    "—";
+                    const name =
+                        data.StudentName ||
+                        data.studentName ||
+                        data.Name ||
+                        "—";
 
 
-                const section =
-                    data.Section ||
-                    "—";
+                    const className =
+                        data.Class ||
+                        "—";
 
 
-                const email =
-                    data.EmailAddress ||
-                    data.Email ||
-                    "—";
+                    const section =
+                        data.Section ||
+                        "—";
 
 
-                const category =
-                    data.Category ||
-                    data.category ||
-                    "General";
+                    const email =
+                        data.EmailAddress ||
+                        data.Email ||
+                        "—";
 
 
-                const subject =
-                    data.Subject ||
-                    data.subject ||
-                    "—";
+                    const category =
+                        data.Category ||
+                        data.category ||
+                        "General";
 
 
-                const message =
-                    data.Message ||
-                    data.message ||
-                    "—";
+                    const subject =
+                        data.Subject ||
+                        data.subject ||
+                        "—";
 
 
-                const currentStatus =
-                    data.Status ||
-                    data.status ||
-                    "Open";
+                    const message =
+                        data.Message ||
+                        data.message ||
+                        "—";
 
 
-                const normalizedStatus =
-                    String(
-                        currentStatus
-                    ).toLowerCase();
+                    const currentStatus =
+                        data.Status ||
+                        data.status ||
+                        "Open";
 
 
-                const statusClass =
-                    normalizedStatus === "solved"
-                        ? "solved"
-                        : normalizedStatus === "in progress"
-                            ? "progress"
-                            : "open";
+                    const normalized =
+                        String(
+                            currentStatus
+                        ).toLowerCase();
 
 
-                const date =
-                    data.timestamp ||
-                    data.createdAt ||
-                    data.registrationDate ||
-                    data.created_at;
+                    const statusClass =
+                        normalized === "solved"
+                            ? "solved"
+                            : normalized ===
+                              "in progress"
+                                ? "progress"
+                                : "open";
 
 
-                return `
-
-                    <tr>
-
-                        <td>
-
-                            <strong>
-                                ${escapeHTML(
-                                    registrationId
-                                )}
-                            </strong>
-
-                            <small>
-                                Ticket:
-                                ${escapeHTML(key)}
-                            </small>
-
-                        </td>
+                    const date =
+                        data.createdAt ||
+                        data.timestamp ||
+                        data.created_at;
 
 
-                        <td>
+                    return `
 
-                            <strong>
-                                ${escapeHTML(student)}
-                            </strong>
+                        <tr>
 
-                            <small>
-                                Class ${escapeHTML(
-                                    className
-                                )}
-                                -
-                                ${escapeHTML(
-                                    section
-                                )}
-                            </small>
+                            <td>
 
-                        </td>
+                                <strong>
+                                    ${escapeHTML(id)}
+                                </strong>
 
+                                <small>
+                                    Ticket:
+                                    ${escapeHTML(key)}
+                                </small>
 
-                        <td>
-
-                            <strong>
-                                ${escapeHTML(subject)}
-                            </strong>
-
-                            <small>
-                                ${escapeHTML(category)}
-                            </small>
-
-                        </td>
+                            </td>
 
 
-                        <td>
+                            <td>
 
-                            <div class="message-preview">
+                                <strong>
+                                    ${escapeHTML(name)}
+                                </strong>
 
-                                ${escapeHTML(message)}
+                                <small>
+                                    Class
+                                    ${escapeHTML(className)}
+                                    -
+                                    ${escapeHTML(section)}
+                                </small>
 
-                            </div>
-
-                        </td>
+                            </td>
 
 
-                        <td>
+                            <td>
 
-                            <strong>
+                                <strong>
+                                    ${escapeHTML(subject)}
+                                </strong>
+
+                                <small>
+                                    ${escapeHTML(category)}
+                                </small>
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="message-preview">
+
+                                    ${escapeHTML(message)}
+
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
                                 ${escapeHTML(email)}
-                            </strong>
 
-                        </td>
+                            </td>
 
 
-                        <td>
+                            <td>
 
-                            <span
-                                class="ticket-status ${statusClass}"
-                            >
+                                <span
+                                    class="ticket-status ${statusClass}"
+                                >
+
+                                    ${escapeHTML(
+                                        currentStatus
+                                    )}
+
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
                                 ${escapeHTML(
-                                    currentStatus
+                                    formatDate(date)
                                 )}
-                            </span>
 
-                        </td>
-
-
-                        <td>
-
-                            ${escapeHTML(
-                                formatDate(date)
-                            )}
-
-                        </td>
+                            </td>
 
 
-                        <td>
+                            <td>
 
-                            <div class="action-buttons">
+                                <div class="action-buttons">
 
-                                <button
-                                    class="progress-btn"
-                                    data-key="${escapeHTML(key)}"
-                                >
-                                    In Progress
-                                </button>
+                                    <button
+                                        class="progress-btn"
+                                        data-key="${escapeHTML(key)}"
+                                    >
+                                        In Progress
+                                    </button>
 
-                                <button
-                                    class="solve-btn"
-                                    data-key="${escapeHTML(key)}"
-                                >
-                                    ✓ Solve
-                                </button>
+                                    <button
+                                        class="solve-btn"
+                                        data-key="${escapeHTML(key)}"
+                                    >
+                                        ✓ Solve
+                                    </button>
 
-                            </div>
+                                </div>
 
-                        </td>
+                            </td>
 
-                    </tr>
+                        </tr>
 
-                `;
+                    `;
 
-            })
+                }
+            )
             .join("");
 
 
-    /* =====================================================
-       IN PROGRESS
-    ===================================================== */
+    /* BUTTONS */
 
     body
         .querySelectorAll(".progress-btn")
@@ -528,7 +525,7 @@ function renderTickets() {
                 "click",
                 () => {
 
-                    updateTicketStatus(
+                    updateTicket(
                         button.dataset.key,
                         "In Progress"
                     );
@@ -539,10 +536,6 @@ function renderTickets() {
         });
 
 
-    /* =====================================================
-       SOLVE
-    ===================================================== */
-
     body
         .querySelectorAll(".solve-btn")
         .forEach(button => {
@@ -551,7 +544,7 @@ function renderTickets() {
                 "click",
                 () => {
 
-                    updateTicketStatus(
+                    updateTicket(
                         button.dataset.key,
                         "Solved"
                     );
@@ -565,19 +558,21 @@ function renderTickets() {
 
 
 /* =========================================================
-   LOAD HELP REQUESTS
+   LOAD HELP DATA
 ========================================================= */
 
 function loadTickets() {
 
     showStatus(
-        "Connecting to help requests..."
+        "Loading Help requests..."
     );
 
 
     /*
-     * IMPORTANT:
-     * The Help form data must be stored under:
+     * IMPORTANT
+     *
+     * Your Help form must save submissions
+     * inside:
      *
      * tickets/
      */
@@ -589,84 +584,62 @@ function loadTickets() {
         );
 
 
-    if (unsubscribe) {
-        unsubscribe();
-    }
+    onValue(
+
+        ticketsRef,
+
+        snapshot => {
+
+            tickets =
+                snapshot.val() || {};
 
 
-    unsubscribe =
-        onValue(
-
-            ticketsRef,
-
-            snapshot => {
-
-                tickets =
-                    snapshot.val() || {};
+            console.log(
+                "FIREBASE HELP DATA:",
+                tickets
+            );
 
 
-                console.log(
-                    "HELP REQUESTS FROM FIREBASE:",
-                    tickets
-                );
+            renderTickets();
 
 
-                renderTickets();
+            showStatus(
+                `${Object.keys(tickets).length} help request(s) loaded.`,
+                "success"
+            );
+
+        },
+
+        error => {
+
+            console.error(
+                "Firebase error:",
+                error
+            );
 
 
-                showStatus(
+            showStatus(
+                "Unable to read Help requests. Check Firebase Rules and database path.",
+                "error"
+            );
 
-                    `${Object.keys(
-                        tickets
-                    ).length} help request(s) loaded.`,
+        }
 
-                    "success"
-
-                );
-
-            },
-
-            error => {
-
-                console.error(
-                    "TICKET READ ERROR:",
-                    error
-                );
-
-
-                showStatus(
-
-                    "Firebase denied access to help requests. Check the tickets rules.",
-
-                    "error"
-
-                );
-
-            }
-
-        );
+    );
 
 }
 
 
 /* =========================================================
-   UPDATE TICKET
+   UPDATE STATUS
 ========================================================= */
 
-async function updateTicketStatus(
+async function updateTicket(
     key,
     newStatus
 ) {
 
-    if (!key) return;
-
-
     try {
-
-        showStatus(
-            `Updating ticket to ${newStatus}...`
-        );
-
 
         await update(
 
@@ -677,9 +650,8 @@ async function updateTicketStatus(
 
             {
 
-                Status: newStatus,
-
-                status: newStatus,
+                Status:
+                    newStatus,
 
                 updatedAt:
                     Date.now(),
@@ -693,28 +665,20 @@ async function updateTicketStatus(
 
 
         showStatus(
-
-            `Ticket marked as ${newStatus}.`,
-
+            `Ticket marked ${newStatus}.`,
             "success"
-
         );
 
 
     } catch (error) {
 
         console.error(
-            "TICKET UPDATE ERROR:",
             error
         );
 
-
         showStatus(
-
-            "Unable to update ticket. Check Firebase rules.",
-
+            "Unable to update ticket.",
             "error"
-
         );
 
     }
@@ -738,16 +702,7 @@ search?.addEventListener(
 
 refreshBtn?.addEventListener(
     "click",
-    () => {
-
-        renderTickets();
-
-        showStatus(
-            "Help dashboard refreshed.",
-            "success"
-        );
-
-    }
+    renderTickets
 );
 
 
@@ -759,21 +714,11 @@ logoutBtn?.addEventListener(
     "click",
     async () => {
 
-        try {
+        await signOut(auth);
 
-            await signOut(auth);
-
-            window.location.replace(
-                "agent-login.html"
-            );
-
-        } catch (error) {
-
-            console.error(
-                error
-            );
-
-        }
+        window.location.replace(
+            "agent-login.html"
+        );
 
     }
 );
@@ -798,16 +743,12 @@ onAuthStateChanged(
         }
 
 
-        /*
-         * ONLY HgWi... IS AGENT
-         */
-
         if (
             user.uid !== AGENT_UID
         ) {
 
             alert(
-                "Access denied. This account is not authorized as an agent."
+                "Access denied."
             );
 
             signOut(auth);
@@ -818,13 +759,10 @@ onAuthStateChanged(
 
 
         showStatus(
-
             `Agent authenticated: ${
                 user.email || user.uid
             }`,
-
             "success"
-
         );
 
 
