@@ -2,17 +2,6 @@
    APS ROBOTICS CHAMPIONSHIP 2026
    REGISTRATION SYSTEM
    Firebase Realtime Database
-   + EmailJS Confirmation Email
-
-   IMPORTANT:
-   Firebase remains the PRIMARY registration system.
-   EmailJS only sends the confirmation email AFTER
-   Firebase successfully stores the registration.
-========================================================= */
-
-
-/* =========================================================
-   FIREBASE
 ========================================================= */
 
 import { initializeApp } from
@@ -25,14 +14,6 @@ import {
     set
 } from
     "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
-
-
-/* =========================================================
-   EMAILJS
-========================================================= */
-
-import emailjs from
-    "https://cdn.jsdelivr.net/npm/@emailjs/browser@4/+esm";
 
 
 /* =========================================================
@@ -73,29 +54,6 @@ const app =
 
 const db =
     getDatabase(app);
-
-
-/* =========================================================
-   EMAILJS CONFIGURATION
-========================================================= */
-
-const EMAILJS_SERVICE_ID =
-    "service_5m4uzhb";
-
-const EMAILJS_TEMPLATE_ID =
-    "template_5qb8b2p";
-
-const EMAILJS_PUBLIC_KEY =
-    "GnxniZ70ndujyjDpe";
-
-
-/* =========================================================
-   INITIALIZE EMAILJS
-========================================================= */
-
-emailjs.init({
-    publicKey: EMAILJS_PUBLIC_KEY
-});
 
 
 /* =========================================================
@@ -157,11 +115,6 @@ const characterCount =
         "characterCount"
     );
 
-const mobileInput =
-    document.getElementById(
-        "mobileNumber"
-    );
-
 
 /* =========================================================
    TEAM SIZE
@@ -192,11 +145,10 @@ function updateTeamMembers() {
 
     if (!selected) return;
 
+
     const teamSize =
         Number(selected.value);
 
-
-    /* Participation type */
 
     participationType.value =
         teamSize === 1
@@ -204,9 +156,11 @@ function updateTeamMembers() {
             : `Team of ${teamSize}`;
 
 
-    /* Show / hide member cards */
-
-    for (let i = 2; i <= 5; i++) {
+    for (
+        let i = 2;
+        i <= 5;
+        i++
+    ) {
 
         const card =
             document.querySelector(
@@ -232,8 +186,6 @@ function updateTeamMembers() {
 
     }
 
-
-    /* Instruction */
 
     if (teamSize === 1) {
 
@@ -261,7 +213,10 @@ updateTeamMembers();
    REMARKS CHARACTER COUNT
 ========================================================= */
 
-if (remarks && characterCount) {
+if (
+    remarks &&
+    characterCount
+) {
 
     remarks.addEventListener(
         "input",
@@ -279,6 +234,12 @@ if (remarks && characterCount) {
 /* =========================================================
    MOBILE NUMBER
 ========================================================= */
+
+const mobileInput =
+    document.getElementById(
+        "mobileNumber"
+    );
+
 
 if (mobileInput) {
 
@@ -323,7 +284,7 @@ document
 
 
 /* =========================================================
-   GET SELECTED EVENTS
+   GET EVENTS
 ========================================================= */
 
 function getSelectedEvents() {
@@ -340,7 +301,7 @@ function getSelectedEvents() {
 
 
 /* =========================================================
-   EVENT VALIDATION
+   VALIDATE EVENTS
 ========================================================= */
 
 function validateEvents() {
@@ -349,7 +310,9 @@ function validateEvents() {
         getSelectedEvents();
 
 
-    if (selectedEvents.length === 0) {
+    if (
+        selectedEvents.length === 0
+    ) {
 
         if (eventError) {
 
@@ -376,7 +339,7 @@ function validateEvents() {
 
 
 /* =========================================================
-   EVENT ERROR CLEAR
+   EVENT VALIDATION LISTENER
 ========================================================= */
 
 document
@@ -394,7 +357,7 @@ document
 
 
 /* =========================================================
-   REGISTRATION ID
+   GENERATE REGISTRATION ID
 ========================================================= */
 
 function generateRegistrationId() {
@@ -420,7 +383,7 @@ function generateRegistrationId() {
    HELPER
 ========================================================= */
 
-function getValue(id) {
+function value(id) {
 
     const element =
         document.getElementById(id);
@@ -433,567 +396,332 @@ function getValue(id) {
 
 
 /* =========================================================
-   SEND CONFIRMATION EMAIL
-=========================================================
-
-   IMPORTANT:
-
-   This function is called ONLY after Firebase
-   successfully saves the registration.
-
-   If EmailJS fails, the registration remains
-   safely stored in Firebase.
+   SUBMIT
 ========================================================= */
 
-async function sendConfirmationEmail(
-    registrationData
-) {
+form.addEventListener(
+    "submit",
+    async function (event) {
 
-    const templateParams = {
-
-        /* Recipient */
-
-        to_email:
-            registrationData.EmailAddress,
-
-        email:
-            registrationData.EmailAddress,
+        event.preventDefault();
 
 
-        /* Registration */
+        if (
+            submitBtn.disabled
+        ) {
 
-        registration_id:
-            registrationData.registrationId,
+            return;
 
-        registrationId:
-            registrationData.registrationId,
-
-
-        /* Team */
-
-        student_name:
-            registrationData.StudentName,
-
-        StudentName:
-            registrationData.StudentName,
-
-        team_name:
-            registrationData.TeamName ||
-            "Not specified",
-
-        TeamName:
-            registrationData.TeamName ||
-            "Not specified",
-
-        team_size:
-            registrationData.TeamSize,
-
-        TeamSize:
-            registrationData.TeamSize,
-
-        participation_type:
-            registrationData.ParticipationType,
+        }
 
 
-        /* School information */
+        formMessage.textContent = "";
 
-        class:
-            registrationData.Class,
-
-        section:
-            registrationData.Section,
+        formMessage.className =
+            "form-message";
 
 
-        /* Contact */
+        /* HTML validation */
 
-        mobile:
-            registrationData.MobileNumber,
+        if (!form.checkValidity()) {
 
-        mobile_number:
-            registrationData.MobileNumber,
+            form.reportValidity();
 
+            return;
 
-        /* Events */
-
-        events:
-            registrationData.Events.join(", "),
-
-        Events:
-            registrationData.Events.join(", "),
+        }
 
 
-        /* Remarks */
+        /* Event validation */
 
-        remarks:
-            registrationData.Remarks ||
-            "None",
+        if (!validateEvents()) {
 
-        Remarks:
-            registrationData.Remarks ||
-            "None",
+            return;
+
+        }
 
 
-        /* Date */
+        /* Mobile validation */
 
-        registration_date:
-            new Date(
-                registrationData.registrationDate
-            ).toLocaleString(
-                "en-IN",
-                {
-                    dateStyle: "medium",
-                    timeStyle: "short"
-                }
+        const mobile =
+            mobileInput.value.trim();
+
+
+        if (
+            !/^[6-9]\d{9}$/.test(
+                mobile
             )
+        ) {
 
-    };
+            formMessage.textContent =
+                "Please enter a valid 10-digit mobile number.";
+
+            formMessage.classList.add(
+                "error"
+            );
+
+            mobileInput.focus();
+
+            return;
+
+        }
 
 
-    console.log(
-        "Sending confirmation email...",
-        templateParams
-    );
+        /* Loading */
 
+        submitBtn.disabled = true;
 
-    const response =
-        await emailjs.send(
-            EMAILJS_SERVICE_ID,
-            EMAILJS_TEMPLATE_ID,
-            templateParams
+        submitBtn.classList.add(
+            "loading"
         );
 
 
-    console.log(
-        "EmailJS success:",
-        response
-    );
+        try {
 
 
-    return response;
+            /* =============================================
+               REGISTRATION ID
+            ============================================= */
 
-}
-
-
-/* =========================================================
-   FORM SUBMISSION
-========================================================= */
-
-if (form) {
-
-    form.addEventListener(
-        "submit",
-        async function (event) {
-
-            event.preventDefault();
+            const registrationId =
+                generateRegistrationId();
 
 
-            /* ---------------------------------------------
-               PREVENT DOUBLE SUBMISSION
-            --------------------------------------------- */
+            /* =============================================
+               TEAM SIZE
+            ============================================= */
 
-            if (submitBtn.disabled) {
-
-                return;
-
-            }
-
-
-            /* ---------------------------------------------
-               CLEAR OLD MESSAGE
-            --------------------------------------------- */
-
-            formMessage.textContent = "";
-
-            formMessage.className =
-                "form-message";
-
-
-            /* ---------------------------------------------
-               HTML VALIDATION
-            --------------------------------------------- */
-
-            if (!form.checkValidity()) {
-
-                form.reportValidity();
-
-                return;
-
-            }
-
-
-            /* ---------------------------------------------
-               EVENT VALIDATION
-            --------------------------------------------- */
-
-            if (!validateEvents()) {
-
-                return;
-
-            }
-
-
-            /* ---------------------------------------------
-               MOBILE VALIDATION
-            --------------------------------------------- */
-
-            const mobile =
-                mobileInput.value.trim();
-
-
-            if (
-                !/^[6-9]\d{9}$/.test(
-                    mobile
-                )
-            ) {
-
-                formMessage.textContent =
-                    "Please enter a valid 10-digit mobile number.";
-
-                formMessage.classList.add(
-                    "error"
+            const teamSize =
+                Number(
+                    document.querySelector(
+                        'input[name="TeamSize"]:checked'
+                    )?.value || 1
                 );
 
-                mobileInput.focus();
 
-                return;
+            /* =============================================
+               EVENTS
+            ============================================= */
+
+            const selectedEvents =
+                getSelectedEvents();
+
+
+            /* =============================================
+               DATA
+            ============================================= */
+
+            const registrationData = {
+
+                registrationId:
+                    registrationId,
+
+                TeamSize:
+                    teamSize,
+
+                ParticipationType:
+                    participationType.value,
+
+                StudentName:
+                    value(
+                        "studentName"
+                    ),
+
+                Class:
+                    value(
+                        "studentClass"
+                    ),
+
+                Section:
+                    value(
+                        "studentSection"
+                    ),
+
+                MobileNumber:
+                    value(
+                        "mobileNumber"
+                    ),
+
+                EmailAddress:
+                    value(
+                        "emailAddress"
+                    ),
+
+                TeamName:
+                    value(
+                        "teamName"
+                    ),
+
+                Events:
+                    selectedEvents,
+
+                Remarks:
+                    value(
+                        "remarks"
+                    ),
+
+                registrationDate:
+                    new Date()
+                        .toISOString(),
+
+                createdAt:
+                    Date.now()
+
+            };
+
+
+            /* =============================================
+               MEMBERS
+            ============================================= */
+
+            for (
+                let i = 2;
+                i <= 5;
+                i++
+            ) {
+
+                registrationData[
+                    `Member${i}Name`
+                ] =
+                    value(
+                        `member${i}Name`
+                    );
+
+
+                registrationData[
+                    `Member${i}Class`
+                ] =
+                    value(
+                        `member${i}Class`
+                    );
+
+
+                registrationData[
+                    `Member${i}Section`
+                ] =
+                    value(
+                        `member${i}Section`
+                    );
 
             }
 
 
-            /* ---------------------------------------------
-               START LOADING
-            --------------------------------------------- */
+            /* =============================================
+               FIREBASE PATH
 
-            submitBtn.disabled =
-                true;
+               KEEP THIS EXACTLY THE SAME
+            ============================================= */
 
-            submitBtn.classList.add(
-                "loading"
+            const registrationsRef =
+                ref(
+                    db,
+                    "registrations"
+                );
+
+
+            /* =============================================
+               CREATE RECORD
+            ============================================= */
+
+            const newRegistrationRef =
+                push(
+                    registrationsRef
+                );
+
+
+            /* =============================================
+               SAVE RECORD
+            ============================================= */
+
+            await set(
+                newRegistrationRef,
+                registrationData
             );
 
 
-            try {
-
-                /* =========================================
-                   GENERATE REGISTRATION ID
-                ========================================= */
-
-                const registrationId =
-                    generateRegistrationId();
-
-
-                /* =========================================
-                   TEAM SIZE
-                ========================================= */
-
-                const teamSize =
-                    Number(
-                        document.querySelector(
-                            'input[name="TeamSize"]:checked'
-                        )?.value || 1
-                    );
-
-
-                /* =========================================
-                   EVENTS
-                ========================================= */
-
-                const selectedEvents =
-                    getSelectedEvents();
-
-
-                /* =========================================
-                   REGISTRATION DATA
-                ========================================= */
-
-                const registrationData = {
-
-                    registrationId:
-                        registrationId,
-
-
-                    TeamSize:
-                        teamSize,
-
-
-                    ParticipationType:
-                        participationType.value,
-
-
-                    StudentName:
-                        getValue(
-                            "studentName"
-                        ),
-
-
-                    Class:
-                        getValue(
-                            "studentClass"
-                        ),
-
-
-                    Section:
-                        getValue(
-                            "studentSection"
-                        ),
-
-
-                    MobileNumber:
-                        getValue(
-                            "mobileNumber"
-                        ),
-
-
-                    EmailAddress:
-                        getValue(
-                            "emailAddress"
-                        ),
-
-
-                    TeamName:
-                        getValue(
-                            "teamName"
-                        ),
-
-
-                    Events:
-                        selectedEvents,
-
-
-                    Remarks:
-                        getValue(
-                            "remarks"
-                        ),
-
-
-                    registrationDate:
-                        new Date().toISOString(),
-
-
-                    createdAt:
-                        Date.now()
-
-                };
-
-
-                /* =========================================
-                   MEMBER INFORMATION
-                ========================================= */
-
-                for (
-                    let i = 2;
-                    i <= 5;
-                    i++
-                ) {
-
-                    registrationData[
-                        `Member${i}Name`
-                    ] =
-                        getValue(
-                            `member${i}Name`
-                        );
-
-
-                    registrationData[
-                        `Member${i}Class`
-                    ] =
-                        getValue(
-                            `member${i}Class`
-                        );
-
-
-                    registrationData[
-                        `Member${i}Section`
-                    ] =
-                        getValue(
-                            `member${i}Section`
-                        );
-
-                }
-
-
-                /* =========================================
-                   FIREBASE LOCATION
-
-                   DO NOT CHANGE THIS.
-
-                   Your admin panel reads:
-
-                   registrations
-                ========================================= */
-
-                const registrationsRef =
-                    ref(
-                        db,
-                        "registrations"
-                    );
-
-
-                /* =========================================
-                   CREATE FIREBASE RECORD
-                ========================================= */
-
-                const newRegistrationRef =
-                    push(
-                        registrationsRef
-                    );
-
-
-                /* =========================================
-                   SAVE TO FIREBASE FIRST
-
-                   This keeps your existing admin
-                   panel completely compatible.
-                ========================================= */
-
-                await set(
-                    newRegistrationRef,
-                    registrationData
-                );
-
-
-                console.log(
-                    "Registration saved to Firebase:",
-                    registrationData
-                );
-
-
-                /* =========================================
-                   SEND EMAILJS CONFIRMATION
-
-                   IMPORTANT:
-
-                   Email failure DOES NOT delete or
-                   invalidate the Firebase registration.
-                ========================================= */
-
-                let emailSent = false;
-
-
-                try {
-
-                    await sendConfirmationEmail(
-                        registrationData
-                    );
-
-                    emailSent = true;
-
-
-                } catch (emailError) {
-
-                    console.error(
-                        "EmailJS error:",
-                        emailError
-                    );
-
-                    /*
-                       DO NOT throw this error.
-
-                       Firebase registration has already
-                       succeeded.
-                    */
-
-                    emailSent = false;
-
-                }
-
-
-                /* =========================================
-                   SHOW REGISTRATION ID
-                ========================================= */
-
-                if (
-                    successRegistrationId
-                ) {
-
-                    successRegistrationId
-                        .textContent =
-                        registrationId;
-
-                }
-
-
-                /* =========================================
-                   SUCCESS MESSAGE
-                ========================================= */
-
-                if (emailSent) {
-
-                    formMessage.textContent =
-                        "Registration submitted successfully. A confirmation email has been sent to your email address.";
-
-                } else {
-
-                    formMessage.textContent =
-                        "Registration submitted successfully. Your registration has been saved, but the confirmation email could not be sent.";
-
-                }
-
-
-                formMessage.classList.add(
-                    "success"
-                );
-
-
-                /* =========================================
-                   SUCCESS OVERLAY
-                ========================================= */
-
-                if (
-                    successOverlay
-                ) {
-
-                    successOverlay
-                        .classList
-                        .remove(
-                            "hidden"
-                        );
-
-                }
-
-
-            } catch (error) {
-
-                /* =========================================
-                   FIREBASE ERROR
-
-                   This is ONLY reached if Firebase
-                   itself failed.
-                ========================================= */
-
-                console.error(
-                    "Firebase registration error:",
-                    error
-                );
-
-
-                formMessage.textContent =
-                    "Registration could not be submitted. Please check your internet connection and try again.";
-
-                formMessage.classList.add(
-                    "error"
-                );
-
-
-            } finally {
-
-                submitBtn.disabled =
-                    false;
-
-                submitBtn.classList.remove(
-                    "loading"
-                );
+            console.log(
+                "Registration saved:",
+                registrationData
+            );
+
+
+            /* =============================================
+               SUCCESS ID
+            ============================================= */
+
+            if (
+                successRegistrationId
+            ) {
+
+                successRegistrationId
+                    .textContent =
+                    registrationId;
 
             }
 
-        }
-    );
 
-}
+            /* =============================================
+               SUCCESS MESSAGE
+            ============================================= */
+
+            formMessage.textContent =
+                "Registration submitted successfully.";
+
+            formMessage.classList.add(
+                "success"
+            );
+
+
+            /* =============================================
+               SUCCESS OVERLAY
+            ============================================= */
+
+            if (
+                successOverlay
+            ) {
+
+                successOverlay
+                    .classList
+                    .remove(
+                        "hidden"
+                    );
+
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                "Registration error:",
+                error
+            );
+
+
+            formMessage.textContent =
+                "Registration is currently unavailable. Please contact the organizers.";
+
+            formMessage.classList.add(
+                "error"
+            );
+
+
+        } finally {
+
+            submitBtn.disabled =
+                false;
+
+            submitBtn.classList.remove(
+                "loading"
+            );
+
+        }
+
+    }
+);
 
 
 /* =========================================================
-   CONTINUE BUTTON
+   CONTINUE
 ========================================================= */
 
 if (continueBtn) {
@@ -1012,7 +740,7 @@ if (continueBtn) {
 
 
 /* =========================================================
-   ESCAPE KEY
+   ESCAPE
 ========================================================= */
 
 document.addEventListener(
@@ -1035,17 +763,13 @@ document.addEventListener(
 
 
 /* =========================================================
-   DEBUG INFORMATION
+   DEBUG
 ========================================================= */
 
 console.log(
-    "APS Robotics Registration System loaded."
+    "APS Robotics Registration System loaded successfully."
 );
 
 console.log(
     "Firebase path: /registrations"
-);
-
-console.log(
-    "EmailJS enabled."
 );
