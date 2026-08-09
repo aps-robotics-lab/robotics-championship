@@ -1,304 +1,331 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="theme-color" content="#020711">
-<meta name="description" content="APS Robotics Championship 2026 - APS Tinkering Lab">
+    <meta name="theme-color" content="#050816">
 
-<title>APS Robotics Championship 2026</title>
+    <title>APS Robotics Championship 2026</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-<link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- PRELOADER -->
+<!-- =====================================================
+     PRELOADER
+===================================================== -->
+
 <div id="preloader">
-    <div class="loader">
-        <div class="loader-robot">
-            <i class="fa-solid fa-robot"></i>
-        </div>
+    <div class="loader-ring"></div>
 
-        <div class="loader-text">
-            APS ROBOTICS
-        </div>
+    <div class="loader-content">
+        <img src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+             alt="Army Welfare Education Society">
 
-        <div class="loader-line">
-            <span></span>
-        </div>
-
-        <small>
-            INITIALIZING CHAMPIONSHIP...
-        </small>
+        <h2>APS ROBOTICS</h2>
+        <span>CHAMPIONSHIP 2026</span>
     </div>
 </div>
 
+
+<!-- =====================================================
+     BACKGROUND
+===================================================== -->
+
 <div class="background-grid"></div>
-<div class="background-glow glow-1"></div>
-<div class="background-glow glow-2"></div>
+<div class="background-glow glow-one"></div>
+<div class="background-glow glow-two"></div>
 
-<!-- HEADER -->
-<header class="header" id="header">
 
-    <div class="nav-container">
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
 
-        <a href="#home" class="logo">
+<header class="navbar" id="navbar">
 
-            <div class="logo-icon">
-                <i class="fa-solid fa-robot"></i>
-            </div>
+    <a href="#home" class="brand">
 
-            <div class="logo-text">
-                <strong>APS</strong>
-                <span>TINKERING LAB</span>
-            </div>
+        <div class="brand-logo">
+            <img src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+                 alt="APS Logo">
+        </div>
 
+        <div class="brand-text">
+            <strong>APS ROBOTICS</strong>
+            <span>CHAMPIONSHIP 2026</span>
+        </div>
+
+    </a>
+
+
+    <nav class="desktop-nav">
+
+        <a href="#home" class="nav-link active">Home</a>
+
+        <a href="#about" class="nav-link">About</a>
+
+        <a href="#events" class="nav-link">Events</a>
+
+        <a href="rules.html" class="nav-link">Rules</a>
+
+        <a href="#registration" class="nav-link">Registration</a>
+
+        <a href="#contact" class="nav-link">Contact</a>
+
+        <a href="#team" class="nav-link">Team</a>
+
+    </nav>
+
+
+    <div class="nav-actions">
+
+        <a href="rules.html" class="nav-rules-btn">
+            <i class="fa-solid fa-book"></i>
+            Rules
         </a>
 
-        <nav class="nav" id="nav">
-
-            <a href="#home" class="nav-link active">Home</a>
-
-            <a href="#about" class="nav-link">About</a>
-
-            <a href="#events" class="nav-link">Events</a>
-
-            <a href="#registration" class="nav-link">
-                Registration
-            </a>
-
-            <a href="#message" class="nav-link">Message</a>
-
-            <a href="#contact" class="nav-link">Contact</a>
-
-            <a href="rules.html" class="nav-rules">
-                <i class="fa-solid fa-book-open"></i>
-                Rules
-            </a>
-
-            <a href="admin.html" class="nav-admin">
-                <i class="fa-solid fa-user-shield"></i>
-                Admin
-            </a>
-
-        </nav>
-
-        <button
-            class="menu-toggle"
-            id="menuToggle"
-            aria-label="Open navigation">
-
-            <span></span>
-            <span></span>
-            <span></span>
-
+        <button id="menuBtn" class="menu-btn" type="button">
+            <i class="fa-solid fa-bars"></i>
         </button>
 
     </div>
 
 </header>
 
-<!-- HERO -->
-<section class="hero" id="home">
 
-    <div class="hero-particles"></div>
+<!-- =====================================================
+     MOBILE MENU
+===================================================== -->
+
+<div id="mobileMenu" class="mobile-menu">
+
+    <button class="mobile-close" id="mobileClose">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <div class="mobile-menu-logo">
+        <img src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+             alt="APS Logo">
+    </div>
+
+    <a href="#home">Home</a>
+    <a href="#about">About</a>
+    <a href="#events">Events</a>
+    <a href="rules.html">Rules</a>
+    <a href="#registration">Registration</a>
+    <a href="#contact">Contact</a>
+    <a href="#team">Our Team</a>
+
+</div>
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<main>
+
+<section id="home" class="hero-section">
 
     <div class="hero-content">
 
         <div class="hero-badge">
-            <span class="live-dot"></span>
+            <span class="pulse-dot"></span>
             APS TINKERING LAB PRESENTS
         </div>
 
         <h1>
-            APS ROBOTICS
-            <span>CHAMPIONSHIP</span>
-            <strong>2026</strong>
+            APS
+            <span>ROBOTICS</span>
+            CHAMPIONSHIP
         </h1>
 
+        <div class="hero-year">
+            2026
+        </div>
+
         <p class="hero-description">
-            Where imagination meets engineering.
-            Design intelligent machines, challenge
-            your limits and experience the future
-            of robotics.
+            Think. Build. Innovate. Compete.
+            Enter the arena where young innovators
+            transform ideas into intelligent machines.
         </p>
 
         <div class="hero-buttons">
 
-            <a href="registration.html"
-               class="btn btn-primary">
-
+            <a href="#registration" class="primary-btn">
                 <i class="fa-solid fa-rocket"></i>
                 Register Your Team
-
             </a>
 
-            <a href="rules.html"
-               class="btn btn-secondary">
-
+            <a href="rules.html" class="secondary-btn">
                 <i class="fa-solid fa-book-open"></i>
-                Rules & Event Details
-
+                View Rules
             </a>
 
         </div>
+
 
         <div class="hero-stats">
 
-            <div class="stat">
+            <div>
                 <strong>04</strong>
-                <span>EVENTS</span>
+                <span>Events</span>
             </div>
 
-            <div class="stat">
+            <div>
                 <strong>01</strong>
-                <span>CHAMPIONSHIP</span>
+                <span>Championship</span>
             </div>
 
-            <div class="stat">
+            <div>
                 <strong>∞</strong>
-                <span>INNOVATION</span>
+                <span>Innovation</span>
             </div>
 
         </div>
 
     </div>
+
 
     <div class="hero-visual">
 
-        <div class="orbit orbit-1"></div>
-        <div class="orbit orbit-2"></div>
-        <div class="orbit orbit-3"></div>
+        <div class="robot-orbit orbit-one"></div>
+        <div class="robot-orbit orbit-two"></div>
+        <div class="robot-orbit orbit-three"></div>
 
-        <div class="robot-display">
+        <div class="robot-core">
 
-            <div class="robot-face">
-                <div class="robot-eye left"></div>
-                <div class="robot-eye right"></div>
-                <div class="robot-mouth"></div>
+            <div class="robot-eye eye-one"></div>
+            <div class="robot-eye eye-two"></div>
+
+            <div class="robot-mouth">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
 
-            <div class="robot-body">
-                <div class="robot-chest">
-                    APS
-                </div>
-            </div>
-
-            <div class="robot-leg left"></div>
-            <div class="robot-leg right"></div>
-
         </div>
 
-        <div class="floating-chip chip-1">
-            AI
+        <div class="floating-chip chip-one">
+            <i class="fa-solid fa-microchip"></i>
         </div>
 
-        <div class="floating-chip chip-2">
-            ROBOT
+        <div class="floating-chip chip-two">
+            <i class="fa-solid fa-bolt"></i>
         </div>
 
-        <div class="floating-chip chip-3">
-            2026
+        <div class="floating-chip chip-three">
+            <i class="fa-solid fa-gear"></i>
         </div>
 
-    </div>
-
-    <div class="scroll-indicator">
-        <span>SCROLL TO EXPLORE</span>
-        <i class="fa-solid fa-chevron-down"></i>
     </div>
 
 </section>
 
-<!-- ABOUT -->
-<section class="section about" id="about">
+
+<!-- =====================================================
+     ABOUT
+===================================================== -->
+
+<section id="about" class="section">
 
     <div class="section-heading">
 
-        <span>01 / ABOUT</span>
+        <span>01 // ABOUT</span>
 
         <h2>
-            Engineering the
-            <span>Future</span>
+            Build The Future
         </h2>
 
         <p>
-            APS Robotics Championship 2026 is a platform
-            for students to explore robotics, engineering,
-            programming, creativity and teamwork.
+            A platform for young innovators to compete,
+            collaborate and showcase their robotics skills.
         </p>
 
     </div>
+
 
     <div class="about-grid">
 
         <div class="about-card large">
 
-            <div class="card-icon">
-                <i class="fa-solid fa-microchip"></i>
-            </div>
+            <div class="card-number">01</div>
 
-            <h3>Innovation</h3>
+            <i class="fa-solid fa-robot"></i>
+
+            <h3>
+                Young Innovators
+            </h3>
 
             <p>
-                Transform ideas into working robotic
-                systems and discover innovative solutions
-                to real engineering challenges.
+                APS Robotics Championship 2026 encourages
+                students to explore robotics, engineering,
+                programming and problem solving through
+                exciting practical challenges.
             </p>
 
         </div>
 
+
         <div class="about-card">
 
-            <div class="card-icon">
-                <i class="fa-solid fa-users"></i>
-            </div>
+            <div class="card-number">02</div>
 
-            <h3>Teamwork</h3>
+            <i class="fa-solid fa-brain"></i>
+
+            <h3>
+                Think
+            </h3>
 
             <p>
-                Work together, solve problems and build
-                something greater as a team.
+                Plan your strategy, understand the challenge
+                and solve problems creatively.
             </p>
 
         </div>
 
+
         <div class="about-card">
 
-            <div class="card-icon">
-                <i class="fa-solid fa-code"></i>
-            </div>
+            <div class="card-number">03</div>
 
-            <h3>Technology</h3>
+            <i class="fa-solid fa-screwdriver-wrench"></i>
+
+            <h3>
+                Build
+            </h3>
 
             <p>
-                Explore electronics, programming,
-                mechanics and automation.
+                Turn your ideas into functional robotic
+                machines designed for competition.
             </p>
 
         </div>
 
+
         <div class="about-card">
 
-            <div class="card-icon">
-                <i class="fa-solid fa-lightbulb"></i>
-            </div>
+            <div class="card-number">04</div>
 
-            <h3>Creativity</h3>
+            <i class="fa-solid fa-trophy"></i>
+
+            <h3>
+                Compete
+            </h3>
 
             <p>
-                Think differently and create solutions
-                beyond conventional boundaries.
+                Challenge other teams and demonstrate
+                precision, creativity and teamwork.
             </p>
 
         </div>
@@ -307,24 +334,27 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
 </section>
 
-<!-- EVENTS -->
-<section class="section events" id="events">
+
+<!-- =====================================================
+     EVENTS
+===================================================== -->
+
+<section id="events" class="section">
 
     <div class="section-heading">
 
-        <span>02 / COMPETITIONS</span>
+        <span>02 // COMPETITION</span>
 
         <h2>
-            Choose Your
-            <span>Challenge</span>
+            Championship Events
         </h2>
 
         <p>
-            Four exciting robotics competitions designed
-            to test speed, strategy, control and creativity.
+            Choose your battlefield and put your robot to the test.
         </p>
 
     </div>
+
 
     <div class="events-grid">
 
@@ -339,18 +369,17 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
             <h3>Robo Race</h3>
 
             <p>
-                Speed, precision and control.
-                Navigate the track and reach
-                the finish line.
+                Speed, control and precision.
+                Navigate the course and reach the finish line.
             </p>
 
-            <a href="rules.html#events"
-               class="event-link">
-                View Rules
+            <a href="rules.html#robo-race">
+                Explore Event
                 <i class="fa-solid fa-arrow-right"></i>
             </a>
 
         </article>
+
 
         <article class="event-card">
 
@@ -363,18 +392,17 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
             <h3>Robo War</h3>
 
             <p>
-                Strategy, engineering and robot
-                control collide in an exciting
-                arena challenge.
+                Engineering meets strategy in an intense
+                robotic battle arena.
             </p>
 
-            <a href="rules.html#events"
-               class="event-link">
-                View Rules
+            <a href="rules.html#robo-war">
+                Explore Event
                 <i class="fa-solid fa-arrow-right"></i>
             </a>
 
         </article>
+
 
         <article class="event-card">
 
@@ -387,17 +415,17 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
             <h3>Robo Tug of War</h3>
 
             <p>
-                Build a powerful robot and pull
-                your opponent beyond the winning line.
+                Power, traction and engineering strength
+                determine the winning machine.
             </p>
 
-            <a href="rules.html#events"
-               class="event-link">
-                View Rules
+            <a href="rules.html#robo-tug">
+                Explore Event
                 <i class="fa-solid fa-arrow-right"></i>
             </a>
 
         </article>
+
 
         <article class="event-card">
 
@@ -410,13 +438,12 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
             <h3>Robo Soccer</h3>
 
             <p>
-                Control your robotic player,
-                score goals and outsmart opponents.
+                Teamwork, autonomous control and precision
+                collide in the robotic football arena.
             </p>
 
-            <a href="rules.html#events"
-               class="event-link">
-                View Rules
+            <a href="rules.html#robo-soccer">
+                Explore Event
                 <i class="fa-solid fa-arrow-right"></i>
             </a>
 
@@ -424,114 +451,362 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
     </div>
 
-    <div class="rules-callout">
-
-        <div>
-            <i class="fa-solid fa-shield-halved"></i>
-        </div>
-
-        <section>
-
-            <strong>
-                Want the complete competition rules?
-            </strong>
-
-            <p>
-                View the dedicated official Rules &
-                Event Details page.
-            </p>
-
-        </section>
-
-        <a href="rules.html"
-           class="btn btn-primary">
-            Open Rulebook
-            <i class="fa-solid fa-arrow-right"></i>
-        </a>
-
-    </div>
-
 </section>
 
-<!-- REGISTRATION -->
-<section class="section registration" id="registration">
+
+<!-- =====================================================
+     REGISTRATION
+===================================================== -->
+
+<section id="registration" class="section registration-section">
 
     <div class="section-heading">
 
-        <span>03 / REGISTRATION</span>
+        <span>03 // REGISTRATION</span>
 
         <h2>
-            Register Your
-            <span>Team</span>
+            Register Your Team
         </h2>
 
         <p>
-            Ready to compete?
-            Complete your registration and receive
-            your unique championship registration ID.
+            Complete the form below to participate in
+            APS Robotics Championship 2026.
         </p>
 
     </div>
 
-    <div class="registration-box">
+
+    <div class="registration-layout">
 
         <div class="registration-info">
 
-            <div class="registration-icon">
-                <i class="fa-solid fa-rocket"></i>
-            </div>
+            <div class="info-panel">
 
-            <h3>Ready to Build?</h3>
+                <span class="panel-label">
+                    MISSION BRIEF
+                </span>
 
-            <p>
-                Gather your team, choose your events
-                and get ready for the APS Robotics
-                Championship 2026.
-            </p>
+                <h3>
+                    Prepare Your Team.
+                    Enter The Arena.
+                </h3>
 
-            <div class="registration-points">
+                <p>
+                    Fill in the team leader information,
+                    team details and select one or more
+                    championship events.
+                </p>
 
-                <div>
-                    <i class="fa-solid fa-check"></i>
-                    Choose your competition
-                </div>
+                <div class="info-list">
 
-                <div>
-                    <i class="fa-solid fa-check"></i>
-                    Prepare your robot
-                </div>
+                    <div>
+                        <i class="fa-solid fa-circle-check"></i>
+                        Team registration
+                    </div>
 
-                <div>
-                    <i class="fa-solid fa-check"></i>
-                    Follow official rules
-                </div>
+                    <div>
+                        <i class="fa-solid fa-circle-check"></i>
+                        Multiple events allowed
+                    </div>
 
-                <div>
-                    <i class="fa-solid fa-check"></i>
-                    Compete and innovate
+                    <div>
+                        <i class="fa-solid fa-circle-check"></i>
+                        Secure Firebase submission
+                    </div>
+
+                    <div>
+                        <i class="fa-solid fa-circle-check"></i>
+                        Instant registration confirmation
+                    </div>
+
                 </div>
 
             </div>
 
         </div>
 
-        <div class="registration-action">
 
-            <span>APS ROBOTICS CHAMPIONSHIP</span>
+        <div class="registration-card">
 
-            <strong>2026</strong>
+            <form id="registrationForm">
 
-            <p>
-                Registration is now open.
-            </p>
+                <div class="form-section-title">
+                    <span>TEAM LEADER</span>
+                </div>
 
-            <a href="registration.html"
-               class="btn btn-primary large">
+                <div class="form-grid">
 
-                <i class="fa-solid fa-user-plus"></i>
-                Register Now
+                    <div class="input-group">
 
-            </a>
+                        <label for="studentName">
+                            Team Leader Name *
+                        </label>
+
+                        <div class="input-box">
+                            <i class="fa-solid fa-user"></i>
+
+                            <input
+                                id="studentName"
+                                name="StudentName"
+                                type="text"
+                                placeholder="Enter full name"
+                                required>
+                        </div>
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="teamName">
+                            Team Name *
+                        </label>
+
+                        <div class="input-box">
+                            <i class="fa-solid fa-users"></i>
+
+                            <input
+                                id="teamName"
+                                name="TeamName"
+                                type="text"
+                                placeholder="Enter team name"
+                                required>
+                        </div>
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="className">
+                            Class *
+                        </label>
+
+                        <div class="input-box">
+                            <i class="fa-solid fa-graduation-cap"></i>
+
+                            <input
+                                id="className"
+                                name="Class"
+                                type="text"
+                                placeholder="e.g. IX"
+                                required>
+                        </div>
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="sectionName">
+                            Section *
+                        </label>
+
+                        <div class="input-box">
+                            <i class="fa-solid fa-layer-group"></i>
+
+                            <input
+                                id="sectionName"
+                                name="Section"
+                                type="text"
+                                placeholder="e.g. A"
+                                required>
+                        </div>
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="mobileNumber">
+                            Mobile Number *
+                        </label>
+
+                        <div class="input-box">
+                            <i class="fa-solid fa-phone"></i>
+
+                            <input
+                                id="mobileNumber"
+                                name="MobileNumber"
+                                type="tel"
+                                placeholder="Enter mobile number"
+                                required>
+                        </div>
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="emailAddress">
+                            Email Address *
+                        </label>
+
+                        <div class="input-box">
+                            <i class="fa-solid fa-envelope"></i>
+
+                            <input
+                                id="emailAddress"
+                                name="EmailAddress"
+                                type="email"
+                                placeholder="Enter email address"
+                                required>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-section-title">
+                    <span>TEAM MEMBERS</span>
+                </div>
+
+
+                <div class="member-grid">
+
+                    <div class="input-group">
+                        <label for="member2">Member 2</label>
+                        <div class="input-box">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <input id="member2"
+                                   name="Member2Name"
+                                   type="text"
+                                   placeholder="Member name">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="member3">Member 3</label>
+                        <div class="input-box">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <input id="member3"
+                                   name="Member3Name"
+                                   type="text"
+                                   placeholder="Member name">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="member4">Member 4</label>
+                        <div class="input-box">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <input id="member4"
+                                   name="Member4Name"
+                                   type="text"
+                                   placeholder="Member name">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="member5">Member 5</label>
+                        <div class="input-box">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <input id="member5"
+                                   name="Member5Name"
+                                   type="text"
+                                   placeholder="Member name">
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="form-section-title">
+                    <span>SELECT EVENT(S)</span>
+                </div>
+
+
+                <div class="event-selection">
+
+                    <label class="event-option">
+
+                        <input type="checkbox"
+                               name="Events"
+                               value="Robo Race">
+
+                        <span class="event-option-content">
+                            <i class="fa-solid fa-flag-checkered"></i>
+
+                            <span>
+                                <strong>Robo Race</strong>
+                                <small>Speed & precision</small>
+                            </span>
+                        </span>
+
+                    </label>
+
+
+                    <label class="event-option">
+
+                        <input type="checkbox"
+                               name="Events"
+                               value="Robo War">
+
+                        <span class="event-option-content">
+                            <i class="fa-solid fa-shield-halved"></i>
+
+                            <span>
+                                <strong>Robo War</strong>
+                                <small>Battle arena</small>
+                            </span>
+                        </span>
+
+                    </label>
+
+
+                    <label class="event-option">
+
+                        <input type="checkbox"
+                               name="Events"
+                               value="Robo Tug of War">
+
+                        <span class="event-option-content">
+                            <i class="fa-solid fa-handshake"></i>
+
+                            <span>
+                                <strong>Robo Tug of War</strong>
+                                <small>Power challenge</small>
+                            </span>
+                        </span>
+
+                    </label>
+
+
+                    <label class="event-option">
+
+                        <input type="checkbox"
+                               name="Events"
+                               value="Robo Soccer">
+
+                        <span class="event-option-content">
+                            <i class="fa-solid fa-futbol"></i>
+
+                            <span>
+                                <strong>Robo Soccer</strong>
+                                <small>Robotic football</small>
+                            </span>
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <div id="formMessage" class="form-message"></div>
+
+
+                <button type="submit"
+                        id="submitRegistration"
+                        class="submit-registration">
+
+                    <i class="fa-solid fa-paper-plane"></i>
+
+                    Submit Registration
+
+                </button>
+
+            </form>
 
         </div>
 
@@ -539,72 +814,28 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
 </section>
 
-<!-- MESSAGE -->
-<section class="section message" id="message">
+
+<!-- =====================================================
+     CONTACT
+===================================================== -->
+
+<section id="contact" class="section contact-section">
 
     <div class="section-heading">
 
-        <span>04 / MESSAGE</span>
+        <span>04 // CONTACT</span>
 
         <h2>
-            A Message to
-            <span>Young Innovators</span>
-        </h2>
-
-    </div>
-
-    <div class="message-box">
-
-        <div class="quote-icon">
-            <i class="fa-solid fa-quote-left"></i>
-        </div>
-
-        <p>
-            Robotics is not just about building machines.
-            It is about curiosity, creativity, teamwork
-            and having the courage to solve problems
-            differently.
-        </p>
-
-        <p>
-            We encourage every participant to experiment,
-            learn from failure and turn ideas into reality.
-            Let this championship be a place where your
-            imagination becomes innovation.
-        </p>
-
-        <div class="message-sign">
-
-            <strong>APS Tinkering Lab</strong>
-
-            <span>
-                Inspiring Young Innovators
-            </span>
-
-        </div>
-
-    </div>
-
-</section>
-
-<!-- CONTACT -->
-<section class="section contact" id="contact">
-
-    <div class="section-heading">
-
-        <span>05 / CONTACT</span>
-
-        <h2>
-            Get in
-            <span>Touch</span>
+            Get In Touch
         </h2>
 
         <p>
             Have a question about the championship?
-            Connect with APS Tinkering Lab.
+            Contact the APS Tinkering Lab.
         </p>
 
     </div>
+
 
     <div class="contact-grid">
 
@@ -614,15 +845,20 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                 <i class="fa-solid fa-location-dot"></i>
             </div>
 
-            <h3>Address</h3>
+            <span>LOCATION</span>
+
+            <h3>
+                APS Tinkering Lab
+            </h3>
 
             <p>
-                Army Public School<br>
-                Lal Bahadur Shastri Marg<br>
+                Army Public School,<br>
+                Lal Bahadur Shastri Marg,<br>
                 Lucknow, Uttar Pradesh
             </p>
 
         </div>
+
 
         <div class="contact-card">
 
@@ -630,7 +866,11 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                 <i class="fa-solid fa-phone"></i>
             </div>
 
-            <h3>Phone</h3>
+            <span>PHONE</span>
+
+            <h3>
+                Contact Us
+            </h3>
 
             <p>
                 +91 XXXXX XXXXX
@@ -638,16 +878,21 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
         </div>
 
+
         <div class="contact-card">
 
             <div class="contact-icon">
                 <i class="fa-solid fa-envelope"></i>
             </div>
 
-            <h3>Email</h3>
+            <span>EMAIL</span>
+
+            <h3>
+                Email
+            </h3>
 
             <p>
-                aayushksingh3746@gmail.com
+                tinkeringlab@aps.edu.in
             </p>
 
         </div>
@@ -656,90 +901,637 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
 </section>
 
-<!-- FOOTER -->
-<footer class="footer">
 
-    <div class="footer-top">
+<!-- =====================================================
+     OUR TEAM
+===================================================== -->
 
-        <div class="footer-brand">
+<section id="team" class="section team-section">
 
-            <div class="logo">
+    <div class="section-heading">
 
-                <div class="logo-icon">
-                    <i class="fa-solid fa-robot"></i>
+        <span>05 // OUR TEAM</span>
+
+        <h2>
+            Meet The Team
+        </h2>
+
+        <p>
+            The people helping young innovators turn
+            ideas into technology.
+        </p>
+
+    </div>
+
+
+    <div class="team-grid">
+
+        <article class="team-card">
+
+            <div class="team-photo">
+                <div class="team-placeholder">
+                    <i class="fa-solid fa-user-tie"></i>
                 </div>
 
-                <div class="logo-text">
-                    <strong>APS</strong>
-                    <span>TINKERING LAB</span>
-                </div>
+                <span>01</span>
+            </div>
+
+            <div class="team-info">
+
+                <span class="team-role">
+                    COORDINATOR
+                </span>
+
+                <h3>
+                    Team Coordinator
+                </h3>
+
+                <p>
+                    APS Tinkering Lab
+                </p>
 
             </div>
 
-            <p>
-                Building the innovators of tomorrow
-                through technology and creativity.
-            </p>
+        </article>
+
+
+        <article class="team-card">
+
+            <div class="team-photo">
+                <div class="team-placeholder">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                </div>
+
+                <span>02</span>
+            </div>
+
+            <div class="team-info">
+
+                <span class="team-role">
+                    MENTOR
+                </span>
+
+                <h3>
+                    Robotics Mentor
+                </h3>
+
+                <p>
+                    APS Tinkering Lab
+                </p>
+
+            </div>
+
+        </article>
+
+
+        <article class="team-card">
+
+            <div class="team-photo">
+                <div class="team-placeholder">
+                    <i class="fa-solid fa-microchip"></i>
+                </div>
+
+                <span>03</span>
+            </div>
+
+            <div class="team-info">
+
+                <span class="team-role">
+                    TECHNICAL
+                </span>
+
+                <h3>
+                    Technical Team
+                </h3>
+
+                <p>
+                    Robotics & Innovation
+                </p>
+
+            </div>
+
+        </article>
+
+
+        <article class="team-card">
+
+            <div class="team-photo">
+                <div class="team-placeholder">
+                    <i class="fa-solid fa-people-group"></i>
+                </div>
+
+                <span>04</span>
+            </div>
+
+            <div class="team-info">
+
+                <span class="team-role">
+                    EVENT TEAM
+                </span>
+
+                <h3>
+                    Event Support Team
+                </h3>
+
+                <p>
+                    APS Robotics Championship
+                </p>
+
+            </div>
+
+        </article>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer class="footer">
+
+    <div class="footer-main">
+
+        <div class="footer-brand">
+
+            <img src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+                 alt="APS Logo">
+
+            <div>
+                <strong>APS ROBOTICS</strong>
+                <span>CHAMPIONSHIP 2026</span>
+            </div>
 
         </div>
 
-        <div class="footer-links">
 
-            <h4>QUICK LINKS</h4>
+        <div class="footer-links">
 
             <a href="#home">Home</a>
             <a href="#about">About</a>
             <a href="#events">Events</a>
-            <a href="registration.html">Registration</a>
             <a href="rules.html">Rules</a>
+            <a href="#registration">Registration</a>
+            <a href="#contact">Contact</a>
 
         </div>
 
-        <div class="footer-links">
 
-            <h4>PORTAL</h4>
+        <div class="footer-social">
 
-            <a href="registration.html">
-                Register Team
+            <a href="#" aria-label="Facebook">
+                <i class="fa-brands fa-facebook-f"></i>
             </a>
 
-            <a href="thankyou.html">
-                Registration Status
+            <a href="#" aria-label="Instagram">
+                <i class="fa-brands fa-instagram"></i>
             </a>
 
-            <a href="admin.html">
-                <i class="fa-solid fa-user-shield"></i>
-                Admin Login
+            <a href="#" aria-label="YouTube">
+                <i class="fa-brands fa-youtube"></i>
             </a>
 
         </div>
 
     </div>
 
+
     <div class="footer-bottom">
 
         <span>
-            © 2026 APS Tinkering Lab.
-            All Rights Reserved.
+            © 2026 APS Tinkering Lab. All Rights Reserved.
         </span>
 
         <span>
-            APS Robotics Championship 2026
+            Built for innovation.
         </span>
 
     </div>
 
 </footer>
 
-<button class="back-top"
-        id="backTop"
-        aria-label="Back to top">
 
-    <i class="fa-solid fa-arrow-up"></i>
+<!-- =====================================================
+     TOAST
+===================================================== -->
 
-</button>
+<div id="siteToast" class="site-toast">
 
-<script src="script.js"></script>
+    <i class="fa-solid fa-circle-check"></i>
+
+    <span id="siteToastText">
+        Registration successful.
+    </span>
+
+</div>
+
+
+<script type="module">
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+
+import {
+    getDatabase,
+    ref,
+    push,
+    set
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
+
+    authDomain:
+        "aps-robotics-championship.firebaseapp.com",
+
+    databaseURL:
+        "https://aps-robotics-championship-default-rtdb.firebaseio.com",
+
+    projectId:
+        "aps-robotics-championship",
+
+    storageBucket:
+        "aps-robotics-championship.firebasestorage.app",
+
+    messagingSenderId:
+        "1063542904891",
+
+    appId:
+        "1:1063542904891:web:82ff9bb3fba0b87384a41e"
+
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const database = getDatabase(app);
+
+
+const form =
+    document.getElementById("registrationForm");
+
+const submitButton =
+    document.getElementById("submitRegistration");
+
+const formMessage =
+    document.getElementById("formMessage");
+
+
+form.addEventListener("submit", async event => {
+
+    event.preventDefault();
+
+
+    const selectedEvents =
+        [...document.querySelectorAll(
+            'input[name="Events"]:checked'
+        )].map(input => input.value);
+
+
+    if(selectedEvents.length === 0){
+
+        showFormMessage(
+            "Please select at least one event.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const studentName =
+        document.getElementById("studentName").value.trim();
+
+
+    const teamName =
+        document.getElementById("teamName").value.trim();
+
+
+    const className =
+        document.getElementById("className").value.trim();
+
+
+    const section =
+        document.getElementById("sectionName").value.trim();
+
+
+    const mobile =
+        document.getElementById("mobileNumber").value.trim();
+
+
+    const email =
+        document.getElementById("emailAddress").value.trim();
+
+
+    const teamSize =
+        1 +
+        [2,3,4,5].filter(number => {
+
+            return document.getElementById(
+                `member${number}`
+            ).value.trim();
+
+        }).length;
+
+
+    const registrationId =
+        "APS26-" +
+        Date.now().toString(36).toUpperCase();
+
+
+    const registrationDate =
+        new Date().toISOString();
+
+
+    const registrationData = {
+
+        registrationId,
+
+        StudentName:
+            studentName,
+
+        TeamName:
+            teamName,
+
+        Class:
+            className,
+
+        Section:
+            section,
+
+        MobileNumber:
+            mobile,
+
+        EmailAddress:
+            email,
+
+        Events:
+            selectedEvents,
+
+        TeamSize:
+            teamSize,
+
+        Member2Name:
+            document.getElementById("member2").value.trim(),
+
+        Member3Name:
+            document.getElementById("member3").value.trim(),
+
+        Member4Name:
+            document.getElementById("member4").value.trim(),
+
+        Member5Name:
+            document.getElementById("member5").value.trim(),
+
+        Remarks:
+            "",
+
+        registrationDate
+
+    };
+
+
+    submitButton.disabled = true;
+
+    submitButton.innerHTML = `
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        Submitting...
+    `;
+
+
+    try{
+
+        const registrationRef =
+            push(
+                ref(database, "registrations")
+            );
+
+
+        await set(
+            registrationRef,
+            registrationData
+        );
+
+
+        showFormMessage(
+            "Registration successful! Redirecting...",
+            "success"
+        );
+
+
+        form.reset();
+
+
+        setTimeout(() => {
+
+            window.location.href =
+                "thank.html";
+
+        }, 1200);
+
+    }
+    catch(error){
+
+        console.error(
+            "Registration error:",
+            error
+        );
+
+
+        showFormMessage(
+            "Registration failed: " +
+            getFirebaseError(error),
+            "error"
+        );
+
+    }
+    finally{
+
+        submitButton.disabled = false;
+
+        submitButton.innerHTML = `
+            <i class="fa-solid fa-paper-plane"></i>
+            Submit Registration
+        `;
+
+    }
+
+});
+
+
+function showFormMessage(message, type){
+
+    formMessage.textContent =
+        message;
+
+    formMessage.className =
+        "form-message " + type;
+
+}
+
+
+function getFirebaseError(error){
+
+    if(
+        error &&
+        error.code ===
+        "PERMISSION_DENIED"
+    ){
+
+        return "Database permission denied.";
+
+    }
+
+
+    if(
+        error &&
+        error.code ===
+        "PERMISSION_DENIED"
+    ){
+
+        return "Database permission denied.";
+
+    }
+
+
+    return "Please check your internet connection and try again.";
+
+}
+
+
+</script>
+
+
+<script>
+
+const preloader =
+    document.getElementById("preloader");
+
+
+window.addEventListener("load", () => {
+
+    setTimeout(() => {
+
+        preloader.classList.add("loaded");
+
+    }, 900);
+
+});
+
+
+const navbar =
+    document.getElementById("navbar");
+
+
+window.addEventListener("scroll", () => {
+
+    navbar.classList.toggle(
+        "scrolled",
+        window.scrollY > 40
+    );
+
+});
+
+
+const menuBtn =
+    document.getElementById("menuBtn");
+
+const mobileMenu =
+    document.getElementById("mobileMenu");
+
+const mobileClose =
+    document.getElementById("mobileClose");
+
+
+menuBtn.addEventListener("click", () => {
+
+    mobileMenu.classList.add("open");
+
+});
+
+
+mobileClose.addEventListener("click", () => {
+
+    mobileMenu.classList.remove("open");
+
+});
+
+
+document
+.querySelectorAll(".mobile-menu a")
+.forEach(link => {
+
+    link.addEventListener("click", () => {
+
+        mobileMenu.classList.remove("open");
+
+    });
+
+});
+
+
+const sections =
+    document.querySelectorAll("main section[id]");
+
+const navLinks =
+    document.querySelectorAll(".desktop-nav .nav-link");
+
+
+const observer =
+    new IntersectionObserver(
+        entries => {
+
+            entries.forEach(entry => {
+
+                if(entry.isIntersecting){
+
+                    navLinks.forEach(link => {
+
+                        link.classList.remove("active");
+
+                        if(
+                            link.getAttribute("href") ===
+                            "#" + entry.target.id
+                        ){
+
+                            link.classList.add("active");
+
+                        }
+
+                    });
+
+                }
+
+            });
+
+        },
+        {
+            threshold: 0.25
+        }
+    );
+
+
+sections.forEach(section => {
+
+    observer.observe(section);
+
+});
+
+
+const siteToast =
+    document.getElementById("siteToast");
+
+
+</script>
 
 </body>
-</html>
+    </html>
