@@ -1,45 +1,479 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#050914">
-<title>APS Robotics Championship 2026 | Help Center</title>
+
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1.0">
+
+<meta
+    name="theme-color"
+    content="#050914">
+
+<title>
+    APS Robotics Championship 2026 | Help Center
+</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="help.css">
+
+<link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+<link
+    rel="stylesheet"
+    href="help.css">
+
 </head>
+
+
 <body>
+
+
 <header class="help-header">
-  <a href="index.html" class="brand"><img src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png" alt="APS Logo"><span><b>APS ROBOTICS</b><small>CHAMPIONSHIP 2026</small></span></a>
-  <a href="index.html" class="back-link">← Back to Website</a>
+
+    <a
+        href="index.html"
+        class="brand">
+
+        <img
+            src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+            alt="APS Logo">
+
+        <span>
+
+            <b>
+                APS ROBOTICS
+            </b>
+
+            <small>
+                CHAMPIONSHIP 2026
+            </small>
+
+        </span>
+
+    </a>
+
+
+    <a
+        href="index.html"
+        class="back-link">
+
+        ← Back to Website
+
+    </a>
+
 </header>
+
+
+
 <main class="help-main">
-  <section class="help-hero"><span>SUPPORT CENTER</span><h1>How Can We <b>Help?</b></h1><p>Having a problem with registration or the championship website? Send the organising team a support request.</p></section>
-  <section class="help-grid">
-    <div class="help-card">
-      <h2>🆘 Submit an Issue</h2>
-      <p class="muted">Please provide accurate contact details so the team can respond.</p>
-      <form id="helpForm">
-        <label>Your Name<input id="name" required maxlength="80" placeholder="Enter your name"></label>
-        <label>Email Address<input id="email" type="email" required maxlength="120" placeholder="you@example.com"></label>
-        <label>Category<select id="category" required><option value="Registration">Registration</option><option value="Website">Website</option><option value="Payment">Payment</option><option value="Technical">Technical</option><option value="Other">Other</option></select></label>
-        <label>Subject<input id="subject" required maxlength="120" placeholder="Briefly describe the issue"></label>
-        <label>Message<textarea id="message" required maxlength="2000" rows="7" placeholder="Explain the issue clearly..."></textarea></label>
-        <button class="submit-btn" type="submit" id="submitBtn">Send Support Request →</button>
-        <div id="formStatus" class="form-status"></div>
-      </form>
+
+
+<section class="help-hero">
+
+    <span>
+        SUPPORT CENTER
+    </span>
+
+    <h1>
+        How Can We
+        <b>Help?</b>
+    </h1>
+
+    <p>
+        Having a problem with registration or the
+        championship website? Send the organising
+        team a support request and we will get back
+        to you.
+    </p>
+
+</section>
+
+
+
+<section class="help-grid">
+
+
+<!-- =====================================================
+     SUPPORT FORM
+====================================================== -->
+
+<div class="help-card">
+
+    <h2>
+        🆘 Submit an Issue
+    </h2>
+
+    <p class="muted">
+        Please provide accurate details so the
+        organising team can respond quickly.
+    </p>
+
+
+    <form
+        id="helpForm"
+        action="https://formsubmit.co/ayusshh@outlook.in"
+        method="POST">
+
+
+        <!-- FormSubmit settings -->
+
+        <input
+            type="hidden"
+            name="_subject"
+            value="APS Robotics Championship 2026 - New Support Request">
+
+        <input
+            type="hidden"
+            name="_template"
+            value="table">
+
+        <input
+            type="hidden"
+            name="_captcha"
+            value="false">
+
+        <input
+            type="hidden"
+            name="_next"
+            value="https://apsrobotics2026.github.io/thankyou.html">
+
+
+        <!-- NAME -->
+
+        <label>
+
+            Your Name
+
+            <input
+                id="name"
+                name="Name"
+                type="text"
+                required
+                maxlength="80"
+                autocomplete="name"
+                placeholder="Enter your name">
+
+        </label>
+
+
+        <!-- CLASS -->
+
+        <label>
+
+            Class
+
+            <select
+                id="class"
+                name="Class"
+                required>
+
+                <option value="">
+                    Select Class
+                </option>
+
+                <option value="VI">
+                    VI
+                </option>
+
+                <option value="VII">
+                    VII
+                </option>
+
+                <option value="VIII">
+                    VIII
+                </option>
+
+                <option value="IX">
+                    IX
+                </option>
+
+                <option value="X">
+                    X
+                </option>
+
+                <option value="XI">
+                    XI
+                </option>
+
+                <option value="XII">
+                    XII
+                </option>
+
+            </select>
+
+        </label>
+
+
+        <!-- SECTION -->
+
+        <label>
+
+            Section
+
+            <input
+                id="section"
+                name="Section"
+                type="text"
+                required
+                maxlength="5"
+                placeholder="e.g. A">
+
+        </label>
+
+
+        <!-- EMAIL -->
+
+        <label>
+
+            Email Address
+
+            <input
+                id="email"
+                name="Email"
+                type="email"
+                required
+                maxlength="120"
+                autocomplete="email"
+                placeholder="you@example.com">
+
+        </label>
+
+
+        <!-- REGISTRATION ID -->
+
+        <label>
+
+            Registration ID
+
+            <input
+                id="registrationId"
+                name="Registration ID"
+                type="text"
+                maxlength="40"
+                placeholder="e.g. APS-RBC-2026-1234">
+
+            <small class="field-help">
+                If your issue is related to a registration,
+                enter your Registration ID.
+            </small>
+
+        </label>
+
+
+        <!-- CATEGORY -->
+
+        <label>
+
+            Category
+
+            <select
+                id="category"
+                name="Category"
+                required>
+
+                <option value="Registration">
+                    Registration
+                </option>
+
+                <option value="Website">
+                    Website
+                </option>
+
+                <option value="Payment">
+                    Payment
+                </option>
+
+                <option value="Technical">
+                    Technical
+                </option>
+
+                <option value="Other">
+                    Other
+                </option>
+
+            </select>
+
+        </label>
+
+
+        <!-- SUBJECT -->
+
+        <label>
+
+            Subject
+
+            <input
+                id="subject"
+                name="Subject"
+                type="text"
+                required
+                maxlength="120"
+                placeholder="Briefly describe the issue">
+
+        </label>
+
+
+        <!-- MESSAGE -->
+
+        <label>
+
+            Message
+
+            <textarea
+                id="message"
+                name="Message"
+                required
+                maxlength="2000"
+                rows="7"
+                placeholder="Explain the issue clearly..."></textarea>
+
+        </label>
+
+
+        <!-- SUBMIT -->
+
+        <button
+            class="submit-btn"
+            type="submit"
+            id="submitBtn">
+
+            Send Support Request →
+
+        </button>
+
+
+        <div
+            id="formStatus"
+            class="form-status"
+            aria-live="polite">
+        </div>
+
+
+    </form>
+
+</div>
+
+
+
+<!-- =====================================================
+     HELP INFORMATION
+====================================================== -->
+
+<div class="help-card side">
+
+    <h2>
+        Before You Submit
+    </h2>
+
+
+    <div class="tip">
+
+        <b>
+            Registration problem?
+        </b>
+
+        <span>
+            Keep your Registration ID ready if
+            you already registered.
+        </span>
+
     </div>
-    <div class="help-card side">
-      <h2>Before You Submit</h2>
-      <div class="tip"><b>Registration problem?</b><span>Keep your Registration ID ready if you already registered.</span></div>
-      <div class="tip"><b>Website problem?</b><span>Mention the page and what you clicked when the problem occurred.</span></div>
-      <div class="tip"><b>Technical issue?</b><span>Describe the device/browser and the exact error message if possible.</span></div>
-      <div class="contact-box"><small>ORGANISING TEAM</small><strong>APS Tinkering Lab</strong><span>Army Public School, Lal Bahadur Shastri Marg, Lucknow</span></div>
+
+
+    <div class="tip">
+
+        <b>
+            Website problem?
+        </b>
+
+        <span>
+            Mention the page and what you clicked
+            when the problem occurred.
+        </span>
+
     </div>
-  </section>
+
+
+    <div class="tip">
+
+        <b>
+            Technical issue?
+        </b>
+
+        <span>
+            Describe your device/browser and the
+            exact error message if possible.
+        </span>
+
+    </div>
+
+
+    <div class="tip">
+
+        <b>
+            Student information
+        </b>
+
+        <span>
+            Please provide your correct class and
+            section so the organising team can
+            identify your registration quickly.
+        </span>
+
+    </div>
+
+
+    <div class="contact-box">
+
+        <small>
+            ORGANISING TEAM
+        </small>
+
+        <strong>
+            APS Tinkering Lab
+        </strong>
+
+        <span>
+            Army Public School,
+            Lal Bahadur Shastri Marg,
+            Lucknow
+        </span>
+
+        <span>
+            Support Email:
+            ayusshh@outlook.in
+        </span>
+
+    </div>
+
+</div>
+
+
+</section>
+
 </main>
-<script type="module" src="help.js"></script>
+
+
+<!--
+    No help.js is required.
+
+    FormSubmit handles the form submission
+    and sends the request to:
+
+    ayusshh@outlook.in
+-->
+
+
 </body>
+
 </html>
