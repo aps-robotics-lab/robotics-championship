@@ -4,417 +4,570 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<meta name="theme-color" content="#020711">
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-<title>Agent Dashboard | APS Robotics</title>
+<meta
+name="theme-color"
+content="#020711">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<title>
+Help & Support | APS Robotics Championship 2026
+</title>
+
 
 <link
-href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Poppins:wght@400;500;600&display=swap"
+rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link
+rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+
+<link
+href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap"
 rel="stylesheet">
 
-<link rel="stylesheet" href="agent.css">
+
+<link
+rel="stylesheet"
+href="help.css">
 
 </head>
 
+
 <body>
 
+<div class="background"></div>
 
-<!-- LOGIN -->
-
-<section id="loginScreen" class="login-screen">
-
-<div class="login-card">
-
-<div class="login-logo">
-
-<img
-src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
-alt="APS">
-
-</div>
-
-<span class="login-badge">
-APS ROBOTICS
-</span>
-
-<h1>Agent Login</h1>
-
-<p>
-Sign in to manage student support requests.
-</p>
-
-
-<form id="loginForm">
-
-<label>
-
-Agent Email
-
-<input
-id="loginEmail"
-type="email"
-required
-autocomplete="username"
-placeholder="agent@example.com">
-
-</label>
-
-
-<label>
-
-Password
-
-<input
-id="loginPassword"
-type="password"
-required
-autocomplete="current-password"
-placeholder="Enter password">
-
-</label>
-
-
-<button
-type="submit"
-id="loginBtn">
-
-Login to Dashboard
-
-</button>
-
-
-<div
-id="loginStatus"
-class="login-status">
-</div>
-
-</form>
-
-
-<a
-href="help.html"
-class="back-help">
-← Back to Help Center
-</a>
-
-</div>
-
-</section>
-
-
-<!-- DASHBOARD -->
-
-<div
-id="dashboard"
-class="dashboard hidden">
+<div class="grid"></div>
 
 
 <header class="topbar">
 
-<div class="brand">
+    <a
+    href="index.html"
+    class="brand">
 
-<img
-src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
-alt="APS">
+        <img
+        src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+        alt="APS Logo">
 
-<div>
+        <div>
 
-<b>APS ROBOTICS</b>
+            <span>
+                APS TINKERING LAB
+            </span>
 
-<span>SUPPORT CENTER</span>
+            <strong>
+                ROBOTICS CHAMPIONSHIP 2026
+            </strong>
 
-</div>
+        </div>
 
-</div>
+    </a>
 
 
-<div class="agent-area">
+    <a
+    href="index.html"
+    class="home-btn">
 
-<div class="agent-info">
+        ← Home
 
-<strong id="agentName">
-Agent
-</strong>
-
-<small id="agentEmail">
-</small>
-
-</div>
-
-<button id="logoutBtn">
-Logout
-</button>
-
-</div>
+    </a>
 
 </header>
 
 
-<main class="main">
+
+<main>
+
+<section class="hero">
+
+    <div class="hero-badge">
+
+        <span></span>
+
+        SUPPORT CENTRE
+
+    </div>
 
 
-<div class="page-title">
+    <h1>
 
-<div>
+        How can we
 
-<span>AGENT CONTROL PANEL</span>
+        <span>
+            help you?
+        </span>
 
-<h1>Support Tickets</h1>
-
-<p>
-Manage and resolve APS Robotics Championship support requests.
-</p>
-
-</div>
-
-<button
-id="refreshBtn"
-class="refresh-btn">
-
-↻ Refresh
-
-</button>
-
-</div>
+    </h1>
 
 
-<!-- STATS -->
+    <p>
 
-<section class="stats">
+        Submit your question, problem or support request.
+        Our support team will review your ticket and help
+        you as soon as possible.
 
-<div class="stat-card">
-
-<small>TOTAL</small>
-
-<strong id="totalCount">0</strong>
-
-</div>
-
-<div class="stat-card">
-
-<small>OPEN</small>
-
-<strong id="openCount">0</strong>
-
-</div>
-
-<div class="stat-card">
-
-<small>IN PROGRESS</small>
-
-<strong id="progressCount">0</strong>
-
-</div>
-
-<div class="stat-card">
-
-<small>RESOLVED</small>
-
-<strong id="resolvedCount">0</strong>
-
-</div>
+    </p>
 
 </section>
 
 
-<!-- FILTER -->
 
-<section class="toolbar">
+<section class="support-section">
 
-<input
-id="searchInput"
-type="search"
-placeholder="Search ticket, student, registration ID...">
 
-<select id="statusFilter">
+    <div class="info-panel">
 
-<option value="All">All Status</option>
-<option value="Open">Open</option>
-<option value="In Progress">In Progress</option>
-<option value="Resolved">Resolved</option>
+        <div class="panel-label">
+            APS SUPPORT DESK
+        </div>
 
-</select>
 
-<select id="categoryFilter">
+        <h2>
 
-<option value="All">All Categories</option>
-<option value="Registration">Registration</option>
-<option value="Website">Website</option>
-<option value="Payment">Payment</option>
-<option value="Technical">Technical</option>
-<option value="Other">Other</option>
+            Need assistance with the
 
-</select>
+            <span>
+                championship?
+            </span>
 
-</section>
+        </h2>
 
 
-<div
-id="dashboardStatus"
-class="dashboard-status">
-</div>
+        <p>
 
+            You can contact the support team for help with
+            registration, events, team details, technical
+            problems or any other championship-related issue.
 
-<section class="ticket-layout">
+        </p>
 
 
-<div class="ticket-list">
+        <div class="support-list">
 
-<div class="list-header">
 
-<strong>Tickets</strong>
+            <div class="support-item">
 
-<span id="ticketCountLabel">
-0 tickets
-</span>
+                <div class="support-icon">
+                    01
+                </div>
 
-</div>
+                <div>
 
-<div
-id="ticketList">
-</div>
+                    <strong>
+                        Submit your issue
+                    </strong>
 
-</div>
+                    <span>
+                        Fill in the support form.
+                    </span>
 
+                </div>
 
-<div class="ticket-detail">
+            </div>
 
-<div
-id="emptyDetail"
-class="empty-detail">
 
-<div>🎧</div>
 
-<h2>Select a Ticket</h2>
+            <div class="support-item">
 
-<p>
-Choose a support ticket to view the issue and respond.
-</p>
+                <div class="support-icon">
+                    02
+                </div>
 
-</div>
+                <div>
 
+                    <strong>
+                        Get a Ticket ID
+                    </strong>
 
-<div
-id="detailContent"
-class="hidden">
+                    <span>
+                        Save your unique support ticket number.
+                    </span>
 
-<div class="detail-top">
+                </div>
 
-<div>
+            </div>
 
-<span
-id="detailStatus"
-class="status-badge">
-Open
-</span>
 
-<h2 id="detailSubject">
-Subject
-</h2>
 
-</div>
+            <div class="support-item">
 
-<span id="detailTicketId">
-APS-HLP-2026-0001
-</span>
+                <div class="support-icon">
+                    03
+                </div>
 
-</div>
+                <div>
 
+                    <strong>
+                        Agent reviews your request
+                    </strong>
 
-<div class="student-box">
+                    <span>
+                        Our support team can update and resolve it.
+                    </span>
 
-<div>
-<small>STUDENT</small>
-<strong id="detailStudent"></strong>
-</div>
+                </div>
 
-<div>
-<small>CLASS / SECTION</small>
-<strong id="detailClass"></strong>
-</div>
+            </div>
 
-<div>
-<small>REGISTRATION</small>
-<strong id="detailRegistration"></strong>
-</div>
 
-<div>
-<small>EMAIL</small>
-<strong id="detailEmail"></strong>
-</div>
+        </div>
 
-</div>
 
+        <div class="important-note">
 
-<div class="issue-box">
+            <strong>
+                Registration ID is optional.
+            </strong>
 
-<small>STUDENT MESSAGE</small>
+            <span>
+                You can still submit a support request even if
+                you do not have a registration number.
+            </span>
 
-<p id="detailMessage"></p>
+        </div>
 
-</div>
+    </div>
 
 
-<div class="reply-area">
 
-<label>
+    <div class="form-card">
 
-Agent Reply
 
-<textarea
-id="replyText"
-rows="7"
-placeholder="Write your response to the student..."></textarea>
+        <div class="form-heading">
 
-</label>
+            <span>
+                CREATE SUPPORT TICKET
+            </span>
 
+            <h2>
+                Tell us what happened
+            </h2>
 
-<div class="update-row">
+            <p>
+                Fields marked with * are required.
+            </p>
 
-<select id="detailStatusSelect">
+        </div>
 
-<option value="Open">Open</option>
-<option value="In Progress">In Progress</option>
-<option value="Resolved">Resolved</option>
 
-</select>
 
-<button
-id="saveTicketBtn">
+        <form
+        id="helpForm"
+        novalidate>
 
-Save & Reply
 
-</button>
+            <div class="form-grid">
 
-</div>
 
-<div
-id="updateStatus"
-class="update-status">
-</div>
+                <div class="field full-field">
 
-</div>
+                    <label
+                    for="registrationId">
 
-</div>
+                        Registration ID
 
-</div>
+                        <small>
+                            OPTIONAL
+                        </small>
+
+                    </label>
+
+
+                    <input
+                    type="text"
+                    id="registrationId"
+                    placeholder="Example: APS-RBC-2026-0001"
+                    autocomplete="off">
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label
+                    for="name">
+
+                        Your Name *
+
+                    </label>
+
+
+                    <input
+                    type="text"
+                    id="name"
+                    placeholder="Enter your full name"
+                    required>
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label
+                    for="className">
+
+                        Class *
+
+                    </label>
+
+
+                    <select
+                    id="className"
+                    required>
+
+                        <option value="">
+                            Select Class
+                        </option>
+
+                        <option value="VI">
+                            VI
+                        </option>
+
+                        <option value="VII">
+                            VII
+                        </option>
+
+                        <option value="VIII">
+                            VIII
+                        </option>
+
+                        <option value="IX">
+                            IX
+                        </option>
+
+                        <option value="X">
+                            X
+                        </option>
+
+                        <option value="XI">
+                            XI
+                        </option>
+
+                        <option value="XII">
+                            XII
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label
+                    for="section">
+
+                        Section *
+
+                    </label>
+
+
+                    <input
+                    type="text"
+                    id="section"
+                    placeholder="Example: A"
+                    maxlength="20"
+                    required>
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label
+                    for="email">
+
+                        Email Address *
+
+                    </label>
+
+
+                    <input
+                    type="email"
+                    id="email"
+                    placeholder="example@email.com"
+                    required>
+
+                </div>
+
+
+
+                <div class="field full-field">
+
+                    <label
+                    for="category">
+
+                        Issue Category *
+
+                    </label>
+
+
+                    <select
+                    id="category"
+                    required>
+
+                        <option value="">
+                            Select a category
+                        </option>
+
+                        <option value="Registration">
+                            Registration
+                        </option>
+
+                        <option value="Team">
+                            Team / Members
+                        </option>
+
+                        <option value="Event">
+                            Event Information
+                        </option>
+
+                        <option value="Technical">
+                            Technical Problem
+                        </option>
+
+                        <option value="Website">
+                            Website Issue
+                        </option>
+
+                        <option value="Payment">
+                            Payment
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div class="field full-field">
+
+                    <label
+                    for="subject">
+
+                        Subject *
+
+                    </label>
+
+
+                    <input
+                    type="text"
+                    id="subject"
+                    placeholder="Briefly describe your issue"
+                    maxlength="120"
+                    required>
+
+                </div>
+
+
+
+                <div class="field full-field">
+
+                    <label
+                    for="message">
+
+                        Describe Your Issue *
+
+                    </label>
+
+
+                    <textarea
+                    id="message"
+                    rows="7"
+                    placeholder="Please explain your issue in detail..."
+                    maxlength="2000"
+                    required></textarea>
+
+                </div>
+
+
+            </div>
+
+
+
+            <div
+            id="formStatus"
+            class="form-status"
+            aria-live="polite">
+            </div>
+
+
+
+            <button
+            id="submitBtn"
+            type="submit"
+            class="submit-btn">
+
+                <span id="submitText">
+                    Submit Support Ticket
+                </span>
+
+
+                <span
+                id="submitLoading"
+                class="hidden">
+
+                    <i></i>
+
+                    Creating Ticket...
+
+                </span>
+
+            </button>
+
+
+            <p class="privacy-text">
+
+                Your information is used only for resolving your
+                support request.
+
+            </p>
+
+
+        </form>
+
+    </div>
+
 
 </section>
 
 </main>
 
-</div>
+
+
+<footer>
+
+    © 2026 APS Tinkering Lab · APS Robotics Championship 2026
+
+</footer>
+
 
 
 <script
 type="module"
-src="agent.js">
+src="help.js">
 </script>
 
 </body>
+
 </html>
