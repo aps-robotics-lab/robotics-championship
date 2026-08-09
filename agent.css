@@ -878,3 +878,17 @@ td small {
     }
 
                           }
+/* =========================================================
+   HIDDEN AGENT NAVIGATION
+   Visible only when JavaScript enables it
+========================================================= */
+
+.agent-nav-link {
+    display: none !important;
+}
+
+.agent-nav-link.agent-visible {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
