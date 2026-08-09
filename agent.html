@@ -15,19 +15,10 @@
         content="#020711"
     >
 
-    <meta
-        name="description"
-        content="APS Robotics Championship 2026 Agent Dashboard"
-    >
-
     <title>
-        Agent Dashboard | APS Robotics Championship 2026
+        Agent Help Center | APS Robotics Championship 2026
     </title>
 
-
-    <!-- =====================================================
-         GOOGLE FONTS
-    ====================================================== -->
 
     <link
         rel="preconnect"
@@ -36,7 +27,7 @@
 
     <link
         rel="preconnect"
-        href="https://fonts.gstatic.com"
+        href="https://fonts.googleapis.com"
         crossorigin
     >
 
@@ -45,10 +36,6 @@
         rel="stylesheet"
     >
 
-
-    <!-- =====================================================
-         AGENT CSS
-    ====================================================== -->
 
     <link
         rel="stylesheet"
@@ -61,9 +48,9 @@
 <body>
 
 
-<!-- =========================================================
+<!-- =====================================================
      TOP BAR
-========================================================= -->
+===================================================== -->
 
 <header class="topbar">
 
@@ -71,7 +58,7 @@
 
         <img
             src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
-            alt="APS Logo"
+            alt="APS"
         >
 
         <div>
@@ -89,67 +76,54 @@
     </div>
 
 
-    <nav>
+    <div class="agent-area">
 
-        <a href="index.html">
-            Home
-        </a>
+        <div class="agent-status">
 
-        <a href="rules.html">
-            Rules
-        </a>
+            <span></span>
 
-        <a href="help.html">
-            Help
-        </a>
+            AGENT ONLINE
+
+        </div>
 
 
         <button
             id="logoutBtn"
             class="logout-btn"
-            type="button"
         >
             Logout
         </button>
 
-    </nav>
+    </div>
 
 </header>
 
 
-<!-- =========================================================
+
+<!-- =====================================================
      MAIN
-========================================================= -->
+===================================================== -->
 
 <main>
 
 
-    <!-- =====================================================
-         HERO
-    ====================================================== -->
+    <!-- HERO -->
 
     <section class="hero">
 
         <div>
 
             <span class="badge">
-                AGENT CONTROL CENTER
+                SUPPORT CONTROL CENTER
             </span>
 
-
             <h1>
-
-                Registration
-
-                <span>
-                    Dashboard
-                </span>
-
+                Help
+                <span>Tickets</span>
             </h1>
 
-
             <p>
-                Manage APS Robotics Championship 2026 registrations.
+                View student problems and help resolve them quickly.
             </p>
 
         </div>
@@ -158,539 +132,488 @@
 
 
 
-    <!-- =====================================================
-         DASHBOARD
-    ====================================================== -->
+    <!-- =================================================
+         STATS
+    ================================================= -->
 
-    <section class="dashboard">
-
-
-        <!-- =================================================
-             STATISTICS
-        ================================================== -->
-
-        <div class="stats-grid">
+    <section class="stats-grid">
 
 
-            <div class="stat-card">
+        <div class="stat-card">
 
-                <div class="stat-icon">
-                    📋
-                </div>
-
-                <div>
-
-                    <small>
-                        REGISTRATIONS
-                    </small>
-
-                    <strong
-                        id="totalRegistrations"
-                    >
-                        0
-                    </strong>
-
-                </div>
-
+            <div class="stat-icon">
+                🎫
             </div>
-
-
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-                    👤
-                </div>
-
-                <div>
-
-                    <small>
-                        SOLO
-                    </small>
-
-                    <strong
-                        id="soloCount"
-                    >
-                        0
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-                    👥
-                </div>
-
-                <div>
-
-                    <small>
-                        TEAMS
-                    </small>
-
-                    <strong
-                        id="teamCount"
-                    >
-                        0
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-                    🤖
-                </div>
-
-                <div>
-
-                    <small>
-                        PARTICIPANTS
-                    </small>
-
-                    <strong
-                        id="participantCount"
-                    >
-                        0
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-        </div>
-
-
-
-        <!-- =================================================
-             TOOLBAR
-        ================================================== -->
-
-        <div class="toolbar">
-
 
             <div>
 
-                <span class="section-label">
-                    AGENT PANEL
-                </span>
+                <small>
+                    TOTAL TICKETS
+                </small>
 
-
-                <h2>
-                    Registrations
-                </h2>
-
-
-                <p>
-                    Search and manage registered participants.
-                </p>
-
-            </div>
-
-
-
-            <div class="toolbar-actions">
-
-
-                <input
-                    id="search"
-                    type="search"
-                    placeholder="Search name, ID, team, email..."
-                    autocomplete="off"
-                >
-
-
-                <button
-                    id="refreshBtn"
-                    class="secondary-btn"
-                    type="button"
-                >
-                    ↻ Refresh
-                </button>
-
+                <strong id="totalTickets">
+                    0
+                </strong>
 
             </div>
 
         </div>
 
 
+        <div class="stat-card open-card">
 
-        <!-- =================================================
-             STATUS
-        ================================================== -->
+            <div class="stat-icon">
+                🔴
+            </div>
 
-        <div
-            id="status"
-            class="status"
-            aria-live="polite"
-        ></div>
+            <div>
 
+                <small>
+                    OPEN
+                </small>
 
+                <strong id="openTickets">
+                    0
+                </strong>
 
-        <!-- =================================================
-             REGISTRATION TABLE
-        ================================================== -->
+            </div>
 
-        <div class="table-container">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            Registration ID
-                        </th>
+        </div>
 
 
-                        <th>
-                            Leader
-                        </th>
+        <div class="stat-card progress-card">
+
+            <div class="stat-icon">
+                🟡
+            </div>
+
+            <div>
+
+                <small>
+                    IN PROGRESS
+                </small>
+
+                <strong id="progressTickets">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
 
 
-                        <th>
-                            Team
-                        </th>
+        <div class="stat-card closed-card">
 
+            <div class="stat-icon">
+                🟢
+            </div>
 
-                        <th>
-                            Type
-                        </th>
+            <div>
 
+                <small>
+                    SOLVED
+                </small>
 
-                        <th>
-                            Members
-                        </th>
+                <strong id="closedTickets">
+                    0
+                </strong>
 
-
-                        <th>
-                            Contact
-                        </th>
-
-
-                        <th>
-                            Events
-                        </th>
-
-
-                        <th>
-                            Date
-                        </th>
-
-
-                        <th>
-                            Action
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody
-                    id="registrationBody"
-                >
-
-                    <!-- Firebase registrations appear here -->
-
-                </tbody>
-
-            </table>
+            </div>
 
         </div>
 
 
     </section>
 
-</main>
 
 
+    <!-- =================================================
+         TICKET AREA
+    ================================================= -->
 
-<!-- =========================================================
-     EDIT REGISTRATION MODAL
-========================================================= -->
-
-<div
-    id="editOverlay"
-    class="overlay hidden"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="editTitle"
->
+    <section class="panel">
 
 
-    <div class="edit-card">
-
-
-        <!-- ================================================
-             EDIT HEADER
-        ================================================= -->
-
-        <div class="edit-header">
+        <div class="toolbar">
 
 
             <div>
 
-                <span>
-                    EDIT REGISTRATION
+                <h2>
+                    Student Support Requests
+                </h2>
+
+                <p>
+                    Select a ticket to view the complete problem.
+                </p>
+
+            </div>
+
+
+            <div class="toolbar-actions">
+
+
+                <input
+                    id="searchInput"
+                    type="search"
+                    placeholder="Search ticket, name, email..."
+                >
+
+
+                <select id="statusFilter">
+
+                    <option value="All">
+                        All Tickets
+                    </option>
+
+                    <option value="Open">
+                        Open
+                    </option>
+
+                    <option value="In Progress">
+                        In Progress
+                    </option>
+
+                    <option value="Closed">
+                        Solved
+                    </option>
+
+                </select>
+
+
+                <button
+                    id="refreshBtn"
+                    class="refresh-btn"
+                >
+                    ↻
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="statusMessage"
+            class="status-message"
+        ></div>
+
+
+        <!-- TICKETS -->
+
+        <div
+            id="ticketList"
+            class="ticket-list"
+        ></div>
+
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     TICKET DETAIL MODAL
+===================================================== -->
+
+<div
+    id="ticketOverlay"
+    class="overlay hidden"
+>
+
+
+    <div class="ticket-modal">
+
+
+        <!-- HEADER -->
+
+        <div class="modal-header">
+
+            <div>
+
+                <span class="modal-label">
+                    SUPPORT TICKET
                 </span>
 
-
-                <h2 id="editTitle">
-                    Registration Details
+                <h2 id="modalSubject">
+                    Ticket
                 </h2>
+
+                <div
+                    id="modalTicketId"
+                    class="ticket-id"
+                ></div>
 
             </div>
 
 
             <button
-                id="closeEdit"
+                id="closeModal"
                 class="close-btn"
                 type="button"
-                aria-label="Close"
             >
                 ×
             </button>
-
 
         </div>
 
 
 
-        <!-- ================================================
-             EDIT FORM
-        ================================================= -->
+        <!-- STUDENT INFORMATION -->
 
-        <form
-            id="editForm"
-            autocomplete="off"
-        >
+        <div class="section-title">
+            STUDENT INFORMATION
+        </div>
 
 
-            <input
-                type="hidden"
-                id="editKey"
+        <div class="student-grid">
+
+
+            <div class="info-box">
+
+                <span>
+                    STUDENT NAME
+                </span>
+
+                <strong id="modalName">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <span>
+                    REGISTRATION ID
+                </span>
+
+                <strong id="modalRegistrationId">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <span>
+                    CLASS
+                </span>
+
+                <strong id="modalClass">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <span>
+                    SECTION
+                </span>
+
+                <strong id="modalSection">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <span>
+                    EMAIL
+                </span>
+
+                <strong id="modalEmail">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <span>
+                    CATEGORY
+                </span>
+
+                <strong id="modalCategory">
+                    -
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ORIGINAL MESSAGE -->
+
+        <div class="section-title">
+            STUDENT'S PROBLEM
+        </div>
+
+
+        <div class="problem-box">
+
+            <div class="problem-subject">
+
+                <span>
+                    SUBJECT
+                </span>
+
+                <strong id="problemSubject">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div
+                id="problemMessage"
+                class="problem-message"
             >
+            </div>
+
+        </div>
 
 
 
-            <div class="edit-grid">
+        <!-- TICKET INFORMATION -->
+
+        <div class="section-title">
+            TICKET INFORMATION
+        </div>
 
 
-                <!-- LEADER -->
-
-                <label>
-
-                    Leader Name
-
-                    <input
-                        id="editStudentName"
-                        type="text"
-                        required
-                    >
-
-                </label>
+        <div class="ticket-info-grid">
 
 
+            <div>
 
-                <!-- CLASS -->
+                <span>
+                    STATUS
+                </span>
 
-                <label>
-
-                    Class
-
-                    <select
-                        id="editStudentClass"
-                        required
-                    >
-
-                        <option value="">
-                            Select Class
-                        </option>
-
-                        <option value="VI">
-                            VI
-                        </option>
-
-                        <option value="VII">
-                            VII
-                        </option>
-
-                        <option value="VIII">
-                            VIII
-                        </option>
-
-                        <option value="IX">
-                            IX
-                        </option>
-
-                        <option value="X">
-                            X
-                        </option>
-
-                        <option value="XI">
-                            XI
-                        </option>
-
-                        <option value="XII">
-                            XII
-                        </option>
-
-                    </select>
-
-                </label>
-
-
-
-                <!-- SECTION -->
-
-                <label>
-
-                    Section
-
-                    <input
-                        id="editStudentSection"
-                        type="text"
-                        required
-                    >
-
-                </label>
-
-
-
-                <!-- MOBILE -->
-
-                <label>
-
-                    Mobile
-
-                    <input
-                        id="editMobileNumber"
-                        type="tel"
-                        maxlength="10"
-                        inputmode="numeric"
-                    >
-
-                </label>
-
-
-
-                <!-- EMAIL -->
-
-                <label>
-
-                    Email
-
-                    <input
-                        id="editEmailAddress"
-                        type="email"
-                    >
-
-                </label>
-
-
-
-                <!-- TEAM -->
-
-                <label>
-
-                    Team Name
-
-                    <input
-                        id="editTeamName"
-                        type="text"
-                    >
-
-                </label>
-
+                <strong id="modalStatus">
+                    -
+                </strong>
 
             </div>
 
 
+            <div>
 
-            <!-- ============================================
-                 MEMBERS
-            ============================================= -->
+                <span>
+                    PRIORITY
+                </span>
 
-            <h3 class="member-title">
-                Team Members
-            </h3>
-
-
-            <div
-                id="editMembers"
-            ></div>
-
-
-
-            <!-- ============================================
-                 REMARKS
-            ============================================= -->
-
-            <label class="remarks-label">
-
-                Remarks
-
-                <textarea
-                    id="editRemarks"
-                    rows="4"
-                    placeholder="Add optional remarks..."
-                ></textarea>
-
-            </label>
-
-
-
-            <!-- ============================================
-                 SAVE MESSAGE
-            ============================================= -->
-
-            <div
-                id="editMessage"
-                class="edit-message"
-                aria-live="polite"
-            ></div>
-
-
-
-            <!-- ============================================
-                 ACTIONS
-            ============================================= -->
-
-            <div class="edit-actions">
-
-
-                <button
-                    type="button"
-                    id="cancelEdit"
-                    class="secondary-btn"
-                >
-                    Cancel
-                </button>
-
-
-                <button
-                    type="submit"
-                    class="save-btn"
-                >
-                    Save Changes
-                </button>
-
+                <strong id="modalPriority">
+                    -
+                </strong>
 
             </div>
 
 
-        </form>
+            <div>
+
+                <span>
+                    CREATED
+                </span>
+
+                <strong id="modalCreated">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    LAST UPDATED
+                </span>
+
+                <strong id="modalUpdated">
+                    -
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- AGENT RESPONSE -->
+
+        <div class="section-title">
+            AGENT RESPONSE
+        </div>
+
+
+        <textarea
+            id="agentReply"
+            class="reply-box"
+            placeholder="Write a helpful response to the student..."
+            rows="5"
+        ></textarea>
+
+
+
+        <div
+            id="modalMessage"
+            class="modal-message"
+        ></div>
+
+
+
+        <!-- ACTIONS -->
+
+        <div class="modal-actions">
+
+
+            <button
+                id="setOpenBtn"
+                class="status-btn open-btn"
+                type="button"
+            >
+                🔴 Open
+            </button>
+
+
+            <button
+                id="setProgressBtn"
+                class="status-btn progress-btn"
+                type="button"
+            >
+                🟡 In Progress
+            </button>
+
+
+            <button
+                id="saveReplyBtn"
+                class="reply-btn"
+                type="button"
+            >
+                💬 Save Reply
+            </button>
+
+
+            <button
+                id="setClosedBtn"
+                class="status-btn closed-btn"
+                type="button"
+            >
+                🟢 Mark Solved
+            </button>
+
+
+        </div>
 
 
     </div>
@@ -698,10 +621,6 @@
 </div>
 
 
-
-<!-- =========================================================
-     AGENT JAVASCRIPT
-========================================================= -->
 
 <script
     type="module"
