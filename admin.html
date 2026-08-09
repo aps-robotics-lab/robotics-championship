@@ -1,156 +1,232 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="theme-color" content="#050914">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-    <title>APS Robotics Championship 2026 | Admin Panel</title>
+    <meta
+        name="theme-color"
+        content="#020711">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>
+        APS Robotics Championship 2026 | Admin
+    </title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com">
 
-    <link rel="stylesheet" href="admin.css">
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="admin.css">
+
 </head>
+
 
 <body>
 
-<!-- =========================================================
-     LOGIN
-========================================================= -->
 
-<section id="loginScreen" class="login-screen">
+<!-- =====================================================
+     LOGIN
+===================================================== -->
+
+<section
+    id="loginScreen"
+    class="login-screen">
 
     <div class="login-card">
 
         <div class="login-logo">
+
             <img
                 src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
-                alt="Army Welfare Education Society">
+                alt="APS Logo">
+
         </div>
 
-        <div class="login-label">SECURE ADMIN ACCESS</div>
+        <span class="eyebrow">
+            SECURE ADMIN ACCESS
+        </span>
 
-        <h1>APS ROBOTICS</h1>
+        <h1>
+            APS ROBOTICS
+        </h1>
 
-        <p>Championship 2026 Control Center</p>
+        <p>
+            Championship 2026 Control Center
+        </p>
+
 
         <form id="loginForm">
 
-            <label>Email Address</label>
+            <div class="input-group">
 
-            <input
-                id="loginEmail"
-                type="email"
-                autocomplete="username"
-                placeholder="Admin email"
-                required>
-
-            <label>Password</label>
-
-            <div class="password-box">
+                <label>
+                    Admin Email
+                </label>
 
                 <input
-                    id="loginPassword"
-                    type="password"
-                    autocomplete="current-password"
-                    placeholder="Password"
+                    id="loginEmail"
+                    type="email"
+                    placeholder="Enter admin email"
+                    autocomplete="email"
                     required>
-
-                <button
-                    type="button"
-                    id="togglePassword"
-                    aria-label="Show password">
-                    👁
-                </button>
 
             </div>
 
-            <div id="loginError" class="login-error"></div>
+
+            <div class="input-group">
+
+                <label>
+                    Password
+                </label>
+
+                <div class="password-box">
+
+                    <input
+                        id="loginPassword"
+                        type="password"
+                        placeholder="Enter password"
+                        autocomplete="current-password"
+                        required>
+
+                    <button
+                        type="button"
+                        id="togglePassword">
+                        <i class="fa-eye">◉</i>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="loginError"
+                class="login-error">
+            </div>
+
 
             <button
                 type="submit"
                 id="loginBtn"
-                class="login-button">
-                LOGIN TO DASHBOARD
+                class="primary-btn">
+
+                Login to Dashboard
+
             </button>
 
         </form>
-
-        <div class="security-note">
-            🔒 Authorized personnel only
-        </div>
 
     </div>
 
 </section>
 
 
-<!-- =========================================================
-     ADMIN APPLICATION
-========================================================= -->
 
-<div id="adminApp" class="admin-app hidden">
+<!-- =====================================================
+     ADMIN APPLICATION
+===================================================== -->
+
+<div
+    id="adminApp"
+    class="admin-app hidden">
+
 
     <!-- SIDEBAR -->
 
     <aside id="sidebar">
 
-        <div class="sidebar-top">
+        <div class="brand">
 
-            <div class="brand">
+            <img
+                src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+                alt="APS">
 
-                <img
-                    src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
-                    alt="APS Logo">
+            <div>
 
-                <div>
-                    <strong>APS ROBOTICS</strong>
-                    <small>ADMIN PANEL</small>
-                </div>
+                <strong>
+                    APS ROBOTICS
+                </strong>
+
+                <small>
+                    ADMIN CONTROL
+                </small>
 
             </div>
-
-            <button
-                id="mobileClose"
-                class="mobile-close">
-                ×
-            </button>
 
         </div>
 
 
-        <nav class="sidebar-nav">
+        <nav class="navigation">
 
             <button
                 class="nav-item active"
                 data-page="dashboard">
+
                 <span>⌂</span>
-                <strong>Dashboard</strong>
+                Dashboard
+
             </button>
+
 
             <button
                 class="nav-item"
                 data-page="registrations">
+
                 <span>▣</span>
-                <strong>Registrations</strong>
+                Registrations
+
+                <b
+                    id="registrationBadge"
+                    class="nav-badge">
+                    0
+                </b>
+
             </button>
+
+
+            <button
+                class="nav-item"
+                data-page="homeEditor">
+
+                <span>⌘</span>
+                Home Page
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-page="rulesEditor">
+
+                <span>☷</span>
+                Rules Page
+
+            </button>
+
 
             <button
                 class="nav-item"
                 data-page="events">
-                <span>⚡</span>
-                <strong>Events</strong>
-            </button>
 
-            <button
-                class="nav-item"
-                data-page="rules">
-                <span>☷</span>
-                <strong>Rules & Details</strong>
+                <span>◆</span>
+                Events
+
             </button>
 
         </nav>
@@ -158,28 +234,25 @@
 
         <div class="sidebar-bottom">
 
-            <div class="admin-profile">
+            <div class="admin-user">
 
-                <div class="admin-avatar">
-                    A
-                </div>
+                <small>
+                    SIGNED IN AS
+                </small>
 
-                <div class="admin-information">
-
-                    <strong>Administrator</strong>
-
-                    <span id="adminEmail">
-                        Loading...
-                    </span>
-
-                </div>
+                <strong id="adminEmail">
+                    Admin
+                </strong>
 
             </div>
 
+
             <button
                 id="logoutBtn"
-                class="logout-button">
-                ⇥ Logout
+                class="logout-btn">
+
+                Logout
+
             </button>
 
         </div>
@@ -187,55 +260,43 @@
     </aside>
 
 
-    <!-- MOBILE OVERLAY -->
-
-    <div
-        id="sidebarOverlay"
-        class="sidebar-overlay">
-    </div>
-
 
     <!-- MAIN -->
 
-    <main class="main-content">
+    <main>
+
 
         <!-- HEADER -->
 
         <header class="topbar">
 
-            <div class="topbar-left">
+            <button
+                id="sidebarToggle"
+                class="menu-btn">
+                ☰
+            </button>
 
-                <button
-                    id="sidebarToggle"
-                    class="menu-button">
-                    ☰
-                </button>
 
-                <div>
+            <div>
 
-                    <span class="topbar-kicker">
-                        APS ROBOTICS CHAMPIONSHIP 2026
-                    </span>
+                <small>
+                    APS ROBOTICS CHAMPIONSHIP 2026
+                </small>
 
-                    <h1 id="pageTitle">
-                        Dashboard
-                    </h1>
-
-                </div>
+                <h1 id="pageTitle">
+                    Dashboard
+                </h1>
 
             </div>
 
 
-            <div class="topbar-right">
-
-                <div class="live-status">
-                    <span></span>
-                    LIVE
-                </div>
-
+            <div class="live-status">
+                <span></span>
+                LIVE
             </div>
 
         </header>
+
 
 
         <!-- =================================================
@@ -250,22 +311,25 @@
 
                 <div>
 
-                    <span>CONTROL CENTER</span>
+                    <span>
+                        CONTROL CENTER
+                    </span>
 
                     <h2>
                         Championship Overview
                     </h2>
 
                     <p>
-                        Monitor registrations and competition activity.
+                        Manage registrations and website content.
                     </p>
 
                 </div>
 
+
                 <button
                     id="dashboardRefresh"
-                    class="primary-button">
-                    ↻ Refresh
+                    class="primary-btn">
+                    Refresh
                 </button>
 
             </div>
@@ -275,9 +339,9 @@
 
                 <div class="stat-card">
 
-                    <div class="stat-icon">▣</div>
-
-                    <span>Total Registrations</span>
+                    <small>
+                        TOTAL REGISTRATIONS
+                    </small>
 
                     <strong id="totalRegistrations">
                         0
@@ -288,9 +352,9 @@
 
                 <div class="stat-card">
 
-                    <div class="stat-icon">♟</div>
-
-                    <span>Total Teams</span>
+                    <small>
+                        TOTAL TEAMS
+                    </small>
 
                     <strong id="totalTeams">
                         0
@@ -301,9 +365,9 @@
 
                 <div class="stat-card">
 
-                    <div class="stat-icon">🏁</div>
-
-                    <span>Robo Race</span>
+                    <small>
+                        ROBO RACE
+                    </small>
 
                     <strong id="raceCount">
                         0
@@ -314,9 +378,9 @@
 
                 <div class="stat-card">
 
-                    <div class="stat-icon">⚔</div>
-
-                    <span>Robo War</span>
+                    <small>
+                        ROBO WAR
+                    </small>
 
                     <strong id="warCount">
                         0
@@ -327,9 +391,9 @@
 
                 <div class="stat-card">
 
-                    <div class="stat-icon">🤝</div>
-
-                    <span>Robo Tug of War</span>
+                    <small>
+                        ROBO TUG OF WAR
+                    </small>
 
                     <strong id="tugCount">
                         0
@@ -340,9 +404,9 @@
 
                 <div class="stat-card">
 
-                    <div class="stat-icon">⚽</div>
-
-                    <span>Robo Soccer</span>
+                    <small>
+                        ROBO SOCCER
+                    </small>
 
                     <strong id="soccerCount">
                         0
@@ -353,97 +417,95 @@
             </div>
 
 
-            <div class="dashboard-grid">
+            <div class="card">
 
-                <div class="panel">
+                <div class="card-heading">
 
-                    <div class="panel-header">
+                    <h3>
+                        Recent Registrations
+                    </h3>
 
-                        <div>
+                    <button
+                        data-page-target="registrations"
+                        class="text-btn">
 
-                            <span>RECENT ACTIVITY</span>
+                        View All
 
-                            <h3>
-                                Recent Registrations
-                            </h3>
-
-                        </div>
-
-                        <button
-                            class="small-button"
-                            data-page-target="registrations">
-                            View All
-                        </button>
-
-                    </div>
-
-                    <div id="recentRegistrations">
-                        Loading registrations...
-                    </div>
+                    </button>
 
                 </div>
 
 
-                <div class="panel">
+                <div
+                    id="recentRegistrations"
+                    class="recent-list">
 
-                    <div class="panel-header">
-
-                        <div>
-
-                            <span>QUICK ACTIONS</span>
-
-                            <h3>
-                                Admin Tools
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-                    <div class="quick-actions">
-
-                        <button
-                            data-page-target="registrations">
-                            <b>▣</b>
-                            <span>
-                                <strong>Registrations</strong>
-                                <small>Manage teams</small>
-                            </span>
-                        </button>
-
-                        <button
-                            data-page-target="events">
-                            <b>⚡</b>
-                            <span>
-                                <strong>Events</strong>
-                                <small>View participation</small>
-                            </span>
-                        </button>
-
-                        <button
-                            data-page-target="rules">
-                            <b>☷</b>
-                            <span>
-                                <strong>Rules & Details</strong>
-                                <small>Manage competition rules</small>
-                            </span>
-                        </button>
-
-                        <button id="exportDashboard">
-                            <b>⇩</b>
-                            <span>
-                                <strong>Export CSV</strong>
-                                <small>Download registrations</small>
-                            </span>
-                        </button>
-
-                    </div>
+                    Loading...
 
                 </div>
 
             </div>
 
+
+            <div class="quick-grid">
+
+                <button
+                    class="quick-card"
+                    data-page-target="homeEditor">
+
+                    <strong>
+                        Home Page
+                    </strong>
+
+                    <span>
+                        Edit homepage content
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="quick-card"
+                    data-page-target="rulesEditor">
+
+                    <strong>
+                        Rules
+                    </strong>
+
+                    <span>
+                        Manage competition rules
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="quick-card"
+                    data-page-target="registrations">
+
+                    <strong>
+                        Registrations
+                    </strong>
+
+                    <span>
+                        View submitted teams
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <button
+                id="exportDashboard"
+                class="secondary-btn">
+
+                Export All Registrations CSV
+
+            </button>
+
         </section>
+
 
 
         <!-- =================================================
@@ -458,145 +520,126 @@
 
                 <div>
 
-                    <span>REGISTRATION MANAGEMENT</span>
+                    <span>
+                        REGISTRATION MANAGEMENT
+                    </span>
 
                     <h2>
                         All Registrations
                     </h2>
 
                     <p>
-                        Search, inspect, edit and manage registered teams.
+                        View, edit and manage championship registrations.
                     </p>
 
                 </div>
 
+
                 <button
                     id="refreshRegistrations"
-                    class="primary-button">
-                    ↻ Refresh
+                    class="primary-btn">
+
+                    Refresh
+
                 </button>
 
             </div>
 
 
-            <div class="filter-panel">
+            <div class="filters">
 
-                <div class="filter-field search-field">
-
-                    <label>Search</label>
-
-                    <input
-                        id="searchInput"
-                        type="search"
-                        placeholder="Name, team, ID, mobile or email">
-
-                </div>
+                <input
+                    id="searchInput"
+                    type="search"
+                    placeholder="Search name, team, ID, mobile or email">
 
 
-                <div class="filter-field">
+                <select id="eventFilter">
 
-                    <label>Event</label>
+                    <option value="all">
+                        All Events
+                    </option>
 
-                    <select id="eventFilter">
+                    <option value="Robo Race">
+                        Robo Race
+                    </option>
 
-                        <option value="all">
-                            All Events
-                        </option>
+                    <option value="Robo War">
+                        Robo War
+                    </option>
 
-                        <option value="Robo Race">
-                            Robo Race
-                        </option>
+                    <option value="Robo Tug of War">
+                        Robo Tug of War
+                    </option>
 
-                        <option value="Robo War">
-                            Robo War
-                        </option>
+                    <option value="Robo Soccer">
+                        Robo Soccer
+                    </option>
 
-                        <option value="Robo Tug of War">
-                            Robo Tug of War
-                        </option>
-
-                        <option value="Robo Soccer">
-                            Robo Soccer
-                        </option>
-
-                    </select>
-
-                </div>
+                </select>
 
 
-                <div class="filter-field">
+                <select id="classFilter">
 
-                    <label>Class</label>
+                    <option value="all">
+                        All Classes
+                    </option>
 
-                    <select id="classFilter">
-
-                        <option value="all">
-                            All Classes
-                        </option>
-
-                    </select>
-
-                </div>
+                </select>
 
 
-                <div class="filter-field">
+                <select id="sectionFilter">
 
-                    <label>Section</label>
+                    <option value="all">
+                        All Sections
+                    </option>
 
-                    <select id="sectionFilter">
-
-                        <option value="all">
-                            All Sections
-                        </option>
-
-                    </select>
-
-                </div>
+                </select>
 
 
                 <button
                     id="clearFilters"
-                    class="secondary-button">
+                    class="secondary-btn">
+
                     Clear
+
                 </button>
+
 
                 <button
                     id="exportCsv"
-                    class="primary-button">
+                    class="primary-btn">
+
                     Export CSV
+
                 </button>
 
             </div>
 
 
-            <div class="panel table-panel">
+            <div class="card table-card">
 
-                <div class="panel-header">
+                <div class="card-heading">
 
-                    <div>
+                    <h3>
+                        Registration Records
+                    </h3>
 
-                        <span>DATABASE</span>
-
-                        <h3>
-                            Registration Records
-                        </h3>
-
-                    </div>
-
-                    <strong id="resultCount">
+                    <span id="resultCount">
                         0 registrations
-                    </strong>
+                    </span>
 
                 </div>
 
 
-                <div class="table-container">
+                <div class="table-wrap">
 
                     <table>
 
                         <thead>
 
                             <tr>
+
                                 <th>ID</th>
                                 <th>Leader</th>
                                 <th>Team</th>
@@ -607,11 +650,14 @@
                                 <th>Members</th>
                                 <th>Date</th>
                                 <th>Actions</th>
+
                             </tr>
 
                         </thead>
 
-                        <tbody id="registrationTableBody">
+
+                        <tbody
+                            id="registrationTableBody">
                         </tbody>
 
                     </table>
@@ -621,23 +667,327 @@
 
                 <div
                     id="tableEmpty"
-                    class="empty-state hidden">
+                    class="empty hidden">
 
-                    <div>⌕</div>
-
-                    <h3>
-                        No registrations found
-                    </h3>
-
-                    <p>
-                        Try changing your search or filters.
-                    </p>
+                    No registrations found.
 
                 </div>
 
             </div>
 
         </section>
+
+
+
+        <!-- =================================================
+             HOME PAGE EDITOR
+        ================================================== -->
+
+        <section
+            id="homeEditorPage"
+            class="page">
+
+            <div class="page-heading">
+
+                <div>
+
+                    <span>
+                        WEBSITE CONTENT MANAGEMENT
+                    </span>
+
+                    <h2>
+                        Home Page Editor
+                    </h2>
+
+                    <p>
+                        Change homepage content without editing HTML.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form
+                id="homeForm"
+                class="editor-form">
+
+
+                <div class="editor-card">
+
+                    <div class="editor-card-heading">
+
+                        <div>
+                            <span>
+                                HERO SECTION
+                            </span>
+
+                            <h3>
+                                Main Homepage
+                            </h3>
+                        </div>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Eyebrow Text
+                        </label>
+
+                        <input
+                            id="homeEyebrow"
+                            type="text"
+                            placeholder="APS TINKERING LAB">
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Main Heading
+                        </label>
+
+                        <input
+                            id="homeTitle"
+                            type="text"
+                            placeholder="APS ROBOTICS CHAMPIONSHIP 2026">
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Subtitle
+                        </label>
+
+                        <input
+                            id="homeSubtitle"
+                            type="text"
+                            placeholder="Build. Compete. Innovate.">
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Description
+                        </label>
+
+                        <textarea
+                            id="homeDescription"
+                            rows="5"
+                            placeholder="Enter homepage description..."></textarea>
+
+                    </div>
+
+
+                    <div class="two-fields">
+
+                        <div class="field">
+
+                            <label>
+                                Primary Button Text
+                            </label>
+
+                            <input
+                                id="homeButtonText"
+                                type="text"
+                                placeholder="Register Now">
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label>
+                                Primary Button Link
+                            </label>
+
+                            <input
+                                id="homeButtonLink"
+                                type="text"
+                                placeholder="registration.html">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="editor-card">
+
+                    <div class="editor-card-heading">
+
+                        <div>
+                            <span>
+                                ABOUT SECTION
+                            </span>
+
+                            <h3>
+                                About the Championship
+                            </h3>
+                        </div>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            About Title
+                        </label>
+
+                        <input
+                            id="aboutTitle"
+                            type="text">
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            About Description
+                        </label>
+
+                        <textarea
+                            id="aboutDescription"
+                            rows="7"></textarea>
+
+                    </div>
+
+                </div>
+
+
+                <div class="save-bar">
+
+                    <span id="homeSaveStatus">
+                        No unsaved changes
+                    </span>
+
+                    <button
+                        type="submit"
+                        class="primary-btn">
+
+                        Save Home Page
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+
+        <!-- =================================================
+             RULES EDITOR
+        ================================================== -->
+
+        <section
+            id="rulesEditorPage"
+            class="page">
+
+            <div class="page-heading">
+
+                <div>
+
+                    <span>
+                        WEBSITE CONTENT MANAGEMENT
+                    </span>
+
+                    <h2>
+                        Rules Page Editor
+                    </h2>
+
+                    <p>
+                        Add, edit and remove championship rules.
+                    </p>
+
+                </div>
+
+                <button
+                    id="addRuleBtn"
+                    class="primary-btn">
+
+                    + Add Rule
+
+                </button>
+
+            </div>
+
+
+            <form
+                id="rulesForm"
+                class="editor-form">
+
+
+                <div class="editor-card">
+
+                    <div class="field">
+
+                        <label>
+                            Rules Page Title
+                        </label>
+
+                        <input
+                            id="rulesTitle"
+                            type="text"
+                            placeholder="Championship Rules">
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Rules Introduction
+                        </label>
+
+                        <textarea
+                            id="rulesIntro"
+                            rows="5"
+                            placeholder="Enter introduction..."></textarea>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="rulesList"
+                    class="rules-admin-list">
+                </div>
+
+
+                <div class="save-bar">
+
+                    <span id="rulesSaveStatus">
+                        No unsaved changes
+                    </span>
+
+                    <button
+                        type="submit"
+                        class="primary-btn">
+
+                        Save Rules Page
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
 
 
         <!-- =================================================
@@ -652,15 +1002,13 @@
 
                 <div>
 
-                    <span>COMPETITION EVENTS</span>
+                    <span>
+                        COMPETITION EVENTS
+                    </span>
 
                     <h2>
                         Event Participation
                     </h2>
-
-                    <p>
-                        Overview of registration participation by event.
-                    </p>
 
                 </div>
 
@@ -671,13 +1019,9 @@
 
                 <div class="event-card">
 
-                    <span class="event-number">
+                    <span>
                         01
                     </span>
-
-                    <div class="event-symbol">
-                        🏁
-                    </div>
 
                     <h3>
                         Robo Race
@@ -696,13 +1040,9 @@
 
                 <div class="event-card">
 
-                    <span class="event-number">
+                    <span>
                         02
                     </span>
-
-                    <div class="event-symbol">
-                        ⚔
-                    </div>
 
                     <h3>
                         Robo War
@@ -721,13 +1061,9 @@
 
                 <div class="event-card">
 
-                    <span class="event-number">
+                    <span>
                         03
                     </span>
-
-                    <div class="event-symbol">
-                        🤝
-                    </div>
 
                     <h3>
                         Robo Tug of War
@@ -746,13 +1082,9 @@
 
                 <div class="event-card">
 
-                    <span class="event-number">
+                    <span>
                         04
                     </span>
-
-                    <div class="event-symbol">
-                        ⚽
-                    </div>
 
                     <h3>
                         Robo Soccer
@@ -770,393 +1102,6 @@
 
             </div>
 
-
-            <div class="panel event-information">
-
-                <div class="panel-header">
-
-                    <div>
-
-                        <span>EVENT INFORMATION</span>
-
-                        <h3>
-                            Championship Events
-                        </h3>
-
-                    </div>
-
-                </div>
-
-                <div class="event-info-list">
-
-                    <div>
-                        <b>🏁 Robo Race</b>
-                        <span>Speed and obstacle navigation challenge.</span>
-                    </div>
-
-                    <div>
-                        <b>⚔ Robo War</b>
-                        <span>Robot combat and pushing challenge.</span>
-                    </div>
-
-                    <div>
-                        <b>🤝 Robo Tug of War</b>
-                        <span>Strength and traction based team challenge.</span>
-                    </div>
-
-                    <div>
-                        <b>⚽ Robo Soccer</b>
-                        <span>Robot football competition.</span>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             RULES & DETAILS
-        ================================================== -->
-
-        <section
-            id="rulesPage"
-            class="page">
-
-            <div class="page-heading">
-
-                <div>
-
-                    <span>ADMIN CONTENT MANAGEMENT</span>
-
-                    <h2>
-                        Rules & Details
-                    </h2>
-
-                    <p>
-                        Manage competition information from the admin panel.
-                    </p>
-
-                </div>
-
-                <div class="heading-actions">
-
-                    <button
-                        id="reloadRules"
-                        class="secondary-button">
-                        ↻ Reload
-                    </button>
-
-                    <button
-                        id="saveRules"
-                        class="primary-button">
-                        ✓ Save Changes
-                    </button>
-
-                </div>
-
-            </div>
-
-
-            <div class="admin-warning">
-
-                <div>⚠</div>
-
-                <div>
-
-                    <strong>
-                        Admin-only content
-                    </strong>
-
-                    <p>
-                        These rules are stored in Firebase and are managed
-                        from this private administration panel.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="rules-layout">
-
-                <div class="panel">
-
-                    <div class="panel-header">
-
-                        <div>
-
-                            <span>GENERAL</span>
-
-                            <h3>
-                                Competition Information
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="form-grid">
-
-                        <div class="admin-field full">
-
-                            <label>
-                                Competition Title
-                            </label>
-
-                            <input
-                                id="ruleTitle"
-                                type="text"
-                                placeholder="APS Robotics Championship 2026">
-
-                        </div>
-
-
-                        <div class="admin-field full">
-
-                            <label>
-                                General Description
-                            </label>
-
-                            <textarea
-                                id="ruleDescription"
-                                rows="5"
-                                placeholder="Enter competition description..."></textarea>
-
-                        </div>
-
-
-                        <div class="admin-field">
-
-                            <label>
-                                Venue
-                            </label>
-
-                            <input
-                                id="ruleVenue"
-                                type="text"
-                                placeholder="Competition venue">
-
-                        </div>
-
-
-                        <div class="admin-field">
-
-                            <label>
-                                Important Date
-                            </label>
-
-                            <input
-                                id="ruleDate"
-                                type="text"
-                                placeholder="Enter event date">
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="panel">
-
-                    <div class="panel-header">
-
-                        <div>
-
-                            <span>REGISTRATION</span>
-
-                            <h3>
-                                Registration Rules
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-                    <div class="admin-field">
-
-                        <label>
-                            Rules
-                        </label>
-
-                        <textarea
-                            id="registrationRules"
-                            rows="10"
-                            placeholder="Enter registration rules, one rule per line..."></textarea>
-
-                        <small>
-                            Put each rule on a separate line.
-                        </small>
-
-                    </div>
-
-                </div>
-
-
-                <div class="panel">
-
-                    <div class="panel-header">
-
-                        <div>
-
-                            <span>ROBO RACE</span>
-
-                            <h3>
-                                Race Details & Rules
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-                    <div class="admin-field">
-
-                        <label>
-                            Details
-                        </label>
-
-                        <textarea
-                            id="raceRules"
-                            rows="9"
-                            placeholder="Enter Robo Race rules..."></textarea>
-
-                    </div>
-
-                </div>
-
-
-                <div class="panel">
-
-                    <div class="panel-header">
-
-                        <div>
-
-                            <span>ROBO WAR</span>
-
-                            <h3>
-                                War Details & Rules
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-                    <div class="admin-field">
-
-                        <label>
-                            Details
-                        </label>
-
-                        <textarea
-                            id="warRules"
-                            rows="9"
-                            placeholder="Enter Robo War rules..."></textarea>
-
-                    </div>
-
-                </div>
-
-
-                <div class="panel">
-
-                    <div class="panel-header">
-
-                        <div>
-
-                            <span>ROBO TUG OF WAR</span>
-
-                            <h3>
-                                Tug of War Details & Rules
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-                    <div class="admin-field">
-
-                        <label>
-                            Details
-                        </label>
-
-                        <textarea
-                            id="tugRules"
-                            rows="9"
-                            placeholder="Enter Robo Tug of War rules..."></textarea>
-
-                    </div>
-
-                </div>
-
-
-                <div class="panel">
-
-                    <div class="panel-header">
-
-                        <div>
-
-                            <span>ROBO SOCCER</span>
-
-                            <h3>
-                                Soccer Details & Rules
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-                    <div class="admin-field">
-
-                        <label>
-                            Details
-                        </label>
-
-                        <textarea
-                            id="soccerRules"
-                            rows="9"
-                            placeholder="Enter Robo Soccer rules..."></textarea>
-
-                    </div>
-
-                </div>
-
-
-                <div class="panel">
-
-                    <div class="panel-header">
-
-                        <div>
-
-                            <span>IMPORTANT</span>
-
-                            <h3>
-                                Important Instructions
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-                    <div class="admin-field">
-
-                        <label>
-                            Instructions
-                        </label>
-
-                        <textarea
-                            id="importantInstructions"
-                            rows="10"
-                            placeholder="Enter important instructions..."></textarea>
-
-                    </div>
-
-                </div>
-
-            </div>
-
         </section>
 
     </main>
@@ -1164,9 +1109,10 @@
 </div>
 
 
-<!-- =========================================================
-     REGISTRATION MODAL
-========================================================= -->
+
+<!-- =====================================================
+     REGISTRATION DETAIL MODAL
+===================================================== -->
 
 <div
     id="modal"
@@ -1187,6 +1133,7 @@
 </div>
 
 
+
 <!-- TOAST -->
 
 <div
@@ -1201,4 +1148,4 @@
 </script>
 
 </body>
-  </html>
+</html>
