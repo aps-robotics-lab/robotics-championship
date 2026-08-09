@@ -1,316 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
-<meta name="theme-color"
-      content="#050914">
-
-<title>
-Help & Support | APS Robotics Championship 2026
-</title>
-
-<link rel="preconnect"
-      href="https://fonts.googleapis.com">
-
-<link rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet">
-
-<link rel="stylesheet"
-      href="help.css">
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#050914">
+<title>APS Robotics Championship 2026 | Help Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="help.css">
 </head>
-
 <body>
-
 <header class="help-header">
-
-    <a href="index.html" class="brand">
-
-        <img
-            src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
-            alt="APS Logo">
-
-        <span>
-            <b>APS ROBOTICS</b>
-            <small>CHAMPIONSHIP 2026</small>
-        </span>
-
-    </a>
-
-    <a href="index.html" class="back-button">
-        ← Home
-    </a>
-
+  <a href="index.html" class="brand"><img src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png" alt="APS Logo"><span><b>APS ROBOTICS</b><small>CHAMPIONSHIP 2026</small></span></a>
+  <a href="index.html" class="back-link">← Back to Website</a>
 </header>
-
-
-<main>
-
-<section class="hero">
-
-    <div class="hero-glow"></div>
-
-    <span class="eyebrow">
-        APS ROBOTICS CHAMPIONSHIP 2026
-    </span>
-
-    <h1>
-        Help & <b>Support</b>
-    </h1>
-
-    <p>
-        Facing a problem with registration, the website or the championship?
-        Submit your issue and our organising team will review it.
-    </p>
-
-</section>
-
-
-<section class="support-wrapper">
-
-    <div class="info-card">
-
-        <span class="card-number">
-            01
-        </span>
-
-        <h2>
-            Need Assistance?
-        </h2>
-
-        <p>
-            Please provide accurate information so that the organising
-            team can understand and resolve your issue quickly.
-        </p>
-
-        <div class="support-points">
-
-            <div>
-                <span>✓</span>
-                Registration problems
-            </div>
-
-            <div>
-                <span>✓</span>
-                Website problems
-            </div>
-
-            <div>
-                <span>✓</span>
-                Technical issues
-            </div>
-
-            <div>
-                <span>✓</span>
-                Championship queries
-            </div>
-
-        </div>
-
+<main class="help-main">
+  <section class="help-hero"><span>SUPPORT CENTER</span><h1>How Can We <b>Help?</b></h1><p>Having a problem with registration or the championship website? Send the organising team a support request.</p></section>
+  <section class="help-grid">
+    <div class="help-card">
+      <h2>🆘 Submit an Issue</h2>
+      <p class="muted">Please provide accurate contact details so the team can respond.</p>
+      <form id="helpForm">
+        <label>Your Name<input id="name" required maxlength="80" placeholder="Enter your name"></label>
+        <label>Email Address<input id="email" type="email" required maxlength="120" placeholder="you@example.com"></label>
+        <label>Category<select id="category" required><option value="Registration">Registration</option><option value="Website">Website</option><option value="Payment">Payment</option><option value="Technical">Technical</option><option value="Other">Other</option></select></label>
+        <label>Subject<input id="subject" required maxlength="120" placeholder="Briefly describe the issue"></label>
+        <label>Message<textarea id="message" required maxlength="2000" rows="7" placeholder="Explain the issue clearly..."></textarea></label>
+        <button class="submit-btn" type="submit" id="submitBtn">Send Support Request →</button>
+        <div id="formStatus" class="form-status"></div>
+      </form>
     </div>
-
-
-    <div class="form-card">
-
-        <div class="form-heading">
-
-            <span>
-                SUPPORT REQUEST
-            </span>
-
-            <h2>
-                Submit an Issue
-            </h2>
-
-        </div>
-
-
-        <form id="helpForm">
-
-            <div class="form-grid">
-
-                <div class="field">
-
-                    <label for="name">
-                        Your Name
-                    </label>
-
-                    <input
-                        id="name"
-                        type="text"
-                        placeholder="Enter your name"
-                        required>
-
-                </div>
-
-
-                <div class="field">
-
-                    <label for="email">
-                        Email Address
-                    </label>
-
-                    <input
-                        id="email"
-                        type="email"
-                        placeholder="Enter your email"
-                        required>
-
-                </div>
-
-            </div>
-
-
-            <div class="field">
-
-                <label for="category">
-                    Issue Category
-                </label>
-
-                <select id="category" required>
-
-                    <option value="">
-                        Select an issue category
-                    </option>
-
-                    <option value="Registration">
-                        Registration
-                    </option>
-
-                    <option value="Website">
-                        Website
-                    </option>
-
-                    <option value="Payment">
-                        Payment
-                    </option>
-
-                    <option value="Technical">
-                        Technical
-                    </option>
-
-                    <option value="Other">
-                        Other
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="field">
-
-                <label for="registrationId">
-                    Registration ID
-                    <span>(Optional)</span>
-                </label>
-
-                <input
-                    id="registrationId"
-                    type="text"
-                    placeholder="If applicable">
-
-            </div>
-
-
-            <div class="field">
-
-                <label for="message">
-                    Describe Your Issue
-                </label>
-
-                <textarea
-                    id="message"
-                    rows="7"
-                    maxlength="2000"
-                    placeholder="Please describe the problem in detail..."
-                    required></textarea>
-
-                <div class="character-count">
-                    <span id="characterCount">0</span>/2000
-                </div>
-
-            </div>
-
-
-            <div
-                id="formMessage"
-                class="form-message">
-            </div>
-
-
-            <button
-                id="submitButton"
-                type="submit"
-                class="submit-button">
-
-                <span>
-                    SEND SUPPORT REQUEST
-                </span>
-
-                <b>
-                    →
-                </b>
-
-            </button>
-
-        </form>
-
+    <div class="help-card side">
+      <h2>Before You Submit</h2>
+      <div class="tip"><b>Registration problem?</b><span>Keep your Registration ID ready if you already registered.</span></div>
+      <div class="tip"><b>Website problem?</b><span>Mention the page and what you clicked when the problem occurred.</span></div>
+      <div class="tip"><b>Technical issue?</b><span>Describe the device/browser and the exact error message if possible.</span></div>
+      <div class="contact-box"><small>ORGANISING TEAM</small><strong>APS Tinkering Lab</strong><span>Army Public School, Lal Bahadur Shastri Marg, Lucknow</span></div>
     </div>
-
-</section>
-
-
-<section class="bottom-note">
-
-    <span>IMPORTANT</span>
-
-    <p>
-        Please do not submit passwords, authentication codes or other
-        confidential information through this form.
-    </p>
-
-</section>
-
+  </section>
 </main>
-
-
-<footer>
-
-    <img
-        src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
-        alt="APS Logo">
-
-    <div>
-
-        <strong>
-            APS ROBOTICS CHAMPIONSHIP 2026
-        </strong>
-
-        <span>
-            APS Tinkering Lab • Lucknow
-        </span>
-
-    </div>
-
-</footer>
-
-
-<script
-    type="module"
-    src="help.js">
-</script>
-
+<script type="module" src="help.js"></script>
 </body>
-
 </html>
