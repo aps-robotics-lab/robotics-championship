@@ -68,30 +68,160 @@ function setValue(id, value) {
   if ($(id)) $(id).value = value ?? "";
 }
 
-function normalizeText(value) {
-  if (Array.isArray(value)) return value.join(", ");
-  if (value && typeof value === "object") return Object.values(value).join(", ");
-  return String(value ?? "");
+function normalizeKey(value) {
+  return String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
 }
 
-/* Supports the field names used by different versions of the registration form. */
-function cleanKey(k){return String(k??"").toLowerCase().replace(/[^a-z0-9]/g,"");}
-function field(r, names){
-  if(!r || typeof r!=="object") return "";
-  const map={}; Object.keys(r).forEach(k=>map[cleanKey(k)]=r[k]);
-  for(const n of names){ const v=map[cleanKey(n)]; if(v!==undefined && v!==null && v!=="") return v; }
-  return "";
+function allFields(r) {
+  return Object.entries(r || {});
 }
-function studentName(r){return field(r,["student_name","studentName","student name","name","leaderName","leader_name","leader name"])}
-function teamName(r){return field(r,["team_name","teamName","team name","team"])}
-function className(r){return field(r,["class","className","class name","studentClass","student class"])}
-function sectionName(r){return field(r,["section","sectionName","section name"])}
-function mobile(r){return field(r,["mobile","mobileNumber","mobile number","phone","phoneNumber","phone number"])}
-function email(r){return field(r,["email","emailAddress","email address"])}
-function registrationId(r){return field(r,["registration_id","registrationId","registration id","id","registrationID"]) || r.key || ""}
-function eventsText(r){return normalizeText(field(r,["events","event","selectedEvents","selected Event","selectedEvent","eventSelection","event selection","selectEvent","select events"]))}
-function membersText(r){return normalizeText(field(r,["members","teamMembers","team members","memberNames","member names","team_members","membersName","teamMember","team member"]))}
-function dateText(r){const v=field(r,["registration_date","registrationDate","registration date","date","createdAt","created at","timestamp","submittedAt","submitted at"]); if(!v)return ""; if(typeof v==="number")return new Date(v).toLocaleString(); return String(v)}
+
+function findField(r, aliases, fallback = "") {
+  const wanted = aliases.map(normalizeKey);
+
+  for (const [key, value] of allFields(r)) {
+    if (key === "key") continue;
+    if (wanted.includes(normalizeKey(key))) return value;
+  }
+
+  return fallback;
+}
+
+function normalizeText(value) {
+  if (value === null || value === undefined) return "";
+  if (Array.isArray(value)) {
+    return value.map(v => normalizeText(v)).filter(Boolean).join(", ");
+  }
+  if (typeof value === "object") {
+    return Object.entries(value)
+      .map(([k, v]) => `${k}: ${normalizeText(v)}`)
+      .filter(Boolean)
+      .join(", ");
+  }
+  return String(value);
+}
+
+/*
+  Flexible field matching:
+  Firebase keys such as:
+  "student_name", "studentName", "Student Name",
+  "Student_Name", "student-name" are all treated as the same field.
+*/
+function studentName(r) {
+  return findField(r, [
+    "student_name", "studentName", "Student Name",
+    "name", "leaderName", "leader_name", "Team Leader",
+    "Team Leader Name", "Captain", "Captain Name"
+  ]);
+}
+
+function teamName(r) {
+  return findField(r, [
+    "team_name", "teamName", "Team Name", "team"
+  ]);
+}
+
+function className(r) {
+  return findField(r, [
+    "class", "Class", "className", "studentClass",
+    "Student Class", "Class Name"
+  ]);
+}
+
+function sectionName(r) {
+  return findField(r, [
+    "section", "Section", "sectionName", "Section Name"
+  ]);
+}
+
+function mobile(r) {
+  return findField(r, [
+    "mobile", "Mobile", "Mobile Number", "mobileNumber",
+    "phone", "Phone", "phoneNumber", "Contact Number",
+    "Contact", "WhatsApp", "WhatsApp Number"
+  ]);
+}
+
+function email(r) {
+  return findField(r, [
+    "email", "Email", "emailAddress", "Email Address",
+    "studentEmail", "Student Email"
+  ]);
+}
+
+function registrationId(r) {
+  return findField(r, [
+    "registration_id", "registrationId", "Registration ID",
+    "registrationID", "id", "ID"
+  ], r?.key || "");
+}
+
+function eventsText(r) {
+  const direct = findField(r, [
+    "events", "event", "Events", "Event",
+    "selectedEvents", "selectedEvent", "Selected Events",
+    "eventSelection", "Event Selection", "Select Event",
+    "Select Events", "event_s", "eventName"
+  ]);
+  if (direct !== "") return normalizeText(direct);
+
+  // Fallback: collect event-looking fields even if the form used unusual names.
+  const eventParts = [];
+  for (const [key, val] of allFields(r)) {
+    const k = normalizeKey(key);
+    if (
+      k.includes("event") ||
+      k.includes("roborace") ||
+      k.includes("robowar") ||
+      k.includes("robosoccer") ||
+      k.includes("robotug")
+    ) {
+      const text = normalizeText(val);
+      if (text) eventParts.push(text);
+    }
+  }
+  return eventParts.join(", ");
+}
+
+function membersText(r) {
+  const direct = findField(r, [
+    "members", "teamMembers", "memberNames", "team_members",
+    "membersName", "Team Members", "Team Member",
+    "Member Names", "Members", "Member 1", "Member 2",
+    "Member 3", "Member 4", "Member 5"
+  ]);
+  if (direct !== "") return normalizeText(direct);
+
+  const parts = [];
+  for (const [key, val] of allFields(r)) {
+    const k = normalizeKey(key);
+    if (
+      k.includes("member") ||
+      k.includes("teammate") ||
+      k.includes("participant")
+    ) {
+      const text = normalizeText(val);
+      if (text) parts.push(text);
+    }
+  }
+  return parts.join(", ");
+}
+
+function dateText(r) {
+  const v = findField(r, [
+    "registration_date", "registrationDate", "Registration Date",
+    "date", "Date", "createdAt", "created_at", "Created At",
+    "timestamp", "Timestamp", "submittedAt", "Submitted At"
+  ]);
+  if (v === "" || v === null || v === undefined) return "";
+  if (typeof v === "number") {
+    try { return new Date(v).toLocaleString(); } catch {}
+  }
+  return String(v);
+}
 
 function pageName(page) {
   return ({
@@ -159,18 +289,15 @@ async function loadRegistrations() {
       /registrations/{pushId}: {...}
       and a single registration object.
     */
-    if (
-      data &&
-      typeof data === "object" &&
-      !Array.isArray(data) &&
-      Object.values(data).some(v => v && typeof v === "object" && !Array.isArray(v))
-    ) {
-      registrations = Object.entries(data).map(([key, val]) => ({
-        key,
-        ...(val && typeof val === "object" ? val : { value: val })
-      }));
+    if (data && typeof data === "object" && !Array.isArray(data)) {
+      registrations = Object.entries(data).map(([key, val]) => {
+        if (val && typeof val === "object" && !Array.isArray(val)) {
+          return { key, ...val };
+        }
+        return { key, value: val };
+      });
     } else {
-      registrations = [{ key: "registration", ...data }];
+      registrations = [{ key: "registration", value: data }];
     }
 
     registrations.sort((a, b) => {
@@ -338,14 +465,8 @@ function openRegistration(key) {
         .filter(([k]) => k !== "key")
         .map(([k, v]) => `
           <div class="detail-item">
-            <small>${esc(k.replace(/_/g, " ").toUpperCase())}</small>
-            <strong>${esc(
-              Array.isArray(v)
-                ? v.join(", ")
-                : typeof v === "object" && v
-                  ? JSON.stringify(v)
-                  : v
-            )}</strong>
+            <small>${esc(String(k).replace(/[_-]/g, " ").toUpperCase())}</small>
+            <strong>${esc(normalizeText(v) || "—")}</strong>
           </div>
         `).join("")}
     </div>
