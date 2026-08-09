@@ -3,47 +3,47 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width,initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-<meta
-    name="theme-color"
-    content="#020711">
+    <meta
+        name="theme-color"
+        content="#020711">
 
-<title>
-    Support Agent Dashboard | APS Robotics Championship 2026
-</title>
+    <title>
+        Agent Dashboard | APS Robotics Championship 2026
+    </title>
 
-<link
-    rel="preconnect"
-    href="https://fonts.googleapis.com">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com">
 
-<link
-    rel="preconnect"
-    href="https://fonts.gstatic.com"
-    crossorigin>
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
 
-<link
-    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap"
-    rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 
-<link
-    rel="stylesheet"
-    href="agent.css">
+    <link
+        rel="stylesheet"
+        href="agent.css">
 
 </head>
 
 
 <body>
 
-<div class="background"></div>
+<div class="page-bg"></div>
 
 
 <!-- =====================================================
-     TOPBAR
+     HEADER
 ===================================================== -->
 
 <header class="topbar">
@@ -52,7 +52,7 @@
 
         <img
             src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
-            alt="APS Logo">
+            alt="APS">
 
         <div class="brand-text">
 
@@ -61,7 +61,7 @@
             </span>
 
             <strong>
-                ROBOTICS CHAMPIONSHIP 2026
+                SUPPORT AGENT
             </strong>
 
         </div>
@@ -69,27 +69,23 @@
     </div>
 
 
-    <nav class="nav">
+    <div class="agent-header-actions">
 
-        <a href="index.html">
-            Home
-        </a>
-
-        <a href="rules.html">
-            Rules
-        </a>
-
-        <a href="admin.html">
-            Admin
-        </a>
+        <span
+            id="agentIdentity"
+            class="agent-identity">
+            Checking...
+        </span>
 
         <button
             id="logoutBtn"
             class="logout-btn">
+
             Logout
+
         </button>
 
-    </nav>
+    </div>
 
 </header>
 
@@ -98,17 +94,15 @@
      MAIN
 ===================================================== -->
 
-<main class="container">
+<main class="agent-page">
 
-
-    <!-- HERO -->
 
     <section class="hero">
 
         <div>
 
-            <span class="eyebrow">
-                SUPPORT OPERATIONS
+            <span class="badge">
+                SUPPORT CONTROL CENTER
             </span>
 
             <h1>
@@ -117,30 +111,9 @@
             </h1>
 
             <p>
-                Manage participant support tickets
-                for APS Robotics Championship 2026.
+                Manage APS Robotics Championship 2026
+                support requests.
             </p>
-
-        </div>
-
-
-        <div class="agent-card">
-
-            <div class="agent-avatar">
-                <span>◉</span>
-            </div>
-
-            <div>
-
-                <small>
-                    SIGNED IN AS
-                </small>
-
-                <strong id="agentEmail">
-                    Administrator
-                </strong>
-
-            </div>
 
         </div>
 
@@ -148,21 +121,21 @@
 
 
     <!-- =================================================
-         STATISTICS
+         STATS
     ================================================= -->
 
     <section class="stats-grid">
 
         <div class="stat-card">
 
-            <div class="stat-icon">
+            <span class="stat-icon">
                 🎫
-            </div>
+            </span>
 
             <div>
 
                 <small>
-                    TOTAL TICKETS
+                    TOTAL
                 </small>
 
                 <strong id="totalTickets">
@@ -174,11 +147,11 @@
         </div>
 
 
-        <div class="stat-card open">
+        <div class="stat-card">
 
-            <div class="stat-icon">
+            <span class="stat-icon open">
                 🟢
-            </div>
+            </span>
 
             <div>
 
@@ -195,19 +168,19 @@
         </div>
 
 
-        <div class="stat-card pending">
+        <div class="stat-card">
 
-            <div class="stat-icon">
+            <span class="stat-icon progress">
                 🟡
-            </div>
+            </span>
 
             <div>
 
                 <small>
-                    PENDING
+                    IN PROGRESS
                 </small>
 
-                <strong id="pendingTickets">
+                <strong id="progressTickets">
                     0
                 </strong>
 
@@ -216,19 +189,19 @@
         </div>
 
 
-        <div class="stat-card resolved">
+        <div class="stat-card">
 
-            <div class="stat-icon">
+            <span class="stat-icon closed">
                 🔵
-            </div>
+            </span>
 
             <div>
 
                 <small>
-                    RESOLVED
+                    CLOSED
                 </small>
 
-                <strong id="resolvedTickets">
+                <strong id="closedTickets">
                     0
                 </strong>
 
@@ -243,75 +216,58 @@
          TOOLBAR
     ================================================= -->
 
-    <section class="panel">
+    <section class="dashboard-card">
 
-        <div class="panel-header">
+        <div class="toolbar">
 
             <div>
 
-                <span class="panel-label">
-                    TICKET MANAGEMENT
-                </span>
-
                 <h2>
-                    Support Requests
+                    Support Tickets
                 </h2>
+
+                <p>
+                    Review and manage student requests.
+                </p>
 
             </div>
 
 
-            <button
-                id="refreshBtn"
-                class="refresh-btn">
-
-                ↻
-                Refresh
-
-            </button>
-
-        </div>
-
-
-        <div class="toolbar">
-
-            <div class="search-box">
-
-                <span>
-                    🔎
-                </span>
+            <div class="toolbar-actions">
 
                 <input
                     id="searchInput"
                     type="search"
-                    placeholder="Search ticket, name, email, subject...">
+                    placeholder="Search tickets...">
 
-            </div>
+                <select
+                    id="statusFilter">
 
+                    <option value="all">
+                        All Status
+                    </option>
 
-            <div class="filters">
+                    <option value="Open">
+                        Open
+                    </option>
+
+                    <option value="In Progress">
+                        In Progress
+                    </option>
+
+                    <option value="Closed">
+                        Closed
+                    </option>
+
+                </select>
+
 
                 <button
-                    class="filter-btn active"
-                    data-filter="all">
-                    All
-                </button>
+                    id="refreshBtn"
+                    class="refresh-btn">
 
-                <button
-                    class="filter-btn"
-                    data-filter="Open">
-                    Open
-                </button>
+                    Refresh
 
-                <button
-                    class="filter-btn"
-                    data-filter="Pending">
-                    Pending
-                </button>
-
-                <button
-                    class="filter-btn"
-                    data-filter="Resolved">
-                    Resolved
                 </button>
 
             </div>
@@ -319,76 +275,29 @@
         </div>
 
 
-        <!-- STATUS -->
-
         <div
-            id="status"
-            class="status">
+            id="pageStatus"
+            class="page-status">
         </div>
 
 
         <!-- =================================================
-             TICKET TABLE
+             TICKETS
         ================================================= -->
 
-        <div class="table-wrapper">
+        <div
+            id="ticketList"
+            class="ticket-list">
 
-            <table>
+            <div class="loading-state">
 
-                <thead>
+                <div class="large-spinner"></div>
 
-                    <tr>
+                <p>
+                    Loading support tickets...
+                </p>
 
-                        <th>
-                            Ticket
-                        </th>
-
-                        <th>
-                            Student
-                        </th>
-
-                        <th>
-                            Subject
-                        </th>
-
-                        <th>
-                            Category
-                        </th>
-
-                        <th>
-                            Status
-                        </th>
-
-                        <th>
-                            Date
-                        </th>
-
-                        <th>
-                            Action
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody id="ticketBody">
-
-                    <tr>
-
-                        <td
-                            colspan="7"
-                            class="loading-cell">
-
-                            Connecting to Firebase...
-
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
-            </table>
+            </div>
 
         </div>
 
@@ -405,7 +314,9 @@
     id="ticketOverlay"
     class="overlay hidden">
 
+
     <div class="ticket-modal">
+
 
         <div class="modal-header">
 
@@ -416,216 +327,198 @@
                 </span>
 
                 <h2 id="modalTicketId">
-                    Ticket
+                    -
                 </h2>
 
             </div>
 
 
             <button
-                id="closeModal"
+                id="closeTicket"
                 class="close-btn">
+
                 ×
+
             </button>
 
         </div>
 
 
-        <div class="ticket-content">
+        <div class="ticket-details">
 
 
-            <!-- BASIC INFORMATION -->
+            <div class="detail-card">
 
-            <div class="info-grid">
+                <span>
+                    Student
+                </span>
 
-                <div class="info-item">
-
-                    <small>
-                        STUDENT
-                    </small>
-
-                    <strong id="modalName">
-                        -
-                    </strong>
-
-                </div>
-
-
-                <div class="info-item">
-
-                    <small>
-                        EMAIL
-                    </small>
-
-                    <strong id="modalEmail">
-                        -
-                    </strong>
-
-                </div>
-
-
-                <div class="info-item">
-
-                    <small>
-                        CLASS
-                    </small>
-
-                    <strong id="modalClass">
-                        -
-                    </strong>
-
-                </div>
-
-
-                <div class="info-item">
-
-                    <small>
-                        SECTION
-                    </small>
-
-                    <strong id="modalSection">
-                        -
-                    </strong>
-
-                </div>
-
-
-                <div class="info-item">
-
-                    <small>
-                        REGISTRATION ID
-                    </small>
-
-                    <strong id="modalRegistrationId">
-                        Not provided
-                    </strong>
-
-                </div>
-
-
-                <div class="info-item">
-
-                    <small>
-                        CATEGORY
-                    </small>
-
-                    <strong id="modalCategory">
-                        -
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <!-- SUBJECT -->
-
-            <div class="message-box">
-
-                <small>
-                    SUBJECT
-                </small>
-
-                <h3 id="modalSubject">
+                <strong id="modalName">
                     -
-                </h3>
+                </strong>
 
             </div>
 
 
-            <!-- MESSAGE -->
+            <div class="detail-card">
 
-            <div class="message-box">
+                <span>
+                    Class / Section
+                </span>
 
-                <small>
-                    MESSAGE
-                </small>
-
-                <p id="modalMessage">
+                <strong id="modalClass">
                     -
-                </p>
+                </strong>
 
             </div>
 
 
-            <!-- AGENT RESPONSE -->
+            <div class="detail-card">
 
-            <div class="edit-section">
+                <span>
+                    Email
+                </span>
 
-                <label>
-
-                    Ticket Status
-
-                    <select id="modalStatus">
-
-                        <option value="Open">
-                            Open
-                        </option>
-
-                        <option value="Pending">
-                            Pending
-                        </option>
-
-                        <option value="Resolved">
-                            Resolved
-                        </option>
-
-                    </select>
-
-                </label>
-
-
-                <label>
-
-                    Agent Remarks
-
-                    <textarea
-                        id="modalRemarks"
-                        rows="5"
-                        placeholder="Add remarks or resolution notes...">
-                    </textarea>
-
-                </label>
+                <strong id="modalEmail">
+                    -
+                </strong>
 
             </div>
 
 
-            <div
-                id="modalMessageStatus"
-                class="modal-status">
+            <div class="detail-card">
+
+                <span>
+                    Registration ID
+                </span>
+
+                <strong id="modalRegistration">
+                    Not provided
+                </strong>
+
             </div>
 
 
-            <!-- ACTIONS -->
+            <div class="detail-card">
 
-            <div class="modal-actions">
+                <span>
+                    Category
+                </span>
 
-                <button
-                    id="deleteTicketBtn"
-                    class="delete-btn">
-                    Delete Ticket
-                </button>
+                <strong id="modalCategory">
+                    -
+                </strong>
+
+            </div>
 
 
-                <div>
+            <div class="detail-card">
 
-                    <button
-                        id="cancelModal"
-                        class="secondary-btn">
-                        Cancel
-                    </button>
+                <span>
+                    Created
+                </span>
 
-                    <button
-                        id="saveTicketBtn"
-                        class="save-btn">
-                        Save Changes
-                    </button>
-
-                </div>
+                <strong id="modalCreated">
+                    -
+                </strong>
 
             </div>
 
         </div>
+
+
+        <div class="message-box">
+
+            <span>
+                SUBJECT
+            </span>
+
+            <h3 id="modalSubject">
+                -
+            </h3>
+
+
+            <span class="message-label">
+                MESSAGE
+            </span>
+
+            <p id="modalMessage">
+                -
+            </p>
+
+        </div>
+
+
+        <div class="agent-response">
+
+            <label for="agentReply">
+                Agent Reply
+            </label>
+
+            <textarea
+                id="agentReply"
+                rows="6"
+                placeholder="Write your response here..."></textarea>
+
+        </div>
+
+
+        <div class="modal-controls">
+
+            <div>
+
+                <label for="modalStatus">
+                    Ticket Status
+                </label>
+
+                <select
+                    id="modalStatus">
+
+                    <option value="Open">
+                        Open
+                    </option>
+
+                    <option value="In Progress">
+                        In Progress
+                    </option>
+
+                    <option value="Closed">
+                        Closed
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="modal-buttons">
+
+                <button
+                    id="cancelTicket"
+                    class="secondary-btn">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    id="saveTicket"
+                    class="save-btn">
+
+                    Save Ticket
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="modalMessageStatus"
+            class="modal-status">
+        </div>
+
 
     </div>
 
