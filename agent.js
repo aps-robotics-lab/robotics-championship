@@ -17,13 +17,11 @@ import {
 
 
 /* =========================================================
-   HELP FIREBASE
+   FIREBASE
 ========================================================= */
 
 const firebaseConfig = {
-
-    apiKey:
-        "AIzaSyCVfkLAc5EKDRUoHf4LgVhBFwTNmq2GMI0",
+    apiKey: "AIzaSyCVfkLAc5EKDRUoHf4LgVhBFwTNmq2GMI0",
 
     authDomain:
         "robotics-championship-ab248.firebaseapp.com",
@@ -32,7 +30,7 @@ const firebaseConfig = {
         "https://robotics-championship-ab248-default-rtdb.asia-southeast1.firebasedatabase.app",
 
     projectId:
-        "robotics-championship",
+        "robotics-championship-ab248",
 
     storageBucket:
         "robotics-championship-ab248.firebasestorage.app",
@@ -41,23 +39,26 @@ const firebaseConfig = {
         "521981495733",
 
     appId:
-        "1:521981495733:web:ecec2bc677a4450f19f1fc"
+        "1:521981495733:web:ecec2bc677a4450f19f1fc",
 
+    measurementId:
+        "G-NTBPB3MJ0E"
 };
 
 
-const app =
-    initializeApp(firebaseConfig);
+/* =========================================================
+   INITIALIZE
+========================================================= */
 
-const auth =
-    getAuth(app);
+const app = initializeApp(firebaseConfig);
 
-const db =
-    getDatabase(app);
+const auth = getAuth(app);
+
+const db = getDatabase(app);
 
 
 /* =========================================================
-   ONLY AGENT
+   ONLY AUTHORIZED AGENT
 ========================================================= */
 
 const AGENT_UID =
@@ -68,11 +69,14 @@ const AGENT_UID =
    ELEMENTS
 ========================================================= */
 
-const body =
-    document.getElementById("ticketBody");
+const issueBody =
+    document.getElementById("issueBody");
 
 const search =
     document.getElementById("search");
+
+const status =
+    document.getElementById("status");
 
 const refreshBtn =
     document.getElementById("refreshBtn");
@@ -80,42 +84,66 @@ const refreshBtn =
 const logoutBtn =
     document.getElementById("logoutBtn");
 
-const status =
-    document.getElementById("status");
+const totalIssues =
+    document.getElementById("totalIssues");
 
-const totalTickets =
-    document.getElementById("totalTickets");
+const openIssues =
+    document.getElementById("openIssues");
 
-const openTickets =
-    document.getElementById("openTickets");
+const solvedIssues =
+    document.getElementById("solvedIssues");
 
-const solvedTickets =
-    document.getElementById("solvedTickets");
+const issueOverlay =
+    document.getElementById("issueOverlay");
+
+const closeIssue =
+    document.getElementById("closeIssue");
+
+const cancelIssue =
+    document.getElementById("cancelIssue");
+
+const issueForm =
+    document.getElementById("issueForm");
+
+const issueKey =
+    document.getElementById("issueKey");
+
+const issueStatus =
+    document.getElementById("issueStatus");
+
+const issueReply =
+    document.getElementById("issueReply");
+
+const issueMessage =
+    document.getElementById("issueMessage");
 
 
-let tickets = {};
+/* =========================================================
+   DATA
+========================================================= */
+
+let issues = {};
+
+let firebaseListener = null;
 
 
 /* =========================================================
    STATUS
 ========================================================= */
 
-function showStatus(
-    message,
-    type = ""
-) {
+function showStatus(message, type = "") {
 
-    status.textContent =
-        message;
+    if (!status) return;
+
+    status.textContent = message;
 
     status.className =
         "status " + type;
-
 }
 
 
 /* =========================================================
-   ESCAPE
+   ESCAPE HTML
 ========================================================= */
 
 function escapeHTML(value) {
@@ -130,24 +158,32 @@ function escapeHTML(value) {
 
 
 /* =========================================================
-   DATE / TIME
+   DATE
 ========================================================= */
 
 function formatDate(value) {
 
-    if (!value) {
-        return "—";
-    }
+    if (!value) return "—";
 
-    const date =
-        new Date(value);
+    let date;
 
     if (
-        Number.isNaN(
-            date.getTime()
-        )
+        typeof value === "number" ||
+        !isNaN(Number(value))
     ) {
+
+        date = new Date(Number(value));
+
+    } else {
+
+        date = new Date(value);
+
+    }
+
+    if (isNaN(date.getTime())) {
+
         return String(value);
+
     }
 
     return date.toLocaleString(
@@ -167,45 +203,48 @@ function formatDate(value) {
    SEARCH
 ========================================================= */
 
-function matchesSearch(
-    data,
-    key
-) {
+function matchesSearch(data, key) {
 
     const query =
-        search.value
-            .trim()
-            .toLowerCase();
+        search?.value
+            ?.trim()
+            .toLowerCase() || "";
 
-    if (!query) {
-        return true;
-    }
+    if (!query) return true;
 
-    const text = [
+    const searchable = [
 
         key,
 
-        data.registrationId,
+        data.name,
+        data.Name,
 
-        data.StudentName,
         data.studentName,
+        data.StudentName,
 
-        data.Class,
-        data.Section,
-
-        data.EmailAddress,
+        data.email,
         data.Email,
+        data.EmailAddress,
 
-        data.Category,
-        data.category,
+        data.mobile,
+        data.Mobile,
+        data.MobileNumber,
 
-        data.Subject,
         data.subject,
+        data.Subject,
 
-        data.Message,
+        data.issue,
+        data.Issue,
+
         data.message,
+        data.Message,
 
-        data.Status,
+        data.description,
+        data.Description,
+
+        data.reply,
+        data.agentReply,
+
         data.status
 
     ]
@@ -213,7 +252,32 @@ function matchesSearch(
         .join(" ")
         .toLowerCase();
 
-    return text.includes(query);
+    return searchable.includes(query);
+}
+
+
+/* =========================================================
+   GET FIELD
+========================================================= */
+
+function getField(data, ...names) {
+
+    for (const name of names) {
+
+        if (
+            data &&
+            data[name] !== undefined &&
+            data[name] !== null &&
+            data[name] !== ""
+        ) {
+
+            return data[name];
+
+        }
+
+    }
+
+    return "";
 }
 
 
@@ -221,39 +285,41 @@ function matchesSearch(
    RENDER
 ========================================================= */
 
-function renderTickets() {
+function renderIssues() {
+
+    if (!issueBody) return;
+
+
+    const allEntries =
+        Object.entries(issues);
+
 
     const entries =
-        Object.entries(tickets);
-
-
-    const filtered =
-        entries
-            .filter(
-                ([key, data]) =>
-                    matchesSearch(
-                        data,
-                        key
-                    )
+        allEntries
+            .filter(([key, data]) =>
+                matchesSearch(data, key)
             )
             .reverse();
 
 
-    /* COUNTS */
+    /* =====================================================
+       STATS
+    ===================================================== */
 
     const total =
-        entries.length;
+        allEntries.length;
 
 
     const solved =
-        entries.filter(
-            ([, data]) =>
+        allEntries.filter(
+            ([key, data]) =>
                 String(
-                    data.Status ||
-                    data.status ||
-                    "Open"
-                ).toLowerCase() ===
-                "solved"
+                    getField(
+                        data,
+                        "status",
+                        "Status"
+                    )
+                ).toLowerCase() === "solved"
         ).length;
 
 
@@ -261,21 +327,37 @@ function renderTickets() {
         total - solved;
 
 
-    totalTickets.textContent =
-        total;
+    if (totalIssues) {
 
-    openTickets.textContent =
-        open;
+        totalIssues.textContent =
+            total;
 
-    solvedTickets.textContent =
-        solved;
+    }
 
 
-    /* EMPTY */
+    if (openIssues) {
 
-    if (!filtered.length) {
+        openIssues.textContent =
+            open;
 
-        body.innerHTML = `
+    }
+
+
+    if (solvedIssues) {
+
+        solvedIssues.textContent =
+            solved;
+
+    }
+
+
+    /* =====================================================
+       EMPTY
+    ===================================================== */
+
+    if (!entries.length) {
+
+        issueBody.innerHTML = `
 
             <tr>
 
@@ -283,25 +365,16 @@ function renderTickets() {
                     colspan="8"
                     style="
                         text-align:center;
-                        padding:60px;
+                        padding:50px;
                     "
                 >
 
-                    <div style="
-                        font-size:40px;
-                    ">
-                        🎫
+                    <div style="font-size:30px;">
+                        🔎
                     </div>
 
-                    <strong>
-                        No help requests found
-                    </strong>
-
-                    <div style="
-                        margin-top:8px;
-                        color:#71859c;
-                    ">
-                        New Help submissions will appear here.
+                    <div style="margin-top:10px;">
+                        No help requests found.
                     </div>
 
                 </td>
@@ -314,229 +387,180 @@ function renderTickets() {
     }
 
 
-    /* ROWS */
+    /* =====================================================
+       ROWS
+    ===================================================== */
 
-    body.innerHTML =
-        filtered
-            .map(
-                ([key, data]) => {
+    issueBody.innerHTML =
+        entries
+            .map(([key, data]) => {
 
-                    const id =
-                        data.registrationId ||
-                        data.RegistrationID ||
-                        "—";
-
-
-                    const name =
-                        data.StudentName ||
-                        data.studentName ||
-                        data.Name ||
-                        "—";
+                const name =
+                    getField(
+                        data,
+                        "name",
+                        "Name",
+                        "studentName",
+                        "StudentName"
+                    ) || "—";
 
 
-                    const className =
-                        data.Class ||
-                        "—";
+                const email =
+                    getField(
+                        data,
+                        "email",
+                        "Email",
+                        "EmailAddress"
+                    ) || "—";
 
 
-                    const section =
-                        data.Section ||
-                        "—";
+                const mobile =
+                    getField(
+                        data,
+                        "mobile",
+                        "Mobile",
+                        "MobileNumber"
+                    ) || "—";
 
 
-                    const email =
-                        data.EmailAddress ||
-                        data.Email ||
-                        "—";
+                const subject =
+                    getField(
+                        data,
+                        "subject",
+                        "Subject",
+                        "issue",
+                        "Issue"
+                    ) || "Help Request";
 
 
-                    const category =
-                        data.Category ||
-                        data.category ||
-                        "General";
+                const message =
+                    getField(
+                        data,
+                        "message",
+                        "Message",
+                        "description",
+                        "Description"
+                    ) || "—";
 
 
-                    const subject =
-                        data.Subject ||
-                        data.subject ||
-                        "—";
+                const currentStatus =
+                    getField(
+                        data,
+                        "status",
+                        "Status"
+                    ) || "Open";
 
 
-                    const message =
-                        data.Message ||
-                        data.message ||
-                        "—";
+                const date =
+                    getField(
+                        data,
+                        "timestamp",
+                        "createdAt",
+                        "date",
+                        "created",
+                        "time"
+                    );
 
 
-                    const currentStatus =
-                        data.Status ||
-                        data.status ||
-                        "Open";
+                const statusClass =
+                    String(currentStatus)
+                        .toLowerCase() === "solved"
+                        ? "solved"
+                        : "open";
 
 
-                    const normalized =
-                        String(
-                            currentStatus
-                        ).toLowerCase();
+                return `
+
+                    <tr>
+
+                        <td>
+
+                            <strong>
+                                ${escapeHTML(key)}
+                            </strong>
+
+                        </td>
 
 
-                    const statusClass =
-                        normalized === "solved"
-                            ? "solved"
-                            : normalized ===
-                              "in progress"
-                                ? "progress"
-                                : "open";
+                        <td>
 
+                            <strong>
+                                ${escapeHTML(name)}
+                            </strong>
 
-                    const date =
-                        data.createdAt ||
-                        data.timestamp ||
-                        data.created_at;
-
-
-                    return `
-
-                        <tr>
-
-                            <td>
-
-                                <strong>
-                                    ${escapeHTML(id)}
-                                </strong>
-
-                                <small>
-                                    Ticket:
-                                    ${escapeHTML(key)}
-                                </small>
-
-                            </td>
-
-
-                            <td>
-
-                                <strong>
-                                    ${escapeHTML(name)}
-                                </strong>
-
-                                <small>
-                                    Class
-                                    ${escapeHTML(className)}
-                                    -
-                                    ${escapeHTML(section)}
-                                </small>
-
-                            </td>
-
-
-                            <td>
-
-                                <strong>
-                                    ${escapeHTML(subject)}
-                                </strong>
-
-                                <small>
-                                    ${escapeHTML(category)}
-                                </small>
-
-                            </td>
-
-
-                            <td>
-
-                                <div class="message-preview">
-
-                                    ${escapeHTML(message)}
-
-                                </div>
-
-                            </td>
-
-
-                            <td>
-
+                            <small>
                                 ${escapeHTML(email)}
+                            </small>
 
-                            </td>
-
-
-                            <td>
-
-                                <span
-                                    class="ticket-status ${statusClass}"
-                                >
-
-                                    ${escapeHTML(
-                                        currentStatus
-                                    )}
-
-                                </span>
-
-                            </td>
+                        </td>
 
 
-                            <td>
+                        <td>
 
+                            ${escapeHTML(mobile)}
+
+                        </td>
+
+
+                        <td>
+
+                            <strong>
+                                ${escapeHTML(subject)}
+                            </strong>
+
+                            <small>
+                                ${escapeHTML(message)}
+                            </small>
+
+                        </td>
+
+
+                        <td>
+
+                            <span
+                                class="issue-status ${statusClass}"
+                            >
                                 ${escapeHTML(
-                                    formatDate(date)
+                                    currentStatus
                                 )}
+                            </span>
 
-                            </td>
+                        </td>
 
 
-                            <td>
+                        <td>
 
-                                <div class="action-buttons">
+                            ${escapeHTML(
+                                formatDate(date)
+                            )}
 
-                                    <button
-                                        class="progress-btn"
-                                        data-key="${escapeHTML(key)}"
-                                    >
-                                        In Progress
-                                    </button>
+                        </td>
 
-                                    <button
-                                        class="solve-btn"
-                                        data-key="${escapeHTML(key)}"
-                                    >
-                                        ✓ Solve
-                                    </button>
 
-                                </div>
+                        <td>
 
-                            </td>
+                            <button
+                                class="solve-btn"
+                                data-key="${escapeHTML(key)}"
+                            >
+                                ${
+                                    statusClass === "solved"
+                                    ? "View"
+                                    : "Solve"
+                                }
+                            </button>
 
-                        </tr>
+                        </td>
 
-                    `;
+                    </tr>
 
-                }
-            )
+                `;
+
+            })
             .join("");
 
 
-    /* BUTTONS */
-
-    body
-        .querySelectorAll(".progress-btn")
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    updateTicket(
-                        button.dataset.key,
-                        "In Progress"
-                    );
-
-                }
-            );
-
-        });
-
-
-    body
+    document
         .querySelectorAll(".solve-btn")
         .forEach(button => {
 
@@ -544,146 +568,418 @@ function renderTickets() {
                 "click",
                 () => {
 
-                    updateTicket(
-                        button.dataset.key,
-                        "Solved"
+                    openIssue(
+                        button.dataset.key
                     );
 
                 }
             );
 
         });
-
 }
 
 
 /* =========================================================
-   LOAD HELP DATA
+   LOAD HELP REQUESTS
 ========================================================= */
 
-function loadTickets() {
+function loadIssues() {
 
     showStatus(
-        "Loading Help requests..."
+        "Connecting to help database..."
     );
 
 
     /*
-     * IMPORTANT
+     * IMPORTANT:
      *
-     * Your Help form must save submissions
-     * inside:
+     * This reads:
      *
-     * tickets/
+     * help
+     *
+     * Change this ONE path if your
+     * help form stores data somewhere else.
      */
 
-    const ticketsRef =
+    const helpRef =
         ref(
             db,
-            "tickets"
+            "help"
         );
 
 
-    onValue(
+    if (firebaseListener) {
 
-        ticketsRef,
+        firebaseListener();
 
-        snapshot => {
-
-            tickets =
-                snapshot.val() || {};
+    }
 
 
-            console.log(
-                "FIREBASE HELP DATA:",
-                tickets
+    firebaseListener =
+        onValue(
+
+            helpRef,
+
+            snapshot => {
+
+                issues =
+                    snapshot.val() || {};
+
+
+                console.log(
+                    "HELP DATA:",
+                    issues
+                );
+
+
+                renderIssues();
+
+
+                showStatus(
+
+                    `${Object.keys(
+                        issues
+                    ).length} help request(s) loaded.`,
+
+                    "success"
+
+                );
+
+            },
+
+            error => {
+
+                console.error(
+                    "Help Firebase error:",
+                    error
+                );
+
+
+                showStatus(
+
+                    "Unable to read help requests. Check Firebase Database Rules and the help database path.",
+
+                    "error"
+
+                );
+
+            }
+
+        );
+}
+
+
+/* =========================================================
+   OPEN ISSUE
+========================================================= */
+
+function openIssue(key) {
+
+    const data =
+        issues[key];
+
+
+    if (!data) return;
+
+
+    if (issueKey) {
+
+        issueKey.value = key;
+
+    }
+
+
+    if (issueStatus) {
+
+        issueStatus.value =
+            getField(
+                data,
+                "status",
+                "Status"
+            ) || "Open";
+
+    }
+
+
+    if (issueReply) {
+
+        issueReply.value =
+            getField(
+                data,
+                "agentReply",
+                "reply",
+                "Reply"
+            ) || "";
+
+    }
+
+
+    const details =
+        document.getElementById(
+            "issueDetails"
+        );
+
+
+    if (details) {
+
+        const name =
+            getField(
+                data,
+                "name",
+                "Name",
+                "studentName",
+                "StudentName"
             );
 
 
-            renderTickets();
+        const email =
+            getField(
+                data,
+                "email",
+                "Email",
+                "EmailAddress"
+            );
+
+
+        const mobile =
+            getField(
+                data,
+                "mobile",
+                "Mobile",
+                "MobileNumber"
+            );
+
+
+        const subject =
+            getField(
+                data,
+                "subject",
+                "Subject",
+                "issue",
+                "Issue"
+            );
+
+
+        const message =
+            getField(
+                data,
+                "message",
+                "Message",
+                "description",
+                "Description"
+            );
+
+
+        details.innerHTML = `
+
+            <div class="detail-item">
+
+                <span>Name</span>
+
+                <strong>
+                    ${escapeHTML(name || "—")}
+                </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+                <span>Email</span>
+
+                <strong>
+                    ${escapeHTML(email || "—")}
+                </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+                <span>Mobile</span>
+
+                <strong>
+                    ${escapeHTML(mobile || "—")}
+                </strong>
+
+            </div>
+
+
+            <div class="detail-item">
+
+                <span>Subject</span>
+
+                <strong>
+                    ${escapeHTML(subject || "—")}
+                </strong>
+
+            </div>
+
+
+            <div class="detail-message">
+
+                <span>MESSAGE / ISSUE</span>
+
+                <p>
+                    ${escapeHTML(message || "—")}
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+
+    issueMessage.textContent = "";
+
+
+    issueOverlay?.classList.remove(
+        "hidden"
+    );
+}
+
+
+/* =========================================================
+   CLOSE ISSUE
+========================================================= */
+
+function closeIssueModal() {
+
+    issueOverlay?.classList.add(
+        "hidden"
+    );
+}
+
+
+closeIssue?.addEventListener(
+    "click",
+    closeIssueModal
+);
+
+
+cancelIssue?.addEventListener(
+    "click",
+    closeIssueModal
+);
+
+
+issueOverlay?.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target ===
+            issueOverlay
+        ) {
+
+            closeIssueModal();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   SOLVE ISSUE
+========================================================= */
+
+issueForm?.addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+
+        const key =
+            issueKey?.value;
+
+
+        if (!key) return;
+
+
+        try {
+
+            if (issueMessage) {
+
+                issueMessage.textContent =
+                    "Saving response...";
+
+            }
+
+
+            await update(
+
+                ref(
+                    db,
+                    `help/${key}`
+                ),
+
+                {
+
+                    status:
+                        issueStatus.value,
+
+                    agentReply:
+                        issueReply.value.trim(),
+
+                    repliedAt:
+                        Date.now(),
+
+                    repliedBy:
+                        auth.currentUser?.uid || ""
+
+                }
+
+            );
+
+
+            if (issueMessage) {
+
+                issueMessage.textContent =
+                    "✓ Response saved successfully.";
+
+            }
 
 
             showStatus(
-                `${Object.keys(tickets).length} help request(s) loaded.`,
+                "Help request updated successfully.",
                 "success"
             );
 
-        },
 
-        error => {
+            setTimeout(
+                closeIssueModal,
+                700
+            );
+
+
+        } catch (error) {
 
             console.error(
-                "Firebase error:",
+                "Update help request error:",
                 error
             );
 
 
+            if (issueMessage) {
+
+                issueMessage.textContent =
+                    "Unable to save response.";
+
+            }
+
+
             showStatus(
-                "Unable to read Help requests. Check Firebase Rules and database path.",
+                "Firebase denied the update. Check your Database Rules.",
                 "error"
             );
 
         }
 
-    );
-
-}
-
-
-/* =========================================================
-   UPDATE STATUS
-========================================================= */
-
-async function updateTicket(
-    key,
-    newStatus
-) {
-
-    try {
-
-        await update(
-
-            ref(
-                db,
-                `tickets/${key}`
-            ),
-
-            {
-
-                Status:
-                    newStatus,
-
-                updatedAt:
-                    Date.now(),
-
-                solvedBy:
-                    auth.currentUser?.uid || ""
-
-            }
-
-        );
-
-
-        showStatus(
-            `Ticket marked ${newStatus}.`,
-            "success"
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            error
-        );
-
-        showStatus(
-            "Unable to update ticket.",
-            "error"
-        );
-
     }
-
-}
+);
 
 
 /* =========================================================
@@ -692,7 +988,7 @@ async function updateTicket(
 
 search?.addEventListener(
     "input",
-    renderTickets
+    renderIssues
 );
 
 
@@ -702,7 +998,16 @@ search?.addEventListener(
 
 refreshBtn?.addEventListener(
     "click",
-    renderTickets
+    () => {
+
+        renderIssues();
+
+        showStatus(
+            "Help dashboard refreshed.",
+            "success"
+        );
+
+    }
 );
 
 
@@ -725,7 +1030,7 @@ logoutBtn?.addEventListener(
 
 
 /* =========================================================
-   AUTHORIZATION
+   AUTH
 ========================================================= */
 
 onAuthStateChanged(
@@ -739,17 +1044,21 @@ onAuthStateChanged(
             );
 
             return;
-
         }
 
+
+        /*
+         * ONLY THIS UID
+         */
 
         if (
             user.uid !== AGENT_UID
         ) {
 
             alert(
-                "Access denied."
+                "Access denied. You are not an authorized support agent."
             );
+
 
             signOut(auth);
 
@@ -759,14 +1068,17 @@ onAuthStateChanged(
 
 
         showStatus(
+
             `Agent authenticated: ${
                 user.email || user.uid
             }`,
+
             "success"
+
         );
 
 
-        loadTickets();
+        loadIssues();
 
     }
 );
