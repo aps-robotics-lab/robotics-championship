@@ -1,244 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <title>Agent Login | APS Robotics Championship 2026</title>
 
-    <meta
-        name="theme-color"
-        content="#020711"
-    >
-
-    <meta
-        name="description"
-        content="APS Robotics Championship 2026 Agent Login"
-    >
-
-    <title>
-        Agent Login | APS Robotics Championship 2026
-    </title>
-
-
-    <!-- Fonts -->
-
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
-
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link
         href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap"
         rel="stylesheet"
     >
 
-
-    <!-- Agent Login CSS -->
-
-    <link
-        rel="stylesheet"
-        href="agent-login.css"
-    >
-
+    <link rel="stylesheet" href="agent-login.css">
 </head>
-
 
 <body>
 
+<div class="login-page">
 
-    <!-- Background -->
+    <div class="login-card">
 
-    <div class="background-grid"></div>
-
-
-    <!-- Login Wrapper -->
-
-    <main class="login-page">
-
-
-        <section class="login-card">
-
-
-            <!-- Logo -->
-
-            <div class="logo-wrap">
-
-                <img
-                    src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
-                    alt="APS Logo"
-                >
-
-            </div>
-
-
-            <!-- Header -->
-
-            <div class="login-header">
-
-                <span class="system-label">
-                    APS TINKERING LAB
-                </span>
-
-                <h1>
-                    AGENT
-                    <span>ACCESS</span>
-                </h1>
-
-                <p>
-                    Robotics Championship 2026
-                </p>
-
-            </div>
-
-
-            <!-- Online Indicator -->
-
-            <div class="secure-status">
-
-                <span class="status-dot"></span>
-
-                SECURE AGENT PORTAL
-
-            </div>
-
-
-            <!-- Login Form -->
-
-            <form
-                id="agentLoginForm"
-                autocomplete="on"
+        <div class="logo">
+            <img
+                src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+                alt="APS"
             >
+        </div>
 
+        <span class="eyebrow">
+            APS TINKERING LAB
+        </span>
 
-                <!-- Email -->
+        <h1>
+            AGENT
+            <span>LOGIN</span>
+        </h1>
 
-                <div class="field">
+        <p class="subtitle">
+            Help & Support Control Center
+        </p>
 
-                    <label for="agentEmail">
-                        AGENT EMAIL
-                    </label>
+        <form id="loginForm">
+
+            <label>
+                Agent Email
+
+                <input
+                    id="email"
+                    type="email"
+                    placeholder="Enter agent email"
+                    autocomplete="username"
+                    required
+                >
+            </label>
+
+            <label>
+                Password
+
+                <div class="password-box">
 
                     <input
-                        id="agentEmail"
-                        name="email"
-                        type="email"
-                        placeholder="Enter agent email"
-                        autocomplete="username"
+                        id="password"
+                        type="password"
+                        placeholder="Enter password"
+                        autocomplete="current-password"
                         required
                     >
 
-                </div>
-
-
-                <!-- Password -->
-
-                <div class="field">
-
-                    <label for="agentPassword">
-                        PASSWORD
-                    </label>
-
-                    <div class="password-box">
-
-                        <input
-                            id="agentPassword"
-                            name="password"
-                            type="password"
-                            placeholder="Enter password"
-                            autocomplete="current-password"
-                            required
-                        >
-
-                        <button
-                            type="button"
-                            id="togglePassword"
-                            aria-label="Show password"
-                        >
-                            👁
-                        </button>
-
-                    </div>
+                    <button
+                        type="button"
+                        id="togglePassword"
+                    >
+                        👁
+                    </button>
 
                 </div>
+            </label>
 
+            <button
+                class="login-btn"
+                type="submit"
+            >
+                ACCESS AGENT PANEL
+            </button>
 
-                <!-- Error / Status -->
+            <div
+                id="loginMessage"
+                class="message"
+            ></div>
 
-                <div
-                    id="loginMessage"
-                    class="login-message"
-                    aria-live="polite"
-                ></div>
+        </form>
 
+        <a
+            href="index.html"
+            class="back"
+        >
+            ← Back to website
+        </a>
 
-                <!-- Login -->
+    </div>
 
-                <button
-                    id="loginBtn"
-                    type="submit"
-                    class="login-btn"
-                >
+</div>
 
-                    <span id="loginBtnText">
-                        ACCESS AGENT PANEL
-                    </span>
-
-                    <span
-                        id="loginLoader"
-                        class="loader hidden"
-                    ></span>
-
-                </button>
-
-
-            </form>
-
-
-            <!-- Footer -->
-
-            <div class="login-footer">
-
-                <a href="index.html">
-                    ← Return to Home
-                </a>
-
-                <span>
-                    Authorized Personnel Only
-                </span>
-
-            </div>
-
-
-        </section>
-
-
-        <p class="copyright">
-            APS Tinkering Lab • Robotics Championship 2026
-        </p>
-
-
-    </main>
-
-
-    <!-- Firebase -->
-
-    <script
-        type="module"
-        src="agent-login.js"
-    ></script>
-
+<script
+    type="module"
+    src="agent-login.js"
+></script>
 
 </body>
-
 </html>
