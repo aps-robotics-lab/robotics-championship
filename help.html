@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#050914">
 
 <title>Help Center | APS Robotics Championship 2026</title>
@@ -17,298 +16,468 @@ href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900
 rel="stylesheet">
 
 <link rel="stylesheet" href="help.css">
-
 </head>
+
 
 <body>
 
+<!-- BACKGROUND -->
+<div class="page-background">
+    <div class="grid-overlay"></div>
+    <div class="glow glow-one"></div>
+    <div class="glow glow-two"></div>
+</div>
+
+
+<!-- HEADER -->
 <header class="help-header">
 
-<a href="index.html" class="brand">
+    <a href="index.html" class="brand">
 
-<img
-src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
-alt="APS Logo">
+        <img
+        src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+        alt="Army Welfare Education Society Logo">
 
-<span>
-<b>APS ROBOTICS</b>
-<small>CHAMPIONSHIP 2026</small>
-</span>
+        <span>
+            <b>APS ROBOTICS</b>
+            <small>CHAMPIONSHIP 2026</small>
+        </span>
 
-</a>
+    </a>
 
-<a href="index.html" class="back-link">
-← Back to Website
-</a>
+
+    <a href="index.html" class="back-link">
+        ← Back to Website
+    </a>
 
 </header>
 
 
+
+<!-- MAIN -->
 <main class="help-main">
 
-<section class="help-hero">
+    <!-- HERO -->
+    <section class="help-hero">
 
-<span>SUPPORT CENTER</span>
+        <span class="hero-badge">
+            SUPPORT CENTER
+        </span>
 
-<h1>
-How Can We <b>Help?</b>
-</h1>
+        <h1>
+            How Can We
+            <b>Help?</b>
+        </h1>
 
-<p>
-Having a problem with registration or the championship website?
-Send the organising team a support request.
-</p>
+        <p>
+            Having a problem with registration or the
+            APS Robotics Championship website?
+            Send the organising team a support request
+            and we will help you.
+        </p>
 
-</section>
+    </section>
 
 
-<section class="help-grid">
 
+    <!-- HELP GRID -->
+    <section class="help-grid">
 
-<div class="help-card">
 
-<div class="card-heading">
+        <!-- FORM CARD -->
+        <div class="help-card">
 
-<span class="number">01</span>
+            <div class="card-heading">
 
-<div>
-<small>SUPPORT REQUEST</small>
-<h2>Submit an Issue</h2>
-</div>
+                <span class="card-icon">
+                    🆘
+                </span>
 
-</div>
+                <div>
+                    <h2>Submit an Issue</h2>
 
-<p class="muted">
-Please provide accurate details so our support team can help you quickly.
-</p>
+                    <p class="muted">
+                        Tell us what went wrong and our
+                        support team will look into it.
+                    </p>
+                </div>
 
+            </div>
 
-<form id="helpForm">
 
+            <form
+            id="helpForm"
+            novalidate>
 
-<label>
-Registration ID
 
-<input
-id="registrationId"
-  
-maxlength="30"
-placeholder="e.g. APS-RBC-2026-0001"
-autocomplete="off">
+                <!-- REGISTRATION ID OPTIONAL -->
+                <label for="registrationId">
 
-<small class="field-note">
-Your Registration ID is required to verify your registration.
-</small>
+                    Registration ID
 
-</label>
+                    <span class="optional">
+                        Optional
+                    </span>
 
+                    <input
+                    type="text"
+                    id="registrationId"
+                    name="registrationId"
+                    maxlength="40"
+                    placeholder="e.g. APS-RBC-2026-0001">
 
-<label>
-Your Name
+                    <small class="field-hint">
+                        If you have already registered,
+                        you can provide your Registration ID.
+                    </small>
 
-<input
-id="name"
-required
-maxlength="80"
-placeholder="Enter your name"
-autocomplete="name">
+                </label>
 
-</label>
 
 
-<div class="two-column">
+                <!-- NAME -->
+                <label for="name">
 
-<label>
-Class
+                    Your Name
 
-<select id="className" required>
+                    <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    required
+                    maxlength="80"
+                    autocomplete="name"
+                    placeholder="Enter your full name">
 
-<option value="">Select Class</option>
-<option value="VI">VI</option>
-<option value="VII">VII</option>
-<option value="VIII">VIII</option>
-<option value="IX">IX</option>
-<option value="X">X</option>
-<option value="XI">XI</option>
-<option value="XII">XII</option>
+                </label>
 
-</select>
 
-</label>
 
+                <!-- CLASS + SECTION -->
+                <div class="two-column">
 
-<label>
-Section
 
-<input
-id="section"
-required
-maxlength="5"
-placeholder="e.g. A">
+                    <label for="className">
 
-</label>
+                        Class
 
-</div>
+                        <select
+                        id="className"
+                        name="className"
+                        required>
 
+                            <option value="">
+                                Select Class
+                            </option>
 
-<label>
-Email Address
+                            <option value="VI">VI</option>
+                            <option value="VII">VII</option>
+                            <option value="VIII">VIII</option>
+                            <option value="IX">IX</option>
+                            <option value="X">X</option>
+                            <option value="XI">XI</option>
+                            <option value="XII">XII</option>
 
-<input
-id="email"
-type="email"
-required
-maxlength="120"
-placeholder="you@example.com"
-autocomplete="email">
+                        </select>
 
-</label>
+                    </label>
 
 
-<label>
-Category
 
-<select id="category" required>
+                    <label for="section">
 
-<option value="Registration">Registration</option>
-<option value="Website">Website</option>
-<option value="Payment">Payment</option>
-<option value="Technical">Technical</option>
-<option value="Other">Other</option>
+                        Section
 
-</select>
+                        <input
+                        type="text"
+                        id="section"
+                        name="section"
+                        required
+                        maxlength="5"
+                        placeholder="e.g. A">
 
-</label>
+                    </label>
 
+                </div>
 
-<label>
-Subject
 
-<input
-id="subject"
-required
-maxlength="120"
-placeholder="Briefly describe the issue">
 
-</label>
+                <!-- EMAIL -->
+                <label for="email">
 
+                    Email Address
 
-<label>
-Message
+                    <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    maxlength="120"
+                    autocomplete="email"
+                    placeholder="you@example.com">
 
-<textarea
-id="message"
-required
-maxlength="2000"
-rows="7"
-placeholder="Explain the issue clearly..."></textarea>
+                </label>
 
-</label>
 
 
-<button
-class="submit-btn"
-type="submit"
-id="submitBtn">
+                <!-- CATEGORY -->
+                <label for="category">
 
-<span id="submitText">
-Send Support Request →
-</span>
+                    Issue Category
 
-<span id="submitLoading" class="hidden">
-Submitting...
-</span>
+                    <select
+                    id="category"
+                    name="category"
+                    required>
 
-</button>
+                        <option value="Registration">
+                            Registration
+                        </option>
 
+                        <option value="Website">
+                            Website
+                        </option>
 
-<div
-id="formStatus"
-class="form-status"
-role="alert">
-</div>
+                        <option value="Payment">
+                            Payment
+                        </option>
 
+                        <option value="Technical">
+                            Technical
+                        </option>
 
-</form>
+                        <option value="Other">
+                            Other
+                        </option>
 
-</div>
+                    </select>
 
+                </label>
 
-<div class="help-card side">
 
-<div class="card-heading">
 
-<span class="number">02</span>
+                <!-- SUBJECT -->
+                <label for="subject">
 
-<div>
-<small>QUICK GUIDANCE</small>
-<h2>Before You Submit</h2>
-</div>
+                    Subject
 
-</div>
+                    <input
+                    type="text"
+                    id="subject"
+                    name="subject"
+                    required
+                    maxlength="120"
+                    placeholder="Briefly describe the issue">
 
+                </label>
 
-<div class="tip">
 
-<b>Registration problem?</b>
 
-<span>
-Keep your Registration ID ready.
-</span>
+                <!-- MESSAGE -->
+                <label for="message">
 
-</div>
+                    Message
 
+                    <textarea
+                    id="message"
+                    name="message"
+                    required
+                    maxlength="2000"
+                    rows="7"
+                    placeholder="Explain the issue clearly..."></textarea>
 
-<div class="tip">
+                </label>
 
-<b>Website problem?</b>
 
-<span>
-Mention the page and what you clicked when the problem occurred.
-</span>
 
-</div>
+                <!-- STATUS -->
+                <div
+                id="formStatus"
+                class="form-status"
+                role="alert"
+                aria-live="polite">
+                </div>
 
 
-<div class="tip">
 
-<b>Technical issue?</b>
+                <!-- SUBMIT -->
+                <button
+                class="submit-btn"
+                type="submit"
+                id="submitBtn">
 
-<span>
-Tell us your device/browser and the exact error message if possible.
-</span>
+                    <span id="submitText">
+                        Send Support Request →
+                    </span>
 
-</div>
+                    <span
+                    id="submitLoading"
+                    class="hidden">
 
+                        Sending...
+                    </span>
 
-<div class="contact-box">
+                </button>
 
-<small>ORGANISING TEAM</small>
 
-<strong>APS Tinkering Lab</strong>
+                <p class="secure-note">
+                    🔒 Your support request is securely sent
+                    to the APS organising team.
+                </p>
 
-<span>
-Army Public School, Lal Bahadur Shastri Marg, Lucknow
-</span>
+            </form>
 
-</div>
+        </div>
 
 
-<a
-href="agent.html"
-class="agent-link">
 
-Agent Login →
+        <!-- SIDE CARD -->
+        <div class="help-card side">
 
-</a>
 
-</div>
+            <div class="card-heading">
 
-</section>
+                <span class="card-icon">
+                    💡
+                </span>
+
+                <div>
+
+                    <h2>
+                        Before You Submit
+                    </h2>
+
+                    <p class="muted">
+                        These details can help us solve
+                        your problem faster.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- TIP 1 -->
+            <div class="tip">
+
+                <b>
+                    Registration problem?
+                </b>
+
+                <span>
+                    If you have a Registration ID,
+                    enter it above. It is optional,
+                    so you can still contact us
+                    without one.
+                </span>
+
+            </div>
+
+
+
+            <!-- TIP 2 -->
+            <div class="tip">
+
+                <b>
+                    Website problem?
+                </b>
+
+                <span>
+                    Mention the page you were using
+                    and what you clicked when the
+                    problem occurred.
+                </span>
+
+            </div>
+
+
+
+            <!-- TIP 3 -->
+            <div class="tip">
+
+                <b>
+                    Technical issue?
+                </b>
+
+                <span>
+                    Tell us your device, browser and
+                    the exact error message if possible.
+                </span>
+
+            </div>
+
+
+
+            <!-- TIP 4 -->
+            <div class="tip">
+
+                <b>
+                    Registration ID unavailable?
+                </b>
+
+                <span>
+                    No problem. Registration ID is
+                    optional. Your name, class, section
+                    and email are enough to contact you.
+                </span>
+
+            </div>
+
+
+
+            <!-- CONTACT -->
+            <div class="contact-box">
+
+                <small>
+                    ORGANISING TEAM
+                </small>
+
+                <strong>
+                    APS Tinkering Lab
+                </strong>
+
+                <span>
+                    Army Public School,
+                    Lal Bahadur Shastri Marg,
+                    Lucknow, Uttar Pradesh
+                </span>
+
+                <a href="mailto:ayusshh@outlook.in">
+                    ayusshh@outlook.in
+                </a>
+
+            </div>
+
+
+
+            <!-- AGENT LOGIN -->
+            <div class="agent-box">
+
+                <span>
+                    SUPPORT TEAM
+                </span>
+
+                <strong>
+                    Are you an authorised agent?
+                </strong>
+
+                <a href="agent.html">
+                    Agent Login →
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </section>
 
 </main>
 
 
+
+<!-- JAVASCRIPT -->
 <script type="module" src="help.js"></script>
 
 </body>
