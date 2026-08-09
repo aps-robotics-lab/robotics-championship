@@ -13,6 +13,7 @@
 </head>
 <body>
 <div class="page-background"><div class="grid-overlay"></div><div class="glow glow-one"></div><div class="glow glow-two"></div></div>
+
 <header class="registration-header">
 <a href="index.html" class="back-home"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
 <div class="header-brand">
@@ -20,6 +21,7 @@
 <div><span>APS TINKERING LAB</span><strong>ROBOTICS CHAMPIONSHIP 2026</strong></div>
 </div>
 </header>
+
 <main class="registration-main">
 <div class="registration-container">
 <section class="registration-hero">
@@ -30,7 +32,7 @@
 
 <form id="registrationForm" class="registration-form">
 <section class="form-section">
-<div class="section-heading"><div class="section-number">01</div><div><span>TEAM CONFIGURATION</span><h2>Choose Team Size</h2><p>Select Solo or a team of 2, 3, 4, or 5 students.</p></div></div>
+<div class="section-heading"><div class="section-number">01</div><div><span>TEAM CONFIGURATION</span><h2>Choose Team Size</h2><p>Select how many students are participating.</p></div></div>
 <div class="team-size-grid">
 <label class="team-size-card"><input type="radio" name="TeamSize" value="1" checked><span class="team-size-content"><i class="fa-solid fa-user"></i><strong>Solo</strong><small>1 Student</small></span></label>
 <label class="team-size-card"><input type="radio" name="TeamSize" value="2"><span class="team-size-content"><i class="fa-solid fa-user-group"></i><strong>Team of 2</strong><small>2 Students</small></span></label>
@@ -42,15 +44,14 @@
 </section>
 
 <section class="form-section">
-<div class="section-heading"><div class="section-number">02</div><div><span>TEAM LEADER</span><h2>Participant 01</h2><p>For teams, Participant 01 is the team leader.</p></div></div>
+<div class="section-heading"><div class="section-number">02</div><div><span>TEAM LEADER</span><h2>Leader Information</h2><p>Enter the details of the first participant.</p></div></div>
 <div class="member-card leader-card">
 <div class="member-card-header"><div class="member-icon"><i class="fa-solid fa-user-astronaut"></i></div><div><span>PARTICIPANT 01</span><h3>Team Leader</h3></div><span class="required-badge">REQUIRED</span></div>
 <div class="field-grid">
 <div class="field full-field"><label for="studentName"><i class="fa-solid fa-user"></i> Full Name</label><input type="text" id="studentName" name="StudentName" placeholder="Enter team leader name" autocomplete="name" required></div>
-<div class="field"><label for="studentClass"><i class="fa-solid fa-graduation-cap"></i> Class</label><select id="studentClass" name="Class" required><option value="">Select Class</option><option>VI</option><option>VII</option><option>VIII</option><option>IX</option><option>X</option><option>XI</option><option>XII</option></select></div>
+<div class="field"><label for="studentClass"><i class="fa-solid fa-graduation-cap"></i> Class</label><select id="studentClass" name="Class" required><option value="">Select Class</option><option value="VI">VI</option><option value="VII">VII</option><option value="VIII">VIII</option><option value="IX">IX</option><option value="X">X</option><option value="XI">XI</option><option value="XII">XII</option></select></div>
 <div class="field"><label for="studentSection"><i class="fa-solid fa-layer-group"></i> Section</label><input type="text" id="studentSection" name="Section" placeholder="e.g. A" maxlength="5" required></div>
-</div>
-</div>
+</div></div>
 </section>
 
 <section class="form-section">
@@ -69,7 +70,7 @@
 
 <section class="form-section">
 <div class="section-heading"><div class="section-number">05</div><div><span>CHAMPIONSHIP EVENTS</span><h2>Select Event(s)</h2><p>You may participate in one or multiple events.</p></div></div>
-<div id="eventSelection" class="event-selection">
+<div class="event-selection">
 <label class="event-option"><input type="checkbox" name="Events" value="Robo Race"><span class="event-option-card"><span class="event-icon"><i class="fa-solid fa-flag-checkered"></i></span><span class="event-text"><strong>Robo Race</strong><small>Speed & precision</small></span><span class="event-check"><i class="fa-solid fa-check"></i></span></span></label>
 <label class="event-option"><input type="checkbox" name="Events" value="Robo War"><span class="event-option-card"><span class="event-icon"><i class="fa-solid fa-shield-halved"></i></span><span class="event-text"><strong>Robo War</strong><small>Strength & strategy</small></span><span class="event-check"><i class="fa-solid fa-check"></i></span></span></label>
 <label class="event-option"><input type="checkbox" name="Events" value="Robo Tug of War"><span class="event-option-card"><span class="event-icon"><i class="fa-solid fa-handshake"></i></span><span class="event-text"><strong>Robo Tug of War</strong><small>Power & teamwork</small></span><span class="event-check"><i class="fa-solid fa-check"></i></span></span></label>
@@ -86,7 +87,9 @@
 <section class="agreement-section">
 <label class="agreement"><input type="checkbox" id="agreeTerms" required><span class="custom-checkbox"><i class="fa-solid fa-check"></i></span><span>I confirm that the information provided is correct and I agree to follow the rules and guidelines of APS Robotics Championship 2026.</span></label>
 </section>
+
 <div id="formMessage" class="form-message" role="alert"></div>
+
 <div class="submit-area">
 <button type="submit" id="submitBtn" class="submit-btn"><span class="submit-normal"><i class="fa-solid fa-rocket"></i> Submit Registration</span><span class="submit-loading"><i class="fa-solid fa-spinner fa-spin"></i> Submitting...</span></button>
 <p><i class="fa-solid fa-lock"></i> Your registration information is securely stored.</p>
@@ -98,12 +101,14 @@
 <div id="successOverlay" class="success-overlay hidden">
 <div class="success-card">
 <div class="success-icon"><i class="fa-solid fa-check"></i></div>
-<span>REGISTRATION SUCCESSFUL</span><h2>You're In!</h2>
+<span>REGISTRATION SUCCESSFUL</span>
+<h2>You're In!</h2>
 <p>Your registration has been successfully submitted.</p>
 <div class="success-id"><small>REGISTRATION ID</small><strong id="successRegistrationId">---</strong></div>
 <button type="button" id="continueBtn" class="continue-btn">Continue <i class="fa-solid fa-arrow-right"></i></button>
 </div>
 </div>
+
 <script type="module" src="registration.js"></script>
 </body>
 </html>
