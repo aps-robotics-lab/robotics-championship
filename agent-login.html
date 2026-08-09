@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -11,10 +12,20 @@
 
     <meta
         name="theme-color"
-        content="#050816"
+        content="#020711"
     >
 
-    <title>Admin Login | APS Robotics Championship 2026</title>
+    <meta
+        name="description"
+        content="APS Robotics Championship 2026 Agent Login"
+    >
+
+    <title>
+        Agent Login | APS Robotics Championship 2026
+    </title>
+
+
+    <!-- Fonts -->
 
     <link
         rel="preconnect"
@@ -32,136 +43,117 @@
         rel="stylesheet"
     >
 
+
+    <!-- Agent Login CSS -->
+
     <link
         rel="stylesheet"
-        href="admin-login.css"
+        href="agent-login.css"
     >
+
 </head>
 
 
 <body>
 
-    <div class="background">
 
-        <div class="grid"></div>
+    <!-- Background -->
 
-        <div class="glow glow-one"></div>
-        <div class="glow glow-two"></div>
+    <div class="background-grid"></div>
 
-    </div>
 
+    <!-- Login Wrapper -->
 
     <main class="login-page">
+
 
         <section class="login-card">
 
 
-            <!-- BRAND -->
+            <!-- Logo -->
 
-            <div class="brand">
+            <div class="logo-wrap">
 
-                <div class="logo-box">
+                <img
+                    src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+                    alt="APS Logo"
+                >
 
-                    <img
-                        src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
-                        alt="AWES Logo"
+            </div>
+
+
+            <!-- Header -->
+
+            <div class="login-header">
+
+                <span class="system-label">
+                    APS TINKERING LAB
+                </span>
+
+                <h1>
+                    AGENT
+                    <span>ACCESS</span>
+                </h1>
+
+                <p>
+                    Robotics Championship 2026
+                </p>
+
+            </div>
+
+
+            <!-- Online Indicator -->
+
+            <div class="secure-status">
+
+                <span class="status-dot"></span>
+
+                SECURE AGENT PORTAL
+
+            </div>
+
+
+            <!-- Login Form -->
+
+            <form
+                id="agentLoginForm"
+                autocomplete="on"
+            >
+
+
+                <!-- Email -->
+
+                <div class="field">
+
+                    <label for="agentEmail">
+                        AGENT EMAIL
+                    </label>
+
+                    <input
+                        id="agentEmail"
+                        name="email"
+                        type="email"
+                        placeholder="Enter agent email"
+                        autocomplete="username"
+                        required
                     >
 
                 </div>
 
 
-                <div class="brand-text">
-
-                    <div class="brand-name">
-                        APS TINKERING LAB
-                    </div>
-
-                    <div class="brand-event">
-                        ROBOTICS CHAMPIONSHIP
-                        <span>2026</span>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- SECURITY BADGE -->
-
-            <div class="security-badge">
-
-                <span class="security-dot"></span>
-
-                SECURE ADMIN PORTAL
-
-            </div>
-
-
-            <!-- TITLE -->
-
-            <div class="heading">
-
-                <p class="eyebrow">
-                    AUTHORIZED ACCESS ONLY
-                </p>
-
-                <h1>
-                    Admin
-                    <span>Login</span>
-                </h1>
-
-                <p class="description">
-                    Sign in to manage registrations,
-                    participants and championship data.
-                </p>
-
-            </div>
-
-
-            <!-- FORM -->
-
-            <form id="loginForm">
-
+                <!-- Password -->
 
                 <div class="field">
 
-                    <label for="email">
-                        Administrator Email
+                    <label for="agentPassword">
+                        PASSWORD
                     </label>
 
-                    <div class="input-box">
-
-                        <span class="input-icon">
-                            ✉
-                        </span>
+                    <div class="password-box">
 
                         <input
-                            id="email"
-                            type="email"
-                            placeholder="Enter administrator email"
-                            autocomplete="username"
-                            required
-                        >
-
-                    </div>
-
-                </div>
-
-
-                <div class="field">
-
-                    <label for="password">
-                        Password
-                    </label>
-
-                    <div class="input-box">
-
-                        <span class="input-icon">
-                            🔒
-                        </span>
-
-                        <input
-                            id="password"
+                            id="agentPassword"
+                            name="password"
                             type="password"
                             placeholder="Enter password"
                             autocomplete="current-password"
@@ -171,7 +163,6 @@
                         <button
                             type="button"
                             id="togglePassword"
-                            class="password-toggle"
                             aria-label="Show password"
                         >
                             👁
@@ -182,36 +173,31 @@
                 </div>
 
 
-                <!-- STATUS -->
+                <!-- Error / Status -->
 
                 <div
-                    id="loginStatus"
-                    class="login-status"
+                    id="loginMessage"
+                    class="login-message"
+                    aria-live="polite"
                 ></div>
 
 
-                <!-- LOGIN BUTTON -->
+                <!-- Login -->
 
                 <button
-                    type="submit"
                     id="loginBtn"
+                    type="submit"
                     class="login-btn"
                 >
 
-                    <span id="loginText">
-                        ACCESS ADMIN PANEL
+                    <span id="loginBtnText">
+                        ACCESS AGENT PANEL
                     </span>
 
                     <span
-                        id="loginLoading"
-                        class="loading hidden"
-                    >
-                        <span></span>
-                        <span></span>
-                        <span></span>
-
-                        AUTHENTICATING...
-                    </span>
+                        id="loginLoader"
+                        class="loader hidden"
+                    ></span>
 
                 </button>
 
@@ -219,56 +205,39 @@
             </form>
 
 
-            <!-- FOOTER -->
+            <!-- Footer -->
 
-            <div class="protected">
+            <div class="login-footer">
 
-                <div class="lock-icon">
-                    🔐
-                </div>
+                <a href="index.html">
+                    ← Return to Home
+                </a>
 
-                <div>
-
-                    <strong>
-                        Protected Area
-                    </strong>
-
-                    <small>
-                        Authorized administrators only
-                    </small>
-
-                </div>
+                <span>
+                    Authorized Personnel Only
+                </span>
 
             </div>
 
-
-            <div class="bottom-line">
-
-                APS Tinkering Lab
-
-                <span>•</span>
-
-                Robotics Championship 2026
-
-            </div>
-
-
-            <a
-                href="index.html"
-                class="back-home"
-            >
-                ← Back to Website
-            </a>
 
         </section>
+
+
+        <p class="copyright">
+            APS Tinkering Lab • Robotics Championship 2026
+        </p>
+
 
     </main>
 
 
+    <!-- Firebase -->
+
     <script
         type="module"
-        src="admin-login.js"
+        src="agent-login.js"
     ></script>
+
 
 </body>
 
