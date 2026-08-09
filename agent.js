@@ -1,24 +1,20 @@
 import {
     initializeApp
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 
 import {
     getAuth,
-    signInWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
 import {
     getDatabase,
     ref,
     onValue,
     update,
-    serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
-
+    remove
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
 
 
 /* =========================================================
@@ -54,7 +50,6 @@ const firebaseConfig = {
 };
 
 
-
 /* =========================================================
    INITIALIZE
 ========================================================= */
@@ -62,392 +57,198 @@ const firebaseConfig = {
 const app =
     initializeApp(firebaseConfig);
 
-
 const auth =
     getAuth(app);
 
-
-const database =
+const db =
     getDatabase(app);
 
+
+/* =========================================================
+   ADMIN UID LIST
+========================================================= */
+
+const ADMIN_UIDS = new Set([
+
+    "crfLkH7qlofZBea5GEwLMEtL92X2",
+
+    "5lBbcuD2BjRdDya7Lo9uRXdBIp92",
+
+    "jd7b5KYmivhYpCJzLyQ005BFmCn2",
+
+    "spzBLVusBfcqCCSmK923QmhmcAN2",
+
+    "1PhsiGhletVZYliDKKKVKV2G9tu2"
+
+]);
 
 
 /* =========================================================
    ELEMENTS
 ========================================================= */
 
-const loginScreen =
-    document.getElementById("loginScreen");
+const body =
+    document.getElementById(
+        "registrationBody"
+    );
 
-
-const dashboardScreen =
-    document.getElementById("dashboardScreen");
-
-
-const loginForm =
-    document.getElementById("loginForm");
-
-
-const agentEmail =
-    document.getElementById("agentEmail");
-
-
-const agentPassword =
-    document.getElementById("agentPassword");
-
-
-const loginStatus =
-    document.getElementById("loginStatus");
-
-
-const loginBtn =
-    document.getElementById("loginBtn");
-
-
-const logoutBtn =
-    document.getElementById("logoutBtn");
-
-
-const agentName =
-    document.getElementById("agentName");
-
-
-const ticketBody =
-    document.getElementById("ticketBody");
-
-
-const searchInput =
-    document.getElementById("searchInput");
-
-
-const statusFilter =
-    document.getElementById("statusFilter");
-
+const search =
+    document.getElementById("search");
 
 const refreshBtn =
-    document.getElementById("refreshBtn");
+    document.getElementById(
+        "refreshBtn"
+    );
+
+const logoutBtn =
+    document.getElementById(
+        "logoutBtn"
+    );
+
+const status =
+    document.getElementById("status");
+
+const totalRegistrations =
+    document.getElementById(
+        "totalRegistrations"
+    );
+
+const soloCount =
+    document.getElementById(
+        "soloCount"
+    );
+
+const teamCount =
+    document.getElementById(
+        "teamCount"
+    );
+
+const participantCount =
+    document.getElementById(
+        "participantCount"
+    );
 
 
-const dashboardStatus =
-    document.getElementById("dashboardStatus");
+/* =========================================================
+   EDIT ELEMENTS
+========================================================= */
 
+const editOverlay =
+    document.getElementById(
+        "editOverlay"
+    );
 
-const totalCount =
-    document.getElementById("totalCount");
+const closeEdit =
+    document.getElementById(
+        "closeEdit"
+    );
 
+const cancelEdit =
+    document.getElementById(
+        "cancelEdit"
+    );
 
-const openCount =
-    document.getElementById("openCount");
+const editForm =
+    document.getElementById(
+        "editForm"
+    );
 
+const editKey =
+    document.getElementById(
+        "editKey"
+    );
 
-const progressCount =
-    document.getElementById("progressCount");
+const editStudentName =
+    document.getElementById(
+        "editStudentName"
+    );
 
+const editStudentClass =
+    document.getElementById(
+        "editStudentClass"
+    );
 
-const resolvedCount =
-    document.getElementById("resolvedCount");
+const editStudentSection =
+    document.getElementById(
+        "editStudentSection"
+    );
 
+const editMobileNumber =
+    document.getElementById(
+        "editMobileNumber"
+    );
 
-const ticketModal =
-    document.getElementById("ticketModal");
+const editEmailAddress =
+    document.getElementById(
+        "editEmailAddress"
+    );
 
+const editTeamName =
+    document.getElementById(
+        "editTeamName"
+    );
 
-const modalContent =
-    document.getElementById("modalContent");
+const editMembers =
+    document.getElementById(
+        "editMembers"
+    );
 
+const editRemarks =
+    document.getElementById(
+        "editRemarks"
+    );
 
-const closeModal =
-    document.getElementById("closeModal");
-
+const editMessage =
+    document.getElementById(
+        "editMessage"
+    );
 
 
 /* =========================================================
    DATA
 ========================================================= */
 
-let tickets = {};
+let registrations = {};
 
-let currentUser = null;
-
+let registrationListener = null;
 
 
 /* =========================================================
-   ESCAPE HTML
+   STATUS
+========================================================= */
+
+function showStatus(
+    message,
+    type = ""
+) {
+
+    if (!status) return;
+
+    status.textContent =
+        message;
+
+    status.className =
+        "status " + type;
+
+}
+
+
+/* =========================================================
+   ESCAPE
 ========================================================= */
 
 function escapeHTML(value) {
 
-    return String(value ?? "")
-
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
+    return String(
+        value ?? ""
+    )
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 
 }
-
-
-
-/* =========================================================
-   LOGIN STATUS
-========================================================= */
-
-function showLoginStatus(message) {
-
-    loginStatus.textContent =
-        message;
-
-
-    loginStatus.classList.add(
-        "show"
-    );
-
-}
-
-
-function clearLoginStatus() {
-
-    loginStatus.textContent =
-        "";
-
-
-    loginStatus.classList.remove(
-        "show"
-    );
-
-}
-
-
-
-/* =========================================================
-   LOGIN
-========================================================= */
-
-loginForm?.addEventListener(
-    "submit",
-
-    async function(event) {
-
-        event.preventDefault();
-
-        clearLoginStatus();
-
-
-        const email =
-            agentEmail.value
-            .trim()
-            .toLowerCase();
-
-
-        const password =
-            agentPassword.value;
-
-
-        if (!email || !password) {
-
-            showLoginStatus(
-                "Please enter your email and password."
-            );
-
-            return;
-
-        }
-
-
-        loginBtn.disabled =
-            true;
-
-
-        loginBtn.textContent =
-            "Signing in...";
-
-
-        try {
-
-            await signInWithEmailAndPassword(
-                auth,
-                email,
-                password
-            );
-
-        } catch (error) {
-
-            console.error(
-                error
-            );
-
-
-            let message =
-                "Unable to sign in.";
-
-
-            if (
-                error.code ===
-                "auth/invalid-credential"
-            ) {
-
-                message =
-                    "Incorrect email or password.";
-
-            }
-
-
-            if (
-                error.code ===
-                "auth/invalid-email"
-            ) {
-
-                message =
-                    "Please enter a valid email address.";
-
-            }
-
-
-            showLoginStatus(
-                message
-            );
-
-        } finally {
-
-            loginBtn.disabled =
-                false;
-
-
-            loginBtn.textContent =
-                "Sign In";
-
-        }
-
-    }
-);
-
-
-
-/* =========================================================
-   AUTH STATE
-========================================================= */
-
-onAuthStateChanged(
-    auth,
-
-    user => {
-
-        currentUser =
-            user || null;
-
-
-        if (!user) {
-
-            loginScreen.classList.remove(
-                "hidden"
-            );
-
-
-            dashboardScreen.classList.add(
-                "hidden"
-            );
-
-
-            return;
-
-        }
-
-
-        loginScreen.classList.add(
-            "hidden"
-        );
-
-
-        dashboardScreen.classList.remove(
-            "hidden"
-        );
-
-
-        agentName.textContent =
-            user.email ||
-            "Support Agent";
-
-
-        loadTickets();
-
-    }
-);
-
-
-
-/* =========================================================
-   LOAD TICKETS
-========================================================= */
-
-function loadTickets() {
-
-    dashboardStatus.textContent =
-        "Loading tickets...";
-
-
-    const ticketsRef =
-        ref(
-            database,
-            "tickets"
-        );
-
-
-    onValue(
-
-        ticketsRef,
-
-
-        snapshot => {
-
-            tickets =
-                snapshot.val() || {};
-
-
-            renderTickets();
-
-
-            dashboardStatus.textContent =
-                `${Object.keys(tickets).length} ticket(s) loaded.`;
-
-        },
-
-
-        error => {
-
-            console.error(
-                error
-            );
-
-
-            dashboardStatus.textContent =
-                "Unable to load tickets. Check Firebase Database Rules.";
-
-        }
-
-    );
-
-}
-
 
 
 /* =========================================================
@@ -457,210 +258,234 @@ function loadTickets() {
 function formatDate(value) {
 
     if (!value) {
-
         return "-";
-
     }
-
 
     try {
 
-        return new Date(value)
-            .toLocaleString();
+        const date =
+            new Date(value);
 
-    } catch (error) {
+        if (isNaN(date.getTime())) {
+            return String(value);
+        }
 
-        return "-";
-
-    }
-
-}
-
-
-
-/* =========================================================
-   STATUS CLASS
-========================================================= */
-
-function getStatusClass(status) {
-
-    if (status === "Open") {
-
-        return "status-open";
-
-    }
-
-
-    if (status === "In Progress") {
-
-        return "status-progress";
-
-    }
-
-
-    if (status === "Resolved") {
-
-        return "status-resolved";
-
-    }
-
-
-    return "status-closed";
-
-}
-
-
-
-/* =========================================================
-   FILTER
-========================================================= */
-
-function getFilteredTickets() {
-
-    const query =
-        String(
-            searchInput?.value || ""
-        )
-        .trim()
-        .toLowerCase();
-
-
-    const filter =
-        statusFilter?.value ||
-        "All";
-
-
-    return Object.entries(tickets)
-
-        .filter(
-            ([key, ticket]) => {
-
-                if (
-                    filter !== "All" &&
-                    ticket.status !== filter
-                ) {
-
-                    return false;
-
-                }
-
-
-                if (!query) {
-
-                    return true;
-
-                }
-
-
-                const searchable = [
-
-                    key,
-
-                    ticket.ticketId,
-
-                    ticket.registrationId,
-
-                    ticket.name,
-
-                    ticket.email,
-
-                    ticket.className,
-
-                    ticket.section,
-
-                    ticket.category,
-
-                    ticket.subject,
-
-                    ticket.message,
-
-                    ticket.status
-
-                ]
-
-                    .filter(Boolean)
-
-                    .join(" ")
-
-                    .toLowerCase();
-
-
-                return searchable.includes(
-                    query
-                );
-
-            }
-        )
-
-        .sort(
-            (a, b) => {
-
-                return (
-                    (b[1].createdAt || 0) -
-                    (a[1].createdAt || 0)
-                );
-
+        return date.toLocaleDateString(
+            "en-IN",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
             }
         );
 
+    } catch {
+
+        return String(value);
+
+    }
+
 }
 
 
-
 /* =========================================================
-   RENDER TICKETS
+   MEMBERS
 ========================================================= */
 
-function renderTickets() {
+function getMembers(data) {
 
-    const allTickets =
-        Object.values(tickets);
+    const members = [];
 
+    for (let i = 2; i <= 5; i++) {
 
-    const filteredTickets =
-        getFilteredTickets();
+        const name =
+            data[`Member${i}Name`];
 
+        if (!name) {
+            continue;
+        }
 
-    totalCount.textContent =
-        allTickets.length;
+        const cls =
+            data[`Member${i}Class`] || "-";
 
+        const section =
+            data[`Member${i}Section`] || "-";
 
-    openCount.textContent =
-        allTickets.filter(
-            ticket =>
-                ticket.status === "Open"
-        ).length;
+        members.push({
+            name,
+            className: cls,
+            section
+        });
 
+    }
 
-    progressCount.textContent =
-        allTickets.filter(
-            ticket =>
-                ticket.status === "In Progress"
-        ).length;
+    return members;
 
-
-    resolvedCount.textContent =
-        allTickets.filter(
-            ticket =>
-                ticket.status === "Resolved"
-        ).length;
+}
 
 
-    if (!filteredTickets.length) {
+/* =========================================================
+   SEARCH
+========================================================= */
 
-        ticketBody.innerHTML = `
+function matchesSearch(data, key) {
+
+    const query =
+        search?.value
+            ?.trim()
+            .toLowerCase() || "";
+
+    if (!query) {
+        return true;
+    }
+
+    const events =
+        Array.isArray(data.Events)
+            ? data.Events.join(" ")
+            : String(data.Events || "");
+
+    const text = [
+
+        key,
+
+        data.registrationId,
+
+        data.StudentName,
+
+        data.Class,
+
+        data.Section,
+
+        data.MobileNumber,
+
+        data.EmailAddress,
+
+        data.TeamName,
+
+        data.ParticipationType,
+
+        events,
+
+        data.Member2Name,
+        data.Member2Class,
+        data.Member2Section,
+
+        data.Member3Name,
+        data.Member3Class,
+        data.Member3Section,
+
+        data.Member4Name,
+        data.Member4Class,
+        data.Member4Section,
+
+        data.Member5Name,
+        data.Member5Class,
+        data.Member5Section
+
+    ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+    return text.includes(query);
+
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function renderRegistrations() {
+
+    if (!body) return;
+
+
+    const allEntries =
+        Object.values(
+            registrations
+        );
+
+
+    const entries =
+        Object.entries(
+            registrations
+        )
+            .filter(
+                ([key, data]) =>
+                    matchesSearch(data, key)
+            )
+            .reverse();
+
+
+    /* ================= STATS ================= */
+
+    const total =
+        allEntries.length;
+
+
+    const solo =
+        allEntries.filter(data => {
+
+            return (
+                Number(data.TeamSize) === 1 ||
+                String(
+                    data.ParticipationType || ""
+                ).toLowerCase() === "solo"
+            );
+
+        }).length;
+
+
+    const teams =
+        total - solo;
+
+
+    let participants = 0;
+
+    allEntries.forEach(data => {
+
+        const size =
+            Number(data.TeamSize || 1);
+
+        participants +=
+            size > 0 ? size : 1;
+
+    });
+
+
+    totalRegistrations.textContent =
+        total;
+
+    soloCount.textContent =
+        solo;
+
+    teamCount.textContent =
+        teams;
+
+    participantCount.textContent =
+        participants;
+
+
+    /* ================= EMPTY ================= */
+
+    if (!entries.length) {
+
+        body.innerHTML = `
 
             <tr>
 
                 <td
-                colspan="7"
-                style="
-                    text-align:center;
-                    padding:45px;
-                    color:#91a3ba;
-                ">
+                colspan="9"
+                style="text-align:center;padding:50px;">
 
-                    No support tickets found.
+                    <div style="font-size:30px;">
+                        🔎
+                    </div>
+
+                    <div style="margin-top:10px;">
+                        No registrations found.
+                    </div>
 
                 </td>
 
@@ -668,19 +493,39 @@ function renderTickets() {
 
         `;
 
-
         return;
 
     }
 
 
-    ticketBody.innerHTML =
-        filteredTickets.map(
-            ([key, ticket]) => {
+    /* ================= ROWS ================= */
 
-                const status =
-                    ticket.status ||
-                    "Open";
+    body.innerHTML =
+        entries.map(
+            ([key, data]) => {
+
+                const members =
+                    getMembers(data);
+
+
+                const events =
+                    Array.isArray(data.Events)
+                        ? data.Events.join(", ")
+                        : data.Events || "-";
+
+
+                const type =
+                    data.ParticipationType ||
+                    (
+                        Number(data.TeamSize) === 1
+                            ? "Solo"
+                            : `Team of ${data.TeamSize || "-"}`
+                    );
+
+
+                const registrationId =
+                    data.registrationId ||
+                    key;
 
 
                 return `
@@ -689,69 +534,43 @@ function renderTickets() {
 
                         <td>
 
-                            <span
-                            class="ticket-id">
-
+                            <strong>
                                 ${escapeHTML(
-                                    ticket.ticketId || key
+                                    registrationId
                                 )}
-
-                            </span>
+                            </strong>
 
                         </td>
 
 
                         <td>
 
-                            <span
-                            class="student-name">
-
+                            <strong>
                                 ${escapeHTML(
-                                    ticket.name || "-"
+                                    data.StudentName || "-"
                                 )}
+                            </strong>
 
-                            </span>
-
-                            <span
-                            class="student-email">
-
+                            <small>
                                 ${escapeHTML(
-                                    ticket.email || "-"
+                                    `${data.Class || ""} ${data.Section || ""}`
                                 )}
-
-                            </span>
+                            </small>
 
                         </td>
 
 
                         <td>
-
                             ${escapeHTML(
-                                ticket.category || "-"
+                                data.TeamName || "—"
                             )}
-
                         </td>
 
 
                         <td>
 
-                            ${escapeHTML(
-                                ticket.subject || "-"
-                            )}
-
-                        </td>
-
-
-                        <td>
-
-                            <span
-                            class="
-                            status-badge
-                            ${getStatusClass(status)}
-                            ">
-
-                                ${escapeHTML(status)}
-
+                            <span class="type-badge">
+                                ${escapeHTML(type)}
                             </span>
 
                         </td>
@@ -759,24 +578,88 @@ function renderTickets() {
 
                         <td>
 
+                            ${
+                                members.length
+                                    ? members.map(member => `
+
+                                        <div style="margin-bottom:5px;">
+
+                                            <strong>
+                                                ${escapeHTML(
+                                                    member.name
+                                                )}
+                                            </strong>
+
+                                            <small>
+                                                ${escapeHTML(
+                                                    `${member.className}-${member.section}`
+                                                )}
+                                            </small>
+
+                                        </div>
+
+                                    `).join("")
+                                    : "—"
+                            }
+
+                        </td>
+
+
+                        <td>
+
+                            <strong>
+                                ${escapeHTML(
+                                    data.MobileNumber || "-"
+                                )}
+                            </strong>
+
+                            <small>
+                                ${escapeHTML(
+                                    data.EmailAddress || "-"
+                                )}
+                            </small>
+
+                        </td>
+
+
+                        <td>
+                            ${escapeHTML(events)}
+                        </td>
+
+
+                        <td>
                             ${escapeHTML(
                                 formatDate(
-                                    ticket.createdAt
+                                    data.registrationDate ||
+                                    data.timestamp ||
+                                    data.createdAt
                                 )
                             )}
-
                         </td>
 
 
                         <td>
 
-                            <button
-                            class="view-btn"
-                            data-key="${escapeHTML(key)}">
+                            <div class="action-buttons">
 
-                                View
+                                <button
+                                class="edit-btn"
+                                data-key="${escapeHTML(key)}">
 
-                            </button>
+                                    Edit
+
+                                </button>
+
+
+                                <button
+                                class="delete-btn"
+                                data-key="${escapeHTML(key)}">
+
+                                    Delete
+
+                                </button>
+
+                            </div>
 
                         </td>
 
@@ -785,430 +668,581 @@ function renderTickets() {
                 `;
 
             }
-        )
-        .join("");
+        ).join("");
 
 
-    document
-        .querySelectorAll(
-            ".view-btn"
-        )
-        .forEach(
+    /* ================= EVENTS ================= */
 
-            button => {
+    body
+        .querySelectorAll(".edit-btn")
+        .forEach(button => {
 
-                button.addEventListener(
-                    "click",
+            button.addEventListener(
+                "click",
+                () => {
 
-                    () => {
+                    openEdit(
+                        button.dataset.key
+                    );
 
-                        openTicket(
-                            button.dataset.key
-                        );
+                }
+            );
 
-                    }
-                );
+        });
 
-            }
 
-        );
+    body
+        .querySelectorAll(".delete-btn")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    deleteRegistration(
+                        button.dataset.key
+                    );
+
+                }
+            );
+
+        });
 
 }
 
 
-
 /* =========================================================
-   OPEN TICKET
+   LOAD REGISTRATIONS
 ========================================================= */
 
-function openTicket(key) {
+function loadRegistrations() {
 
-    const ticket =
-        tickets[key];
-
-
-    if (!ticket) {
-
-        return;
-
-    }
-
-
-    const status =
-        ticket.status ||
-        "Open";
-
-
-    modalContent.innerHTML = `
-
-        <div class="detail-header">
-
-            <span class="badge">
-                SUPPORT REQUEST
-            </span>
-
-            <h2>
-                ${escapeHTML(
-                    ticket.ticketId || key
-                )}
-            </h2>
-
-        </div>
-
-
-        <div class="detail-grid">
-
-
-            <div class="detail-box">
-
-                <small>
-                    STUDENT NAME
-                </small>
-
-                <strong>
-                    ${escapeHTML(
-                        ticket.name || "-"
-                    )}
-                </strong>
-
-            </div>
-
-
-            <div class="detail-box">
-
-                <small>
-                    EMAIL
-                </small>
-
-                <strong>
-                    ${escapeHTML(
-                        ticket.email || "-"
-                    )}
-                </strong>
-
-            </div>
-
-
-            <div class="detail-box">
-
-                <small>
-                    CLASS / SECTION
-                </small>
-
-                <strong>
-                    ${escapeHTML(
-                        `${ticket.className || "-"} / ${ticket.section || "-"}`
-                    )}
-                </strong>
-
-            </div>
-
-
-            <div class="detail-box">
-
-                <small>
-                    REGISTRATION ID
-                </small>
-
-                <strong>
-                    ${escapeHTML(
-                        ticket.registrationId ||
-                        "Not provided"
-                    )}
-                </strong>
-
-            </div>
-
-
-            <div class="detail-box">
-
-                <small>
-                    CATEGORY
-                </small>
-
-                <strong>
-                    ${escapeHTML(
-                        ticket.category || "-"
-                    )}
-                </strong>
-
-            </div>
-
-
-            <div class="detail-box">
-
-                <small>
-                    CREATED
-                </small>
-
-                <strong>
-                    ${escapeHTML(
-                        formatDate(
-                            ticket.createdAt
-                        )
-                    )}
-                </strong>
-
-            </div>
-
-
-        </div>
-
-
-        <div class="issue-box">
-
-            <h4>
-                Subject
-            </h4>
-
-            <p>
-                ${escapeHTML(
-                    ticket.subject || "-"
-                )}
-            </p>
-
-        </div>
-
-
-        <div class="issue-box">
-
-            <h4>
-                Student's Message
-            </h4>
-
-            <p>
-                ${escapeHTML(
-                    ticket.message || "-"
-                )}
-            </p>
-
-        </div>
-
-
-        <div class="reply-area">
-
-            <label
-            for="ticketReply">
-
-                Agent Reply
-
-            </label>
-
-
-            <textarea
-            id="ticketReply"
-            placeholder="Write your reply to the student...">${escapeHTML(
-                ticket.reply || ""
-            )}</textarea>
-
-        </div>
-
-
-        <div class="modal-actions">
-
-            <select
-            id="ticketStatusSelect">
-
-                <option
-                value="Open"
-                ${status === "Open" ? "selected" : ""}>
-
-                    Open
-
-                </option>
-
-                <option
-                value="In Progress"
-                ${status === "In Progress" ? "selected" : ""}>
-
-                    In Progress
-
-                </option>
-
-                <option
-                value="Resolved"
-                ${status === "Resolved" ? "selected" : ""}>
-
-                    Resolved
-
-                </option>
-
-                <option
-                value="Closed"
-                ${status === "Closed" ? "selected" : ""}>
-
-                    Closed
-
-                </option>
-
-            </select>
-
-
-            <button
-            id="saveTicketBtn"
-            class="save-ticket-btn">
-
-                Save Changes
-
-            </button>
-
-        </div>
-
-    `;
-
-
-    ticketModal.classList.remove(
-        "hidden"
+    showStatus(
+        "Connecting to Firebase..."
     );
 
 
-    document
-        .getElementById(
-            "saveTicketBtn"
-        )
-        .addEventListener(
-
-            "click",
-
-            async function() {
-
-                await saveTicket(
-                    key
-                );
-
-            }
-
-        );
-
-}
-
-
-
-/* =========================================================
-   SAVE TICKET
-========================================================= */
-
-async function saveTicket(key) {
-
-    const reply =
-        document
-        .getElementById(
-            "ticketReply"
-        )
-        .value
-        .trim();
-
-
-    const status =
-        document
-        .getElementById(
-            "ticketStatusSelect"
-        )
-        .value;
-
-
-    const button =
-        document.getElementById(
-            "saveTicketBtn"
+    const registrationsRef =
+        ref(
+            db,
+            "registrations"
         );
 
 
-    button.disabled =
-        true;
+    if (registrationListener) {
+        registrationListener();
+    }
 
 
-    button.textContent =
-        "Saving...";
+    registrationListener =
+        onValue(
 
+            registrationsRef,
 
-    try {
+            snapshot => {
 
-        await update(
+                registrations =
+                    snapshot.val() || {};
 
-            ref(
-                database,
-                `tickets/${key}`
-            ),
+                renderRegistrations();
 
-            {
-
-                reply:
-                    reply,
-
-                status:
-                    status,
-
-                agent:
-                    currentUser?.email ||
-                    "Support Agent",
-
-                updatedAt:
-                    serverTimestamp()
-
-            }
-
-        );
-
-
-        button.textContent =
-            "Saved ✓";
-
-
-        setTimeout(
-
-            () => {
-
-                ticketModal.classList.add(
-                    "hidden"
+                showStatus(
+                    `${Object.keys(registrations).length} registration(s) loaded.`,
+                    "success"
                 );
 
             },
 
-            600
+            error => {
 
+                console.error(
+                    "Firebase error:",
+                    error
+                );
+
+                showStatus(
+                    "Permission denied. Please check your Firebase Realtime Database Rules.",
+                    "error"
+                );
+
+            }
+
+        );
+
+}
+
+
+/* =========================================================
+   OPEN EDIT
+========================================================= */
+
+function openEdit(key) {
+
+    const data =
+        registrations[key];
+
+    if (!data) {
+        return;
+    }
+
+
+    editKey.value =
+        key;
+
+    editStudentName.value =
+        data.StudentName || "";
+
+    editStudentClass.value =
+        data.Class || "";
+
+    editStudentSection.value =
+        data.Section || "";
+
+    editMobileNumber.value =
+        data.MobileNumber || "";
+
+    editEmailAddress.value =
+        data.EmailAddress || "";
+
+    editTeamName.value =
+        data.TeamName || "";
+
+    editRemarks.value =
+        data.Remarks || "";
+
+
+    editMembers.innerHTML =
+        "";
+
+
+    const teamSize =
+        Math.min(
+            Math.max(
+                Number(
+                    data.TeamSize || 1
+                ),
+                1
+            ),
+            5
+        );
+
+
+    for (
+        let i = 2;
+        i <= teamSize;
+        i++
+    ) {
+
+        const selectedClass =
+            data[`Member${i}Class`] || "";
+
+
+        editMembers.insertAdjacentHTML(
+
+            "beforeend",
+
+            `
+
+            <div class="edit-member-card">
+
+                <h4>
+                    PARTICIPANT ${String(i).padStart(2, "0")}
+                </h4>
+
+
+                <label>
+
+                    Name
+
+                    <input
+                    id="editMember${i}Name"
+                    value="${escapeHTML(
+                        data[`Member${i}Name`] || ""
+                    )}">
+
+                </label>
+
+
+                <label>
+
+                    Class
+
+                    <select
+                    id="editMember${i}Class">
+
+                        <option value="">
+                            Select Class
+                        </option>
+
+                        ${
+                            [
+                                "VI",
+                                "VII",
+                                "VIII",
+                                "IX",
+                                "X",
+                                "XI",
+                                "XII"
+                            ]
+                            .map(
+                                cls => `
+
+                                    <option
+                                    value="${cls}"
+                                    ${
+                                        selectedClass === cls
+                                            ? "selected"
+                                            : ""
+                                    }>
+
+                                        ${cls}
+
+                                    </option>
+
+                                `
+                            )
+                            .join("")
+                        }
+
+                    </select>
+
+                </label>
+
+
+                <label>
+
+                    Section
+
+                    <input
+                    id="editMember${i}Section"
+                    value="${escapeHTML(
+                        data[`Member${i}Section`] || ""
+                    )}">
+
+                </label>
+
+            </div>
+
+            `
+
+        );
+
+    }
+
+
+    editMessage.textContent =
+        "";
+
+
+    editOverlay.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+/* =========================================================
+   CLOSE MODAL
+========================================================= */
+
+function closeEditModal() {
+
+    editOverlay.classList.add(
+        "hidden"
+    );
+
+}
+
+
+closeEdit?.addEventListener(
+    "click",
+    closeEditModal
+);
+
+cancelEdit?.addEventListener(
+    "click",
+    closeEditModal
+);
+
+
+editOverlay?.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target === editOverlay
+        ) {
+
+            closeEditModal();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   SAVE EDIT
+========================================================= */
+
+editForm?.addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+
+        const key =
+            editKey.value;
+
+
+        if (!key) {
+            return;
+        }
+
+
+        const oldData =
+            registrations[key];
+
+
+        if (!oldData) {
+            return;
+        }
+
+
+        const updatedData = {
+
+            ...oldData,
+
+            StudentName:
+                editStudentName.value.trim(),
+
+            Class:
+                editStudentClass.value,
+
+            Section:
+                editStudentSection.value.trim(),
+
+            MobileNumber:
+                editMobileNumber.value.trim(),
+
+            EmailAddress:
+                editEmailAddress.value
+                    .trim()
+                    .toLowerCase(),
+
+            TeamName:
+                editTeamName.value.trim(),
+
+            Remarks:
+                editRemarks.value.trim(),
+
+            updatedAt:
+                Date.now()
+
+        };
+
+
+        const teamSize =
+            Math.min(
+                Math.max(
+                    Number(
+                        oldData.TeamSize || 1
+                    ),
+                    1
+                ),
+                5
+            );
+
+
+        for (
+            let i = 2;
+            i <= 5;
+            i++
+        ) {
+
+            if (i <= teamSize) {
+
+                updatedData[
+                    `Member${i}Name`
+                ] =
+                    document.getElementById(
+                        `editMember${i}Name`
+                    )?.value.trim() || "";
+
+
+                updatedData[
+                    `Member${i}Class`
+                ] =
+                    document.getElementById(
+                        `editMember${i}Class`
+                    )?.value || "";
+
+
+                updatedData[
+                    `Member${i}Section`
+                ] =
+                    document.getElementById(
+                        `editMember${i}Section`
+                    )?.value.trim() || "";
+
+            } else {
+
+                updatedData[
+                    `Member${i}Name`
+                ] = "";
+
+                updatedData[
+                    `Member${i}Class`
+                ] = "";
+
+                updatedData[
+                    `Member${i}Section`
+                ] = "";
+
+            }
+
+        }
+
+
+        try {
+
+            editMessage.textContent =
+                "Saving changes...";
+
+
+            await update(
+
+                ref(
+                    db,
+                    `registrations/${key}`
+                ),
+
+                updatedData
+
+            );
+
+
+            editMessage.textContent =
+                "✓ Changes saved successfully.";
+
+
+            showStatus(
+                "Registration updated successfully.",
+                "success"
+            );
+
+
+            setTimeout(
+                closeEditModal,
+                800
+            );
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            editMessage.textContent =
+                "Unable to save changes.";
+
+            showStatus(
+                "Permission denied while saving changes.",
+                "error"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   DELETE
+========================================================= */
+
+async function deleteRegistration(key) {
+
+    const data =
+        registrations[key];
+
+
+    if (!data) {
+        return;
+    }
+
+
+    const name =
+        data.StudentName ||
+        "this registration";
+
+
+    const id =
+        data.registrationId ||
+        key;
+
+
+    const confirmed =
+        confirm(
+
+            `Delete registration?\n\n` +
+            `Registration: ${id}\n` +
+            `Student: ${name}\n\n` +
+            `This action cannot be undone.`
+
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    try {
+
+        showStatus(
+            "Deleting registration..."
+        );
+
+
+        await remove(
+
+            ref(
+                db,
+                `registrations/${key}`
+            )
+
+        );
+
+
+        showStatus(
+            "Registration deleted successfully.",
+            "success"
         );
 
 
     } catch (error) {
 
-        console.error(
-            error
+        console.error(error);
+
+        showStatus(
+            "Permission denied. Registration could not be deleted.",
+            "error"
         );
-
-
-        alert(
-            "Unable to save ticket changes. Check your Firebase Rules."
-        );
-
-
-        button.disabled =
-            false;
-
-
-        button.textContent =
-            "Save Changes";
 
     }
 
 }
-
 
 
 /* =========================================================
    SEARCH
 ========================================================= */
 
-searchInput?.addEventListener(
+search?.addEventListener(
     "input",
-    renderTickets
+    renderRegistrations
 );
-
-
-statusFilter?.addEventListener(
-    "change",
-    renderTickets
-);
-
 
 
 /* =========================================================
@@ -1217,55 +1251,17 @@ statusFilter?.addEventListener(
 
 refreshBtn?.addEventListener(
     "click",
-
     () => {
 
-        renderTickets();
+        renderRegistrations();
 
-        dashboardStatus.textContent =
-            "Dashboard refreshed.";
-
-    }
-);
-
-
-
-/* =========================================================
-   CLOSE MODAL
-========================================================= */
-
-closeModal?.addEventListener(
-    "click",
-
-    () => {
-
-        ticketModal.classList.add(
-            "hidden"
+        showStatus(
+            "Dashboard refreshed.",
+            "success"
         );
 
     }
 );
-
-
-ticketModal?.addEventListener(
-    "click",
-
-    event => {
-
-        if (
-            event.target ===
-            ticketModal
-        ) {
-
-            ticketModal.classList.add(
-                "hidden"
-            );
-
-        }
-
-    }
-);
-
 
 
 /* =========================================================
@@ -1274,22 +1270,71 @@ ticketModal?.addEventListener(
 
 logoutBtn?.addEventListener(
     "click",
-
-    async function() {
+    async () => {
 
         try {
 
-            await signOut(
-                auth
-            );
+            await signOut(auth);
+
+            window.location.href =
+                "login.html";
 
         } catch (error) {
 
-            console.error(
-                error
-            );
+            console.error(error);
 
         }
 
     }
+);
+
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+onAuthStateChanged(
+
+    auth,
+
+    user => {
+
+        if (!user) {
+
+            window.location.href =
+                "login.html";
+
+            return;
+
+        }
+
+
+        if (
+            !ADMIN_UIDS.has(
+                user.uid
+            )
+        ) {
+
+            alert(
+                "Access denied. Your account is not an administrator."
+            );
+
+
+            signOut(auth);
+
+            return;
+
+        }
+
+
+        showStatus(
+            `Welcome, ${user.email || "Administrator"}.`,
+            "success"
+        );
+
+
+        loadRegistrations();
+
+    }
+
 );
