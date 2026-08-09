@@ -12,7 +12,8 @@ import {
     getDatabase,
     ref,
     onValue,
-    update
+    update,
+    remove
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
 
 
@@ -64,10 +65,10 @@ const db =
 
 
 /* =========================================================
-   SUPPORT AGENTS
+   THE SAME 5 ADMIN UIDS
 ========================================================= */
 
-const AGENT_UIDS = new Set([
+const ADMIN_UIDS = new Set([
 
     "crfLkH7qlofZBea5GEwLMEtL92X2",
 
@@ -86,32 +87,134 @@ const AGENT_UIDS = new Set([
    ELEMENTS
 ========================================================= */
 
-const logoutBtn =
-    document.getElementById("logoutBtn");
+const body =
+    document.getElementById(
+        "registrationBody"
+    );
 
-const status =
-    document.getElementById("status");
-
-const ticketBody =
-    document.getElementById("ticketBody");
-
-const searchInput =
-    document.getElementById("search");
-
-const filterSelect =
-    document.getElementById("ticketFilter");
+const search =
+    document.getElementById(
+        "search"
+    );
 
 const refreshBtn =
-    document.getElementById("refreshBtn");
+    document.getElementById(
+        "refreshBtn"
+    );
+
+const logoutBtn =
+    document.getElementById(
+        "logoutBtn"
+    );
+
+const status =
+    document.getElementById(
+        "status"
+    );
+
+const totalRegistrations =
+    document.getElementById(
+        "totalRegistrations"
+    );
+
+const soloCount =
+    document.getElementById(
+        "soloCount"
+    );
+
+const teamCount =
+    document.getElementById(
+        "teamCount"
+    );
+
+const participantCount =
+    document.getElementById(
+        "participantCount"
+    );
+
+
+/* =========================================================
+   EDIT ELEMENTS
+========================================================= */
+
+const editOverlay =
+    document.getElementById(
+        "editOverlay"
+    );
+
+const closeEdit =
+    document.getElementById(
+        "closeEdit"
+    );
+
+const cancelEdit =
+    document.getElementById(
+        "cancelEdit"
+    );
+
+const editForm =
+    document.getElementById(
+        "editForm"
+    );
+
+const editKey =
+    document.getElementById(
+        "editKey"
+    );
+
+const editStudentName =
+    document.getElementById(
+        "editStudentName"
+    );
+
+const editStudentClass =
+    document.getElementById(
+        "editStudentClass"
+    );
+
+const editStudentSection =
+    document.getElementById(
+        "editStudentSection"
+    );
+
+const editMobileNumber =
+    document.getElementById(
+        "editMobileNumber"
+    );
+
+const editEmailAddress =
+    document.getElementById(
+        "editEmailAddress"
+    );
+
+const editTeamName =
+    document.getElementById(
+        "editTeamName"
+    );
+
+const editMembers =
+    document.getElementById(
+        "editMembers"
+    );
+
+const editRemarks =
+    document.getElementById(
+        "editRemarks"
+    );
+
+const editMessage =
+    document.getElementById(
+        "editMessage"
+    );
 
 
 /* =========================================================
    DATA
 ========================================================= */
 
-let tickets = {};
+let registrations = {};
 
-let currentUser = null;
+let firebaseListener = null;
 
 
 /* =========================================================
@@ -123,7 +226,9 @@ function showStatus(
     type = ""
 ) {
 
-    if (!status) return;
+    if (!status) {
+        return;
+    }
 
     status.textContent =
         message;
@@ -153,130 +258,76 @@ function escapeHTML(value) {
 
 
 /* =========================================================
-   AUTHENTICATION
+   DATE
 ========================================================= */
 
-onAuthStateChanged(
-    auth,
-    user => {
+function formatDate(value) {
 
-        if (!user) {
+    if (!value) {
+        return "-";
+    }
 
-            window.location.href =
-                "agent-login.html";
+    const date =
+        new Date(value);
 
-            return;
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
 
-        }
-
-
-        console.log(
-            "Logged-in Agent UID:",
-            user.uid
-        );
-
-
-        /* =============================================
-           AGENT CHECK
-        ============================================= */
-
-        if (!AGENT_UIDS.has(user.uid)) {
-
-            console.error(
-                "Unauthorized Agent UID:",
-                user.uid
-            );
-
-            alert(
-                "Access denied. This account is not a support agent."
-            );
-
-            signOut(auth);
-
-            return;
-
-        }
-
-
-        /* =============================================
-           AUTHORIZED
-        ============================================= */
-
-        currentUser =
-            user;
-
-
-        showStatus(
-            `Agent authenticated: ${
-                user.email || "Support Agent"
-            }`,
-            "success"
-        );
-
-
-        loadTickets();
+        return String(value);
 
     }
-);
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
 
 
 /* =========================================================
-   LOAD TICKETS
+   MEMBERS
 ========================================================= */
 
-function loadTickets() {
+function getMembers(data) {
 
-    showStatus(
-        "Connecting to Firebase..."
-    );
+    const members = [];
 
+    for (
+        let i = 2;
+        i <= 5;
+        i++
+    ) {
 
-    const ticketsRef =
-        ref(
-            db,
-            "tickets"
-        );
+        const name =
+            data[`Member${i}Name`];
 
-
-    onValue(
-
-        ticketsRef,
-
-        snapshot => {
-
-            tickets =
-                snapshot.val() || {};
-
-
-            renderTickets();
-
-
-            showStatus(
-                `${Object.keys(tickets).length} ticket(s) loaded.`,
-                "success"
-            );
-
-        },
-
-        error => {
-
-            console.error(
-                "Firebase ticket error:",
-                error
-            );
-
-
-            showStatus(
-
-                "Firebase denied ticket access. Check the tickets Rules and Agent UID.",
-
-                "error"
-
-            );
-
+        if (!name) {
+            continue;
         }
 
-    );
+        members.push({
+
+            name,
+
+            className:
+                data[`Member${i}Class`] || "-",
+
+            section:
+                data[`Member${i}Section`] || "-"
+
+        });
+
+    }
+
+    return members;
 
 }
 
@@ -286,12 +337,12 @@ function loadTickets() {
 ========================================================= */
 
 function matchesSearch(
-    key,
-    ticket
+    data,
+    key
 ) {
 
     const query =
-        searchInput?.value
+        search?.value
             ?.trim()
             .toLowerCase() || "";
 
@@ -301,29 +352,51 @@ function matchesSearch(
     }
 
 
-    const text = [
+    const events =
+        Array.isArray(data.Events)
+            ? data.Events.join(" ")
+            : String(
+                data.Events || ""
+            );
+
+
+    const searchable = [
 
         key,
 
-        ticket.ticketId,
+        data.registrationId,
 
-        ticket.registrationId,
+        data.StudentName,
 
-        ticket.name,
+        data.Class,
 
-        ticket.StudentName,
+        data.Section,
 
-        ticket.email,
+        data.MobileNumber,
 
-        ticket.EmailAddress,
+        data.EmailAddress,
 
-        ticket.subject,
+        data.TeamName,
 
-        ticket.message,
+        data.ParticipationType,
 
-        ticket.category,
+        events,
 
-        ticket.status
+        data.Member2Name,
+        data.Member2Class,
+        data.Member2Section,
+
+        data.Member3Name,
+        data.Member3Class,
+        data.Member3Section,
+
+        data.Member4Name,
+        data.Member4Class,
+        data.Member4Section,
+
+        data.Member5Name,
+        data.Member5Class,
+        data.Member5Section
 
     ]
         .filter(Boolean)
@@ -331,86 +404,145 @@ function matchesSearch(
         .toLowerCase();
 
 
-    return text.includes(query);
+    return searchable.includes(
+        query
+    );
 
 }
 
 
 /* =========================================================
-   FILTER
+   RENDER
 ========================================================= */
 
-function matchesFilter(ticket) {
+function renderRegistrations() {
 
-    const filter =
-        filterSelect?.value || "all";
-
-
-    if (
-        filter === "all"
-    ) {
-
-        return true;
-
-    }
-
-
-    return String(
-        ticket.status || ""
-    )
-        .toLowerCase() ===
-        filter.toLowerCase();
-
-}
-
-
-/* =========================================================
-   RENDER TICKETS
-========================================================= */
-
-function renderTickets() {
-
-    if (!ticketBody) {
+    if (!body) {
         return;
     }
 
 
+    const allEntries =
+        Object.values(
+            registrations
+        );
+
+
     const entries =
         Object.entries(
-            tickets
+            registrations
         )
         .filter(
-            ([key, ticket]) =>
+            ([key, data]) =>
                 matchesSearch(
-                    key,
-                    ticket
-                ) &&
-                matchesFilter(ticket)
+                    data,
+                    key
+                )
         )
         .reverse();
 
 
+    /* =====================================================
+       STATS
+    ===================================================== */
+
+    const total =
+        allEntries.length;
+
+
+    const solo =
+        allEntries.filter(
+            data =>
+                Number(
+                    data.TeamSize
+                ) === 1 ||
+                String(
+                    data.ParticipationType || ""
+                ).toLowerCase() === "solo"
+        ).length;
+
+
+    const teams =
+        total - solo;
+
+
+    let participants = 0;
+
+
+    allEntries.forEach(
+        data => {
+
+            const size =
+                Number(
+                    data.TeamSize || 1
+                );
+
+            participants +=
+                size > 0
+                    ? size
+                    : 1;
+
+        }
+    );
+
+
+    if (totalRegistrations) {
+
+        totalRegistrations.textContent =
+            total;
+
+    }
+
+
+    if (soloCount) {
+
+        soloCount.textContent =
+            solo;
+
+    }
+
+
+    if (teamCount) {
+
+        teamCount.textContent =
+            teams;
+
+    }
+
+
+    if (participantCount) {
+
+        participantCount.textContent =
+            participants;
+
+    }
+
+
+    /* =====================================================
+       EMPTY
+    ===================================================== */
+
     if (!entries.length) {
 
-        ticketBody.innerHTML = `
+        body.innerHTML = `
 
             <tr>
 
                 <td
-                    colspan="8"
-                    class="empty-state">
+                    colspan="9"
+                    style="
+                        text-align:center;
+                        padding:50px;
+                    "
+                >
 
-                    <div class="empty-icon">
-                        🎫
+                    <div style="font-size:30px;">
+                        🔎
                     </div>
 
-                    <strong>
-                        No tickets found
-                    </strong>
-
-                    <small>
-                        There are no support tickets matching your search.
-                    </small>
+                    <div style="margin-top:10px;">
+                        No registrations found.
+                    </div>
 
                 </td>
 
@@ -423,269 +555,811 @@ function renderTickets() {
     }
 
 
-    ticketBody.innerHTML =
-        entries.map(
-            ([key, ticket]) => {
+    /* =====================================================
+       ROWS
+    ===================================================== */
 
-                const ticketId =
-                    ticket.ticketId ||
-                    key;
+    body.innerHTML =
+        entries
+            .map(
+                ([key, data]) => {
 
-
-                const student =
-                    ticket.name ||
-                    ticket.StudentName ||
-                    "-";
+                    const members =
+                        getMembers(data);
 
 
-                const email =
-                    ticket.email ||
-                    ticket.EmailAddress ||
-                    "-";
+                    const events =
+                        Array.isArray(
+                            data.Events
+                        )
+                            ? data.Events.join(
+                                ", "
+                            )
+                            : data.Events ||
+                              "-";
 
 
-                const registrationId =
-                    ticket.registrationId ||
-                    "Not provided";
+                    const type =
+                        data.ParticipationType ||
+                        (
+                            Number(
+                                data.TeamSize
+                            ) === 1
+                                ? "Solo"
+                                : `Team of ${
+                                    data.TeamSize || "-"
+                                }`
+                        );
 
 
-                const ticketStatus =
-                    ticket.status ||
-                    "Open";
+                    const id =
+                        data.registrationId ||
+                        key;
 
 
-                return `
+                    return `
 
-                    <tr>
+                        <tr>
 
-                        <td>
-
-                            <strong>
-                                ${escapeHTML(ticketId)}
-                            </strong>
-
-                        </td>
+                            <td>
+                                <strong>
+                                    ${escapeHTML(id)}
+                                </strong>
+                            </td>
 
 
-                        <td>
+                            <td>
 
-                            <strong>
-                                ${escapeHTML(student)}
-                            </strong>
+                                <strong>
+                                    ${escapeHTML(
+                                        data.StudentName ||
+                                        "-"
+                                    )}
+                                </strong>
 
-                            <small>
-                                ${escapeHTML(email)}
-                            </small>
+                                <small>
+                                    ${escapeHTML(
+                                        `${data.Class || ""} ${
+                                            data.Section || ""
+                                        }`
+                                    )}
+                                </small>
 
-                        </td>
-
-
-                        <td>
-
-                            ${escapeHTML(
-                                registrationId
-                            )}
-
-                        </td>
+                            </td>
 
 
-                        <td>
-
-                            ${escapeHTML(
-                                ticket.category || "Other"
-                            )}
-
-                        </td>
-
-
-                        <td>
-
-                            <strong>
+                            <td>
                                 ${escapeHTML(
-                                    ticket.subject || "-"
+                                    data.TeamName ||
+                                    "—"
                                 )}
-                            </strong>
+                            </td>
 
-                            <small>
+
+                            <td>
+
+                                <span class="type-badge">
+                                    ${escapeHTML(
+                                        type
+                                    )}
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                ${
+                                    members.length
+                                    ?
+                                    members
+                                        .map(
+                                            member => `
+
+                                                <div
+                                                    style="
+                                                        margin-bottom:7px;
+                                                    "
+                                                >
+
+                                                    <strong>
+                                                        ${escapeHTML(
+                                                            member.name
+                                                        )}
+                                                    </strong>
+
+                                                    <small>
+                                                        ${escapeHTML(
+                                                            `${member.className}-${member.section}`
+                                                        )}
+                                                    </small>
+
+                                                </div>
+
+                                            `
+                                        )
+                                        .join("")
+                                    :
+                                    "—"
+                                }
+
+                            </td>
+
+
+                            <td>
+
+                                <strong>
+                                    ${escapeHTML(
+                                        data.MobileNumber ||
+                                        "-"
+                                    )}
+                                </strong>
+
+                                <small>
+                                    ${escapeHTML(
+                                        data.EmailAddress ||
+                                        "-"
+                                    )}
+                                </small>
+
+                            </td>
+
+
+                            <td>
                                 ${escapeHTML(
-                                    ticket.message || ""
+                                    events
                                 )}
-                            </small>
-
-                        </td>
+                            </td>
 
 
-                        <td>
-
-                            <span
-                                class="ticket-status ${String(
-                                    ticketStatus
-                                ).toLowerCase()}">
-
+                            <td>
                                 ${escapeHTML(
-                                    ticketStatus
+                                    formatDate(
+                                        data.registrationDate ||
+                                        data.timestamp ||
+                                        data.createdAt
+                                    )
                                 )}
-
-                            </span>
-
-                        </td>
+                            </td>
 
 
-                        <td>
+                            <td>
 
-                            ${escapeHTML(
-                                ticket.agentReply || "—"
-                            )}
+                                <div class="action-buttons">
 
-                        </td>
-
-
-                        <td>
-
-                            <button
-                                class="open-ticket"
-                                data-key="${escapeHTML(key)}">
-
-                                Open
-
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-                `;
-
-            }
-        ).join("");
+                                    <button
+                                        class="edit-btn"
+                                        data-key="${escapeHTML(
+                                            key
+                                        )}"
+                                    >
+                                        Edit
+                                    </button>
 
 
-    ticketBody
-        .querySelectorAll(
-            ".open-ticket"
-        )
-        .forEach(button => {
+                                    <button
+                                        class="delete-btn"
+                                        data-key="${escapeHTML(
+                                            key
+                                        )}"
+                                    >
+                                        Delete
+                                    </button>
 
-            button.addEventListener(
-                "click",
-                () => {
+                                </div>
 
-                    openTicket(
-                        button.dataset.key
-                    );
+                            </td>
+
+                        </tr>
+
+                    `;
 
                 }
-            );
+            )
+            .join("");
 
-        });
+
+    /* =====================================================
+       EDIT BUTTONS
+    ===================================================== */
+
+    body
+        .querySelectorAll(
+            ".edit-btn"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        openEdit(
+                            button.dataset.key
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+    /* =====================================================
+       DELETE BUTTONS
+    ===================================================== */
+
+    body
+        .querySelectorAll(
+            ".delete-btn"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        deleteRegistration(
+                            button.dataset.key
+                        );
+
+                    }
+                );
+
+            }
+        );
 
 }
 
 
 /* =========================================================
-   OPEN TICKET
+   LOAD FIREBASE DATA
 ========================================================= */
 
-function openTicket(key) {
+function loadRegistrations() {
 
-    const ticket =
-        tickets[key];
-
-
-    if (!ticket) {
-        return;
-    }
+    showStatus(
+        "Connecting to Firebase..."
+    );
 
 
-    const reply =
-        prompt(
-
-            `Support Ticket: ${
-                ticket.ticketId || key
-            }\n\n` +
-
-            `Student: ${
-                ticket.name ||
-                ticket.StudentName ||
-                "-"
-            }\n\n` +
-
-            `Subject: ${
-                ticket.subject || "-"
-            }\n\n` +
-
-            `Message:\n${
-                ticket.message || "-"
-            }\n\n` +
-
-            `Enter agent reply:`
-
+    const registrationsRef =
+        ref(
+            db,
+            "registrations"
         );
 
 
-    if (
-        reply === null
-    ) {
+    if (firebaseListener) {
 
-        return;
+        firebaseListener();
 
     }
 
 
-    updateTicket(
-        key,
-        reply
+    firebaseListener =
+        onValue(
+
+            registrationsRef,
+
+            snapshot => {
+
+                registrations =
+                    snapshot.val() || {};
+
+
+                renderRegistrations();
+
+
+                showStatus(
+
+                    `${Object.keys(
+                        registrations
+                    ).length} registration(s) loaded.`,
+
+                    "success"
+
+                );
+
+            },
+
+            error => {
+
+                console.error(
+                    "Firebase read error:",
+                    error
+                );
+
+
+                showStatus(
+
+                    "Firebase denied access to registrations. Check that you are logged in with one of the 5 authorized Admin UIDs.",
+
+                    "error"
+
+                );
+
+            }
+
+        );
+
+}
+
+
+/* =========================================================
+   OPEN EDIT
+========================================================= */
+
+function openEdit(key) {
+
+    const data =
+        registrations[key];
+
+
+    if (!data) {
+        return;
+    }
+
+
+    editKey.value =
+        key;
+
+
+    editStudentName.value =
+        data.StudentName || "";
+
+
+    editStudentClass.value =
+        data.Class || "";
+
+
+    editStudentSection.value =
+        data.Section || "";
+
+
+    editMobileNumber.value =
+        data.MobileNumber || "";
+
+
+    editEmailAddress.value =
+        data.EmailAddress || "";
+
+
+    editTeamName.value =
+        data.TeamName || "";
+
+
+    editRemarks.value =
+        data.Remarks || "";
+
+
+    editMembers.innerHTML =
+        "";
+
+
+    const teamSize =
+        Math.min(
+            Math.max(
+                Number(
+                    data.TeamSize || 1
+                ),
+                1
+            ),
+            5
+        );
+
+
+    for (
+        let i = 2;
+        i <= teamSize;
+        i++
+    ) {
+
+        const selectedClass =
+            data[
+                `Member${i}Class`
+            ] || "";
+
+
+        editMembers.insertAdjacentHTML(
+
+            "beforeend",
+
+            `
+
+                <div class="edit-member-card">
+
+                    <h4>
+                        PARTICIPANT ${String(i).padStart(2, "0")}
+                    </h4>
+
+
+                    <label>
+
+                        Name
+
+                        <input
+                            id="editMember${i}Name"
+                            value="${escapeHTML(
+                                data[
+                                    `Member${i}Name`
+                                ] || ""
+                            )}"
+                        >
+
+                    </label>
+
+
+                    <label>
+
+                        Class
+
+                        <select
+                            id="editMember${i}Class"
+                        >
+
+                            <option value="">
+                                Select Class
+                            </option>
+
+                            ${
+                                [
+                                    "VI",
+                                    "VII",
+                                    "VIII",
+                                    "IX",
+                                    "X",
+                                    "XI",
+                                    "XII"
+                                ]
+                                .map(
+                                    cls => `
+
+                                        <option
+                                            value="${cls}"
+                                            ${
+                                                selectedClass === cls
+                                                    ? "selected"
+                                                    : ""
+                                            }
+                                        >
+                                            ${cls}
+                                        </option>
+
+                                    `
+                                )
+                                .join("")
+                            }
+
+                        </select>
+
+                    </label>
+
+
+                    <label>
+
+                        Section
+
+                        <input
+                            id="editMember${i}Section"
+                            value="${escapeHTML(
+                                data[
+                                    `Member${i}Section`
+                                ] || ""
+                            )}"
+                        >
+
+                    </label>
+
+                </div>
+
+            `
+
+        );
+
+    }
+
+
+    editMessage.textContent =
+        "";
+
+
+    editOverlay.classList.remove(
+        "hidden"
     );
 
 }
 
 
 /* =========================================================
-   UPDATE TICKET
+   CLOSE EDIT
 ========================================================= */
 
-async function updateTicket(
-    key,
-    reply
+function closeEditModal() {
+
+    editOverlay.classList.add(
+        "hidden"
+    );
+
+}
+
+
+closeEdit?.addEventListener(
+    "click",
+    closeEditModal
+);
+
+
+cancelEdit?.addEventListener(
+    "click",
+    closeEditModal
+);
+
+
+editOverlay?.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target ===
+            editOverlay
+        ) {
+
+            closeEditModal();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   SAVE EDIT
+========================================================= */
+
+editForm?.addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+
+        const key =
+            editKey.value;
+
+
+        if (!key) {
+            return;
+        }
+
+
+        const oldData =
+            registrations[key];
+
+
+        if (!oldData) {
+            return;
+        }
+
+
+        const updatedData = {
+
+            ...oldData,
+
+            StudentName:
+                editStudentName.value.trim(),
+
+            Class:
+                editStudentClass.value,
+
+            Section:
+                editStudentSection.value.trim(),
+
+            MobileNumber:
+                editMobileNumber.value.trim(),
+
+            EmailAddress:
+                editEmailAddress.value
+                    .trim()
+                    .toLowerCase(),
+
+            TeamName:
+                editTeamName.value.trim(),
+
+            Remarks:
+                editRemarks.value.trim(),
+
+            updatedAt:
+                Date.now()
+
+        };
+
+
+        const teamSize =
+            Math.min(
+                Math.max(
+                    Number(
+                        oldData.TeamSize || 1
+                    ),
+                    1
+                ),
+                5
+            );
+
+
+        for (
+            let i = 2;
+            i <= 5;
+            i++
+        ) {
+
+            if (i <= teamSize) {
+
+                updatedData[
+                    `Member${i}Name`
+                ] =
+                    document.getElementById(
+                        `editMember${i}Name`
+                    )?.value.trim() || "";
+
+
+                updatedData[
+                    `Member${i}Class`
+                ] =
+                    document.getElementById(
+                        `editMember${i}Class`
+                    )?.value || "";
+
+
+                updatedData[
+                    `Member${i}Section`
+                ] =
+                    document.getElementById(
+                        `editMember${i}Section`
+                    )?.value.trim() || "";
+
+            } else {
+
+                updatedData[
+                    `Member${i}Name`
+                ] = "";
+
+                updatedData[
+                    `Member${i}Class`
+                ] = "";
+
+                updatedData[
+                    `Member${i}Section`
+                ] = "";
+
+            }
+
+        }
+
+
+        try {
+
+            editMessage.textContent =
+                "Saving changes...";
+
+
+            await update(
+
+                ref(
+                    db,
+                    `registrations/${key}`
+                ),
+
+                updatedData
+
+            );
+
+
+            editMessage.textContent =
+                "✓ Changes saved successfully.";
+
+
+            showStatus(
+                "Registration updated successfully.",
+                "success"
+            );
+
+
+            setTimeout(
+                closeEditModal,
+                700
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Firebase update error:",
+                error
+            );
+
+
+            editMessage.textContent =
+                "Unable to save changes.";
+
+
+            showStatus(
+
+                "Firebase denied the update. Make sure this logged-in account is one of your 5 Admin UIDs.",
+
+                "error"
+
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   DELETE
+========================================================= */
+
+async function deleteRegistration(
+    key
 ) {
+
+    const data =
+        registrations[key];
+
+
+    if (!data) {
+        return;
+    }
+
+
+    const id =
+        data.registrationId ||
+        key;
+
+
+    const name =
+        data.StudentName ||
+        "this participant";
+
+
+    const confirmed =
+        confirm(
+
+            `DELETE REGISTRATION?\n\n` +
+            `Registration ID: ${id}\n` +
+            `Student: ${name}\n\n` +
+            `This action cannot be undone.`
+
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
 
     try {
 
         showStatus(
-            "Saving ticket response..."
+            "Deleting registration..."
         );
 
 
-        await update(
+        await remove(
 
             ref(
                 db,
-                `tickets/${key}`
-            ),
-
-            {
-
-                agentReply:
-                    reply.trim(),
-
-                status:
-                    "Answered",
-
-                updatedAt:
-                    Date.now(),
-
-                handledBy:
-                    currentUser?.email ||
-                    currentUser?.uid ||
-                    "Support Agent"
-
-            }
+                `registrations/${key}`
+            )
 
         );
 
 
         showStatus(
-            "Ticket updated successfully.",
+            "Registration deleted successfully.",
             "success"
         );
 
@@ -693,14 +1367,14 @@ async function updateTicket(
     } catch (error) {
 
         console.error(
-            "Ticket update error:",
+            "Firebase delete error:",
             error
         );
 
 
         showStatus(
 
-            "Unable to update ticket. Check Firebase Rules.",
+            "Firebase denied deletion. Make sure this is an authorized Admin account.",
 
             "error"
 
@@ -715,19 +1389,9 @@ async function updateTicket(
    SEARCH
 ========================================================= */
 
-searchInput?.addEventListener(
+search?.addEventListener(
     "input",
-    renderTickets
-);
-
-
-/* =========================================================
-   FILTER
-========================================================= */
-
-filterSelect?.addEventListener(
-    "change",
-    renderTickets
+    renderRegistrations
 );
 
 
@@ -739,10 +1403,10 @@ refreshBtn?.addEventListener(
     "click",
     () => {
 
-        renderTickets();
+        renderRegistrations();
 
         showStatus(
-            "Ticket list refreshed.",
+            "Dashboard refreshed.",
             "success"
         );
 
@@ -760,18 +1424,92 @@ logoutBtn?.addEventListener(
 
         try {
 
-            await signOut(auth);
+            await signOut(
+                auth
+            );
 
-            window.location.href =
-                "agent-login.html";
+            window.location.replace(
+                "admin-login.html"
+            );
 
         } catch (error) {
 
             console.error(
+                "Logout error:",
                 error
             );
 
         }
 
     }
+);
+
+
+/* =========================================================
+   AUTHORIZATION
+========================================================= */
+
+onAuthStateChanged(
+
+    auth,
+
+    user => {
+
+        /*
+         * No Firebase user.
+         */
+
+        if (!user) {
+
+            window.location.replace(
+                "admin-login.html"
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * Firebase user exists,
+         * but check the UID.
+         */
+
+        if (
+            !ADMIN_UIDS.has(
+                user.uid
+            )
+        ) {
+
+            alert(
+                "Access denied. This account is not an administrator."
+            );
+
+
+            signOut(auth);
+
+            return;
+
+        }
+
+
+        /*
+         * Authorized admin.
+         */
+
+        showStatus(
+
+            `Administrator authenticated: ${
+                user.email || user.uid
+            }`,
+
+            "success"
+
+        );
+
+
+        loadRegistrations();
+
+    }
+
 );
