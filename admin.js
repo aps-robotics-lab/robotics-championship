@@ -1,26 +1,31 @@
 /* =========================================================
    APS ROBOTICS CHAMPIONSHIP 2026
-   ADMIN PANEL
+   ADMIN CONTROL CENTER
 ========================================================= */
 
 import {
     initializeApp
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+} from
+"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 
 import {
     getAuth,
     signInWithEmailAndPassword,
     onAuthStateChanged,
     signOut
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+} from
+"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
 import {
     getDatabase,
     ref,
     get,
+    set,
     update,
-    remove
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+    remove,
+    push
+} from
+"https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 
 /* =========================================================
@@ -28,46 +33,62 @@ import {
 ========================================================= */
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
-    authDomain: "aps-robotics-championship.firebaseapp.com",
-    databaseURL: "https://aps-robotics-championship-default-rtdb.firebaseio.com",
-    projectId: "aps-robotics-championship",
-    storageBucket: "aps-robotics-championship.firebasestorage.app",
-    messagingSenderId: "1063542904891",
-    appId: "1:1063542904891:web:82ff9bb3fba0b87384a41e"
+
+    apiKey:
+        "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
+
+    authDomain:
+        "aps-robotics-championship.firebaseapp.com",
+
+    databaseURL:
+        "https://aps-robotics-championship-default-rtdb.firebaseio.com",
+
+    projectId:
+        "aps-robotics-championship",
+
+    storageBucket:
+        "aps-robotics-championship.firebasestorage.app",
+
+    messagingSenderId:
+        "1063542904891",
+
+    appId:
+        "1:1063542904891:web:82ff9bb3fba0b87384a41e"
 };
 
-const firebaseApp = initializeApp(firebaseConfig);
 
-const auth = getAuth(firebaseApp);
+const firebaseApp =
+    initializeApp(firebaseConfig);
 
-const db = getDatabase(firebaseApp);
+const auth =
+    getAuth(firebaseApp);
 
-
-/* =========================================================
-   GLOBAL STATE
-========================================================= */
-
-let registrations = {};
-let filteredRegistrations = {};
-let currentRegistrationKey = null;
-
-let currentUser = null;
+const db =
+    getDatabase(firebaseApp);
 
 
 /* =========================================================
    HELPERS
 ========================================================= */
 
-const $ = id => document.getElementById(id);
+const $ = id =>
+    document.getElementById(id);
+
+
+let registrations = {};
+let filteredRegistrations = {};
+let rules = [];
+
+let toastTimer;
+
+
+/* =========================================================
+   SAFE TEXT
+========================================================= */
 
 function safe(value) {
 
-    if (value === null || value === undefined) {
-        return "";
-    }
-
-    return String(value)
+    return String(value ?? "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -76,264 +97,85 @@ function safe(value) {
 }
 
 
-function normal(value) {
+function normalize(value) {
 
-    if (
-        value === null ||
-        value === undefined
-    ) {
+    if (value === null ||
+        value === undefined) {
+
         return "";
+
     }
 
     if (Array.isArray(value)) {
-        return value.join(", ");
+
+        return value
+            .map(normalize)
+            .join(", ");
+
     }
 
     if (typeof value === "object") {
-        return Object.values(value).join(", ");
+
+        return Object.values(value)
+            .map(normalize)
+            .join(", ");
+
     }
 
     return String(value);
 }
 
 
-function getEmail(data) {
-
-    return normal(
-        data?.EmailAddress ||
-        data?.Email ||
-        data?.email ||
-        ""
-    );
-}
-
-
-function getEvents(data) {
-
-    const value =
-        data?.Events ??
-        data?.events ??
-        data?.Event ??
-        data?.event;
-
-    if (!value) {
-        return [];
-    }
-
-    if (Array.isArray(value)) {
-        return value
-            .map(normal)
-            .map(x => x.trim())
-            .filter(Boolean);
-    }
-
-    if (typeof value === "object") {
-        return Object.values(value)
-            .map(normal)
-            .map(x => x.trim())
-            .filter(Boolean);
-    }
-
-    return normal(value)
-        .split(/\s*(?:,|\||;)\s*/)
-        .map(x => x.trim())
-        .filter(Boolean);
-}
-
-
-function getTeamSize(data) {
-
-    const declaredSize = Number(data?.TeamSize);
-
-    if (declaredSize > 0) {
-        return declaredSize;
-    }
-
-    let members = 1;
-
-    for (let i = 2; i <= 10; i++) {
-
-        const name =
-            data?.[`Member${i}Name`] ||
-            data?.[`member${i}Name`];
-
-        if (normal(name).trim()) {
-            members++;
-        }
-    }
-
-    return members;
-}
-
-
-function getDate(data) {
+function dateValue(data) {
 
     const value =
         data?.registrationDate ||
         data?.createdAt ||
-        data?.timestamp ||
         "";
 
-    if (!value) {
-        return null;
-    }
+    const date =
+        new Date(value);
 
-    const date = new Date(value);
-
-    if (Number.isNaN(date.getTime())) {
-        return null;
-    }
-
-    return date;
-}
-
-
-function formatDate(data) {
-
-    const date = getDate(data);
-
-    if (!date) {
-        return "-";
-    }
-
-    return date.toLocaleString(
-        "en-IN",
-        {
-            dateStyle: "medium",
-            timeStyle: "short"
-        }
-    );
-}
-
-
-function showToast(
-    message,
-    type = "success"
-) {
-
-    const toast = $("toast");
-
-    toast.textContent = message;
-
-    toast.className =
-        `toast show ${type}`;
-
-    clearTimeout(showToast.timer);
-
-    showToast.timer = setTimeout(() => {
-
-        toast.classList.remove("show");
-
-    }, 3200);
+    return isNaN(date.getTime())
+        ? 0
+        : date.getTime();
 }
 
 
 /* =========================================================
-   AUTHENTICATION
+   TOAST
 ========================================================= */
 
-const loginScreen = $("loginScreen");
-const adminApp = $("adminApp");
+function showToast(
+    message
+) {
 
-const loginForm = $("loginForm");
+    const toast =
+        $("toast");
 
-const loginEmail = $("loginEmail");
-const loginPassword = $("loginPassword");
+    toast.textContent =
+        message;
 
-const loginBtn = $("loginBtn");
+    toast.classList.add(
+        "show"
+    );
 
-const loginError = $("loginError");
+    clearTimeout(
+        toastTimer
+    );
 
+    toastTimer =
+        setTimeout(
+            () => {
 
-loginForm.addEventListener(
-    "submit",
-    async event => {
+                toast.classList.remove(
+                    "show"
+                );
 
-        event.preventDefault();
-
-        loginError.textContent = "";
-
-        loginBtn.disabled = true;
-
-        loginBtn.textContent =
-            "AUTHENTICATING...";
-
-        try {
-
-            await signInWithEmailAndPassword(
-                auth,
-                loginEmail.value.trim(),
-                loginPassword.value
-            );
-
-        } catch (error) {
-
-            console.error(error);
-
-            loginError.textContent =
-                getAuthError(error.code);
-
-        } finally {
-
-            loginBtn.disabled = false;
-
-            loginBtn.textContent =
-                "LOGIN TO DASHBOARD";
-        }
-    }
-);
-
-
-function getAuthError(code) {
-
-    const messages = {
-
-        "auth/invalid-credential":
-            "Invalid email or password.",
-
-        "auth/user-not-found":
-            "Admin account was not found.",
-
-        "auth/wrong-password":
-            "Incorrect password.",
-
-        "auth/invalid-email":
-            "Enter a valid email address.",
-
-        "auth/too-many-requests":
-            "Too many attempts. Try again later.",
-
-        "auth/network-request-failed":
-            "Network error. Check your internet connection.",
-
-        "auth/user-disabled":
-            "This account has been disabled."
-
-    };
-
-    return messages[code] ||
-        "Unable to login. Check Firebase Authentication.";
+            },
+            3000
+        );
 }
-
-
-$("togglePassword").addEventListener(
-    "click",
-    () => {
-
-        const isPassword =
-            loginPassword.type === "password";
-
-        loginPassword.type =
-            isPassword
-                ? "text"
-                : "password";
-
-        $("togglePassword").textContent =
-            isPassword
-                ? "🙈"
-                : "👁";
-    }
-);
 
 
 /* =========================================================
@@ -344,110 +186,162 @@ onAuthStateChanged(
     auth,
     async user => {
 
-        if (!user) {
+        if (user) {
 
-            currentUser = null;
+            $("loginScreen")
+                .classList.add(
+                    "hidden"
+                );
 
-            loginScreen.classList.remove("hidden");
+            $("adminApp")
+                .classList.remove(
+                    "hidden"
+                );
 
-            adminApp.classList.add("hidden");
+            $("adminEmail")
+                .textContent =
+                user.email ||
+                "Authenticated Admin";
 
-            return;
+            await initializeAdmin();
+
+        } else {
+
+            $("loginScreen")
+                .classList.remove(
+                    "hidden"
+                );
+
+            $("adminApp")
+                .classList.add(
+                    "hidden"
+                );
+
         }
-
-        currentUser = user;
-
-        /*
-         * The authenticated Firebase account is allowed
-         * to open the admin application.
-         *
-         * For production, use Firebase Database Rules
-         * to restrict /registrations and /adminRules to
-         * your administrator account(s).
-         */
-
-        loginScreen.classList.add("hidden");
-
-        adminApp.classList.remove("hidden");
-
-        $("adminEmail").textContent =
-            user.email || "Authenticated administrator";
-
-        await loadRegistrations();
-
-        await loadRules();
 
     }
 );
 
 
 /* =========================================================
-   LOGOUT
+   LOGIN
 ========================================================= */
 
-$("logoutBtn").addEventListener(
-    "click",
-    async () => {
+$("loginForm")
+    .addEventListener(
+        "submit",
+        async event => {
 
-        try {
+            event.preventDefault();
 
-            await signOut(auth);
+            const email =
+                $("loginEmail")
+                    .value
+                    .trim();
 
-            showToast(
-                "Logged out successfully.",
-                "success"
-            );
+            const password =
+                $("loginPassword")
+                    .value;
 
-        } catch (error) {
+            $("loginError")
+                .textContent = "";
 
-            console.error(error);
+            $("loginBtn")
+                .disabled = true;
 
-            showToast(
-                "Logout failed.",
-                "error"
-            );
+            $("loginBtn")
+                .textContent =
+                "Signing in...";
+
+
+            try {
+
+                await signInWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                );
+
+            } catch (error) {
+
+                $("loginError")
+                    .textContent =
+                    getAuthError(
+                        error.code
+                    );
+
+            } finally {
+
+                $("loginBtn")
+                    .disabled = false;
+
+                $("loginBtn")
+                    .textContent =
+                    "Login to Dashboard";
+
+            }
+
         }
-    }
-);
-
-
-/* =========================================================
-   SIDEBAR
-========================================================= */
-
-$("sidebarToggle").addEventListener(
-    "click",
-    () => {
-
-        $("sidebar").classList.toggle("open");
-
-        $("sidebarOverlay").classList.toggle(
-            "show"
-        );
-    }
-);
-
-
-$("mobileClose").addEventListener(
-    "click",
-    closeSidebar
-);
-
-
-$("sidebarOverlay").addEventListener(
-    "click",
-    closeSidebar
-);
-
-
-function closeSidebar() {
-
-    $("sidebar").classList.remove("open");
-
-    $("sidebarOverlay").classList.remove(
-        "show"
     );
+
+
+function getAuthError(
+    code
+) {
+
+    const errors = {
+
+        "auth/invalid-credential":
+            "Invalid email or password.",
+
+        "auth/user-not-found":
+            "Admin account not found.",
+
+        "auth/wrong-password":
+            "Incorrect password.",
+
+        "auth/invalid-email":
+            "Enter a valid email address.",
+
+        "auth/too-many-requests":
+            "Too many attempts. Please try again later.",
+
+        "auth/network-request-failed":
+            "Network error. Check your internet connection."
+
+    };
+
+    return errors[code] ||
+        "Login failed. Check Firebase Authentication.";
 }
+
+
+$("togglePassword")
+    .addEventListener(
+        "click",
+        () => {
+
+            const input =
+                $("loginPassword");
+
+            input.type =
+                input.type === "password"
+                    ? "text"
+                    : "password";
+
+        }
+    );
+
+
+$("logoutBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            signOut(auth);
+
+        }
+    );
 
 
 /* =========================================================
@@ -455,7 +349,9 @@ function closeSidebar() {
 ========================================================= */
 
 document
-    .querySelectorAll(".nav-item")
+    .querySelectorAll(
+        ".nav-item"
+    )
     .forEach(button => {
 
         button.addEventListener(
@@ -465,13 +361,17 @@ document
                 showPage(
                     button.dataset.page
                 );
+
             }
         );
+
     });
 
 
 document
-    .querySelectorAll("[data-page-target]")
+    .querySelectorAll(
+        "[data-page-target]"
+    )
     .forEach(button => {
 
         button.addEventListener(
@@ -481,18 +381,26 @@ document
                 showPage(
                     button.dataset.pageTarget
                 );
+
             }
         );
+
     });
 
 
-function showPage(page) {
+function showPage(
+    page
+) {
 
     document
-        .querySelectorAll(".page")
+        .querySelectorAll(
+            ".page"
+        )
         .forEach(section => {
 
-            section.classList.remove("active");
+            section.classList.remove(
+                "active"
+            );
 
         });
 
@@ -500,15 +408,19 @@ function showPage(page) {
     const target =
         $(`${page}Page`);
 
-    if (!target) {
-        return;
-    }
+    if (target) {
 
-    target.classList.add("active");
+        target.classList.add(
+            "active"
+        );
+
+    }
 
 
     document
-        .querySelectorAll(".nav-item")
+        .querySelectorAll(
+            ".nav-item"
+        )
         .forEach(button => {
 
             button.classList.toggle(
@@ -527,34 +439,109 @@ function showPage(page) {
         registrations:
             "Registrations",
 
-        events:
-            "Events",
+        homeEditor:
+            "Home Page Editor",
 
-        rules:
-            "Rules & Details"
+        rulesEditor:
+            "Rules Page Editor",
+
+        events:
+            "Events"
 
     };
 
 
-    $("pageTitle").textContent =
-        titles[page] || "Admin Panel";
+    $("pageTitle")
+        .textContent =
+        titles[page] ||
+        "Dashboard";
 
 
-    closeSidebar();
+    $("sidebar")
+        .classList.remove(
+            "open"
+        );
 
 
-    if (page === "registrations") {
+    if (
+        page ===
+        "registrations"
+    ) {
+
         renderRegistrationTable();
+
     }
 
-    if (page === "rules") {
-        loadRules();
+
+    if (
+        page ===
+        "homeEditor"
+    ) {
+
+        loadHomeEditor();
+
     }
+
+
+    if (
+        page ===
+        "rulesEditor"
+    ) {
+
+        loadRulesEditor();
+
+    }
+
 }
 
 
 /* =========================================================
-   LOAD REGISTRATIONS
+   SIDEBAR
+========================================================= */
+
+$("sidebarToggle")
+    .addEventListener(
+        "click",
+        () => {
+
+            $("sidebar")
+                .classList.toggle(
+                    "open"
+                );
+
+        }
+    );
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+async function initializeAdmin() {
+
+    try {
+
+        await loadRegistrations();
+
+        await loadSiteContent();
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+        showToast(
+            "Some data could not be loaded."
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   REGISTRATIONS
 ========================================================= */
 
 async function loadRegistrations() {
@@ -563,38 +550,55 @@ async function loadRegistrations() {
 
         const snapshot =
             await get(
-                ref(db, "registrations")
+                ref(
+                    db,
+                    "registrations"
+                )
             );
 
 
         if (
-            snapshot.exists() &&
-            typeof snapshot.val() === "object"
+            snapshot.exists()
         ) {
 
-            registrations =
+            const value =
                 snapshot.val();
+
+            registrations =
+                value &&
+                typeof value === "object"
+                    ? value
+                    : {};
 
         } else {
 
             registrations = {};
+
         }
 
 
-        filteredRegistrations = {
-            ...registrations
-        };
+        filteredRegistrations =
+            {
+                ...registrations
+            };
 
 
         populateFilters();
 
         updateDashboard();
 
-        renderRecentRegistrations();
+        renderRecent();
 
         renderRegistrationTable();
 
-        updateEventStatistics();
+        updateEventCounts();
+
+        $("registrationBadge")
+            .textContent =
+            Object.keys(
+                registrations
+            ).length;
+
 
     } catch (error) {
 
@@ -603,50 +607,62 @@ async function loadRegistrations() {
             error
         );
 
-        registrations = {};
-
-        filteredRegistrations = {};
-
         showToast(
-            "Unable to load registrations. Check Firebase Database Rules.",
-            "error"
+            "Could not load registrations. Check Firebase Database Rules."
         );
 
-        renderRegistrationTable();
     }
+
 }
 
 
 /* =========================================================
-   DASHBOARD
+   EVENTS
 ========================================================= */
 
-function updateDashboard() {
+function getEvents(
+    data
+) {
 
-    const list =
-        Object.values(registrations);
+    const value =
+        data?.Events ??
+        data?.events ??
+        data?.Event ??
+        data?.event;
 
-    const counts =
-        countEvents();
+
+    if (!value)
+        return [];
 
 
-    $("totalRegistrations").textContent =
-        list.length;
+    if (
+        Array.isArray(value)
+    ) {
 
-    $("totalTeams").textContent =
-        list.length;
+        return value
+            .map(normalize)
+            .filter(Boolean);
 
-    $("raceCount").textContent =
-        counts.race;
+    }
 
-    $("warCount").textContent =
-        counts.war;
 
-    $("tugCount").textContent =
-        counts.tug;
+    if (
+        typeof value === "object"
+    ) {
 
-    $("soccerCount").textContent =
-        counts.soccer;
+        return Object.values(value)
+            .map(normalize)
+            .filter(Boolean);
+
+    }
+
+
+    return normalize(value)
+        .split(
+            /\s*(?:,|\||;)\s*/
+        )
+        .filter(Boolean);
+
 }
 
 
@@ -662,41 +678,45 @@ function countEvents() {
     };
 
 
-    Object.values(registrations)
+    Object
+        .values(registrations)
         .forEach(data => {
 
             getEvents(data)
                 .forEach(event => {
 
-                    const value =
+                    const name =
                         event
                             .toLowerCase()
                             .trim();
 
 
                     if (
-                        value === "robo race"
-                    ) {
+                        name ===
+                        "robo race"
+                    )
                         counts.race++;
-                    }
 
-                    else if (
-                        value === "robo war"
-                    ) {
+
+                    if (
+                        name ===
+                        "robo war"
+                    )
                         counts.war++;
-                    }
 
-                    else if (
-                        value === "robo tug of war"
-                    ) {
+
+                    if (
+                        name ===
+                        "robo tug of war"
+                    )
                         counts.tug++;
-                    }
 
-                    else if (
-                        value === "robo soccer"
-                    ) {
+
+                    if (
+                        name ===
+                        "robo soccer"
+                    )
                         counts.soccer++;
-                    }
 
                 });
 
@@ -707,23 +727,73 @@ function countEvents() {
 }
 
 
-function updateEventStatistics() {
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+function updateDashboard() {
+
+    const total =
+        Object.keys(
+            registrations
+        ).length;
+
+
+    $("totalRegistrations")
+        .textContent =
+        total;
+
+
+    $("totalTeams")
+        .textContent =
+        total;
+
 
     const counts =
         countEvents();
 
 
-    $("eventRaceCount").textContent =
+    $("raceCount")
+        .textContent =
         counts.race;
 
-    $("eventWarCount").textContent =
+    $("warCount")
+        .textContent =
         counts.war;
 
-    $("eventTugCount").textContent =
+    $("tugCount")
+        .textContent =
         counts.tug;
 
-    $("eventSoccerCount").textContent =
+    $("soccerCount")
+        .textContent =
         counts.soccer;
+
+}
+
+
+function updateEventCounts() {
+
+    const counts =
+        countEvents();
+
+
+    $("eventRaceCount")
+        .textContent =
+        counts.race;
+
+    $("eventWarCount")
+        .textContent =
+        counts.war;
+
+    $("eventTugCount")
+        .textContent =
+        counts.tug;
+
+    $("eventSoccerCount")
+        .textContent =
+        counts.soccer;
+
 }
 
 
@@ -731,90 +801,85 @@ function updateEventStatistics() {
    RECENT REGISTRATIONS
 ========================================================= */
 
-function renderRecentRegistrations() {
+function renderRecent() {
 
-    const container =
+    const box =
         $("recentRegistrations");
 
 
     const entries =
-        Object.entries(registrations)
-            .sort(
-                (a, b) => {
-
-                    const dateA =
-                        getDate(a[1])?.getTime() || 0;
-
-                    const dateB =
-                        getDate(b[1])?.getTime() || 0;
-
-                    return dateB - dateA;
-                }
-            )
-            .slice(0, 7);
+        Object.entries(
+            registrations
+        )
+        .sort(
+            (a, b) =>
+                dateValue(b[1]) -
+                dateValue(a[1])
+        )
+        .slice(0, 7);
 
 
     if (!entries.length) {
 
-        container.innerHTML = `
-            <div class="empty-state">
-                <div>⌕</div>
-                <h3>No registrations yet</h3>
-                <p>New registrations will appear here.</p>
-            </div>
-        `;
+        box.innerHTML =
+            `<div class="empty">
+                No registrations found.
+            </div>`;
 
         return;
+
     }
 
 
-    container.innerHTML =
+    box.innerHTML =
         entries
             .map(
-                ([key, data]) => {
+                ([key, data]) => `
 
-                    const id =
-                        data.registrationId ||
-                        key;
+                <div class="recent-row">
 
-                    return `
-                        <div class="recent-item">
+                    <div>
 
-                            <div class="recent-info">
-
-                                <strong>
-                                    ${safe(
-                                        data.StudentName ||
-                                        "Unknown Student"
-                                    )}
-                                </strong>
-
-                                <span>
-                                    ${safe(
-                                        data.TeamName ||
-                                        "Unnamed Team"
-                                    )}
-                                    •
-                                    ${safe(id)}
-                                </span>
-
-                            </div>
-
-                            <button
-                                class="small-button"
-                                data-view-key="${safe(key)}">
-                                View
-                            </button>
-
+                        <div class="recent-name">
+                            ${safe(
+                                data.StudentName ||
+                                "Unknown"
+                            )}
                         </div>
-                    `;
-                }
+
+                        <div class="recent-meta">
+                            ${safe(
+                                data.TeamName ||
+                                "Unnamed Team"
+                            )}
+                            •
+                            ${safe(
+                                data.registrationId ||
+                                key
+                            )}
+                        </div>
+
+                    </div>
+
+                    <button
+                        class="text-btn"
+                        data-view-key="${safe(key)}">
+
+                        View
+
+                    </button>
+
+                </div>
+
+            `
             )
             .join("");
 
 
-    container
-        .querySelectorAll("[data-view-key]")
+    box
+        .querySelectorAll(
+            "[data-view-key]"
+        )
         .forEach(button => {
 
             button.addEventListener(
@@ -829,6 +894,7 @@ function renderRecentRegistrations() {
             );
 
         });
+
 }
 
 
@@ -841,156 +907,143 @@ function populateFilters() {
     const classes =
         [
             ...new Set(
-                Object.values(registrations)
+                Object
+                    .values(
+                        registrations
+                    )
                     .map(
                         data =>
-                            normal(data.Class).trim()
+                            normalize(
+                                data.Class
+                            )
                     )
                     .filter(Boolean)
             )
-        ].sort();
+        ]
+        .sort();
 
 
     const sections =
         [
             ...new Set(
-                Object.values(registrations)
+                Object
+                    .values(
+                        registrations
+                    )
                     .map(
                         data =>
-                            normal(data.Section).trim()
+                            normalize(
+                                data.Section
+                            )
                     )
                     .filter(Boolean)
             )
-        ].sort();
+        ]
+        .sort();
 
 
-    $("classFilter").innerHTML =
+    $("classFilter")
+        .innerHTML =
         `<option value="all">
             All Classes
-        </option>`;
+        </option>` +
+        classes
+            .map(
+                value =>
+                    `<option value="${safe(value)}">
+                        ${safe(value)}
+                    </option>`
+            )
+            .join("");
 
 
-    classes.forEach(value => {
-
-        $("classFilter").insertAdjacentHTML(
-            "beforeend",
-            `
-                <option value="${safe(value)}">
-                    ${safe(value)}
-                </option>
-            `
-        );
-
-    });
-
-
-    $("sectionFilter").innerHTML =
+    $("sectionFilter")
+        .innerHTML =
         `<option value="all">
             All Sections
-        </option>`;
+        </option>` +
+        sections
+            .map(
+                value =>
+                    `<option value="${safe(value)}">
+                        ${safe(value)}
+                    </option>`
+            )
+            .join("");
 
-
-    sections.forEach(value => {
-
-        $("sectionFilter").insertAdjacentHTML(
-            "beforeend",
-            `
-                <option value="${safe(value)}">
-                    ${safe(value)}
-                </option>
-            `
-        );
-
-    });
 }
 
 
 /* =========================================================
-   FILTER EVENTS
+   APPLY FILTERS
 ========================================================= */
-
-$("searchInput").addEventListener(
-    "input",
-    applyFilters
-);
-
-$("eventFilter").addEventListener(
-    "change",
-    applyFilters
-);
-
-$("classFilter").addEventListener(
-    "change",
-    applyFilters
-);
-
-$("sectionFilter").addEventListener(
-    "change",
-    applyFilters
-);
-
 
 function applyFilters() {
 
-    const search =
+    const query =
         $("searchInput")
             .value
-            .toLowerCase()
-            .trim();
+            .trim()
+            .toLowerCase();
+
 
     const event =
-        $("eventFilter").value;
+        $("eventFilter")
+            .value;
+
 
     const classValue =
-        $("classFilter").value;
+        $("classFilter")
+            .value;
+
 
     const section =
-        $("sectionFilter").value;
+        $("sectionFilter")
+            .value;
 
 
     filteredRegistrations = {};
 
 
-    Object.entries(registrations)
+    Object
+        .entries(
+            registrations
+        )
         .forEach(
             ([key, data]) => {
 
-                const eventList =
+                const events =
                     getEvents(data);
 
 
-                const searchable = [
+                const searchable =
+                    [
 
-                    data.registrationId,
+                        data.registrationId,
+                        data.StudentName,
+                        data.TeamName,
+                        data.Class,
+                        data.Section,
+                        data.MobileNumber,
+                        data.EmailAddress,
+                        ...events
 
-                    data.StudentName,
-
-                    data.TeamName,
-
-                    data.Class,
-
-                    data.Section,
-
-                    data.MobileNumber,
-
-                    getEmail(data),
-
-                    ...eventList
-
-                ]
-                    .map(normal)
+                    ]
+                    .map(normalize)
                     .join(" ")
                     .toLowerCase();
 
 
-                const matchesSearch =
-                    !search ||
-                    searchable.includes(search);
+                const matchesQuery =
+                    !query ||
+                    searchable.includes(
+                        query
+                    );
 
 
                 const matchesEvent =
                     event === "all" ||
-                    eventList.some(
+                    events.some(
                         item =>
                             item.toLowerCase() ===
                             event.toLowerCase()
@@ -999,25 +1052,27 @@ function applyFilters() {
 
                 const matchesClass =
                     classValue === "all" ||
-                    normal(data.Class) ===
+                    normalize(data.Class) ===
                     classValue;
 
 
                 const matchesSection =
                     section === "all" ||
-                    normal(data.Section) ===
+                    normalize(data.Section) ===
                     section;
 
 
                 if (
-                    matchesSearch &&
+                    matchesQuery &&
                     matchesEvent &&
                     matchesClass &&
                     matchesSection
                 ) {
 
-                    filteredRegistrations[key] =
-                        data;
+                    filteredRegistrations[
+                        key
+                    ] = data;
+
                 }
 
             }
@@ -1025,216 +1080,312 @@ function applyFilters() {
 
 
     renderRegistrationTable();
+
 }
 
 
-$("clearFilters").addEventListener(
-    "click",
-    () => {
-
-        $("searchInput").value = "";
-
-        $("eventFilter").value =
-            "all";
-
-        $("classFilter").value =
-            "all";
-
-        $("sectionFilter").value =
-            "all";
+$("searchInput")
+    .addEventListener(
+        "input",
+        applyFilters
+    );
 
 
-        filteredRegistrations = {
-            ...registrations
-        };
+[
+    "eventFilter",
+    "classFilter",
+    "sectionFilter"
+]
+.forEach(id => {
+
+    $(id)
+        .addEventListener(
+            "change",
+            applyFilters
+        );
+
+});
 
 
-        renderRegistrationTable();
-    }
-);
+$("clearFilters")
+    .addEventListener(
+        "click",
+        () => {
+
+            $("searchInput")
+                .value = "";
+
+            $("eventFilter")
+                .value = "all";
+
+            $("classFilter")
+                .value = "all";
+
+            $("sectionFilter")
+                .value = "all";
+
+            applyFilters();
+
+        }
+    );
 
 
 /* =========================================================
-   REGISTRATION TABLE
+   TABLE
 ========================================================= */
 
-function renderRegistrationTable() {
+function getTeamSize(data) {
 
-    const tbody =
-        $("registrationTableBody");
-
-    const entries =
-        Object.entries(filteredRegistrations)
-            .sort(
-                (a, b) => {
-
-                    const dateA =
-                        getDate(a[1])?.getTime() || 0;
-
-                    const dateB =
-                        getDate(b[1])?.getTime() || 0;
-
-                    return dateB - dateA;
-                }
-            );
-
-
-    $("resultCount").textContent =
-        `${entries.length} registration${entries.length === 1 ? "" : "s"}`;
-
-
-    $("tableEmpty")
-        .classList
-        .toggle(
-            "hidden",
-            entries.length !== 0
+    const value =
+        Number(
+            data.TeamSize
         );
 
 
-    tbody.innerHTML =
+    if (
+        value >= 1 &&
+        value <= 5
+    ) {
+
+        return value;
+
+    }
+
+
+    let count = 1;
+
+
+    for (
+        let i = 2;
+        i <= 5;
+        i++
+    ) {
+
+        if (
+            normalize(
+                data[
+                    `Member${i}Name`
+                ]
+            )
+        ) {
+
+            count++;
+
+        }
+
+    }
+
+
+    return count;
+}
+
+
+function renderRegistrationTable() {
+
+    const body =
+        $("registrationTableBody");
+
+
+    const entries =
+        Object
+            .entries(
+                filteredRegistrations
+            )
+            .sort(
+                (a, b) =>
+                    dateValue(b[1]) -
+                    dateValue(a[1])
+            );
+
+
+    $("resultCount")
+        .textContent =
+        `${entries.length} registration${
+            entries.length === 1
+                ? ""
+                : "s"
+        }`;
+
+
+    $("tableEmpty")
+        .classList.toggle(
+            "hidden",
+            entries.length > 0
+        );
+
+
+    body.innerHTML =
         entries
             .map(
                 ([key, data]) => {
 
-                    const eventTags =
-                        getEvents(data)
-                            .map(
-                                event =>
-                                    `<span class="tag">
-                                        ${safe(event)}
-                                    </span>`
+                    const events =
+                        getEvents(data);
+
+
+                    const date =
+                        dateValue(data)
+                            ? new Date(
+                                dateValue(data)
+                            ).toLocaleString(
+                                "en-IN",
+                                {
+                                    dateStyle:
+                                        "medium",
+                                    timeStyle:
+                                        "short"
+                                }
                             )
-                            .join("");
+                            : "-";
 
 
                     return `
-                        <tr>
 
-                            <td>
-                                ${safe(
-                                    data.registrationId ||
-                                    key
-                                )}
-                            </td>
+                    <tr>
 
-                            <td>
-                                ${safe(
-                                    data.StudentName ||
-                                    "-"
-                                )}
-                            </td>
+                        <td>
+                            ${safe(
+                                data.registrationId ||
+                                key
+                            )}
+                        </td>
 
-                            <td>
-                                ${safe(
-                                    data.TeamName ||
-                                    "-"
-                                )}
-                            </td>
+                        <td>
+                            ${safe(
+                                data.StudentName ||
+                                "-"
+                            )}
+                        </td>
 
-                            <td>
-                                ${safe(
-                                    data.Class ||
-                                    "-"
-                                )}
-                            </td>
+                        <td>
+                            ${safe(
+                                data.TeamName ||
+                                "-"
+                            )}
+                        </td>
 
-                            <td>
-                                ${safe(
-                                    data.Section ||
-                                    "-"
-                                )}
-                            </td>
+                        <td>
+                            ${safe(
+                                data.Class ||
+                                "-"
+                            )}
+                        </td>
 
-                            <td>
-                                ${safe(
-                                    data.MobileNumber ||
-                                    data.Mobile ||
-                                    "-"
-                                )}
-                            </td>
+                        <td>
+                            ${safe(
+                                data.Section ||
+                                "-"
+                            )}
+                        </td>
 
-                            <td>
-                                ${eventTags || "-"}
-                            </td>
+                        <td>
+                            ${safe(
+                                data.MobileNumber ||
+                                "-"
+                            )}
+                        </td>
 
-                            <td>
-                                ${getTeamSize(data)}
-                            </td>
+                        <td>
+                            ${
+                                events
+                                    .map(
+                                        event =>
+                                            `<span class="tag">
+                                                ${safe(event)}
+                                            </span>`
+                                    )
+                                    .join("")
+                                ||
+                                "-"
+                            }
+                        </td>
 
-                            <td>
-                                ${safe(
-                                    formatDate(data)
-                                )}
-                            </td>
+                        <td>
+                            ${getTeamSize(data)}
+                        </td>
 
-                            <td>
+                        <td>
+                            ${safe(date)}
+                        </td>
 
-                                <div class="actions">
+                        <td>
 
-                                    <button
-                                        title="View"
-                                        data-action="view"
-                                        data-key="${safe(key)}">
-                                        👁
-                                    </button>
+                            <div class="actions">
 
-                                    <button
-                                        title="Edit"
-                                        data-action="edit"
-                                        data-key="${safe(key)}">
-                                        ✎
-                                    </button>
+                                <button
+                                    data-action="view"
+                                    data-key="${safe(key)}">
+                                    👁
+                                </button>
 
-                                    <button
-                                        title="Delete"
-                                        class="delete"
-                                        data-action="delete"
-                                        data-key="${safe(key)}">
-                                        ×
-                                    </button>
+                                <button
+                                    data-action="edit"
+                                    data-key="${safe(key)}">
+                                    ✎
+                                </button>
 
-                                </div>
+                                <button
+                                    class="delete"
+                                    data-action="delete"
+                                    data-key="${safe(key)}">
+                                    ×
+                                </button>
 
-                            </td>
+                            </div>
 
-                        </tr>
+                        </td>
+
+                    </tr>
+
                     `;
+
                 }
             )
             .join("");
 
 
-    tbody
-        .querySelectorAll("[data-action]")
+    body
+        .querySelectorAll(
+            "[data-action]"
+        )
         .forEach(button => {
 
             button.addEventListener(
                 "click",
                 () => {
 
-                    const action =
-                        button.dataset.action;
-
                     const key =
                         button.dataset.key;
 
+                    const action =
+                        button.dataset.action;
 
-                    if (action === "view") {
+
+                    if (
+                        action ===
+                        "view"
+                    )
                         viewRegistration(key);
-                    }
 
-                    if (action === "edit") {
+
+                    if (
+                        action ===
+                        "edit"
+                    )
                         editRegistration(key);
-                    }
 
-                    if (action === "delete") {
+
+                    if (
+                        action ===
+                        "delete"
+                    )
                         deleteRegistration(key);
-                    }
 
                 }
             );
 
         });
+
 }
 
 
@@ -1242,50 +1393,26 @@ function renderRegistrationTable() {
    VIEW REGISTRATION
 ========================================================= */
 
-function viewRegistration(key) {
+function viewRegistration(
+    key
+) {
 
     const data =
         registrations[key];
 
-    if (!data) {
+
+    if (!data)
         return;
-    }
 
 
-    currentRegistrationKey = key;
+    const fields =
+        Object.entries(
+            data
+        );
 
 
-    const details =
-        Object.entries(data)
-            .filter(
-                ([field]) =>
-                    field !== "createdAt"
-            )
-            .map(
-                ([field, value]) => {
-
-                    return `
-                        <div class="detail-item">
-
-                            <small>
-                                ${safe(field)}
-                            </small>
-
-                            <strong>
-                                ${safe(
-                                    normal(value) ||
-                                    "-"
-                                )}
-                            </strong>
-
-                        </div>
-                    `;
-                }
-            )
-            .join("");
-
-
-    $("modalContent").innerHTML = `
+    $("modalContent")
+        .innerHTML = `
 
         <h2>
             ${safe(
@@ -1303,14 +1430,40 @@ function viewRegistration(key) {
         </p>
 
         <div class="detail-grid">
-            ${details}
+
+            ${fields
+                .map(
+                    ([name, value]) => `
+
+                    <div class="detail-item">
+
+                        <small>
+                            ${safe(name)}
+                        </small>
+
+                        <strong>
+                            ${safe(
+                                normalize(value) ||
+                                "-"
+                            )}
+                        </strong>
+
+                    </div>
+
+                `
+                )
+                .join("")}
+
         </div>
+
     `;
 
 
-    $("modal").classList.remove(
-        "hidden"
-    );
+    $("modal")
+        .classList.remove(
+            "hidden"
+        );
+
 }
 
 
@@ -1318,38 +1471,58 @@ function viewRegistration(key) {
    EDIT REGISTRATION
 ========================================================= */
 
-async function editRegistration(key) {
+async function editRegistration(
+    key
+) {
 
     const data =
         registrations[key];
 
-    if (!data) {
+
+    if (!data)
         return;
-    }
 
 
-    const studentName =
+    const leader =
         prompt(
-            "Team Leader / Student Name:",
+            "Team Leader Name:",
             data.StudentName || ""
         );
 
 
-    if (studentName === null) {
+    if (
+        leader ===
+        null
+    )
         return;
-    }
 
 
-    const teamName =
+    const team =
         prompt(
             "Team Name:",
             data.TeamName || ""
         );
 
 
-    if (teamName === null) {
+    if (
+        team ===
+        null
+    )
         return;
-    }
+
+
+    const mobile =
+        prompt(
+            "Mobile Number:",
+            data.MobileNumber || ""
+        );
+
+
+    if (
+        mobile ===
+        null
+    )
+        return;
 
 
     try {
@@ -1362,20 +1535,31 @@ async function editRegistration(key) {
             {
 
                 StudentName:
-                    studentName.trim(),
+                    leader.trim(),
 
                 TeamName:
-                    teamName.trim()
+                    team.trim(),
+
+                MobileNumber:
+                    mobile.trim()
 
             }
         );
 
 
-        registrations[key].StudentName =
-            studentName.trim();
+        registrations[key]
+            .StudentName =
+            leader.trim();
 
-        registrations[key].TeamName =
-            teamName.trim();
+
+        registrations[key]
+            .TeamName =
+            team.trim();
+
+
+        registrations[key]
+            .MobileNumber =
+            mobile.trim();
 
 
         filteredRegistrations[key] =
@@ -1384,22 +1568,25 @@ async function editRegistration(key) {
 
         renderRegistrationTable();
 
-        renderRecentRegistrations();
+        renderRecent();
+
+        updateDashboard();
 
         showToast(
-            "Registration updated successfully.",
-            "success"
+            "Registration updated successfully."
         );
+
 
     } catch (error) {
 
         console.error(error);
 
         showToast(
-            "Update failed. Check Firebase permissions.",
-            "error"
+            "Update failed. Check Firebase permissions."
         );
+
     }
+
 }
 
 
@@ -1407,31 +1594,29 @@ async function editRegistration(key) {
    DELETE REGISTRATION
 ========================================================= */
 
-async function deleteRegistration(key) {
+async function deleteRegistration(
+    key
+) {
 
     const data =
         registrations[key];
 
-    if (!data) {
+
+    if (!data)
         return;
-    }
-
-
-    const name =
-        data.TeamName ||
-        data.StudentName ||
-        "this registration";
 
 
     const confirmed =
         confirm(
-            `Delete ${name}?\n\nThis action cannot be undone.`
+            `Delete registration for ${
+                data.StudentName ||
+                "this participant"
+            }?`
         );
 
 
-    if (!confirmed) {
+    if (!confirmed)
         return;
-    }
 
 
     try {
@@ -1451,266 +1636,762 @@ async function deleteRegistration(key) {
 
         updateDashboard();
 
-        updateEventStatistics();
+        updateEventCounts();
 
-        renderRecentRegistrations();
+        renderRecent();
 
         renderRegistrationTable();
 
-        populateFilters();
+
+        $("registrationBadge")
+            .textContent =
+            Object.keys(
+                registrations
+            ).length;
 
 
         showToast(
-            "Registration deleted.",
-            "success"
+            "Registration deleted."
         );
+
 
     } catch (error) {
 
         console.error(error);
 
         showToast(
-            "Delete failed. Check Firebase Database Rules.",
-            "error"
+            "Delete failed. Check Firebase permissions."
         );
+
     }
+
 }
 
 
 /* =========================================================
-   RULES & DETAILS
+   MODAL
 ========================================================= */
 
-const ruleFields = {
+$("closeModal")
+    .addEventListener(
+        "click",
+        () => {
 
-    title: "ruleTitle",
+            $("modal")
+                .classList.add(
+                    "hidden"
+                );
+
+        }
+    );
+
+
+$("modal")
+    .addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target.id ===
+                "modal"
+            ) {
+
+                $("modal")
+                    .classList.add(
+                        "hidden"
+                    );
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   HOME PAGE CMS
+========================================================= */
+
+const defaultHome = {
+
+    eyebrow:
+        "APS TINKERING LAB",
+
+    title:
+        "APS ROBOTICS CHAMPIONSHIP 2026",
+
+    subtitle:
+        "Build. Compete. Innovate.",
 
     description:
-        "ruleDescription",
+        "A futuristic robotics championship where young innovators build, compete and showcase their engineering skills.",
 
-    venue:
-        "ruleVenue",
+    buttonText:
+        "Register Now",
 
-    date:
-        "ruleDate",
+    buttonLink:
+        "registration.html",
 
-    registration:
-        "registrationRules",
+    aboutTitle:
+        "About APS Robotics Championship",
 
-    race:
-        "raceRules",
-
-    war:
-        "warRules",
-
-    tug:
-        "tugRules",
-
-    soccer:
-        "soccerRules",
-
-    important:
-        "importantInstructions"
+    aboutDescription:
+        "APS Robotics Championship 2026 is a robotics competition organised by APS Tinkering Lab. Students can participate in exciting robotics challenges including Robo Race, Robo War, Robo Tug of War and Robo Soccer."
 
 };
 
 
-async function loadRules() {
+let homeContent = {};
+
+
+/* =========================================================
+   SITE CONTENT LOAD
+========================================================= */
+
+async function loadSiteContent() {
 
     try {
 
         const snapshot =
             await get(
-                ref(db, "adminRules")
+                ref(
+                    db,
+                    "siteContent"
+                )
             );
 
 
-        const data =
+        const value =
             snapshot.exists()
                 ? snapshot.val()
                 : {};
 
 
-        $("ruleTitle").value =
-            data.title ||
-            "APS Robotics Championship 2026";
+        homeContent =
+            {
+                ...defaultHome,
+                ...(value.home || {})
+            };
 
 
-        $("ruleDescription").value =
-            data.description || "";
+        rules =
+            Array.isArray(
+                value.rules?.items
+            )
+                ? value.rules.items
+                : [];
 
 
-        $("ruleVenue").value =
-            data.venue || "";
+        loadHomeEditor();
 
+        loadRulesEditor();
 
-        $("ruleDate").value =
-            data.date || "";
-
-
-        $("registrationRules").value =
-            data.registration || "";
-
-
-        $("raceRules").value =
-            data.race || "";
-
-
-        $("warRules").value =
-            data.war || "";
-
-
-        $("tugRules").value =
-            data.tug || "";
-
-
-        $("soccerRules").value =
-            data.soccer || "";
-
-
-        $("importantInstructions").value =
-            data.important || "";
 
     } catch (error) {
 
         console.error(
-            "Rules loading error:",
+            "Site content error:",
             error
         );
 
-        showToast(
-            "Unable to load rules from Firebase.",
-            "error"
-        );
+        homeContent =
+            {
+                ...defaultHome
+            };
+
+        rules = [];
+
+        loadHomeEditor();
+
+        loadRulesEditor();
+
     }
+
 }
+
+
+/* =========================================================
+   HOME EDITOR LOAD
+========================================================= */
+
+function loadHomeEditor() {
+
+    if (!homeContent)
+        return;
+
+
+    $("homeEyebrow")
+        .value =
+        homeContent.eyebrow ||
+        "";
+
+
+    $("homeTitle")
+        .value =
+        homeContent.title ||
+        "";
+
+
+    $("homeSubtitle")
+        .value =
+        homeContent.subtitle ||
+        "";
+
+
+    $("homeDescription")
+        .value =
+        homeContent.description ||
+        "";
+
+
+    $("homeButtonText")
+        .value =
+        homeContent.buttonText ||
+        "";
+
+
+    $("homeButtonLink")
+        .value =
+        homeContent.buttonLink ||
+        "";
+
+
+    $("aboutTitle")
+        .value =
+        homeContent.aboutTitle ||
+        "";
+
+
+    $("aboutDescription")
+        .value =
+        homeContent.aboutDescription ||
+        "";
+
+}
+
+
+/* =========================================================
+   SAVE HOME
+========================================================= */
+
+$("homeForm")
+    .addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+
+            const data = {
+
+                eyebrow:
+                    $("homeEyebrow")
+                        .value
+                        .trim(),
+
+                title:
+                    $("homeTitle")
+                        .value
+                        .trim(),
+
+                subtitle:
+                    $("homeSubtitle")
+                        .value
+                        .trim(),
+
+                description:
+                    $("homeDescription")
+                        .value
+                        .trim(),
+
+                buttonText:
+                    $("homeButtonText")
+                        .value
+                        .trim(),
+
+                buttonLink:
+                    $("homeButtonLink")
+                        .value
+                        .trim(),
+
+                aboutTitle:
+                    $("aboutTitle")
+                        .value
+                        .trim(),
+
+                aboutDescription:
+                    $("aboutDescription")
+                        .value
+                        .trim()
+
+            };
+
+
+            try {
+
+                await update(
+                    ref(
+                        db,
+                        "siteContent/home"
+                    ),
+                    data
+                );
+
+
+                homeContent =
+                    {
+                        ...homeContent,
+                        ...data
+                    };
+
+
+                $("homeSaveStatus")
+                    .textContent =
+                    "Saved successfully ✓";
+
+
+                showToast(
+                    "Home page updated successfully."
+                );
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                $("homeSaveStatus")
+                    .textContent =
+                    "Save failed";
+
+
+                showToast(
+                    "Could not save homepage content."
+                );
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   RULES EDITOR
+========================================================= */
+
+function loadRulesEditor() {
+
+    const list =
+        $("rulesList");
+
+
+    $("rulesTitle")
+        .value =
+        window.currentRulesTitle ||
+        "Championship Rules";
+
+
+    $("rulesIntro")
+        .value =
+        window.currentRulesIntro ||
+        "";
+
+
+    renderRulesEditor();
+
+}
+
+
+/* =========================================================
+   RENDER RULES
+========================================================= */
+
+function renderRulesEditor() {
+
+    const list =
+        $("rulesList");
+
+
+    if (!rules.length) {
+
+        list.innerHTML = `
+
+            <div class="editor-card">
+
+                <p style="
+                    color:#718097;
+                    font-size:11px;
+                    margin:0;
+                ">
+
+                    No rules added yet.
+                    Click "Add Rule" to create the first rule.
+
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    list.innerHTML =
+        rules
+            .map(
+                (rule, index) => `
+
+                <div
+                    class="rule-admin-card"
+                    data-rule-index="${index}">
+
+                    <div class="rule-admin-top">
+
+                        <strong class="rule-number">
+                            RULE ${String(
+                                index + 1
+                            ).padStart(2, "0")}
+                        </strong>
+
+                        <button
+                            type="button"
+                            class="delete-rule"
+                            data-delete-rule="${index}">
+
+                            Delete Rule
+
+                        </button>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Rule Title
+                        </label>
+
+                        <input
+                            class="rule-title-input"
+                            type="text"
+                            value="${safe(
+                                rule.title || ""
+                            )}"
+                            placeholder="Rule title">
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Rule Description
+                        </label>
+
+                        <textarea
+                            class="rule-description-input"
+                            rows="4"
+                            placeholder="Rule details">${safe(
+                                rule.description || ""
+                            )}</textarea>
+
+                    </div>
+
+                </div>
+
+            `
+            )
+            .join("");
+
+
+    list
+        .querySelectorAll(
+            "[data-delete-rule]"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const index =
+                        Number(
+                            button.dataset.deleteRule
+                        );
+
+
+                    if (
+                        !confirm(
+                            "Delete this rule?"
+                        )
+                    )
+                        return;
+
+
+                    rules.splice(
+                        index,
+                        1
+                    );
+
+
+                    renderRulesEditor();
+
+
+                    $("rulesSaveStatus")
+                        .textContent =
+                        "Unsaved changes";
+
+                }
+            );
+
+        });
+
+}
+
+
+/* =========================================================
+   ADD RULE
+========================================================= */
+
+$("addRuleBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            rules.push({
+
+                title:
+                    "New Rule",
+
+                description:
+                    "Enter rule details here."
+
+            });
+
+
+            renderRulesEditor();
+
+
+            $("rulesSaveStatus")
+                .textContent =
+                "Unsaved changes";
+
+
+            setTimeout(
+                () => {
+
+                    const cards =
+                        document
+                            .querySelectorAll(
+                                ".rule-admin-card"
+                            );
+
+
+                    cards[
+                        cards.length - 1
+                    ]?.scrollIntoView({
+                        behavior:
+                            "smooth",
+                        block:
+                            "center"
+                    });
+
+                },
+                50
+            );
+
+        }
+    );
 
 
 /* =========================================================
    SAVE RULES
 ========================================================= */
 
-$("saveRules").addEventListener(
-    "click",
-    saveRules
-);
+$("rulesForm")
+    .addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
 
 
-async function saveRules() {
-
-    const saveButton =
-        $("saveRules");
-
-
-    const rules = {
-
-        title:
-            $("ruleTitle").value.trim(),
-
-        description:
-            $("ruleDescription").value.trim(),
-
-        venue:
-            $("ruleVenue").value.trim(),
-
-        date:
-            $("ruleDate").value.trim(),
-
-        registration:
-            $("registrationRules").value.trim(),
-
-        race:
-            $("raceRules").value.trim(),
-
-        war:
-            $("warRules").value.trim(),
-
-        tug:
-            $("tugRules").value.trim(),
-
-        soccer:
-            $("soccerRules").value.trim(),
-
-        important:
-            $("importantInstructions").value.trim(),
-
-        updatedAt:
-            new Date().toISOString(),
-
-        updatedBy:
-            currentUser?.email || ""
-
-    };
+            const cards =
+                document
+                    .querySelectorAll(
+                        ".rule-admin-card"
+                    );
 
 
-    saveButton.disabled = true;
-
-    saveButton.textContent =
-        "Saving...";
+            const updatedRules =
+                [];
 
 
-    try {
+            cards.forEach(card => {
 
-        await update(
-            ref(db, "adminRules"),
-            rules
-        );
-
-
-        showToast(
-            "Rules & details saved successfully.",
-            "success"
-        );
-
-    } catch (error) {
-
-        console.error(error);
-
-        showToast(
-            "Unable to save rules. Check Firebase permissions.",
-            "error"
-        );
-
-    } finally {
-
-        saveButton.disabled = false;
-
-        saveButton.textContent =
-            "✓ Save Changes";
-    }
-}
+                const title =
+                    card
+                        .querySelector(
+                            ".rule-title-input"
+                        )
+                        .value
+                        .trim();
 
 
-$("reloadRules").addEventListener(
-    "click",
-    async () => {
+                const description =
+                    card
+                        .querySelector(
+                            ".rule-description-input"
+                        )
+                        .value
+                        .trim();
 
-        await loadRules();
 
-        showToast(
-            "Rules reloaded.",
-            "success"
-        );
-    }
-);
+                if (
+                    title ||
+                    description
+                ) {
+
+                    updatedRules.push({
+
+                        title,
+                        description
+
+                    });
+
+                }
+
+            });
+
+
+            const rulesData = {
+
+                title:
+                    $("rulesTitle")
+                        .value
+                        .trim(),
+
+                intro:
+                    $("rulesIntro")
+                        .value
+                        .trim(),
+
+                items:
+                    updatedRules
+
+            };
+
+
+            try {
+
+                await set(
+                    ref(
+                        db,
+                        "siteContent/rules"
+                    ),
+                    rulesData
+                );
+
+
+                rules =
+                    updatedRules;
+
+
+                window.currentRulesTitle =
+                    rulesData.title;
+
+
+                window.currentRulesIntro =
+                    rulesData.intro;
+
+
+                $("rulesSaveStatus")
+                    .textContent =
+                    "Saved successfully ✓";
+
+
+                showToast(
+                    "Rules page updated successfully."
+                );
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                $("rulesSaveStatus")
+                    .textContent =
+                    "Save failed";
+
+
+                showToast(
+                    "Could not save rules."
+                );
+
+            }
+
+        }
+    );
 
 
 /* =========================================================
-   EXPORT CSV
+   REFRESH
 ========================================================= */
 
-function csvEscape(value) {
+$("dashboardRefresh")
+    .addEventListener(
+        "click",
+        async () => {
 
-    return `"${normal(value)
+            await loadRegistrations();
+
+            await loadSiteContent();
+
+            showToast(
+                "Dashboard refreshed."
+            );
+
+        }
+    );
+
+
+$("refreshRegistrations")
+    .addEventListener(
+        "click",
+        async () => {
+
+            await loadRegistrations();
+
+            showToast(
+                "Registrations refreshed."
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   CSV
+========================================================= */
+
+function csvEscape(
+    value
+) {
+
+    return `"${normalize(value)
         .replace(/"/g, '""')}"`;
+
 }
 
 
-function exportCSV(dataObject) {
+function exportCSV(
+    object
+) {
 
     const rows = [
 
         [
+
             "Registration ID",
             "Team Leader",
             "Team Name",
@@ -1726,19 +2407,21 @@ function exportCSV(dataObject) {
             "Member 5",
             "Remarks",
             "Registration Date"
+
         ]
 
     ];
 
 
-    Object.entries(dataObject)
+    Object
+        .entries(object)
         .forEach(
             ([key, data]) => {
 
                 rows.push([
 
                     data.registrationId ||
-                    key,
+                        key,
 
                     data.StudentName,
 
@@ -1748,10 +2431,9 @@ function exportCSV(dataObject) {
 
                     data.Section,
 
-                    data.MobileNumber ||
-                    data.Mobile,
+                    data.MobileNumber,
 
-                    getEmail(data),
+                    data.EmailAddress,
 
                     getEvents(data)
                         .join(" | "),
@@ -1776,28 +2458,34 @@ function exportCSV(dataObject) {
         );
 
 
-    const csv =
-        "\ufeff" +
-        rows
-            .map(row => row.join(","))
-            .join("\n");
-
-
     const blob =
         new Blob(
-            [csv],
+            [
+                "\ufeff" +
+                rows
+                    .map(
+                        row =>
+                            row.join(",")
+                    )
+                    .join("\n")
+            ],
             {
-                type: "text/csv;charset=utf-8;"
+                type:
+                    "text/csv;charset=utf-8;"
             }
         );
 
 
     const url =
-        URL.createObjectURL(blob);
+        URL.createObjectURL(
+            blob
+        );
 
 
     const link =
-        document.createElement("a");
+        document.createElement(
+            "a"
+        );
 
 
     link.href = url;
@@ -1805,134 +2493,56 @@ function exportCSV(dataObject) {
     link.download =
         "APS_Robotics_Registrations_2026.csv";
 
-
-    document.body.appendChild(link);
-
     link.click();
 
-    link.remove();
 
-
-    URL.revokeObjectURL(url);
-
-
-    showToast(
-        "CSV export completed.",
-        "success"
+    URL.revokeObjectURL(
+        url
     );
+
 }
 
 
-$("exportCsv").addEventListener(
-    "click",
-    () => {
-
-        exportCSV(
-            filteredRegistrations
-        );
-
-    }
-);
+$("exportCsv")
+    .addEventListener(
+        "click",
+        () =>
+            exportCSV(
+                filteredRegistrations
+            )
+    );
 
 
-$("exportDashboard").addEventListener(
-    "click",
-    () => {
-
-        exportCSV(
-            registrations
-        );
-
-    }
-);
+$("exportDashboard")
+    .addEventListener(
+        "click",
+        () =>
+            exportCSV(
+                registrations
+            )
+    );
 
 
 /* =========================================================
-   REFRESH
+   ESCAPE
 ========================================================= */
 
-$("dashboardRefresh").addEventListener(
-    "click",
-    async () => {
+document
+    .addEventListener(
+        "keydown",
+        event => {
 
-        await loadRegistrations();
+            if (
+                event.key ===
+                "Escape"
+            ) {
 
-        showToast(
-            "Dashboard refreshed.",
-            "success"
-        );
-    }
-);
+                $("modal")
+                    .classList.add(
+                        "hidden"
+                    );
 
-
-$("refreshRegistrations").addEventListener(
-    "click",
-    async () => {
-
-        await loadRegistrations();
-
-        showToast(
-            "Registrations refreshed.",
-            "success"
-        );
-    }
-);
-
-
-/* =========================================================
-   MODAL
-========================================================= */
-
-$("closeModal").addEventListener(
-    "click",
-    closeModal
-);
-
-
-$("modal").addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target === $("modal")
-        ) {
-
-            closeModal();
-        }
-    }
-);
-
-
-function closeModal() {
-
-    $("modal")
-        .classList
-        .add("hidden");
-
-    currentRegistrationKey = null;
-}
-
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "Escape"
-        ) {
-
-            closeModal();
+            }
 
         }
-
-    }
-);
-
-
-/* =========================================================
-   INITIAL UI
-========================================================= */
-
-filteredRegistrations = {};
-
-renderRegistrationTable();
+    );
