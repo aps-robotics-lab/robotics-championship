@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#020711">
 
 <title>Admin Login | APS Robotics Championship 2026</title>
@@ -13,167 +13,126 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
-* {
-    box-sizing: border-box;
-}
+*{box-sizing:border-box}
 
-body {
-    margin: 0;
-    min-height: 100vh;
-    display: grid;
-    place-items: center;
-    padding: 20px;
-
+body{
+    margin:0;
+    min-height:100vh;
+    display:grid;
+    place-items:center;
+    padding:20px;
     background:
-        radial-gradient(
-            circle at 20% 10%,
-            rgba(0, 234, 255, 0.10),
-            transparent 30%
-        ),
-        radial-gradient(
-            circle at 80% 80%,
-            rgba(155, 108, 255, 0.10),
-            transparent 30%
-        ),
+        radial-gradient(circle at 20% 10%,rgba(0,234,255,.1),transparent 30%),
+        radial-gradient(circle at 80% 80%,rgba(155,108,255,.1),transparent 30%),
         #020711;
-
-    color: #f5f9ff;
-    font-family: "Poppins", sans-serif;
+    color:#f5f9ff;
+    font-family:"Poppins",sans-serif;
 }
 
-.login-card {
-    width: min(430px, 100%);
-    padding: 38px 28px;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(10, 25, 45, 0.96),
-            rgba(3, 10, 21, 0.96)
-        );
-
-    border: 1px solid rgba(0, 234, 255, 0.22);
-    border-radius: 24px;
-
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.55);
-}
-
-.logo {
-    display: block;
-    width: 75px;
-    height: 75px;
-    object-fit: contain;
-    margin: 0 auto 20px;
-}
-
-.badge {
-    text-align: center;
-    color: #00eaff;
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-}
-
-h1 {
-    margin: 8px 0;
-    text-align: center;
-    font-family: "Orbitron", sans-serif;
-    font-size: 1.8rem;
-}
-
-h1 span {
-    color: #00eaff;
-}
-
-.subtitle {
-    text-align: center;
-    color: #8fa5bf;
-    font-size: 0.8rem;
-    margin-bottom: 28px;
-}
-
-label {
-    display: block;
-    margin-bottom: 7px;
-    color: #c7d7e9;
-    font-size: 0.78rem;
-    font-weight: 600;
-}
-
-input {
-    width: 100%;
-    padding: 13px 14px;
-    margin-bottom: 17px;
-
-    border: 1px solid rgba(83, 161, 255, 0.18);
-    border-radius: 11px;
-    outline: none;
-
-    background: rgba(1, 8, 18, 0.8);
-    color: #fff;
-}
-
-input::placeholder {
-    color: #526981;
-}
-
-input:focus {
-    border-color: #00eaff;
-    box-shadow: 0 0 0 3px rgba(0, 234, 255, 0.07);
-}
-
-button {
-    width: 100%;
-    padding: 14px;
-
-    border: 0;
-    border-radius: 12px;
-
-    background: linear-gradient(
-        100deg,
-        #00eaff,
-        #4f8cff
+.login-card{
+    width:min(430px,100%);
+    padding:38px 28px;
+    background:linear-gradient(
+        145deg,
+        rgba(10,25,45,.96),
+        rgba(3,10,21,.96)
     );
-
-    color: #001018;
-
-    font-family: "Orbitron", sans-serif;
-    font-weight: 800;
-
-    cursor: pointer;
-    transition: 0.25s ease;
+    border:1px solid rgba(0,234,255,.22);
+    border-radius:24px;
+    box-shadow:0 25px 80px rgba(0,0,0,.55);
 }
 
-button:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(0, 234, 255, 0.18);
+.logo{
+    display:block;
+    width:75px;
+    height:75px;
+    object-fit:contain;
+    margin:0 auto 20px;
 }
 
-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+.badge{
+    text-align:center;
+    color:#00eaff;
+    font-size:.65rem;
+    font-weight:700;
+    letter-spacing:2px;
 }
 
-#loginMessage {
-    min-height: 22px;
-    margin-top: 15px;
-    text-align: center;
-    color: #ff9dad;
-    font-size: 0.75rem;
+h1{
+    margin:8px 0;
+    text-align:center;
+    font-family:"Orbitron",sans-serif;
+    font-size:1.8rem;
 }
 
-.back {
-    display: block;
-    margin-top: 20px;
-    text-align: center;
-    color: #8fa5bf;
-    font-size: 0.75rem;
-    text-decoration: none;
+h1 span{color:#00eaff}
+
+.subtitle{
+    text-align:center;
+    color:#8fa5bf;
+    font-size:.8rem;
+    margin-bottom:28px;
 }
 
-.back:hover {
-    color: #00eaff;
+label{
+    display:block;
+    margin-bottom:7px;
+    color:#c7d7e9;
+    font-size:.78rem;
+    font-weight:600;
 }
+
+input{
+    width:100%;
+    padding:13px 14px;
+    margin-bottom:17px;
+    border:1px solid rgba(83,161,255,.18);
+    border-radius:11px;
+    outline:none;
+    background:rgba(1,8,18,.8);
+    color:#fff;
+}
+
+input:focus{
+    border-color:#00eaff;
+    box-shadow:0 0 0 3px rgba(0,234,255,.07);
+}
+
+button{
+    width:100%;
+    padding:14px;
+    border:0;
+    border-radius:12px;
+    background:linear-gradient(100deg,#00eaff,#4f8cff);
+    color:#001018;
+    font-family:"Orbitron",sans-serif;
+    font-weight:800;
+    cursor:pointer;
+}
+
+button:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+#loginMessage{
+    min-height:22px;
+    margin-top:15px;
+    text-align:center;
+    color:#ff9dad;
+    font-size:.75rem;
+}
+
+.back{
+    display:block;
+    margin-top:20px;
+    text-align:center;
+    color:#8fa5bf;
+    font-size:.75rem;
+    text-decoration:none;
+}
+
+.back:hover{color:#00eaff}
 </style>
 </head>
 
@@ -186,13 +145,9 @@ button:disabled {
         src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
         alt="APS Logo">
 
-    <div class="badge">
-        APS TINKERING LAB
-    </div>
+    <div class="badge">APS TINKERING LAB</div>
 
-    <h1>
-        ADMIN <span>LOGIN</span>
-    </h1>
+    <h1>ADMIN <span>LOGIN</span></h1>
 
     <p class="subtitle">
         APS Robotics Championship 2026
@@ -200,9 +155,7 @@ button:disabled {
 
     <form id="loginForm">
 
-        <label for="email">
-            Admin Email
-        </label>
+        <label for="email">Admin Email</label>
 
         <input
             type="email"
@@ -211,9 +164,7 @@ button:disabled {
             autocomplete="username"
             required>
 
-        <label for="password">
-            Password
-        </label>
+        <label for="password">Password</label>
 
         <input
             type="password"
@@ -222,12 +173,8 @@ button:disabled {
             autocomplete="current-password"
             required>
 
-        <button
-            type="submit"
-            id="loginBtn">
-
+        <button id="loginBtn" type="submit">
             LOGIN
-
         </button>
 
         <div id="loginMessage"></div>
@@ -240,7 +187,6 @@ button:disabled {
 
 </div>
 
-
 <script type="module">
 
 import {
@@ -249,58 +195,36 @@ import {
 
 import {
     getAuth,
-    signInWithEmailAndPassword
+    signInWithEmailAndPassword,
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
-
 const firebaseConfig = {
-
-    apiKey:
-        "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
-
-    authDomain:
-        "aps-robotics-championship.firebaseapp.com",
-
-    databaseURL:
-        "https://aps-robotics-championship-default-rtdb.firebaseio.com",
-
-    projectId:
-        "aps-robotics-championship",
-
-    storageBucket:
-        "aps-robotics-championship.firebasestorage.app",
-
-    messagingSenderId:
-        "1063542904891",
-
-    appId:
-        "1:1063542904891:web:82ff9bb3fba0b87384a41e"
-
+    apiKey: "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
+    authDomain: "aps-robotics-championship.firebaseapp.com",
+    databaseURL: "https://aps-robotics-championship-default-rtdb.firebaseio.com",
+    projectId: "aps-robotics-championship",
+    storageBucket: "aps-robotics-championship.firebasestorage.app",
+    messagingSenderId: "1063542904891",
+    appId: "1:1063542904891:web:82ff9bb3fba0b87384a41e"
 };
 
-
 const app = initializeApp(firebaseConfig);
-
 const auth = getAuth(app);
 
+const form = document.getElementById("loginForm");
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const loginBtn = document.getElementById("loginBtn");
+const message = document.getElementById("loginMessage");
 
-const form =
-    document.getElementById("loginForm");
+onAuthStateChanged(auth, user => {
+    if (user) {
+        window.location.replace("admin.html");
+    }
+});
 
-const email =
-    document.getElementById("email");
-
-const password =
-    document.getElementById("password");
-
-const loginBtn =
-    document.getElementById("loginBtn");
-
-const message =
-    document.getElementById("loginMessage");
-
-
-form.addEventListener("submit", async (event) => {
+form.addEventListener("submit", async event => {
 
     event.preventDefault();
 
@@ -308,7 +232,6 @@ form.addEventListener("submit", async (event) => {
 
     loginBtn.disabled = true;
     loginBtn.textContent = "LOGGING IN...";
-
 
     try {
 
@@ -322,13 +245,9 @@ form.addEventListener("submit", async (event) => {
 
     } catch (error) {
 
-        console.error(
-            "Firebase Login Error:",
-            error
-        );
+        console.error(error);
 
-
-        switch (error.code) {
+        switch(error.code){
 
             case "auth/invalid-credential":
                 message.textContent =
@@ -340,36 +259,23 @@ form.addEventListener("submit", async (event) => {
                     "Please enter a valid email.";
                 break;
 
-            case "auth/user-not-found":
+            case "auth/user-disabled":
                 message.textContent =
-                    "Admin account does not exist.";
-                break;
-
-            case "auth/wrong-password":
-                message.textContent =
-                    "Incorrect password.";
+                    "This admin account has been disabled.";
                 break;
 
             case "auth/too-many-requests":
                 message.textContent =
-                    "Too many attempts. Try again later.";
-                break;
-
-            case "auth/network-request-failed":
-                message.textContent =
-                    "Network error. Check your internet.";
+                    "Too many attempts. Please try again later.";
                 break;
 
             default:
                 message.textContent =
-                    error.message ||
-                    "Login failed.";
+                    error.message;
         }
-
 
         loginBtn.disabled = false;
         loginBtn.textContent = "LOGIN";
-
     }
 
 });
