@@ -49,6 +49,10 @@ const firebaseConfig = {
 };
 
 
+/* =========================================================
+   INITIALIZE FIREBASE
+========================================================= */
+
 const app =
     initializeApp(firebaseConfig);
 
@@ -60,26 +64,20 @@ const db =
 
 
 /* =========================================================
-   AGENT UID LIST
+   SUPPORT AGENTS
 ========================================================= */
-
-/*
- * IMPORTANT:
- *
- * These are NOT Admin UIDs.
- *
- * Put ONLY your support-agent Firebase Auth UIDs here.
- */
 
 const AGENT_UIDS = new Set([
 
-    /*
-     * Example:
-     *
-     * "YOUR_AGENT_UID_1",
-     * "YOUR_AGENT_UID_2"
-     *
-     */
+    "crfLkH7qlofZBea5GEwLMEtL92X2",
+
+    "5lBbcuD2BjRdDya7Lo9uRXdBIp92",
+
+    "jd7b5KYmivhYpCJzLyQ005BFmCn2",
+
+    "spzBLVusBfcqCCSmK923QmhmcAN2",
+
+    "1PhsiGhletVZYliDKKKVKV2G9tu2"
 
 ]);
 
@@ -88,126 +86,23 @@ const AGENT_UIDS = new Set([
    ELEMENTS
 ========================================================= */
 
-const ticketList =
-    document.getElementById(
-        "ticketList"
-    );
+const logoutBtn =
+    document.getElementById("logoutBtn");
+
+const status =
+    document.getElementById("status");
+
+const ticketBody =
+    document.getElementById("ticketBody");
 
 const searchInput =
-    document.getElementById(
-        "searchInput"
-    );
+    document.getElementById("search");
 
-const statusFilter =
-    document.getElementById(
-        "statusFilter"
-    );
+const filterSelect =
+    document.getElementById("ticketFilter");
 
 const refreshBtn =
-    document.getElementById(
-        "refreshBtn"
-    );
-
-const logoutBtn =
-    document.getElementById(
-        "logoutBtn"
-    );
-
-const agentStatus =
-    document.getElementById(
-        "agentStatus"
-    );
-
-
-const totalTickets =
-    document.getElementById(
-        "totalTickets"
-    );
-
-const openTickets =
-    document.getElementById(
-        "openTickets"
-    );
-
-const progressTickets =
-    document.getElementById(
-        "progressTickets"
-    );
-
-const closedTickets =
-    document.getElementById(
-        "closedTickets"
-    );
-
-
-/* =========================================================
-   MODAL
-========================================================= */
-
-const ticketOverlay =
-    document.getElementById(
-        "ticketOverlay"
-    );
-
-const closeTicket =
-    document.getElementById(
-        "closeTicket"
-    );
-
-const modalTicketId =
-    document.getElementById(
-        "modalTicketId"
-    );
-
-const modalName =
-    document.getElementById(
-        "modalName"
-    );
-
-const modalClass =
-    document.getElementById(
-        "modalClass"
-    );
-
-const modalEmail =
-    document.getElementById(
-        "modalEmail"
-    );
-
-const modalRegistration =
-    document.getElementById(
-        "modalRegistration"
-    );
-
-const modalSubject =
-    document.getElementById(
-        "modalSubject"
-    );
-
-const modalMessage =
-    document.getElementById(
-        "modalMessage"
-    );
-
-const modalStatus =
-    document.getElementById(
-        "modalStatus"
-    );
-
-const modalReply =
-    document.getElementById(
-        "modalReply"
-    );
-
-const saveTicketBtn =
-    document.getElementById(
-        "saveTicketBtn"
-    );
-
-const modalMessageStatus =
-    document.getElementById(
-        "modalMessageStatus"
-    );
+    document.getElementById("refreshBtn");
 
 
 /* =========================================================
@@ -216,9 +111,7 @@ const modalMessageStatus =
 
 let tickets = {};
 
-let selectedTicketId = null;
-
-let ticketListener = null;
+let currentUser = null;
 
 
 /* =========================================================
@@ -230,15 +123,13 @@ function showStatus(
     type = ""
 ) {
 
-    if (!agentStatus) {
-        return;
-    }
+    if (!status) return;
 
-    agentStatus.textContent =
+    status.textContent =
         message;
 
-    agentStatus.className =
-        `agent-status ${type}`;
+    status.className =
+        "status " + type;
 
 }
 
@@ -262,303 +153,71 @@ function escapeHTML(value) {
 
 
 /* =========================================================
-   SEARCH
+   AUTHENTICATION
 ========================================================= */
 
-function ticketMatches(
-    ticketId,
-    ticket
-) {
+onAuthStateChanged(
+    auth,
+    user => {
 
-    const query =
-        searchInput?.value
-            ?.trim()
-            .toLowerCase() || "";
+        if (!user) {
 
+            window.location.href =
+                "agent-login.html";
 
-    const filter =
-        statusFilter?.value ||
-        "all";
+            return;
 
+        }
 
-    if (
-        filter !== "all" &&
-        ticket.status !== filter
-    ) {
 
-        return false;
+        console.log(
+            "Logged-in Agent UID:",
+            user.uid
+        );
 
-    }
 
+        /* =============================================
+           AGENT CHECK
+        ============================================= */
 
-    if (!query) {
-        return true;
-    }
+        if (!AGENT_UIDS.has(user.uid)) {
 
-
-    const text = [
-
-        ticketId,
-
-        ticket.ticketId,
-
-        ticket.registrationId,
-
-        ticket.name,
-
-        ticket.className,
-
-        ticket.section,
-
-        ticket.email,
-
-        ticket.category,
-
-        ticket.subject,
-
-        ticket.message,
-
-        ticket.status
-
-    ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
-
-
-    return text.includes(query);
-
-}
-
-
-/* =========================================================
-   RENDER
-========================================================= */
-
-function renderTickets() {
-
-    if (!ticketList) {
-        return;
-    }
-
-
-    const all =
-        Object.values(tickets);
-
-
-    const open =
-        all.filter(
-            ticket =>
-                ticket.status === "Open"
-        ).length;
-
-
-    const progress =
-        all.filter(
-            ticket =>
-                ticket.status === "In Progress"
-        ).length;
-
-
-    const closed =
-        all.filter(
-            ticket =>
-                ticket.status === "Closed"
-        ).length;
-
-
-    totalTickets.textContent =
-        all.length;
-
-    openTickets.textContent =
-        open;
-
-    progressTickets.textContent =
-        progress;
-
-    closedTickets.textContent =
-        closed;
-
-
-    const entries =
-        Object.entries(tickets)
-            .filter(
-                ([id, ticket]) =>
-                    ticketMatches(
-                        id,
-                        ticket
-                    )
-            )
-            .reverse();
-
-
-    if (!entries.length) {
-
-        ticketList.innerHTML = `
-
-            <div
-                style="
-                    padding:50px;
-                    text-align:center;
-                    color:#8fa4bb;
-                ">
-
-                No support tickets found.
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    ticketList.innerHTML =
-        entries
-            .map(
-                ([id, ticket]) => {
-
-                    let statusClass =
-                        "status-open";
-
-
-                    if (
-                        ticket.status ===
-                        "In Progress"
-                    ) {
-
-                        statusClass =
-                            "status-progress";
-
-                    }
-
-
-                    if (
-                        ticket.status ===
-                        "Closed"
-                    ) {
-
-                        statusClass =
-                            "status-closed";
-
-                    }
-
-
-                    const registration =
-                        ticket.registrationId ||
-                        "Not provided";
-
-
-                    return `
-
-                        <div
-                            class="ticket-item"
-                            data-ticket="${escapeHTML(id)}">
-
-                            <div
-                                class="ticket-top">
-
-                                <span
-                                    class="ticket-id">
-
-                                    ${escapeHTML(
-                                        ticket.ticketId ||
-                                        id
-                                    )}
-
-                                </span>
-
-
-                                <span
-                                    class="ticket-status ${statusClass}">
-
-                                    ${escapeHTML(
-                                        ticket.status ||
-                                        "Open"
-                                    )}
-
-                                </span>
-
-                            </div>
-
-
-                            <h3>
-
-                                ${escapeHTML(
-                                    ticket.subject ||
-                                    "No subject"
-                                )}
-
-                            </h3>
-
-
-                            <div
-                                class="ticket-info">
-
-                                <span>
-                                    👤
-                                    ${escapeHTML(
-                                        ticket.name ||
-                                        "-"
-                                    )}
-                                </span>
-
-                                <span>
-                                    ✉
-                                    ${escapeHTML(
-                                        ticket.email ||
-                                        "-"
-                                    )}
-                                </span>
-
-                                <span>
-                                    ID:
-                                    ${escapeHTML(
-                                        registration
-                                    )}
-                                </span>
-
-                            </div>
-
-
-                            <div
-                                class="ticket-preview">
-
-                                ${escapeHTML(
-                                    ticket.message ||
-                                    ""
-                                )}
-
-                            </div>
-
-                        </div>
-
-                    `;
-
-                }
-            )
-            .join("");
-
-
-    ticketList
-        .querySelectorAll(".ticket-item")
-        .forEach(item => {
-
-            item.addEventListener(
-                "click",
-                () => {
-
-                    openTicket(
-                        item.dataset.ticket
-                    );
-
-                }
+            console.error(
+                "Unauthorized Agent UID:",
+                user.uid
             );
 
-        });
+            alert(
+                "Access denied. This account is not a support agent."
+            );
 
-}
+            signOut(auth);
+
+            return;
+
+        }
+
+
+        /* =============================================
+           AUTHORIZED
+        ============================================= */
+
+        currentUser =
+            user;
+
+
+        showStatus(
+            `Agent authenticated: ${
+                user.email || "Support Agent"
+            }`,
+            "success"
+        );
+
+
+        loadTickets();
+
+    }
+);
 
 
 /* =========================================================
@@ -579,47 +238,346 @@ function loadTickets() {
         );
 
 
-    if (ticketListener) {
-        ticketListener();
+    onValue(
+
+        ticketsRef,
+
+        snapshot => {
+
+            tickets =
+                snapshot.val() || {};
+
+
+            renderTickets();
+
+
+            showStatus(
+                `${Object.keys(tickets).length} ticket(s) loaded.`,
+                "success"
+            );
+
+        },
+
+        error => {
+
+            console.error(
+                "Firebase ticket error:",
+                error
+            );
+
+
+            showStatus(
+
+                "Firebase denied ticket access. Check the tickets Rules and Agent UID.",
+
+                "error"
+
+            );
+
+        }
+
+    );
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function matchesSearch(
+    key,
+    ticket
+) {
+
+    const query =
+        searchInput?.value
+            ?.trim()
+            .toLowerCase() || "";
+
+
+    if (!query) {
+        return true;
     }
 
 
-    ticketListener =
-        onValue(
+    const text = [
 
-            ticketsRef,
+        key,
 
-            snapshot => {
+        ticket.ticketId,
 
-                tickets =
-                    snapshot.val() || {};
+        ticket.registrationId,
 
-                renderTickets();
+        ticket.name,
+
+        ticket.StudentName,
+
+        ticket.email,
+
+        ticket.EmailAddress,
+
+        ticket.subject,
+
+        ticket.message,
+
+        ticket.category,
+
+        ticket.status
+
+    ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
 
 
-                showStatus(
-                    `${Object.keys(tickets).length} ticket(s) loaded.`,
-                    "success"
-                );
+    return text.includes(query);
 
-            },
-
-            error => {
-
-                console.error(
-                    "Firebase ticket error:",
-                    error
-                );
+}
 
 
-                showStatus(
-                    "Permission denied. Check the Agent Firebase Rules.",
-                    "error"
-                );
+/* =========================================================
+   FILTER
+========================================================= */
+
+function matchesFilter(ticket) {
+
+    const filter =
+        filterSelect?.value || "all";
+
+
+    if (
+        filter === "all"
+    ) {
+
+        return true;
+
+    }
+
+
+    return String(
+        ticket.status || ""
+    )
+        .toLowerCase() ===
+        filter.toLowerCase();
+
+}
+
+
+/* =========================================================
+   RENDER TICKETS
+========================================================= */
+
+function renderTickets() {
+
+    if (!ticketBody) {
+        return;
+    }
+
+
+    const entries =
+        Object.entries(
+            tickets
+        )
+        .filter(
+            ([key, ticket]) =>
+                matchesSearch(
+                    key,
+                    ticket
+                ) &&
+                matchesFilter(ticket)
+        )
+        .reverse();
+
+
+    if (!entries.length) {
+
+        ticketBody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="8"
+                    class="empty-state">
+
+                    <div class="empty-icon">
+                        🎫
+                    </div>
+
+                    <strong>
+                        No tickets found
+                    </strong>
+
+                    <small>
+                        There are no support tickets matching your search.
+                    </small>
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    ticketBody.innerHTML =
+        entries.map(
+            ([key, ticket]) => {
+
+                const ticketId =
+                    ticket.ticketId ||
+                    key;
+
+
+                const student =
+                    ticket.name ||
+                    ticket.StudentName ||
+                    "-";
+
+
+                const email =
+                    ticket.email ||
+                    ticket.EmailAddress ||
+                    "-";
+
+
+                const registrationId =
+                    ticket.registrationId ||
+                    "Not provided";
+
+
+                const ticketStatus =
+                    ticket.status ||
+                    "Open";
+
+
+                return `
+
+                    <tr>
+
+                        <td>
+
+                            <strong>
+                                ${escapeHTML(ticketId)}
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+
+                            <strong>
+                                ${escapeHTML(student)}
+                            </strong>
+
+                            <small>
+                                ${escapeHTML(email)}
+                            </small>
+
+                        </td>
+
+
+                        <td>
+
+                            ${escapeHTML(
+                                registrationId
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            ${escapeHTML(
+                                ticket.category || "Other"
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            <strong>
+                                ${escapeHTML(
+                                    ticket.subject || "-"
+                                )}
+                            </strong>
+
+                            <small>
+                                ${escapeHTML(
+                                    ticket.message || ""
+                                )}
+                            </small>
+
+                        </td>
+
+
+                        <td>
+
+                            <span
+                                class="ticket-status ${String(
+                                    ticketStatus
+                                ).toLowerCase()}">
+
+                                ${escapeHTML(
+                                    ticketStatus
+                                )}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            ${escapeHTML(
+                                ticket.agentReply || "—"
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            <button
+                                class="open-ticket"
+                                data-key="${escapeHTML(key)}">
+
+                                Open
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                `;
 
             }
+        ).join("");
 
-        );
+
+    ticketBody
+        .querySelectorAll(
+            ".open-ticket"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    openTicket(
+                        button.dataset.key
+                    );
+
+                }
+            );
+
+        });
 
 }
 
@@ -628,10 +586,10 @@ function loadTickets() {
    OPEN TICKET
 ========================================================= */
 
-function openTicket(ticketId) {
+function openTicket(key) {
 
     const ticket =
-        tickets[ticketId];
+        tickets[key];
 
 
     if (!ticket) {
@@ -639,207 +597,118 @@ function openTicket(ticketId) {
     }
 
 
-    selectedTicketId =
-        ticketId;
+    const reply =
+        prompt(
+
+            `Support Ticket: ${
+                ticket.ticketId || key
+            }\n\n` +
+
+            `Student: ${
+                ticket.name ||
+                ticket.StudentName ||
+                "-"
+            }\n\n` +
+
+            `Subject: ${
+                ticket.subject || "-"
+            }\n\n` +
+
+            `Message:\n${
+                ticket.message || "-"
+            }\n\n` +
+
+            `Enter agent reply:`
+
+        );
 
 
-    modalTicketId.textContent =
-        ticket.ticketId ||
-        ticketId;
+    if (
+        reply === null
+    ) {
 
-
-    modalName.textContent =
-        ticket.name ||
-        "-";
-
-
-    modalClass.textContent =
-        `${ticket.className || "-"} / ${
-            ticket.section || "-"
-        }`;
-
-
-    modalEmail.textContent =
-        ticket.email ||
-        "-";
-
-
-    modalRegistration.textContent =
-        ticket.registrationId ||
-        "Not provided";
-
-
-    modalSubject.textContent =
-        ticket.subject ||
-        "-";
-
-
-    modalMessage.textContent =
-        ticket.message ||
-        "-";
-
-
-    modalStatus.value =
-        ticket.status ||
-        "Open";
-
-
-    modalReply.value =
-        ticket.agentReply ||
-        "";
-
-
-    modalMessageStatus.textContent =
-        "";
-
-
-    ticketOverlay.classList.remove(
-        "hidden"
-    );
-
-}
-
-
-/* =========================================================
-   CLOSE
-========================================================= */
-
-function closeTicketModal() {
-
-    ticketOverlay.classList.add(
-        "hidden"
-    );
-
-    selectedTicketId =
-        null;
-
-}
-
-
-closeTicket?.addEventListener(
-    "click",
-    closeTicketModal
-);
-
-
-ticketOverlay?.addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target ===
-            ticketOverlay
-        ) {
-
-            closeTicketModal();
-
-        }
+        return;
 
     }
-);
+
+
+    updateTicket(
+        key,
+        reply
+    );
+
+}
 
 
 /* =========================================================
-   SAVE TICKET
+   UPDATE TICKET
 ========================================================= */
 
-saveTicketBtn?.addEventListener(
-    "click",
-    async () => {
+async function updateTicket(
+    key,
+    reply
+) {
 
-        if (!selectedTicketId) {
-            return;
-        }
+    try {
 
-
-        const ticket =
-            tickets[selectedTicketId];
-
-
-        if (!ticket) {
-            return;
-        }
+        showStatus(
+            "Saving ticket response..."
+        );
 
 
-        saveTicketBtn.disabled =
-            true;
+        await update(
 
+            ref(
+                db,
+                `tickets/${key}`
+            ),
 
-        modalMessageStatus.textContent =
-            "Saving...";
-
-
-        try {
-
-            const updates = {
-
-                status:
-                    modalStatus.value,
+            {
 
                 agentReply:
-                    modalReply.value.trim(),
+                    reply.trim(),
+
+                status:
+                    "Answered",
 
                 updatedAt:
                     Date.now(),
 
-                updatedBy:
-                    auth.currentUser?.uid ||
-                    ""
+                handledBy:
+                    currentUser?.email ||
+                    currentUser?.uid ||
+                    "Support Agent"
 
-            };
+            }
 
-
-            await update(
-
-                ref(
-                    db,
-                    `tickets/${selectedTicketId}`
-                ),
-
-                updates
-
-            );
+        );
 
 
-            modalMessageStatus.textContent =
-                "✓ Ticket updated successfully.";
+        showStatus(
+            "Ticket updated successfully.",
+            "success"
+        );
 
 
-            showStatus(
-                "Ticket updated successfully.",
-                "success"
-            );
+    } catch (error) {
+
+        console.error(
+            "Ticket update error:",
+            error
+        );
 
 
-            setTimeout(
-                closeTicketModal,
-                700
-            );
+        showStatus(
 
+            "Unable to update ticket. Check Firebase Rules.",
 
-        } catch (error) {
+            "error"
 
-            console.error(error);
-
-
-            modalMessageStatus.textContent =
-                "Unable to save ticket.";
-
-
-            showStatus(
-                "Permission denied while updating ticket.",
-                "error"
-            );
-
-        } finally {
-
-            saveTicketBtn.disabled =
-                false;
-
-        }
+        );
 
     }
-);
+
+}
 
 
 /* =========================================================
@@ -852,7 +721,11 @@ searchInput?.addEventListener(
 );
 
 
-statusFilter?.addEventListener(
+/* =========================================================
+   FILTER
+========================================================= */
+
+filterSelect?.addEventListener(
     "change",
     renderTickets
 );
@@ -890,71 +763,15 @@ logoutBtn?.addEventListener(
             await signOut(auth);
 
             window.location.href =
-                "login.html";
+                "agent-login.html";
 
         } catch (error) {
 
-            console.error(error);
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   AUTH
-========================================================= */
-
-onAuthStateChanged(
-
-    auth,
-
-    user => {
-
-        if (!user) {
-
-            window.location.href =
-                "login.html";
-
-            return;
-
-        }
-
-
-        /*
-         * Agent page is intentionally separate
-         * from the Admin page.
-         */
-
-        if (
-            !AGENT_UIDS.has(
-                user.uid
-            )
-        ) {
-
-            alert(
-                "Access denied. This account is not a support agent."
+            console.error(
+                error
             );
 
-
-            signOut(auth);
-
-            return;
-
         }
 
-
-        showStatus(
-            `Agent authenticated: ${
-                user.email || "Support Agent"
-            }`,
-            "success"
-        );
-
-
-        loadTickets();
-
     }
-
 );
