@@ -3,50 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#020711">
 <title>Admin | APS Robotics Championship 2026</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box}body{margin:0;background:#020711;color:#f5f9ff;font-family:Poppins,sans-serif}
 .wrap{width:min(1400px,94%);margin:30px auto}.top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:25px}
 h1{font-family:Orbitron;color:#00eaff;margin:0}.sub{color:#8fa5bf}.panel{background:rgba(8,18,34,.92);border:1px solid rgba(83,161,255,.18);border-radius:20px;padding:22px;box-shadow:0 25px 70px rgba(0,0,0,.45);margin-bottom:20px}
 input,button{font:inherit;padding:11px 13px;border-radius:10px;border:1px solid rgba(83,161,255,.25);background:#07111f;color:#fff}
-button{cursor:pointer;background:#00eaff;color:#001018;font-weight:700}button.danger{background:#ff5874;color:#fff}
+button{cursor:pointer;background:#00eaff;color:#001018;font-weight:700}button:disabled{opacity:.6;cursor:not-allowed}
 .login{max-width:430px;margin:10vh auto}.login h1{font-size:1.6rem;margin-bottom:20px}.login input{width:100%;margin-bottom:12px}
 .hidden{display:none}.stats{display:flex;gap:12px;flex-wrap:wrap}.stat{padding:14px 18px;border:1px solid rgba(0,234,255,.2);border-radius:12px;background:rgba(0,234,255,.04)}.stat b{color:#00eaff;font-size:1.25rem}
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}.toolbar input{flex:1;min-width:220px}
 .table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:1100px}th,td{padding:11px;border-bottom:1px solid rgba(83,161,255,.12);text-align:left;font-size:.78rem;vertical-align:top}th{color:#00eaff;font-family:Orbitron;font-size:.65rem}td{color:#dbe7f5}
 .badge{padding:4px 8px;border-radius:999px;background:rgba(0,234,255,.08);color:#00eaff}
-#error{color:#ff9dad;margin-top:10px}
+#error{color:#ff9dad;margin-top:10px;min-height:20px}.note{font-size:.72rem;color:#607892;line-height:1.6}
 </style>
 </head>
 <body>
 <div id="loginView" class="panel login">
-<h1>APS ADMIN</h1><p class="sub">APS Robotics Championship 2026 registration dashboard</p>
+<h1>APS ADMIN</h1>
+<p class="sub">APS Robotics Championship 2026 registration dashboard</p>
 <input id="email" type="email" placeholder="Admin email" autocomplete="username">
 <input id="password" type="password" placeholder="Password" autocomplete="current-password">
-<button id="loginBtn">Sign in</button><div id="error"></div>
+<button id="loginBtn">Sign in</button>
+<div id="error"></div>
+<p class="note">Use the Firebase Authentication email/password account created for the administrator.</p>
 </div>
 
 <div id="appView" class="wrap hidden">
-<div class="top"><div><h1>REGISTRATION ADMIN</h1><div class="sub">APS Robotics Championship 2026</div></div><button id="logoutBtn">Logout</button></div>
-<div class="panel">
-<div class="stats">
+<div class="top">
+<div><h1>REGISTRATION ADMIN</h1><div class="sub">APS Robotics Championship 2026</div></div>
+<button id="logoutBtn">Logout</button>
+</div>
+<div class="panel"><div class="stats">
 <div class="stat">Registrations <b id="count">0</b></div>
 <div class="stat">Solo <b id="solo">0</b></div>
 <div class="stat">Teams <b id="teams">0</b></div>
-</div>
-</div>
+</div></div>
 <div class="panel">
-<div class="toolbar"><input id="search" placeholder="Search name, email, team, ID, mobile..."><button id="refreshBtn">Refresh</button><button id="exportBtn">Export CSV</button></div>
+<div class="toolbar">
+<input id="search" placeholder="Search name, email, team, ID, mobile...">
+<button id="refreshBtn">Refresh</button><button id="exportBtn">Export CSV</button>
+</div>
 <div class="table-wrap"><table><thead><tr>
 <th>Registration ID</th><th>Date</th><th>Participation</th><th>Leader</th><th>Class/Section</th><th>Contact</th><th>Team</th><th>Members</th><th>Events</th><th>Remarks</th>
 </tr></thead><tbody id="rows"></tbody></table></div>
 </div>
 </div>
-
 <script type="module" src="admin.js"></script>
 </body>
 </html>
