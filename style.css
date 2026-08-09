@@ -30,17 +30,3 @@
 .hidden-admin-link a:hover {
     color: rgba(255, 255, 255, 0.75);
 }
-.agent-login-link {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #00e5ff;
-    font-weight: 600;
-    text-decoration: none;
-    transition: 0.3s ease;
-}
-
-.agent-login-link:hover {
-    color: #ffffff;
-    transform: translateX(5px);
-}
