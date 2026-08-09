@@ -1,3 +1,8 @@
+/* =========================================================
+   APS ROBOTICS CHAMPIONSHIP 2026
+   AGENT LOGIN
+========================================================= */
+
 import {
     initializeApp
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
@@ -22,6 +27,9 @@ const firebaseConfig = {
     authDomain:
         "robotics-championship-ab248.firebaseapp.com",
 
+    databaseURL:
+        "https://robotics-championship-ab248-default-rtdb.asia-southeast1.firebasedatabase.app",
+
     projectId:
         "robotics-championship-ab248",
 
@@ -41,7 +49,15 @@ const firebaseConfig = {
 
 
 /* =========================================================
-   INITIALIZE FIREBASE
+   ONLY AUTHORIZED AGENT UID
+========================================================= */
+
+const AGENT_UID =
+    "HgWiHPRx9gcXZtDTl0pDCpZlokt2";
+
+
+/* =========================================================
+   INITIALIZE
 ========================================================= */
 
 const app =
@@ -52,67 +68,68 @@ const auth =
 
 
 /* =========================================================
-   YOUR FIVE ADMIN UIDS
-========================================================= */
-
-const ADMIN_UIDS = new Set([
-
-    "crfLkH7qlofZBea5GEwLMEtL92X2",
-
-    "5lBbcuD2BjRdDya7Lo9uRXdBIp92",
-
-    "jd7b5KYmivhYpCJzLyQ005BFmCn2",
-
-    "spzBLVusBfcqCCSmK923QmhmcAN2",
-
-    "1PhsiGhletVZYliDKKKVKV2G9tu2"
-
-]);
-
-
-/* =========================================================
    ELEMENTS
 ========================================================= */
 
 const form =
-    document.getElementById("loginForm");
+    document.getElementById(
+        "agentLoginForm"
+    );
 
 const emailInput =
-    document.getElementById("email");
+    document.getElementById(
+        "agentEmail"
+    );
 
 const passwordInput =
-    document.getElementById("password");
+    document.getElementById(
+        "agentPassword"
+    );
 
 const loginBtn =
-    document.getElementById("loginBtn");
+    document.getElementById(
+        "loginBtn"
+    );
 
-const loginText =
-    document.getElementById("loginText");
+const loginBtnText =
+    document.getElementById(
+        "loginBtnText"
+    );
 
-const loginLoading =
-    document.getElementById("loginLoading");
+const loginLoader =
+    document.getElementById(
+        "loginLoader"
+    );
 
-const loginStatus =
-    document.getElementById("loginStatus");
+const loginMessage =
+    document.getElementById(
+        "loginMessage"
+    );
 
 const togglePassword =
-    document.getElementById("togglePassword");
+    document.getElementById(
+        "togglePassword"
+    );
 
 
 /* =========================================================
-   STATUS
+   MESSAGE
 ========================================================= */
 
-function showStatus(
+function showMessage(
     message,
     type = "error"
 ) {
 
-    loginStatus.textContent =
+    if (!loginMessage) {
+        return;
+    }
+
+    loginMessage.textContent =
         message;
 
-    loginStatus.className =
-        "login-status " + type;
+    loginMessage.className =
+        `login-message ${type}`;
 
 }
 
@@ -121,29 +138,33 @@ function showStatus(
    LOADING
 ========================================================= */
 
-function setLoading(isLoading) {
+function setLoading(
+    loading
+) {
 
-    if (loginBtn) {
+    if (!loginBtn) {
+        return;
+    }
 
-        loginBtn.disabled =
-            isLoading;
+    loginBtn.disabled =
+        loading;
+
+
+    if (loginBtnText) {
+
+        loginBtnText.textContent =
+            loading
+                ? "AUTHENTICATING..."
+                : "ACCESS AGENT PANEL";
 
     }
 
-    if (loginText) {
 
-        loginText.classList.toggle(
+    if (loginLoader) {
+
+        loginLoader.classList.toggle(
             "hidden",
-            isLoading
-        );
-
-    }
-
-    if (loginLoading) {
-
-        loginLoading.classList.toggle(
-            "hidden",
-            !isLoading
+            !loading
         );
 
     }
@@ -159,87 +180,24 @@ togglePassword?.addEventListener(
     "click",
     () => {
 
-        if (
+        const isPassword =
             passwordInput.type ===
-            "password"
-        ) {
+            "password";
 
-            passwordInput.type =
-                "text";
 
-            togglePassword.textContent =
-                "🙈";
+        passwordInput.type =
+            isPassword
+                ? "text"
+                : "password";
 
-        } else {
 
-            passwordInput.type =
-                "password";
-
-            togglePassword.textContent =
-                "👁";
-
-        }
+        togglePassword.textContent =
+            isPassword
+                ? "🙈"
+                : "👁";
 
     }
 );
-
-
-/* =========================================================
-   FIREBASE ERROR MESSAGE
-========================================================= */
-
-function firebaseError(error) {
-
-    console.error(
-        "Firebase Authentication Error:",
-        error
-    );
-
-
-    switch (error.code) {
-
-        case "auth/invalid-credential":
-
-        case "auth/invalid-login-credentials":
-
-            return "Incorrect email or password.";
-
-        case "auth/user-not-found":
-
-            return "No administrator account was found with this email.";
-
-        case "auth/wrong-password":
-
-            return "Incorrect password.";
-
-        case "auth/invalid-email":
-
-            return "Please enter a valid email address.";
-
-        case "auth/too-many-requests":
-
-            return "Too many login attempts. Please try again later.";
-
-        case "auth/network-request-failed":
-
-            return "Network error. Check your internet connection.";
-
-        case "auth/user-disabled":
-
-            return "This Firebase account has been disabled.";
-
-        case "auth/operation-not-allowed":
-
-            return "Email/Password authentication is disabled in Firebase.";
-
-        default:
-
-            return error.message ||
-                "Unable to sign in.";
-
-    }
-
-}
 
 
 /* =========================================================
@@ -254,29 +212,16 @@ form?.addEventListener(
 
 
         const email =
-            emailInput.value
-                .trim()
-                .toLowerCase();
+            emailInput.value.trim();
 
         const password =
             passwordInput.value;
 
 
-        if (!email) {
+        if (!email || !password) {
 
-            showStatus(
-                "Please enter your administrator email."
-            );
-
-            return;
-
-        }
-
-
-        if (!password) {
-
-            showStatus(
-                "Please enter your password."
+            showMessage(
+                "Enter your agent email and password."
             );
 
             return;
@@ -286,17 +231,13 @@ form?.addEventListener(
 
         setLoading(true);
 
-        showStatus(
-            "Connecting to secure Firebase authentication...",
-            "success"
+        showMessage(
+            "Verifying agent credentials...",
+            ""
         );
 
 
         try {
-
-            /*
-             * Sign in using Firebase Authentication.
-             */
 
             const credential =
                 await signInWithEmailAndPassword(
@@ -310,28 +251,24 @@ form?.addEventListener(
                 credential.user;
 
 
-            console.log(
-                "Authenticated UID:",
-                user.uid
-            );
-
-
             /*
-             * Check UID.
+             * VERY IMPORTANT:
+             *
+             * Authentication succeeded,
+             * but the UID must also match
+             * the authorized Agent UID.
              */
 
             if (
-                !ADMIN_UIDS.has(
-                    user.uid
-                )
+                user.uid !==
+                AGENT_UID
             ) {
 
                 await signOut(auth);
 
 
-                showStatus(
-                    "Access denied. This Firebase account is not an administrator.",
-                    "error"
+                showMessage(
+                    "Access denied. This account is not authorized as an agent."
                 );
 
 
@@ -342,41 +279,108 @@ form?.addEventListener(
             }
 
 
-            /*
-             * Correct administrator.
-             */
-
-            showStatus(
-                "Authentication successful. Opening Admin Panel...",
+            showMessage(
+                "✓ Agent verified. Opening dashboard...",
                 "success"
             );
 
 
             /*
-             * Small delay so user sees success.
+             * Small delay so the user
+             * can see the success message.
              */
 
             setTimeout(
                 () => {
 
                     window.location.replace(
-                        "admin.html"
+                        "agent.html"
                     );
 
                 },
                 500
             );
 
-        }
 
-        catch (error) {
+        } catch (error) {
+
+            console.error(
+                "Agent login error:",
+                error
+            );
+
+
+            let message =
+                "Unable to sign in.";
+
+
+            switch (
+                error.code
+            ) {
+
+                case "auth/invalid-credential":
+
+                    message =
+                        "Incorrect email or password.";
+
+                    break;
+
+
+                case "auth/user-not-found":
+
+                    message =
+                        "Agent account not found.";
+
+                    break;
+
+
+                case "auth/wrong-password":
+
+                    message =
+                        "Incorrect password.";
+
+                    break;
+
+
+                case "auth/too-many-requests":
+
+                    message =
+                        "Too many attempts. Please try again later.";
+
+                    break;
+
+
+                case "auth/network-request-failed":
+
+                    message =
+                        "Network error. Check your internet connection.";
+
+                    break;
+
+
+                case "auth/user-disabled":
+
+                    message =
+                        "This account has been disabled.";
+
+                    break;
+
+
+                default:
+
+                    message =
+                        error.message ||
+                        "Login failed.";
+
+            }
+
+
+            showMessage(
+                message
+            );
+
 
             setLoading(false);
-
-            showStatus(
-                firebaseError(error),
-                "error"
-            );
 
         }
 
@@ -385,7 +389,7 @@ form?.addEventListener(
 
 
 /* =========================================================
-   AUTH STATE
+   CHECK EXISTING SESSION
 ========================================================= */
 
 onAuthStateChanged(
@@ -398,21 +402,33 @@ onAuthStateChanged(
 
 
         /*
-         * If already logged in and
-         * authorized, go directly to admin.
+         * If an authenticated account is already
+         * logged in, only allow the exact Agent UID.
          */
 
         if (
-            ADMIN_UIDS.has(
-                user.uid
-            )
+            user.uid ===
+            AGENT_UID
         ) {
 
             window.location.replace(
-                "admin.html"
+                "agent.html"
             );
 
+            return;
+
         }
+
+
+        /*
+         * Someone else is logged in.
+         * Sign them out so they cannot access
+         * the agent dashboard.
+         */
+
+        signOut(auth).catch(
+            console.error
+        );
 
     }
 );
