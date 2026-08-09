@@ -1,3 +1,8 @@
+/* =========================================================
+   APS ROBOTICS CHAMPIONSHIP 2026
+   AGENT DASHBOARD
+   ========================================================= */
+
 import {
     initializeApp
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
@@ -65,22 +70,27 @@ const db =
 
 
 /* =========================================================
-   THE SAME 5 ADMIN UIDS
+   AGENT AUTHORIZATION
+   ONLY THIS UID IS ALLOWED
 ========================================================= */
 
-const ADMIN_UIDS = new Set([
+const AGENT_UID =
+    "HgWiHPRx9gcXZtDTl0pDCpZlokt2";
 
-    "HgWiHPRx9gcXZtDTl0pDCpZlokt2",
 
-    "5lBbcuD2BjRdDya7Lo9uRXdBIp92",
+/* =========================================================
+   STATE
+========================================================= */
 
-    "jd7b5KYmivhYpCJzLyQ005BFmCn2",
+let registrations = {};
 
-    "spzBLVusBfcqCCSmK923QmhmcAN2",
+let firebaseListener = null;
 
-    "1PhsiGhletVZYliDKKKVKV2G9tu2"
+let authorizedAgent = false;
 
-]);
+let saving = false;
+
+let deleting = false;
 
 
 /* =========================================================
@@ -209,12 +219,54 @@ const editMessage =
 
 
 /* =========================================================
-   DATA
+   HELPERS
 ========================================================= */
 
-let registrations = {};
+function clean(value) {
 
-let firebaseListener = null;
+    return String(
+        value ?? ""
+    ).trim();
+
+}
+
+
+function escapeHTML(value) {
+
+    return String(
+        value ?? ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
+
+function normalize(value) {
+
+    return clean(
+        value
+    ).toLowerCase();
+
+}
 
 
 /* =========================================================
@@ -234,25 +286,7 @@ function showStatus(
         message;
 
     status.className =
-        "status " + type;
-
-}
-
-
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
-
-function escapeHTML(value) {
-
-    return String(
-        value ?? ""
-    )
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+        `status ${type}`.trim();
 
 }
 
@@ -280,12 +314,14 @@ function formatDate(value) {
 
     }
 
-    return date.toLocaleDateString(
+    return date.toLocaleString(
         "en-IN",
         {
             day: "2-digit",
             month: "short",
-            year: "numeric"
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
         }
     );
 
@@ -300,6 +336,11 @@ function getMembers(data) {
 
     const members = [];
 
+    if (!data) {
+        return members;
+    }
+
+
     for (
         let i = 2;
         i <= 5;
@@ -307,27 +348,152 @@ function getMembers(data) {
     ) {
 
         const name =
-            data[`Member${i}Name`];
+            clean(
+                data[
+                    `Member${i}Name`
+                ]
+            );
+
 
         if (!name) {
             continue;
         }
+
 
         members.push({
 
             name,
 
             className:
-                data[`Member${i}Class`] || "-",
+                clean(
+                    data[
+                        `Member${i}Class`
+                    ]
+                ) || "-",
 
             section:
-                data[`Member${i}Section`] || "-"
+                clean(
+                    data[
+                        `Member${i}Section`
+                    ]
+                ) || "-"
 
         });
 
     }
 
+
     return members;
+
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+function getEvents(data) {
+
+    if (
+        Array.isArray(
+            data?.Events
+        )
+    ) {
+
+        return data.Events
+            .filter(Boolean)
+            .map(
+                event =>
+                    clean(event)
+            );
+
+    }
+
+
+    if (
+        typeof data?.Events === "string"
+    ) {
+
+        return data.Events
+            .split(",")
+            .map(
+                event =>
+                    clean(event)
+            )
+            .filter(Boolean);
+
+    }
+
+
+    return [];
+
+}
+
+
+/* =========================================================
+   TEAM SIZE
+========================================================= */
+
+function getTeamSize(data) {
+
+    const size =
+        Number(
+            data?.TeamSize
+        );
+
+
+    if (
+        Number.isFinite(size) &&
+        size >= 1
+    ) {
+
+        return Math.min(
+            Math.floor(size),
+            5
+        );
+
+    }
+
+
+    const members =
+        getMembers(data).length;
+
+
+    return Math.max(
+        1,
+        Math.min(
+            members + 1,
+            5
+        )
+    );
+
+}
+
+
+/* =========================================================
+   PARTICIPATION TYPE
+========================================================= */
+
+function getParticipationType(data) {
+
+    const type =
+        clean(
+            data?.ParticipationType
+        );
+
+
+    if (type) {
+        return type;
+    }
+
+
+    const size =
+        getTeamSize(data);
+
+
+    return size === 1
+        ? "Solo"
+        : `Team of ${size}`;
 
 }
 
@@ -342,9 +508,9 @@ function matchesSearch(
 ) {
 
     const query =
-        search?.value
-            ?.trim()
-            .toLowerCase() || "";
+        normalize(
+            search?.value
+        );
 
 
     if (!query) {
@@ -352,54 +518,54 @@ function matchesSearch(
     }
 
 
-    const events =
-        Array.isArray(data.Events)
-            ? data.Events.join(" ")
-            : String(
-                data.Events || ""
-            );
-
-
     const searchable = [
 
         key,
 
-        data.registrationId,
+        data?.registrationId,
 
-        data.StudentName,
+        data?.StudentName,
 
-        data.Class,
+        data?.Class,
 
-        data.Section,
+        data?.Section,
 
-        data.MobileNumber,
+        data?.MobileNumber,
 
-        data.EmailAddress,
+        data?.EmailAddress,
 
-        data.TeamName,
+        data?.TeamName,
 
-        data.ParticipationType,
+        data?.ParticipationType,
 
-        events,
+        data?.TeamSize,
 
-        data.Member2Name,
-        data.Member2Class,
-        data.Member2Section,
+        data?.Remarks,
 
-        data.Member3Name,
-        data.Member3Class,
-        data.Member3Section,
+        ...getEvents(data),
 
-        data.Member4Name,
-        data.Member4Class,
-        data.Member4Section,
+        data?.Member2Name,
+        data?.Member2Class,
+        data?.Member2Section,
 
-        data.Member5Name,
-        data.Member5Class,
-        data.Member5Section
+        data?.Member3Name,
+        data?.Member3Class,
+        data?.Member3Section,
+
+        data?.Member4Name,
+        data?.Member4Class,
+        data?.Member4Section,
+
+        data?.Member5Name,
+        data?.Member5Class,
+        data?.Member5Section
 
     ]
-        .filter(Boolean)
+        .filter(
+            value =>
+                value !== null &&
+                value !== undefined
+        )
         .join(" ")
         .toLowerCase();
 
@@ -412,75 +578,48 @@ function matchesSearch(
 
 
 /* =========================================================
-   RENDER
+   UPDATE STATS
 ========================================================= */
 
-function renderRegistrations() {
+function updateStats() {
 
-    if (!body) {
-        return;
-    }
-
-
-    const allEntries =
+    const entries =
         Object.values(
-            registrations
+            registrations || {}
         );
 
 
-    const entries =
-        Object.entries(
-            registrations
-        )
-        .filter(
-            ([key, data]) =>
-                matchesSearch(
-                    data,
-                    key
-                )
-        )
-        .reverse();
-
-
-    /* =====================================================
-       STATS
-    ===================================================== */
-
     const total =
-        allEntries.length;
+        entries.length;
 
 
-    const solo =
-        allEntries.filter(
-            data =>
-                Number(
-                    data.TeamSize
-                ) === 1 ||
-                String(
-                    data.ParticipationType || ""
-                ).toLowerCase() === "solo"
-        ).length;
+    let solo = 0;
 
-
-    const teams =
-        total - solo;
-
+    let teams = 0;
 
     let participants = 0;
 
 
-    allEntries.forEach(
+    entries.forEach(
         data => {
 
             const size =
-                Number(
-                    data.TeamSize || 1
-                );
+                getTeamSize(data);
+
 
             participants +=
-                size > 0
-                    ? size
-                    : 1;
+                size;
+
+
+            if (size === 1) {
+
+                solo++;
+
+            } else {
+
+                teams++;
+
+            }
 
         }
     );
@@ -517,47 +656,121 @@ function renderRegistrations() {
 
     }
 
+}
 
-    /* =====================================================
-       EMPTY
-    ===================================================== */
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+function renderEmpty(
+    message = "No registrations found."
+) {
+
+    if (!body) {
+        return;
+    }
+
+
+    body.innerHTML = `
+
+        <tr>
+
+            <td
+                colspan="9"
+                class="empty-state"
+            >
+
+                <div class="empty-icon">
+                    🔎
+                </div>
+
+                <strong>
+                    ${escapeHTML(message)}
+                </strong>
+
+                <small>
+                    Try changing your search or refresh the dashboard.
+                </small>
+
+            </td>
+
+        </tr>
+
+    `;
+
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function renderRegistrations() {
+
+    if (!body) {
+        return;
+    }
+
+
+    updateStats();
+
+
+    const entries =
+        Object.entries(
+            registrations || {}
+        )
+        .filter(
+            ([key, data]) => {
+
+                return (
+                    data &&
+                    matchesSearch(
+                        data,
+                        key
+                    )
+                );
+
+            }
+        )
+        .sort(
+            (
+                [, a],
+                [, b]
+            ) => {
+
+                const dateA =
+                    Number(
+                        a?.registrationDate ||
+                        a?.timestamp ||
+                        a?.createdAt ||
+                        0
+                    );
+
+
+                const dateB =
+                    Number(
+                        b?.registrationDate ||
+                        b?.timestamp ||
+                        b?.createdAt ||
+                        0
+                    );
+
+
+                return dateB - dateA;
+
+            }
+        );
+
 
     if (!entries.length) {
 
-        body.innerHTML = `
-
-            <tr>
-
-                <td
-                    colspan="9"
-                    style="
-                        text-align:center;
-                        padding:50px;
-                    "
-                >
-
-                    <div style="font-size:30px;">
-                        🔎
-                    </div>
-
-                    <div style="margin-top:10px;">
-                        No registrations found.
-                    </div>
-
-                </td>
-
-            </tr>
-
-        `;
+        renderEmpty();
 
         return;
 
     }
 
-
-    /* =====================================================
-       ROWS
-    ===================================================== */
 
     body.innerHTML =
         entries
@@ -569,32 +782,66 @@ function renderRegistrations() {
 
 
                     const events =
-                        Array.isArray(
-                            data.Events
-                        )
-                            ? data.Events.join(
-                                ", "
-                            )
-                            : data.Events ||
-                              "-";
+                        getEvents(data);
 
 
                     const type =
-                        data.ParticipationType ||
-                        (
-                            Number(
-                                data.TeamSize
-                            ) === 1
-                                ? "Solo"
-                                : `Team of ${
-                                    data.TeamSize || "-"
-                                }`
+                        getParticipationType(
+                            data
                         );
 
 
                     const id =
-                        data.registrationId ||
+                        clean(
+                            data.registrationId
+                        ) ||
                         key;
+
+
+                    const student =
+                        clean(
+                            data.StudentName
+                        ) ||
+                        "-";
+
+
+                    const className =
+                        clean(
+                            data.Class
+                        );
+
+
+                    const section =
+                        clean(
+                            data.Section
+                        );
+
+
+                    const team =
+                        clean(
+                            data.TeamName
+                        ) ||
+                        "—";
+
+
+                    const mobile =
+                        clean(
+                            data.MobileNumber
+                        ) ||
+                        "-";
+
+
+                    const email =
+                        clean(
+                            data.EmailAddress
+                        ) ||
+                        "-";
+
+
+                    const date =
+                        data.registrationDate ||
+                        data.timestamp ||
+                        data.createdAt;
 
 
                     return `
@@ -602,26 +849,28 @@ function renderRegistrations() {
                         <tr>
 
                             <td>
-                                <strong>
+
+                                <span class="registration-id">
                                     ${escapeHTML(id)}
-                                </strong>
+                                </span>
+
                             </td>
 
 
                             <td>
 
                                 <strong>
-                                    ${escapeHTML(
-                                        data.StudentName ||
-                                        "-"
-                                    )}
+                                    ${escapeHTML(student)}
                                 </strong>
 
                                 <small>
                                     ${escapeHTML(
-                                        `${data.Class || ""} ${
-                                            data.Section || ""
-                                        }`
+                                        [
+                                            className,
+                                            section
+                                        ]
+                                        .filter(Boolean)
+                                        .join(" • ")
                                     )}
                                 </small>
 
@@ -629,19 +878,18 @@ function renderRegistrations() {
 
 
                             <td>
-                                ${escapeHTML(
-                                    data.TeamName ||
-                                    "—"
-                                )}
+
+                                <strong>
+                                    ${escapeHTML(team)}
+                                </strong>
+
                             </td>
 
 
                             <td>
 
                                 <span class="type-badge">
-                                    ${escapeHTML(
-                                        type
-                                    )}
+                                    ${escapeHTML(type)}
                                 </span>
 
                             </td>
@@ -651,16 +899,14 @@ function renderRegistrations() {
 
                                 ${
                                     members.length
+
                                     ?
+
                                     members
                                         .map(
                                             member => `
 
-                                                <div
-                                                    style="
-                                                        margin-bottom:7px;
-                                                    "
-                                                >
+                                                <div class="member-item">
 
                                                     <strong>
                                                         ${escapeHTML(
@@ -670,7 +916,12 @@ function renderRegistrations() {
 
                                                     <small>
                                                         ${escapeHTML(
-                                                            `${member.className}-${member.section}`
+                                                            [
+                                                                member.className,
+                                                                member.section
+                                                            ]
+                                                            .filter(Boolean)
+                                                            .join(" • ")
                                                         )}
                                                     </small>
 
@@ -679,8 +930,12 @@ function renderRegistrations() {
                                             `
                                         )
                                         .join("")
+
                                     :
-                                    "—"
+
+                                    `<span class="muted">
+                                        Solo participant
+                                    </span>`
                                 }
 
                             </td>
@@ -689,37 +944,51 @@ function renderRegistrations() {
                             <td>
 
                                 <strong>
-                                    ${escapeHTML(
-                                        data.MobileNumber ||
-                                        "-"
-                                    )}
+                                    ${escapeHTML(mobile)}
                                 </strong>
 
                                 <small>
-                                    ${escapeHTML(
-                                        data.EmailAddress ||
-                                        "-"
-                                    )}
+                                    ${escapeHTML(email)}
                                 </small>
 
                             </td>
 
 
                             <td>
-                                ${escapeHTML(
+
+                                ${
+                                    events.length
+
+                                    ?
+
                                     events
-                                )}
+                                        .map(
+                                            event => `
+
+                                                <span class="event-chip">
+                                                    ${escapeHTML(event)}
+                                                </span>
+
+                                            `
+                                        )
+                                        .join(" ")
+
+                                    :
+
+                                    "—"
+                                }
+
                             </td>
 
 
                             <td>
-                                ${escapeHTML(
-                                    formatDate(
-                                        data.registrationDate ||
-                                        data.timestamp ||
-                                        data.createdAt
-                                    )
-                                )}
+
+                                <span class="date-text">
+                                    ${escapeHTML(
+                                        formatDate(date)
+                                    )}
+                                </span>
+
                             </td>
 
 
@@ -728,22 +997,20 @@ function renderRegistrations() {
                                 <div class="action-buttons">
 
                                     <button
+                                        type="button"
                                         class="edit-btn"
-                                        data-key="${escapeHTML(
-                                            key
-                                        )}"
+                                        data-key="${escapeHTML(key)}"
                                     >
-                                        Edit
+                                        ✏️ Edit
                                     </button>
 
 
                                     <button
+                                        type="button"
                                         class="delete-btn"
-                                        data-key="${escapeHTML(
-                                            key
-                                        )}"
+                                        data-key="${escapeHTML(key)}"
                                     >
-                                        Delete
+                                        🗑️ Delete
                                     </button>
 
                                 </div>
@@ -759,12 +1026,19 @@ function renderRegistrations() {
             .join("");
 
 
-    /* =====================================================
-       EDIT BUTTONS
-    ===================================================== */
+    attachActions();
+
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+function attachActions() {
 
     body
-        .querySelectorAll(
+        ?.querySelectorAll(
             ".edit-btn"
         )
         .forEach(
@@ -774,9 +1048,12 @@ function renderRegistrations() {
                     "click",
                     () => {
 
-                        openEdit(
-                            button.dataset.key
-                        );
+                        const key =
+                            button.dataset.key;
+
+                        if (key) {
+                            openEdit(key);
+                        }
 
                     }
                 );
@@ -785,12 +1062,8 @@ function renderRegistrations() {
         );
 
 
-    /* =====================================================
-       DELETE BUTTONS
-    ===================================================== */
-
     body
-        .querySelectorAll(
+        ?.querySelectorAll(
             ".delete-btn"
         )
         .forEach(
@@ -800,9 +1073,12 @@ function renderRegistrations() {
                     "click",
                     () => {
 
-                        deleteRegistration(
-                            button.dataset.key
-                        );
+                        const key =
+                            button.dataset.key;
+
+                        if (key) {
+                            deleteRegistration(key);
+                        }
 
                     }
                 );
@@ -814,13 +1090,29 @@ function renderRegistrations() {
 
 
 /* =========================================================
-   LOAD FIREBASE DATA
+   LOAD REGISTRATIONS
 ========================================================= */
 
 function loadRegistrations() {
 
+    if (!authorizedAgent) {
+        return;
+    }
+
+
+    if (firebaseListener) {
+
+        firebaseListener();
+
+        firebaseListener =
+            null;
+
+    }
+
+
     showStatus(
-        "Connecting to Firebase..."
+        "Connecting to registrations...",
+        ""
     );
 
 
@@ -829,13 +1121,6 @@ function loadRegistrations() {
             db,
             "registrations"
         );
-
-
-    if (firebaseListener) {
-
-        firebaseListener();
-
-    }
 
 
     firebaseListener =
@@ -852,11 +1137,15 @@ function loadRegistrations() {
                 renderRegistrations();
 
 
+                const count =
+                    Object.keys(
+                        registrations
+                    ).length;
+
+
                 showStatus(
 
-                    `${Object.keys(
-                        registrations
-                    ).length} registration(s) loaded.`,
+                    `${count} registration${count === 1 ? "" : "s"} loaded.`,
 
                     "success"
 
@@ -872,9 +1161,14 @@ function loadRegistrations() {
                 );
 
 
+                registrations = {};
+
+                renderRegistrations();
+
+
                 showStatus(
 
-                    "Firebase denied access to registrations. Check that you are logged in with one of the 5 authorized Admin UIDs.",
+                    "Firebase denied access to registrations. Check the agent Firebase Rules.",
 
                     "error"
 
@@ -893,176 +1187,137 @@ function loadRegistrations() {
 
 function openEdit(key) {
 
+    if (!authorizedAgent) {
+        return;
+    }
+
+
     const data =
         registrations[key];
 
 
     if (!data) {
+
+        showStatus(
+            "Registration not found.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (!editOverlay) {
         return;
     }
 
 
-    editKey.value =
-        key;
+    if (editKey) {
+        editKey.value = key;
+    }
 
 
-    editStudentName.value =
-        data.StudentName || "";
+    if (editStudentName) {
 
-
-    editStudentClass.value =
-        data.Class || "";
-
-
-    editStudentSection.value =
-        data.Section || "";
-
-
-    editMobileNumber.value =
-        data.MobileNumber || "";
-
-
-    editEmailAddress.value =
-        data.EmailAddress || "";
-
-
-    editTeamName.value =
-        data.TeamName || "";
-
-
-    editRemarks.value =
-        data.Remarks || "";
-
-
-    editMembers.innerHTML =
-        "";
-
-
-    const teamSize =
-        Math.min(
-            Math.max(
-                Number(
-                    data.TeamSize || 1
-                ),
-                1
-            ),
-            5
-        );
-
-
-    for (
-        let i = 2;
-        i <= teamSize;
-        i++
-    ) {
-
-        const selectedClass =
-            data[
-                `Member${i}Class`
-            ] || "";
-
-
-        editMembers.insertAdjacentHTML(
-
-            "beforeend",
-
-            `
-
-                <div class="edit-member-card">
-
-                    <h4>
-                        PARTICIPANT ${String(i).padStart(2, "0")}
-                    </h4>
-
-
-                    <label>
-
-                        Name
-
-                        <input
-                            id="editMember${i}Name"
-                            value="${escapeHTML(
-                                data[
-                                    `Member${i}Name`
-                                ] || ""
-                            )}"
-                        >
-
-                    </label>
-
-
-                    <label>
-
-                        Class
-
-                        <select
-                            id="editMember${i}Class"
-                        >
-
-                            <option value="">
-                                Select Class
-                            </option>
-
-                            ${
-                                [
-                                    "VI",
-                                    "VII",
-                                    "VIII",
-                                    "IX",
-                                    "X",
-                                    "XI",
-                                    "XII"
-                                ]
-                                .map(
-                                    cls => `
-
-                                        <option
-                                            value="${cls}"
-                                            ${
-                                                selectedClass === cls
-                                                    ? "selected"
-                                                    : ""
-                                            }
-                                        >
-                                            ${cls}
-                                        </option>
-
-                                    `
-                                )
-                                .join("")
-                            }
-
-                        </select>
-
-                    </label>
-
-
-                    <label>
-
-                        Section
-
-                        <input
-                            id="editMember${i}Section"
-                            value="${escapeHTML(
-                                data[
-                                    `Member${i}Section`
-                                ] || ""
-                            )}"
-                        >
-
-                    </label>
-
-                </div>
-
-            `
-
-        );
+        editStudentName.value =
+            clean(
+                data.StudentName
+            );
 
     }
 
 
-    editMessage.textContent =
-        "";
+    if (editStudentClass) {
+
+        editStudentClass.value =
+            clean(
+                data.Class
+            );
+
+    }
+
+
+    if (editStudentSection) {
+
+        editStudentSection.value =
+            clean(
+                data.Section
+            );
+
+    }
+
+
+    if (editMobileNumber) {
+
+        editMobileNumber.value =
+            clean(
+                data.MobileNumber
+            );
+
+    }
+
+
+    if (editEmailAddress) {
+
+        editEmailAddress.value =
+            clean(
+                data.EmailAddress
+            );
+
+    }
+
+
+    if (editTeamName) {
+
+        editTeamName.value =
+            clean(
+                data.TeamName
+            );
+
+    }
+
+
+    if (editRemarks) {
+
+        editRemarks.value =
+            clean(
+                data.Remarks
+            );
+
+    }
+
+
+    if (editMembers) {
+
+        editMembers.innerHTML = "";
+
+
+        const teamSize =
+            getTeamSize(data);
+
+
+        for (
+            let i = 2;
+            i <= teamSize;
+            i++
+        ) {
+
+            createMemberEditor(
+                data,
+                i
+            );
+
+        }
+
+    }
+
+
+    if (editMessage) {
+
+        editMessage.textContent = "";
+
+    }
 
 
     editOverlay.classList.remove(
@@ -1073,10 +1328,151 @@ function openEdit(key) {
 
 
 /* =========================================================
+   MEMBER EDITOR
+========================================================= */
+
+function createMemberEditor(
+    data,
+    index
+) {
+
+    if (!editMembers) {
+        return;
+    }
+
+
+    const name =
+        clean(
+            data[
+                `Member${index}Name`
+            ]
+        );
+
+
+    const selectedClass =
+        clean(
+            data[
+                `Member${index}Class`
+            ]
+        );
+
+
+    const section =
+        clean(
+            data[
+                `Member${index}Section`
+            ]
+        );
+
+
+    editMembers.insertAdjacentHTML(
+
+        "beforeend",
+
+        `
+
+            <div class="edit-member-card">
+
+                <h4>
+                    PARTICIPANT ${String(index).padStart(2, "0")}
+                </h4>
+
+
+                <label>
+
+                    Name
+
+                    <input
+                        type="text"
+                        id="editMember${index}Name"
+                        value="${escapeHTML(name)}"
+                    >
+
+                </label>
+
+
+                <label>
+
+                    Class
+
+                    <select
+                        id="editMember${index}Class"
+                    >
+
+                        <option value="">
+                            Select Class
+                        </option>
+
+                        ${
+                            [
+                                "VI",
+                                "VII",
+                                "VIII",
+                                "IX",
+                                "X",
+                                "XI",
+                                "XII"
+                            ]
+                            .map(
+                                cls => `
+
+                                    <option
+                                        value="${cls}"
+                                        ${
+                                            selectedClass === cls
+                                                ? "selected"
+                                                : ""
+                                        }
+                                    >
+                                        ${cls}
+                                    </option>
+
+                                `
+                            )
+                            .join("")
+                        }
+
+                    </select>
+
+                </label>
+
+
+                <label>
+
+                    Section
+
+                    <input
+                        type="text"
+                        id="editMember${index}Section"
+                        value="${escapeHTML(section)}"
+                    >
+
+                </label>
+
+            </div>
+
+        `
+
+    );
+
+}
+
+
+/* =========================================================
    CLOSE EDIT
 ========================================================= */
 
 function closeEditModal() {
+
+    if (
+        isSaving ||
+        !editOverlay
+    ) {
+
+        return;
+
+    }
+
 
     editOverlay.classList.add(
         "hidden"
@@ -1125,12 +1521,31 @@ editForm?.addEventListener(
         event.preventDefault();
 
 
+        if (
+            !authorizedAgent ||
+            saving
+        ) {
+
+            return;
+
+        }
+
+
         const key =
-            editKey.value;
+            clean(
+                editKey?.value
+            );
 
 
         if (!key) {
+
+            showStatus(
+                "Invalid registration.",
+                "error"
+            );
+
             return;
+
         }
 
 
@@ -1139,109 +1554,125 @@ editForm?.addEventListener(
 
 
         if (!oldData) {
-            return;
-        }
 
-
-        const updatedData = {
-
-            ...oldData,
-
-            StudentName:
-                editStudentName.value.trim(),
-
-            Class:
-                editStudentClass.value,
-
-            Section:
-                editStudentSection.value.trim(),
-
-            MobileNumber:
-                editMobileNumber.value.trim(),
-
-            EmailAddress:
-                editEmailAddress.value
-                    .trim()
-                    .toLowerCase(),
-
-            TeamName:
-                editTeamName.value.trim(),
-
-            Remarks:
-                editRemarks.value.trim(),
-
-            updatedAt:
-                Date.now()
-
-        };
-
-
-        const teamSize =
-            Math.min(
-                Math.max(
-                    Number(
-                        oldData.TeamSize || 1
-                    ),
-                    1
-                ),
-                5
+            showStatus(
+                "Registration no longer exists.",
+                "error"
             );
 
+            closeEditModal();
 
-        for (
-            let i = 2;
-            i <= 5;
-            i++
-        ) {
-
-            if (i <= teamSize) {
-
-                updatedData[
-                    `Member${i}Name`
-                ] =
-                    document.getElementById(
-                        `editMember${i}Name`
-                    )?.value.trim() || "";
-
-
-                updatedData[
-                    `Member${i}Class`
-                ] =
-                    document.getElementById(
-                        `editMember${i}Class`
-                    )?.value || "";
-
-
-                updatedData[
-                    `Member${i}Section`
-                ] =
-                    document.getElementById(
-                        `editMember${i}Section`
-                    )?.value.trim() || "";
-
-            } else {
-
-                updatedData[
-                    `Member${i}Name`
-                ] = "";
-
-                updatedData[
-                    `Member${i}Class`
-                ] = "";
-
-                updatedData[
-                    `Member${i}Section`
-                ] = "";
-
-            }
+            return;
 
         }
+
+
+        saving = true;
+
+
+        if (editMessage) {
+
+            editMessage.textContent =
+                "Saving changes...";
+
+        }
+
+
+        showStatus(
+            "Saving registration...",
+            ""
+        );
 
 
         try {
 
-            editMessage.textContent =
-                "Saving changes...";
+            const updatedData = {
+
+                StudentName:
+                    clean(
+                        editStudentName?.value
+                    ),
+
+                Class:
+                    clean(
+                        editStudentClass?.value
+                    ),
+
+                Section:
+                    clean(
+                        editStudentSection?.value
+                    ),
+
+                MobileNumber:
+                    clean(
+                        editMobileNumber?.value
+                    ),
+
+                EmailAddress:
+                    clean(
+                        editEmailAddress?.value
+                    ).toLowerCase(),
+
+                TeamName:
+                    clean(
+                        editTeamName?.value
+                    ),
+
+                Remarks:
+                    clean(
+                        editRemarks?.value
+                    ),
+
+                updatedAt:
+                    Date.now()
+
+            };
+
+
+            const teamSize =
+                getTeamSize(oldData);
+
+
+            for (
+                let i = 2;
+                i <= 5;
+                i++
+            ) {
+
+                if (i <= teamSize) {
+
+                    updatedData[
+                        `Member${i}Name`
+                    ] =
+                        clean(
+                            document.getElementById(
+                                `editMember${i}Name`
+                            )?.value
+                        );
+
+
+                    updatedData[
+                        `Member${i}Class`
+                    ] =
+                        clean(
+                            document.getElementById(
+                                `editMember${i}Class`
+                            )?.value
+                        );
+
+
+                    updatedData[
+                        `Member${i}Section`
+                    ] =
+                        clean(
+                            document.getElementById(
+                                `editMember${i}Section`
+                            )?.value
+                        );
+
+                }
+
+            }
 
 
             await update(
@@ -1256,8 +1687,12 @@ editForm?.addEventListener(
             );
 
 
-            editMessage.textContent =
-                "✓ Changes saved successfully.";
+            if (editMessage) {
+
+                editMessage.textContent =
+                    "✓ Changes saved successfully.";
+
+            }
 
 
             showStatus(
@@ -1267,7 +1702,13 @@ editForm?.addEventListener(
 
 
             setTimeout(
-                closeEditModal,
+                () => {
+
+                    saving = false;
+
+                    closeEditModal();
+
+                },
                 700
             );
 
@@ -1275,18 +1716,25 @@ editForm?.addEventListener(
         } catch (error) {
 
             console.error(
-                "Firebase update error:",
+                "Agent update error:",
                 error
             );
 
 
-            editMessage.textContent =
-                "Unable to save changes.";
+            saving = false;
+
+
+            if (editMessage) {
+
+                editMessage.textContent =
+                    "Unable to save changes.";
+
+            }
 
 
             showStatus(
 
-                "Firebase denied the update. Make sure this logged-in account is one of your 5 Admin UIDs.",
+                "Firebase denied the update. Check your agent Firebase Rules.",
 
                 "error"
 
@@ -1302,26 +1750,45 @@ editForm?.addEventListener(
    DELETE
 ========================================================= */
 
-async function deleteRegistration(
-    key
-) {
+async function deleteRegistration(key) {
+
+    if (
+        !authorizedAgent ||
+        deleting
+    ) {
+
+        return;
+
+    }
+
 
     const data =
         registrations[key];
 
 
     if (!data) {
+
+        showStatus(
+            "Registration not found.",
+            "error"
+        );
+
         return;
+
     }
 
 
     const id =
-        data.registrationId ||
+        clean(
+            data.registrationId
+        ) ||
         key;
 
 
     const name =
-        data.StudentName ||
+        clean(
+            data.StudentName
+        ) ||
         "this participant";
 
 
@@ -1329,8 +1796,11 @@ async function deleteRegistration(
         confirm(
 
             `DELETE REGISTRATION?\n\n` +
+
             `Registration ID: ${id}\n` +
+
             `Student: ${name}\n\n` +
+
             `This action cannot be undone.`
 
         );
@@ -1341,10 +1811,14 @@ async function deleteRegistration(
     }
 
 
+    deleting = true;
+
+
     try {
 
         showStatus(
-            "Deleting registration..."
+            "Deleting registration...",
+            ""
         );
 
 
@@ -1367,18 +1841,22 @@ async function deleteRegistration(
     } catch (error) {
 
         console.error(
-            "Firebase delete error:",
+            "Agent delete error:",
             error
         );
 
 
         showStatus(
 
-            "Firebase denied deletion. Make sure this is an authorized Admin account.",
+            "Firebase denied deletion. Check your agent Firebase Rules.",
 
             "error"
 
         );
+
+    } finally {
+
+        deleting = false;
 
     }
 
@@ -1403,12 +1881,19 @@ refreshBtn?.addEventListener(
     "click",
     () => {
 
-        renderRegistrations();
+        if (!authorizedAgent) {
 
-        showStatus(
-            "Dashboard refreshed.",
-            "success"
-        );
+            showStatus(
+                "You are not authorized as an agent.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        loadRegistrations();
 
     }
 );
@@ -1422,47 +1907,74 @@ logoutBtn?.addEventListener(
     "click",
     async () => {
 
+        if (firebaseListener) {
+
+            firebaseListener();
+
+            firebaseListener =
+                null;
+
+        }
+
+
+        authorizedAgent = false;
+
+
         try {
 
-            await signOut(
-                auth
-            );
-
-            window.location.replace(
-                "admin-login.html"
-            );
+            await signOut(auth);
 
         } catch (error) {
 
             console.error(
-                "Logout error:",
+                "Agent logout error:",
                 error
             );
 
         }
+
+
+        window.location.replace(
+            "agent-login.html"
+        );
 
     }
 );
 
 
 /* =========================================================
-   AUTHORIZATION
+   AUTHENTICATION + AGENT AUTHORIZATION
 ========================================================= */
 
 onAuthStateChanged(
 
     auth,
 
-    user => {
+    async user => {
 
         /*
-         * No Firebase user.
+         * NO LOGIN
          */
 
         if (!user) {
 
+            authorizedAgent = false;
+
+            registrations = {};
+
+
+            if (firebaseListener) {
+
+                firebaseListener();
+
+                firebaseListener =
+                    null;
+
+            }
+
+
             window.location.replace(
-                "admin-login.html"
+                "agent-login.html"
             );
 
             return;
@@ -1471,22 +1983,44 @@ onAuthStateChanged(
 
 
         /*
-         * Firebase user exists,
-         * but check the UID.
+         * ONLY ONE UID IS ALLOWED
          */
 
         if (
-            !ADMIN_UIDS.has(
-                user.uid
-            )
+            user.uid !== AGENT_UID
         ) {
 
-            alert(
-                "Access denied. This account is not an administrator."
+            authorizedAgent = false;
+
+
+            console.warn(
+                "Unauthorized agent login:",
+                user.uid
             );
 
 
-            signOut(auth);
+            alert(
+                "Access denied.\n\nThis account is not authorized as an agent."
+            );
+
+
+            try {
+
+                await signOut(auth);
+
+            } catch (error) {
+
+                console.error(
+                    "Unauthorized logout error:",
+                    error
+                );
+
+            }
+
+
+            window.location.replace(
+                "agent-login.html"
+            );
 
             return;
 
@@ -1494,17 +2028,21 @@ onAuthStateChanged(
 
 
         /*
-         * Authorized admin.
+         * AUTHORIZED AGENT
          */
 
+        authorizedAgent = true;
+
+
+        console.log(
+            "Authorized agent:",
+            user.uid
+        );
+
+
         showStatus(
-
-            `Administrator authenticated: ${
-                user.email || user.uid
-            }`,
-
+            "Agent authenticated successfully.",
             "success"
-
         );
 
 
@@ -1512,4 +2050,22 @@ onAuthStateChanged(
 
     }
 
+);
+
+
+/* =========================================================
+   CLEANUP
+========================================================= */
+
+window.addEventListener(
+    "beforeunload",
+    () => {
+
+        if (firebaseListener) {
+
+            firebaseListener();
+
+        }
+
+    }
 );
