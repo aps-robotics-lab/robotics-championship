@@ -1,41 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#050914">
 <title>Registration | APS Robotics Championship 2026</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="registration.css">
-</head><body>
-<header><a href="index.html" class="brand"><img src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png" alt="APS Logo"><span><b>APS ROBOTICS</b><small>REGISTRATION 2026</small></span></a><a href="rules.html" class="rules-link">Read Rules →</a></header>
-<main class="registration-page">
-<div class="form-intro"><span>TEAM REGISTRATION</span><h1>ENTER THE <em>CHAMPIONSHIP</em></h1><p>Register your team for APS Robotics Championship 2026.</p></div>
-<form id="registrationForm" class="registration-form">
-<div class="form-card"><h2>Team Leader</h2><div class="grid">
-<label>Student Name<input id="studentName" required></label>
-<label>Team Name<input id="teamName" required></label>
-<label>Class<input id="className" required></label>
-<label>Section<input id="sectionName" required></label>
-<label>Mobile Number<input id="mobileNumber" type="tel" required></label>
-<label>Email<input id="emailAddress" type="email" required></label>
-</div></div>
-<div class="form-card"><h2>Team Members</h2><p class="hint">Add the participating members. Leave unused fields blank.</p><div class="grid">
-<label>Member 2 Name<input id="member2Name"></label><label>Member 2 Class<input id="member2Class"></label><label>Member 2 Section<input id="member2Section"></label>
-<label>Member 3 Name<input id="member3Name"></label><label>Member 3 Class<input id="member3Class"></label><label>Member 3 Section<input id="member3Section"></label>
-<label>Member 4 Name<input id="member4Name"></label><label>Member 4 Class<input id="member4Class"></label><label>Member 4 Section<input id="member4Section"></label>
-<label>Member 5 Name<input id="member5Name"></label><label>Member 5 Class<input id="member5Class"></label><label>Member 5 Section<input id="member5Section"></label>
-</div></div>
-<div class="form-card"><h2>Select Event(s)</h2><div class="event-options">
-<label><input type="checkbox" name="events" value="Robo Race"><span>🏁 Robo Race</span></label>
-<label><input type="checkbox" name="events" value="Robo War"><span>⚔️ Robo War</span></label>
-<label><input type="checkbox" name="events" value="Robo Tug of War"><span>🤝 Robo Tug of War</span></label>
-<label><input type="checkbox" name="events" value="Robo Soccer"><span>⚽ Robo Soccer</span></label>
-</div></div>
-<div class="form-card"><h2>Remarks</h2><textarea id="remarks" rows="4" placeholder="Optional message..."></textarea></div>
-<div id="formError" class="form-error"></div>
-<button class="submit-btn" id="submitBtn" type="submit">Submit Registration <span>→</span></button>
-</form>
+</head>
+<body>
+<header>
+  <a href="index.html" class="brand">
+    <img src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png" alt="APS Logo">
+    <span>APS ROBOTICS<small>CHAMPIONSHIP 2026</small></span>
+  </a>
+  <div class="header-links"><a href="index.html">Home</a><a href="rules.html">Rules</a></div>
+</header>
+
+<main>
+  <div class="heading">
+    <span>TEAM REGISTRATION</span>
+    <h1>Enter the <b>Arena</b></h1>
+    <p>Choose solo participation or register a two-member team for APS Robotics Championship 2026.</p>
+  </div>
+
+  <form id="registrationForm">
+    <section>
+      <h2>Participation Type</h2>
+      <div class="participation-options">
+        <label class="choice-card active" id="soloChoice">
+          <input type="radio" name="participationType" value="Solo" checked>
+          <span class="choice-icon">◉</span>
+          <span><strong>Solo</strong><small>Only the team leader participates. No member form is shown.</small></span>
+        </label>
+        <label class="choice-card" id="teamChoice">
+          <input type="radio" name="participationType" value="Team">
+          <span class="choice-icon">◉</span>
+          <span><strong>Team of 2</strong><small>Team leader + 1 team member.</small></span>
+        </label>
+      </div>
+    </section>
+
+    <section>
+      <h2>Team Leader</h2>
+      <div class="grid">
+        <label>Student Name<input id="studentName" required></label>
+        <label>Team Name<input id="teamName" required></label>
+        <label>Class<input id="className" required></label>
+        <label>Section<input id="sectionName" required></label>
+        <label>Mobile Number<input id="mobile" type="tel" required></label>
+        <label>Email<input id="email" type="email" required></label>
+      </div>
+    </section>
+
+    <section id="memberSection" class="member-section hidden-section" aria-hidden="true">
+      <h2>Team Member</h2>
+      <p class="section-note">This section appears only when you select <b>Team of 2</b>.</p>
+      <div class="grid">
+        <label>Member 2 Name<input id="member2"></label>
+        <label>Member 2 Class<input id="member2Class"></label>
+        <label>Member 2 Section<input id="member2Section"></label>
+      </div>
+    </section>
+
+    <section>
+      <h2>Select Event(s)</h2>
+      <div class="events">
+        <label><input type="checkbox" name="events" value="Robo Race"><span>🏁 Robo Race</span></label>
+        <label><input type="checkbox" name="events" value="Robo War"><span>⚔️ Robo War</span></label>
+        <label><input type="checkbox" name="events" value="Robo Tug of War"><span>🤝 Robo Tug of War</span></label>
+        <label><input type="checkbox" name="events" value="Robo Soccer"><span>⚽ Robo Soccer</span></label>
+      </div>
+      <label class="full">Remarks<textarea id="remarks" rows="4" placeholder="Optional"></textarea></label>
+    </section>
+
+    <div id="formMessage" role="alert"></div>
+    <button id="submitBtn" type="submit">Submit Registration →</button>
+  </form>
 </main>
-<footer>© 2026 APS Tinkering Lab • APS Robotics Championship</footer>
 <script type="module" src="registration.js"></script>
-</body></html>
+</body>
+</html>
