@@ -1,42 +1,55 @@
+/* =========================================================
+   APS ROBOTICS CHAMPIONSHIP 2026
+   AGENT DASHBOARD
+========================================================= */
+
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-
 :root {
-
     --bg: #020711;
-    --panel: rgba(7, 17, 31, .88);
+    --panel: rgba(7, 17, 31, .90);
+    --panel-light: rgba(255, 255, 255, .035);
 
     --border: rgba(100, 180, 255, .14);
+    --border-hover: rgba(54, 169, 255, .35);
 
     --text: #f3f7ff;
     --muted: #8295aa;
 
     --blue: #36a9ff;
+    --blue-light: #69c1ff;
     --purple: #765cff;
 
     --green: #32df9b;
     --red: #ff5f6d;
-
+    --yellow: #ffd166;
 }
 
 
-body {
+/* =========================================================
+   BODY
+========================================================= */
 
+html {
+    scroll-behavior: smooth;
+}
+
+body {
     min-height: 100vh;
 
     background:
         radial-gradient(
             circle at 10% 10%,
-            rgba(54,169,255,.10),
+            rgba(54, 169, 255, .11),
             transparent 30%
         ),
         radial-gradient(
             circle at 90% 80%,
-            rgba(118,92,255,.09),
+            rgba(118, 92, 255, .10),
             transparent 30%
         ),
         var(--bg);
@@ -45,11 +58,13 @@ body {
 
     font-family: Poppins, sans-serif;
 
+    overflow-x: hidden;
 }
 
 
-body::before {
+/* Background grid */
 
+body::before {
     content: "";
 
     position: fixed;
@@ -57,6 +72,8 @@ body::before {
     inset: 0;
 
     pointer-events: none;
+
+    z-index: -1;
 
     opacity: .22;
 
@@ -72,7 +89,6 @@ body::before {
         );
 
     background-size: 45px 45px;
-
 }
 
 
@@ -81,7 +97,6 @@ body::before {
 ========================================================= */
 
 .topbar {
-
     position: sticky;
 
     top: 0;
@@ -98,38 +113,45 @@ body::before {
 
     padding: 12px 30px;
 
-    background: rgba(2,7,17,.88);
+    background: rgba(2, 7, 17, .90);
 
     border-bottom: 1px solid var(--border);
 
     backdrop-filter: blur(18px);
-
+    -webkit-backdrop-filter: blur(18px);
 }
 
 
-.brand {
+/* =========================================================
+   BRAND
+========================================================= */
 
+.brand {
     display: flex;
 
     align-items: center;
 
     gap: 13px;
 
+    min-width: 0;
 }
 
-
 .brand img {
-
     width: 48px;
     height: 48px;
 
+    flex-shrink: 0;
+
     object-fit: contain;
 
+    filter:
+        drop-shadow(
+            0 0 12px
+            rgba(54,169,255,.12)
+        );
 }
 
-
 .brand span {
-
     display: block;
 
     color: #8ca0b7;
@@ -139,37 +161,37 @@ body::before {
     letter-spacing: 1.5px;
 
     font-family: Orbitron, sans-serif;
-
 }
 
-
 .brand strong {
-
     display: block;
 
     margin-top: 3px;
+
+    color: white;
 
     font-family: Orbitron, sans-serif;
 
     font-size: 12px;
 
+    letter-spacing: .2px;
 }
 
 
-nav {
+/* =========================================================
+   NAVIGATION
+========================================================= */
 
+nav {
     display: flex;
 
     align-items: center;
 
     gap: 7px;
-
 }
-
 
 nav a,
 nav button {
-
     padding: 9px 13px;
 
     border: 1px solid transparent;
@@ -186,24 +208,35 @@ nav button {
 
     cursor: pointer;
 
+    transition:
+        color .2s ease,
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
 }
 
-
 nav a:hover {
-
     color: white;
 
     background: rgba(255,255,255,.04);
 
+    border-color: var(--border);
+
+    transform: translateY(-1px);
 }
 
-
 .logout-btn {
-
-    border-color: rgba(255,95,109,.2);
+    border-color: rgba(255,95,109,.20);
 
     color: #ff8790;
+}
 
+.logout-btn:hover {
+    color: white;
+
+    background: rgba(255,95,109,.10);
+
+    border-color: rgba(255,95,109,.40);
 }
 
 
@@ -212,26 +245,44 @@ nav a:hover {
 ========================================================= */
 
 main {
+    width: 100%;
 
     max-width: 1500px;
 
     margin: auto;
 
     padding: 40px 25px 70px;
-
 }
 
+
+/* =========================================================
+   HERO
+========================================================= */
 
 .hero {
-
     margin-bottom: 30px;
 
+    animation: heroIn .5s ease both;
 }
 
+@keyframes heroIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
 .badge {
-
     display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
 
     padding: 7px 12px;
 
@@ -239,41 +290,55 @@ main {
 
     color: var(--blue);
 
-    border: 1px solid rgba(54,169,255,.18);
+    border: 1px solid rgba(54,169,255,.20);
 
     background: rgba(54,169,255,.06);
 
     font: 600 10px Orbitron, sans-serif;
 
     letter-spacing: 1px;
-
 }
 
+.badge::before {
+    content: "";
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: var(--green);
+
+    box-shadow:
+        0 0 10px
+        rgba(50,223,155,.8);
+}
 
 .hero h1 {
-
     margin-top: 15px;
 
-    font: 700 clamp(32px, 5vw, 55px) Orbitron, sans-serif;
+    font:
+        700 clamp(32px, 5vw, 55px)
+        Orbitron,
+        sans-serif;
 
+    line-height: 1.1;
 }
-
 
 .hero h1 span {
-
     color: var(--blue);
 
+    text-shadow:
+        0 0 30px
+        rgba(54,169,255,.18);
 }
 
-
 .hero p {
-
     margin-top: 10px;
 
     color: var(--muted);
 
     font-size: 14px;
-
 }
 
 
@@ -282,7 +347,6 @@ main {
 ========================================================= */
 
 .dashboard {
-
     padding: 25px;
 
     border: 1px solid var(--border);
@@ -291,8 +355,22 @@ main {
 
     background: rgba(4,12,24,.68);
 
-    box-shadow: 0 25px 70px rgba(0,0,0,.25);
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.25);
 
+    animation: dashboardIn .6s ease both;
+}
+
+@keyframes dashboardIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 
@@ -301,7 +379,6 @@ main {
 ========================================================= */
 
 .stats-grid {
-
     display: grid;
 
     grid-template-columns:
@@ -310,11 +387,10 @@ main {
     gap: 14px;
 
     margin-bottom: 30px;
-
 }
 
-
 .stat-card {
+    position: relative;
 
     display: flex;
 
@@ -324,17 +400,49 @@ main {
 
     padding: 20px;
 
+    overflow: hidden;
+
     border: 1px solid var(--border);
 
     border-radius: 18px;
 
     background: rgba(255,255,255,.025);
 
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        background .2s ease;
 }
 
+.stat-card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 100px;
+    height: 100px;
+
+    right: -40px;
+    bottom: -50px;
+
+    border-radius: 50%;
+
+    background: rgba(54,169,255,.07);
+
+    filter: blur(5px);
+
+    pointer-events: none;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+
+    border-color: var(--border-hover);
+
+    background: rgba(255,255,255,.045);
+}
 
 .stat-icon {
-
     width: 45px;
     height: 45px;
 
@@ -342,36 +450,41 @@ main {
 
     place-items: center;
 
+    flex-shrink: 0;
+
     border-radius: 13px;
 
     background: rgba(54,169,255,.08);
 
-    font-size: 20px;
+    border: 1px solid rgba(54,169,255,.10);
 
+    font-size: 20px;
 }
 
-
 .stat-card small {
-
     display: block;
 
     color: var(--muted);
 
-    font: 600 9px Orbitron, sans-serif;
+    font:
+        600 9px
+        Orbitron,
+        sans-serif;
 
     letter-spacing: 1px;
-
 }
 
-
 .stat-card strong {
-
     display: block;
 
     margin-top: 3px;
 
-    font: 700 25px Orbitron, sans-serif;
+    color: white;
 
+    font:
+        700 25px
+        Orbitron,
+        sans-serif;
 }
 
 
@@ -380,7 +493,6 @@ main {
 ========================================================= */
 
 .toolbar {
-
     display: flex;
 
     justify-content: space-between;
@@ -390,39 +502,47 @@ main {
     gap: 20px;
 
     margin-bottom: 18px;
-
 }
 
+.section-label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: var(--blue);
+
+    font:
+        600 8px
+        Orbitron,
+        sans-serif;
+
+    letter-spacing: 1.2px;
+}
 
 .toolbar h2 {
-
-    font: 700 19px Orbitron, sans-serif;
-
+    font:
+        700 19px
+        Orbitron,
+        sans-serif;
 }
 
-
 .toolbar p {
-
     margin-top: 4px;
 
     color: var(--muted);
 
     font-size: 11px;
-
 }
-
 
 .toolbar-actions {
-
     display: flex;
 
-    gap: 9px;
+    align-items: center;
 
+    gap: 9px;
 }
 
-
 .toolbar-actions input {
-
     width: 280px;
 
     height: 43px;
@@ -439,19 +559,37 @@ main {
 
     color: white;
 
+    font-family: Poppins, sans-serif;
+
+    font-size: 11px;
+
+    transition:
+        border-color .2s ease,
+        background .2s ease,
+        box-shadow .2s ease;
 }
 
+.toolbar-actions input::placeholder {
+    color: #61758c;
+}
 
 .toolbar-actions input:focus {
-
     border-color: var(--blue);
 
+    background: rgba(54,169,255,.035);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(54,169,255,.06);
 }
 
+
+/* =========================================================
+   BUTTONS
+========================================================= */
 
 .secondary-btn,
 .save-btn {
-
     min-height: 43px;
 
     padding: 0 15px;
@@ -460,24 +598,37 @@ main {
 
     cursor: pointer;
 
-    font: 600 11px Poppins, sans-serif;
+    font:
+        600 11px
+        Poppins,
+        sans-serif;
 
+    transition:
+        transform .2s ease,
+        background .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
 }
 
-
 .secondary-btn {
-
     border: 1px solid var(--border);
 
     background: rgba(255,255,255,.04);
 
     color: #cbd7e6;
-
 }
 
+.secondary-btn:hover {
+    border-color: var(--border-hover);
+
+    background: rgba(255,255,255,.07);
+
+    color: white;
+
+    transform: translateY(-1px);
+}
 
 .save-btn {
-
     border: none;
 
     color: white;
@@ -489,6 +640,24 @@ main {
             var(--purple)
         );
 
+    box-shadow:
+        0 8px 25px
+        rgba(54,169,255,.12);
+}
+
+.save-btn:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 10px 30px
+        rgba(54,169,255,.20);
+}
+
+.secondary-btn:active,
+.save-btn:active,
+.edit-btn:active,
+.delete-btn:active {
+    transform: scale(.97);
 }
 
 
@@ -497,7 +666,6 @@ main {
 ========================================================= */
 
 .status {
-
     min-height: 28px;
 
     margin-bottom: 12px;
@@ -506,26 +674,31 @@ main {
 
     border-radius: 9px;
 
+    color: #91a5bb;
+
+    background: rgba(255,255,255,.02);
+
     font-size: 11px;
 
+    transition:
+        color .2s ease,
+        background .2s ease;
 }
 
-
 .status.success {
-
     color: var(--green);
 
     background: rgba(50,223,155,.05);
 
+    border: 1px solid rgba(50,223,155,.08);
 }
 
-
 .status.error {
-
     color: var(--red);
 
     background: rgba(255,95,109,.06);
 
+    border: 1px solid rgba(255,95,109,.10);
 }
 
 
@@ -534,29 +707,41 @@ main {
 ========================================================= */
 
 .table-container {
-
     overflow-x: auto;
 
     border: 1px solid var(--border);
 
     border-radius: 17px;
 
+    background: rgba(0,0,0,.08);
+
+    scrollbar-width: thin;
+    scrollbar-color: #263c55 transparent;
 }
 
+.table-container::-webkit-scrollbar {
+    height: 7px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: #263c55;
+
+    border-radius: 20px;
+}
 
 table {
-
     width: 100%;
 
     min-width: 1100px;
 
     border-collapse: collapse;
-
 }
 
-
 th {
-
     padding: 15px;
 
     text-align: left;
@@ -567,48 +752,51 @@ th {
 
     border-bottom: 1px solid var(--border);
 
-    font: 600 9px Orbitron, sans-serif;
+    font:
+        600 9px
+        Orbitron,
+        sans-serif;
 
     letter-spacing: .6px;
 
     white-space: nowrap;
-
 }
 
-
 td {
-
     padding: 15px;
 
-    border-bottom: 1px solid rgba(255,255,255,.045);
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.045);
 
     color: #c6d3e3;
 
     font-size: 11px;
 
     vertical-align: top;
-
 }
 
+tbody tr {
+    transition:
+        background .15s ease;
+}
+
+tbody tr:hover {
+    background:
+        rgba(54,169,255,.025);
+}
 
 tr:last-child td {
-
     border-bottom: none;
-
 }
 
-
 td strong {
-
     display: block;
 
     color: white;
-
 }
 
-
 td small {
-
     display: block;
 
     margin-top: 4px;
@@ -616,13 +804,17 @@ td small {
     color: #71859c;
 
     font-size: 9px;
-
 }
 
 
-.type-badge {
+/* =========================================================
+   TYPE BADGE
+========================================================= */
 
+.type-badge {
     display: inline-flex;
+
+    align-items: center;
 
     padding: 5px 8px;
 
@@ -636,21 +828,24 @@ td small {
 
     font-size: 9px;
 
+    white-space: nowrap;
 }
 
 
-.action-buttons {
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
 
+.action-buttons {
     display: flex;
 
     gap: 6px;
 
+    flex-wrap: wrap;
 }
-
 
 .edit-btn,
 .delete-btn {
-
     border: 1px solid;
 
     border-radius: 8px;
@@ -659,30 +854,55 @@ td small {
 
     cursor: pointer;
 
-    font-size: 10px;
+    font:
+        600 10px
+        Poppins,
+        sans-serif;
 
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
 }
-
 
 .edit-btn {
-
     color: var(--blue);
 
-    border-color: rgba(54,169,255,.2);
+    border-color:
+        rgba(54,169,255,.20);
 
-    background: rgba(54,169,255,.05);
-
+    background:
+        rgba(54,169,255,.05);
 }
 
+.edit-btn:hover {
+    color: white;
+
+    border-color:
+        rgba(54,169,255,.45);
+
+    background:
+        rgba(54,169,255,.12);
+}
 
 .delete-btn {
-
     color: var(--red);
 
-    border-color: rgba(255,95,109,.2);
+    border-color:
+        rgba(255,95,109,.20);
 
-    background: rgba(255,95,109,.05);
+    background:
+        rgba(255,95,109,.05);
+}
 
+.delete-btn:hover {
+    color: white;
+
+    border-color:
+        rgba(255,95,109,.45);
+
+    background:
+        rgba(255,95,109,.12);
 }
 
 
@@ -691,7 +911,6 @@ td small {
 ========================================================= */
 
 .overlay {
-
     position: fixed;
 
     inset: 0;
@@ -706,22 +925,18 @@ td small {
 
     padding: 20px;
 
-    background: rgba(0,0,0,.72);
+    background:
+        rgba(0,0,0,.72);
 
     backdrop-filter: blur(8px);
-
+    -webkit-backdrop-filter: blur(8px);
 }
-
 
 .hidden {
-
     display: none !important;
-
 }
 
-
 .edit-card {
-
     width: min(760px, 100%);
 
     max-height: 92vh;
@@ -736,13 +951,30 @@ td small {
 
     background: #07111f;
 
-    box-shadow: 0 30px 90px rgba(0,0,0,.6);
+    box-shadow:
+        0 30px 90px
+        rgba(0,0,0,.6);
 
+    scrollbar-width: thin;
+    scrollbar-color: #263c55 transparent;
+}
+
+.edit-card::-webkit-scrollbar {
+    width: 6px;
+}
+
+.edit-card::-webkit-scrollbar-thumb {
+    background: #263c55;
+
+    border-radius: 20px;
 }
 
 
-.edit-header {
+/* =========================================================
+   EDIT HEADER
+========================================================= */
 
+.edit-header {
     display: flex;
 
     justify-content: space-between;
@@ -750,32 +982,29 @@ td small {
     align-items: flex-start;
 
     margin-bottom: 22px;
-
 }
-
 
 .edit-header span {
-
     color: var(--blue);
 
-    font: 600 9px Orbitron, sans-serif;
+    font:
+        600 9px
+        Orbitron,
+        sans-serif;
 
     letter-spacing: 1px;
-
 }
-
 
 .edit-header h2 {
-
     margin-top: 6px;
 
-    font: 700 20px Orbitron, sans-serif;
-
+    font:
+        700 20px
+        Orbitron,
+        sans-serif;
 }
 
-
 .close-btn {
-
     width: 38px;
     height: 38px;
 
@@ -791,40 +1020,49 @@ td small {
 
     cursor: pointer;
 
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
+}
+
+.close-btn:hover {
+    background: rgba(255,255,255,.09);
+
+    border-color: rgba(255,255,255,.20);
+
+    transform: rotate(3deg);
 }
 
 
-.edit-grid {
+/* =========================================================
+   EDIT GRID
+========================================================= */
 
+.edit-grid {
     display: grid;
 
     grid-template-columns:
         repeat(2, 1fr);
 
     gap: 15px;
-
 }
-
 
 .edit-grid label,
 .remarks-label,
 .edit-member-card label {
-
     display: block;
 
     color: #aebed1;
 
     font-size: 11px;
-
 }
-
 
 .edit-grid input,
 .edit-grid select,
 .remarks-label textarea,
 .edit-member-card input,
 .edit-member-card select {
-
     width: 100%;
 
     margin-top: 7px;
@@ -845,39 +1083,53 @@ td small {
 
     font-size: 11px;
 
+    transition:
+        border-color .2s ease,
+        background .2s ease,
+        box-shadow .2s ease;
 }
 
+.edit-grid input::placeholder,
+.edit-member-card input::placeholder {
+    color: #61758c;
+}
 
 .edit-grid select option,
 .edit-member-card select option {
-
     background: #07111f;
 
+    color: white;
 }
-
 
 .edit-grid input:focus,
 .edit-grid select:focus,
 .edit-member-card input:focus,
 .edit-member-card select:focus,
 .remarks-label textarea:focus {
-
     border-color: var(--blue);
 
+    background: rgba(54,169,255,.035);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(54,169,255,.05);
 }
 
+
+/* =========================================================
+   TEAM MEMBERS
+========================================================= */
 
 .member-title {
-
     margin: 25px 0 12px;
 
-    font: 600 13px Orbitron, sans-serif;
-
+    font:
+        600 13px
+        Orbitron,
+        sans-serif;
 }
 
-
 .edit-member-card {
-
     display: grid;
 
     grid-template-columns:
@@ -895,36 +1147,51 @@ td small {
 
     background: rgba(255,255,255,.02);
 
+    transition:
+        border-color .2s ease,
+        background .2s ease;
 }
 
+.edit-member-card:hover {
+    border-color: var(--border-hover);
+
+    background: rgba(255,255,255,.03);
+}
 
 .edit-member-card h4 {
-
     grid-column: 1 / -1;
 
     color: var(--blue);
 
-    font: 600 10px Orbitron, sans-serif;
+    font:
+        600 10px
+        Orbitron,
+        sans-serif;
 
+    letter-spacing: .7px;
 }
 
+
+/* =========================================================
+   REMARKS
+========================================================= */
 
 .remarks-label {
-
     margin-top: 15px;
-
 }
-
 
 .remarks-label textarea {
-
     resize: vertical;
 
+    min-height: 90px;
 }
 
 
-.edit-message {
+/* =========================================================
+   EDIT MESSAGE
+========================================================= */
 
+.edit-message {
     min-height: 24px;
 
     margin-top: 10px;
@@ -932,12 +1199,14 @@ td small {
     color: var(--green);
 
     font-size: 11px;
-
 }
 
 
-.edit-actions {
+/* =========================================================
+   EDIT ACTIONS
+========================================================= */
 
+.edit-actions {
     display: flex;
 
     justify-content: flex-end;
@@ -945,114 +1214,242 @@ td small {
     gap: 10px;
 
     margin-top: 15px;
-
 }
 
 
 /* =========================================================
-   RESPONSIVE
+   MOBILE NAV
 ========================================================= */
 
 @media (max-width: 900px) {
 
-    .stats-grid {
-
-        grid-template-columns:
-            repeat(2, 1fr);
-
+    .topbar {
+        padding: 12px 20px;
     }
 
+    .stats-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
 
     .toolbar {
-
         flex-direction: column;
 
         align-items: stretch;
-
     }
 
+    .toolbar-actions {
+        width: 100%;
+    }
 
     .toolbar-actions input {
-
         flex: 1;
 
         width: auto;
-
     }
-
 }
 
+
+/* =========================================================
+   MOBILE
+========================================================= */
 
 @media (max-width: 650px) {
 
     .topbar {
+        min-height: 68px;
 
-        padding: 12px 15px;
-
+        padding: 10px 14px;
     }
 
+    .brand {
+        gap: 9px;
+    }
+
+    .brand img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .brand span {
+        font-size: 8px;
+
+        letter-spacing: 1px;
+    }
 
     .brand strong {
+        font-size: 8px;
 
-        font-size: 9px;
-
+        letter-spacing: 0;
     }
 
+    nav {
+        gap: 4px;
+    }
 
     nav a {
-
         display: none;
-
     }
 
+    .logout-btn {
+        padding: 8px 10px;
+
+        font-size: 10px;
+    }
 
     main {
-
         padding: 25px 12px 50px;
-
     }
 
+    .hero {
+        margin-bottom: 22px;
+    }
+
+    .hero h1 {
+        font-size: 30px;
+    }
+
+    .hero p {
+        font-size: 12px;
+    }
 
     .dashboard {
-
         padding: 14px;
 
+        border-radius: 18px;
     }
 
-
     .stats-grid {
-
         grid-template-columns:
             1fr 1fr;
 
-    }
+        gap: 9px;
 
+        margin-bottom: 22px;
+    }
 
     .stat-card {
+        gap: 9px;
 
-        padding: 14px;
+        padding: 13px;
 
+        border-radius: 14px;
     }
 
+    .stat-icon {
+        width: 37px;
+        height: 37px;
+
+        border-radius: 10px;
+
+        font-size: 16px;
+    }
+
+    .stat-card small {
+        font-size: 7px;
+    }
+
+    .stat-card strong {
+        font-size: 20px;
+    }
 
     .toolbar-actions {
-
         flex-direction: column;
 
+        align-items: stretch;
     }
 
+    .toolbar-actions input {
+        width: 100%;
+
+        min-height: 43px;
+    }
+
+    .secondary-btn {
+        width: 100%;
+    }
 
     .edit-grid {
-
         grid-template-columns: 1fr;
-
     }
-
 
     .edit-member-card {
-
         grid-template-columns: 1fr;
-
     }
 
+    .edit-member-card h4 {
+        grid-column: auto;
+    }
+
+    .edit-actions {
+        flex-direction: column-reverse;
+    }
+
+    .edit-actions button {
+        width: 100%;
+    }
 }
+
+
+/* =========================================================
+   VERY SMALL PHONES
+========================================================= */
+
+@media (max-width: 400px) {
+
+    .brand span {
+        font-size: 7px;
+    }
+
+    .brand strong {
+        font-size: 7px;
+    }
+
+    .hero h1 {
+        font-size: 26px;
+    }
+
+    .stats-grid {
+        gap: 7px;
+    }
+
+    .stat-card {
+        padding: 10px;
+
+        gap: 7px;
+    }
+
+    .stat-icon {
+        width: 32px;
+        height: 32px;
+
+        font-size: 14px;
+    }
+
+    .stat-card strong {
+        font-size: 17px;
+    }
+
+    .stat-card small {
+        font-size: 6px;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+
+        transition-duration: .01ms !important;
+    }
+    }
