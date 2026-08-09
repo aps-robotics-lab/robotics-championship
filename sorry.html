@@ -4,204 +4,480 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<meta name="theme-color" content="#020711">
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-<title>Support Request Submitted | APS Robotics</title>
+<meta
+name="theme-color"
+content="#020711">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<title>
+Support Request Submitted | APS Robotics Championship 2026
+</title>
+
 
 <link
-href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Poppins:wght@400;500;600&display=swap"
+rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link
+rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+
+<link
+href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap"
 rel="stylesheet">
+
 
 <style>
 
-*{
-box-sizing:border-box;
+:root {
+
+    --bg: #020711;
+    --blue: #3d9cff;
+    --cyan: #40dfff;
+    --green: #3ee8a8;
+    --text: #f4f8ff;
+    --muted: #9caec5;
+
 }
 
-body{
-margin:0;
-min-height:100vh;
-display:grid;
-place-items:center;
-padding:25px;
-font-family:Poppins,sans-serif;
-color:#f5f8ff;
-background:
-radial-gradient(circle at 50% 20%,rgba(53,217,255,.14),transparent 35%),
-#030712;
+
+* {
+
+    box-sizing: border-box;
+
 }
 
-.card{
-width:min(560px,100%);
-padding:45px 30px;
-text-align:center;
-background:rgba(10,19,36,.9);
-border:1px solid rgba(255,255,255,.1);
-border-radius:26px;
-box-shadow:0 30px 100px rgba(0,0,0,.4);
+
+body {
+
+    min-height: 100vh;
+
+    margin: 0;
+
+    display: grid;
+
+    place-items: center;
+
+    padding: 22px;
+
+    overflow: hidden;
+
+    color: var(--text);
+
+    font-family:
+        "Poppins",
+        sans-serif;
+
+    background:
+        radial-gradient(
+            circle at 20% 20%,
+            rgba(61,156,255,0.16),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 80% 80%,
+            rgba(64,223,255,0.12),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+            #020711,
+            #08192e
+        );
+
 }
 
-.icon{
-width:80px;
-height:80px;
-margin:0 auto 25px;
-display:grid;
-place-items:center;
-border-radius:50%;
-background:rgba(52,231,161,.1);
-border:1px solid rgba(52,231,161,.35);
-font-size:38px;
-color:#34e7a1;
+
+.card {
+
+    width: min(100%, 680px);
+
+    text-align: center;
+
+    padding:
+        55px 35px;
+
+    border-radius: 28px;
+
+    border:
+        1px solid
+        rgba(126,181,255,0.18);
+
+    background:
+        rgba(7,22,41,0.78);
+
+    backdrop-filter:
+        blur(20px);
+
+    box-shadow:
+        0 25px 80px
+        rgba(0,0,0,0.35);
+
 }
 
-.badge{
-font-family:Orbitron,sans-serif;
-font-size:10px;
-letter-spacing:2px;
-color:#35d9ff;
+
+.icon {
+
+    width: 88px;
+    height: 88px;
+
+    margin:
+        0 auto 25px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 50%;
+
+    font-size: 40px;
+
+    color: #02101a;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--green),
+            var(--cyan)
+        );
+
+    box-shadow:
+        0 0 45px
+        rgba(62,232,168,0.25);
+
 }
 
-h1{
-font-family:Orbitron,sans-serif;
-font-size:clamp(25px,6vw,38px);
-margin:13px 0;
+
+.badge {
+
+    display: inline-block;
+
+    padding:
+        8px 14px;
+
+    border-radius: 999px;
+
+    color: var(--green);
+
+    font-family:
+        "Orbitron",
+        sans-serif;
+
+    font-size: 10px;
+
+    letter-spacing: 1.5px;
+
+    background:
+        rgba(62,232,168,0.08);
+
 }
 
-p{
-color:#8e9bb2;
-line-height:1.8;
-font-size:14px;
+
+h1 {
+
+    margin:
+        20px 0 12px;
+
+    font-family:
+        "Orbitron",
+        sans-serif;
+
+    font-size:
+        clamp(28px, 5vw, 48px);
+
 }
 
-.ticket{
-margin:25px 0;
-padding:20px;
-border-radius:15px;
-background:rgba(53,217,255,.06);
-border:1px solid rgba(53,217,255,.15);
+
+p {
+
+    max-width: 520px;
+
+    margin:
+        0 auto;
+
+    color: var(--muted);
+
+    line-height: 1.8;
+
 }
 
-.ticket small{
-display:block;
-font-size:9px;
-font-family:Orbitron,sans-serif;
-letter-spacing:2px;
-color:#35d9ff;
-margin-bottom:7px;
+
+.ticket-box {
+
+    margin-top: 32px;
+
+    padding: 22px;
+
+    border-radius: 18px;
+
+    border:
+        1px solid
+        rgba(64,223,255,0.20);
+
+    background:
+        rgba(0,0,0,0.18);
+
 }
 
-.ticket strong{
-font-family:Orbitron,sans-serif;
-font-size:24px;
-letter-spacing:1px;
+
+.ticket-box span {
+
+    display: block;
+
+    margin-bottom: 10px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    letter-spacing: 1px;
+
 }
 
-.buttons{
-display:flex;
-gap:12px;
-justify-content:center;
-margin-top:25px;
+
+.ticket-box strong {
+
+    display: block;
+
+    color: var(--cyan);
+
+    font-family:
+        "Orbitron",
+        sans-serif;
+
+    font-size:
+        clamp(17px, 4vw, 27px);
+
+    word-break: break-all;
+
 }
 
-a{
-text-decoration:none;
-padding:13px 20px;
-border-radius:11px;
-font-size:13px;
-font-weight:600;
+
+.warning {
+
+    margin-top: 22px;
+
+    color: #ffd98a;
+
+    font-size: 12px;
+
 }
 
-.primary{
-background:#35d9ff;
-color:#031019;
+
+.actions {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    flex-wrap: wrap;
+
+    margin-top: 32px;
+
 }
 
-.secondary{
-border:1px solid rgba(255,255,255,.1);
-color:#cdd6e8;
+
+a,
+button {
+
+    border: none;
+
+    cursor: pointer;
+
+    padding:
+        13px 20px;
+
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    font-family:
+        "Poppins",
+        sans-serif;
+
+    font-weight: 600;
+
 }
+
+
+.primary {
+
+    color: #02101a;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--blue),
+            var(--cyan)
+        );
+
+}
+
+
+.secondary {
+
+    color: var(--text);
+
+    border:
+        1px solid
+        rgba(126,181,255,0.2);
+
+    background:
+        rgba(255,255,255,0.04);
+
+}
+
 
 </style>
 
 </head>
 
+
 <body>
+
 
 <div class="card">
 
-<div class="icon">✓</div>
+    <div class="icon">
+        ✓
+    </div>
 
-<span class="badge">
-SUPPORT REQUEST RECEIVED
-</span>
 
-<h1>We've Got It!</h1>
+    <div class="badge">
+        SUPPORT TICKET CREATED
+    </div>
 
-<p>
-Your support request has been successfully submitted.
-Our organising team will review your issue and respond to you.
-</p>
 
-<div class="ticket">
+    <h1>
+        We received your request
+    </h1>
 
-<small>TICKET ID</small>
 
-<strong id="ticketId">
-APS-HLP-2026-----
-</strong>
+    <p>
+
+        Your support request has been successfully submitted
+        to the APS Robotics Championship support system.
+
+    </p>
+
+
+    <div class="ticket-box">
+
+        <span>
+            YOUR SUPPORT TICKET ID
+        </span>
+
+        <strong id="ticketId">
+            Loading...
+        </strong>
+
+    </div>
+
+
+    <div class="warning">
+
+        Please save this Ticket ID for your records.
+
+    </div>
+
+
+    <div class="actions">
+
+        <button
+        class="secondary"
+        id="copyBtn">
+
+            Copy Ticket ID
+
+        </button>
+
+
+        <a
+        href="index.html"
+        class="primary">
+
+            Return Home
+
+        </a>
+
+    </div>
 
 </div>
 
-<p>
-Please keep your Ticket ID for future communication.
-</p>
-
-<div class="buttons">
-
-<a
-href="index.html"
-class="primary">
-Back to Website
-</a>
-
-<a
-href="help.html"
-class="secondary">
-New Request
-</a>
-
-</div>
-
-</div>
 
 
 <script>
 
 const params =
-new URLSearchParams(
-location.search
-);
+    new URLSearchParams(
+        window.location.search
+    );
 
-const ticket =
-params.get("ticket") ||
-sessionStorage.getItem(
-"apsHelpTicketId"
-);
 
-if(ticket){
+const ticketId =
+    params.get("ticket") ||
+    sessionStorage.getItem(
+        "apsHelpTicketId"
+    ) ||
+    "Not available";
+
 
 document.getElementById(
-"ticketId"
-).textContent = ticket;
+    "ticketId"
+).textContent =
+    ticketId;
 
-}
+
+document.getElementById(
+    "copyBtn"
+).addEventListener(
+    "click",
+
+    async function() {
+
+        try {
+
+            await navigator.clipboard.writeText(
+                ticketId
+            );
+
+            this.textContent =
+                "Copied ✓";
+
+
+            setTimeout(
+                () => {
+
+                    this.textContent =
+                        "Copy Ticket ID";
+
+                },
+                1800
+            );
+
+        } catch (error) {
+
+            alert(
+                "Ticket ID: " +
+                ticketId
+            );
+
+        }
+
+    }
+);
 
 </script>
 
+
 </body>
+
 </html>
