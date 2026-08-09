@@ -1,51 +1,238 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#020711">
-<title>Admin | APS Robotics Championship 2026</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css">
-</head>
-<body>
-<div class="bg"></div>
-<main class="wrap">
-  <section id="loginCard" class="card">
-    <div class="logo">APS</div>
-    <div class="tag">ROBOTICS CHAMPIONSHIP 2026</div>
-    <h1>Admin Login</h1>
-    <p>Sign in with the Firebase admin account.</p>
-    <form id="loginForm">
-      <label>Email<input id="email" type="email" autocomplete="username" required></label>
-      <label>Password<input id="password" type="password" autocomplete="current-password" required></label>
-      <button type="submit">LOGIN</button>
-      <div id="loginError" class="error"></div>
-    </form>
-  </section>
 
-  <section id="dashboard" class="dashboard hidden">
-    <header class="top">
-      <div><div class="tag">APS TINKERING LAB</div><h1>Registration Dashboard</h1></div>
-      <button id="logoutBtn" class="secondary">Logout</button>
-    </header>
-    <div id="status" class="status"></div>
-    <div class="toolbar">
-      <input id="search" type="search" placeholder="Search name, team, email, event...">
-      <button id="refreshBtn" class="secondary">Refresh</button>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr>
-          <th>Registration ID</th><th>Leader</th><th>Team</th><th>Size</th><th>Class</th><th>Section</th><th>Mobile</th><th>Email</th><th>Events</th><th>Members</th><th>Date</th>
-        </tr></thead>
-        <tbody id="registrationBody"></tbody>
-      </table>
-    </div>
-  </section>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="theme-color"
+    content="#020711">
+
+<title>
+    Admin | APS Robotics Championship 2026
+</title>
+
+
+<link
+    rel="preconnect"
+    href="https://fonts.googleapis.com">
+
+<link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin>
+
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Poppins:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
+
+<link
+    rel="stylesheet"
+    href="admin.css">
+
+</head>
+
+
+<body>
+
+
+<div class="bg"></div>
+
+
+<main class="wrap">
+
+
+    <!-- =================================================
+         LOGIN CARD
+    ================================================== -->
+
+    <section
+        id="loginCard"
+        class="card">
+
+        <div class="logo">
+            APS
+        </div>
+
+        <div class="tag">
+            ROBOTICS CHAMPIONSHIP 2026
+        </div>
+
+        <h1>
+            Admin Login
+        </h1>
+
+        <p>
+            Please sign in through the admin login page.
+        </p>
+
+        <button
+            type="button"
+            onclick="window.location.href='login.html'">
+
+            GO TO LOGIN
+
+        </button>
+
+    </section>
+
+
+    <!-- =================================================
+         DASHBOARD
+    ================================================== -->
+
+    <section
+        id="dashboard"
+        class="dashboard hidden">
+
+
+        <!-- TOP -->
+
+        <header class="top">
+
+            <div>
+
+                <div class="tag">
+                    APS TINKERING LAB
+                </div>
+
+                <h1>
+                    Registration Dashboard
+                </h1>
+
+            </div>
+
+
+            <button
+                id="logoutBtn"
+                class="secondary"
+                type="button">
+
+                Logout
+
+            </button>
+
+        </header>
+
+
+        <!-- STATUS -->
+
+        <div
+            id="status"
+            class="status">
+        </div>
+
+
+        <!-- TOOLBAR -->
+
+        <div class="toolbar">
+
+            <input
+                id="search"
+                type="search"
+                placeholder="Search name, team, email, event...">
+
+
+            <button
+                id="refreshBtn"
+                class="secondary"
+                type="button">
+
+                Refresh
+
+            </button>
+
+        </div>
+
+
+        <!-- TABLE -->
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Registration ID
+                        </th>
+
+                        <th>
+                            Leader
+                        </th>
+
+                        <th>
+                            Team
+                        </th>
+
+                        <th>
+                            Size
+                        </th>
+
+                        <th>
+                            Class
+                        </th>
+
+                        <th>
+                            Section
+                        </th>
+
+                        <th>
+                            Mobile
+                        </th>
+
+                        <th>
+                            Email
+                        </th>
+
+                        <th>
+                            Events
+                        </th>
+
+                        <th>
+                            Members
+                        </th>
+
+                        <th>
+                            Date
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody
+                    id="registrationBody">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+    </section>
+
+
 </main>
-<script type="module" src="admin.js"></script>
+
+
+<script
+    type="module"
+    src="admin.js">
+</script>
+
+
 </body>
+
 </html>
