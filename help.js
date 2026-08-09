@@ -1,17 +1,18 @@
 import {
     initializeApp
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 
 import {
     getDatabase,
     ref,
     push,
-    set
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+    set,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
 
 
 /* =========================================================
-   FIREBASE
+   FIREBASE CONFIG
 ========================================================= */
 
 const firebaseConfig = {
@@ -43,6 +44,10 @@ const firebaseConfig = {
 };
 
 
+/* =========================================================
+   INITIALIZE FIREBASE
+========================================================= */
+
 const app =
     initializeApp(firebaseConfig);
 
@@ -72,12 +77,12 @@ const formStatus =
 const message =
     document.getElementById("message");
 
-const charCount =
-    document.getElementById("charCount");
+const messageCount =
+    document.getElementById("messageCount");
 
 
 /* =========================================================
-   HELPERS
+   VALUE
 ========================================================= */
 
 function getValue(id) {
@@ -85,19 +90,29 @@ function getValue(id) {
     const element =
         document.getElementById(id);
 
-    return element
-        ? String(element.value || "").trim()
-        : "";
+    if (!element) {
+        return "";
+    }
+
+    return String(
+        element.value || ""
+    ).trim();
 
 }
 
+
+/* =========================================================
+   STATUS
+========================================================= */
 
 function showStatus(
     text,
     type = "error"
 ) {
 
-    if (!formStatus) return;
+    if (!formStatus) {
+        return;
+    }
 
     formStatus.textContent =
         text;
@@ -108,36 +123,70 @@ function showStatus(
 }
 
 
-function createTicketId() {
+function clearStatus() {
 
-    const now =
-        new Date();
+    if (!formStatus) {
+        return;
+    }
 
-    const year =
-        now.getFullYear();
+    formStatus.textContent =
+        "";
 
-    const random =
-        Math.floor(
-            1000 +
-            Math.random() * 9000
-        );
-
-    return `APS-HLP-${year}-${random}`;
+    formStatus.className =
+        "form-status";
 
 }
 
 
 /* =========================================================
-   CHARACTER COUNTER
+   TICKET ID
+========================================================= */
+
+function generateTicketId() {
+
+    const chars =
+        "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+    let random =
+        "";
+
+    for (
+        let i = 0;
+        i < 6;
+        i++
+    ) {
+
+        random +=
+            chars[
+                Math.floor(
+                    Math.random() *
+                    chars.length
+                )
+            ];
+
+    }
+
+    return (
+        "APS-" +
+        new Date().getFullYear() +
+        "-" +
+        random
+    );
+
+}
+
+
+/* =========================================================
+   CHARACTER COUNT
 ========================================================= */
 
 message?.addEventListener(
     "input",
     () => {
 
-        if (charCount) {
+        if (messageCount) {
 
-            charCount.textContent =
+            messageCount.textContent =
                 message.value.length;
 
         }
@@ -156,148 +205,299 @@ form?.addEventListener(
 
         event.preventDefault();
 
-        showStatus("");
+        clearStatus();
 
 
-        const registrationId =
-            getValue("registrationId");
+        /* =================================================
+           COLLECT DATA
+        ================================================= */
 
-        const name =
-            getValue("name");
+        const data = {
 
-        const email =
-            getValue("email")
-                .toLowerCase();
+            /*
+             * OPTIONAL
+             */
+            registrationId:
+                getValue(
+                    "registrationId"
+                ),
 
-        const className =
-            getValue("className");
+            /*
+             * REQUIRED
+             */
+            name:
+                getValue(
+                    "name"
+                ),
 
-        const section =
-            getValue("section");
+            className:
+                getValue(
+                    "className"
+                ),
 
-        const category =
-            getValue("category") ||
-            "Other";
+            section:
+                getValue(
+                    "section"
+                ),
 
-        const subject =
-            getValue("subject");
+            email:
+                getValue(
+                    "email"
+                ).toLowerCase(),
 
-        const messageText =
-            getValue("message");
+            /*
+             * OPTIONAL
+             */
+            category:
+                getValue(
+                    "category"
+                ) || "General",
+
+            /*
+             * REQUIRED
+             */
+            subject:
+                getValue(
+                    "subject"
+                ),
+
+            message:
+                getValue(
+                    "message"
+                )
+
+        };
 
 
-        /* Registration ID is intentionally optional. */
+        /* =================================================
+           VALIDATION
+        ================================================= */
 
-        if (!name) {
+        if (!data.name) {
+
             showStatus(
                 "Please enter your name."
             );
+
+            document
+                .getElementById("name")
+                ?.focus();
+
             return;
+
         }
 
-        if (!email) {
-            showStatus(
-                "Please enter your email."
-            );
-            return;
-        }
 
-        if (!className) {
+        if (!data.className) {
+
             showStatus(
                 "Please select your class."
             );
+
+            document
+                .getElementById("className")
+                ?.focus();
+
             return;
+
         }
 
-        if (!section) {
+
+        if (!data.section) {
+
             showStatus(
                 "Please enter your section."
             );
+
+            document
+                .getElementById("section")
+                ?.focus();
+
             return;
+
         }
 
-        if (!subject) {
+
+        if (!data.email) {
+
+            showStatus(
+                "Please enter your email address."
+            );
+
+            document
+                .getElementById("email")
+                ?.focus();
+
+            return;
+
+        }
+
+
+        const emailPattern =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+        if (
+            !emailPattern.test(
+                data.email
+            )
+        ) {
+
+            showStatus(
+                "Please enter a valid email address."
+            );
+
+            return;
+
+        }
+
+
+        if (!data.subject) {
+
             showStatus(
                 "Please enter a subject."
             );
+
+            document
+                .getElementById("subject")
+                ?.focus();
+
             return;
+
         }
 
-        if (!messageText) {
+
+        if (!data.message) {
+
             showStatus(
                 "Please describe your issue."
             );
+
+            message?.focus();
+
             return;
+
         }
 
 
-        const ticketId =
-            createTicketId();
+        if (
+            data.message.length >
+            2000
+        ) {
+
+            showStatus(
+                "Message must be 2000 characters or less."
+            );
+
+            return;
+
+        }
 
 
-        try {
+        /* =================================================
+           LOADING
+        ================================================= */
+
+        if (submitBtn) {
 
             submitBtn.disabled =
                 true;
+
+        }
+
+
+        if (submitText) {
 
             submitText.classList.add(
                 "hidden"
             );
 
+        }
+
+
+        if (submitLoading) {
+
             submitLoading.classList.remove(
                 "hidden"
             );
 
+        }
+
+
+        try {
+
+            /* =================================================
+               CREATE FIREBASE KEY
+            ================================================= */
 
             const ticketRef =
-                ref(
-                    db,
-                    `tickets/${ticketId}`
+                push(
+                    ref(
+                        db,
+                        "tickets"
+                    )
                 );
 
+
+            /* =================================================
+               GENERATE TICKET ID
+            ================================================= */
+
+            const ticketId =
+                generateTicketId();
+
+
+            /* =================================================
+               SAVE TICKET
+            ================================================= */
 
             await set(
                 ticketRef,
                 {
 
-                    ticketId,
+                    ticketId:
+                        ticketId,
 
                     registrationId:
-                        registrationId || "",
+                        data.registrationId || "",
 
-                    name,
+                    name:
+                        data.name,
 
-                    email,
+                    className:
+                        data.className,
 
-                    className,
+                    section:
+                        data.section,
 
-                    section,
+                    email:
+                        data.email,
 
-                    category,
+                    category:
+                        data.category,
 
-                    subject,
+                    subject:
+                        data.subject,
 
                     message:
-                        messageText,
+                        data.message,
 
                     status:
                         "Open",
 
-                    agent:
-                        "",
-
-                    reply:
-                        "",
-
                     createdAt:
-                        Date.now(),
+                        serverTimestamp(),
 
                     updatedAt:
-                        Date.now()
+                        serverTimestamp()
 
                 }
             );
 
+
+            /* =================================================
+               SAVE SESSION
+            ================================================= */
 
             sessionStorage.setItem(
                 "apsHelpTicketId",
@@ -307,119 +507,82 @@ form?.addEventListener(
 
             sessionStorage.setItem(
                 "apsHelpRegistrationId",
-                registrationId
+                data.registrationId || ""
             );
 
+
+            /* =================================================
+               SUCCESS
+            ================================================= */
 
             window.location.href =
                 "sorry.html?ticket=" +
-                encodeURIComponent(ticketId);
+                encodeURIComponent(
+                    ticketId
+                );
+
+        }
 
 
-        } catch (error) {
+        catch (error) {
 
             console.error(
-                "Firebase ticket error:",
+                "Firebase Help Error:",
                 error
             );
 
+
+            let message =
+                "Unable to submit your request.";
+
+
+            if (
+                error?.code ===
+                "PERMISSION_DENIED"
+            ) {
+
+                message =
+                    "Permission denied. Please check your Firebase Realtime Database Rules.";
+
+            }
+
+
             showStatus(
-                "Unable to submit your request. Please check your Firebase Rules and try again.",
+                message,
                 "error"
             );
 
-        } finally {
+        }
 
-            submitBtn.disabled =
-                false;
 
-            submitText.classList.remove(
-                "hidden"
-            );
+        finally {
 
-            submitLoading.classList.add(
-                "hidden"
-            );
+            if (submitBtn) {
+
+                submitBtn.disabled =
+                    false;
+
+            }
+
+
+            if (submitText) {
+
+                submitText.classList.remove(
+                    "hidden"
+                );
+
+            }
+
+
+            if (submitLoading) {
+
+                submitLoading.classList.add(
+                    "hidden"
+                );
+
+            }
 
         }
 
     }
 );
-/* =========================================================
-   SECRET AGENT ACCESS
-   Tap APS logo 5 times
-========================================================= */
-
-const agentNav =
-    document.getElementById("agentNav");
-
-/*
- * Change this selector if your logo has
- * a different ID/class.
- */
-const apsLogo =
-    document.querySelector(
-        ".brand img, .logo img, header img"
-    );
-
-let logoTapCount = 0;
-let logoTapTimer = null;
-
-if (apsLogo) {
-
-    apsLogo.addEventListener(
-        "click",
-        () => {
-
-            logoTapCount++;
-
-            clearTimeout(logoTapTimer);
-
-            logoTapTimer =
-                setTimeout(() => {
-
-                    logoTapCount = 0;
-
-                }, 1500);
-
-
-            if (logoTapCount >= 5) {
-
-                logoTapCount = 0;
-
-                if (agentNav) {
-
-                    agentNav.classList.add(
-                        "show"
-                    );
-
-                    sessionStorage.setItem(
-                        "apsAgentAccessVisible",
-                        "true"
-                    );
-
-                }
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   KEEP SECRET BUTTON VISIBLE DURING SESSION
-========================================================= */
-
-if (
-    sessionStorage.getItem(
-        "apsAgentAccessVisible"
-    ) === "true"
-) {
-
-    agentNav?.classList.add(
-        "show"
-    );
-
-}
