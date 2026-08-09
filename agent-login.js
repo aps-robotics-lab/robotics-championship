@@ -22,9 +22,6 @@ const firebaseConfig = {
     authDomain:
         "robotics-championship-ab248.firebaseapp.com",
 
-    databaseURL:
-        "https://robotics-championship-ab248-default-rtdb.asia-southeast1.firebasedatabase.app",
-
     projectId:
         "robotics-championship-ab248",
 
@@ -44,7 +41,7 @@ const firebaseConfig = {
 
 
 /* =========================================================
-   INITIALIZE
+   INITIALIZE FIREBASE
 ========================================================= */
 
 const app =
@@ -55,7 +52,7 @@ const auth =
 
 
 /* =========================================================
-   ADMIN UID LIST
+   YOUR FIVE ADMIN UIDS
 ========================================================= */
 
 const ADMIN_UIDS = new Set([
@@ -78,66 +75,84 @@ const ADMIN_UIDS = new Set([
 ========================================================= */
 
 const form =
-    document.getElementById(
-        "adminLoginForm"
-    );
+    document.getElementById("loginForm");
 
-const email =
-    document.getElementById(
-        "email"
-    );
+const emailInput =
+    document.getElementById("email");
 
-const password =
-    document.getElementById(
-        "password"
-    );
+const passwordInput =
+    document.getElementById("password");
 
 const loginBtn =
-    document.getElementById(
-        "loginBtn"
-    );
+    document.getElementById("loginBtn");
 
 const loginText =
-    document.getElementById(
-        "loginText"
-    );
+    document.getElementById("loginText");
 
 const loginLoading =
-    document.getElementById(
-        "loginLoading"
-    );
+    document.getElementById("loginLoading");
 
-const loginMessage =
-    document.getElementById(
-        "loginMessage"
-    );
+const loginStatus =
+    document.getElementById("loginStatus");
 
 const togglePassword =
-    document.getElementById(
-        "togglePassword"
-    );
+    document.getElementById("togglePassword");
 
 
 /* =========================================================
-   MESSAGE
+   STATUS
 ========================================================= */
 
-function showMessage(
+function showStatus(
     message,
     type = "error"
 ) {
 
-    loginMessage.textContent =
+    loginStatus.textContent =
         message;
 
-    loginMessage.className =
-        "login-message " + type;
+    loginStatus.className =
+        "login-status " + type;
 
 }
 
 
 /* =========================================================
-   PASSWORD TOGGLE
+   LOADING
+========================================================= */
+
+function setLoading(isLoading) {
+
+    if (loginBtn) {
+
+        loginBtn.disabled =
+            isLoading;
+
+    }
+
+    if (loginText) {
+
+        loginText.classList.toggle(
+            "hidden",
+            isLoading
+        );
+
+    }
+
+    if (loginLoading) {
+
+        loginLoading.classList.toggle(
+            "hidden",
+            !isLoading
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   PASSWORD VISIBILITY
 ========================================================= */
 
 togglePassword?.addEventListener(
@@ -145,11 +160,11 @@ togglePassword?.addEventListener(
     () => {
 
         if (
-            password.type ===
+            passwordInput.type ===
             "password"
         ) {
 
-            password.type =
+            passwordInput.type =
                 "text";
 
             togglePassword.textContent =
@@ -157,11 +172,211 @@ togglePassword?.addEventListener(
 
         } else {
 
-            password.type =
+            passwordInput.type =
                 "password";
 
             togglePassword.textContent =
                 "👁";
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   FIREBASE ERROR MESSAGE
+========================================================= */
+
+function firebaseError(error) {
+
+    console.error(
+        "Firebase Authentication Error:",
+        error
+    );
+
+
+    switch (error.code) {
+
+        case "auth/invalid-credential":
+
+        case "auth/invalid-login-credentials":
+
+            return "Incorrect email or password.";
+
+        case "auth/user-not-found":
+
+            return "No administrator account was found with this email.";
+
+        case "auth/wrong-password":
+
+            return "Incorrect password.";
+
+        case "auth/invalid-email":
+
+            return "Please enter a valid email address.";
+
+        case "auth/too-many-requests":
+
+            return "Too many login attempts. Please try again later.";
+
+        case "auth/network-request-failed":
+
+            return "Network error. Check your internet connection.";
+
+        case "auth/user-disabled":
+
+            return "This Firebase account has been disabled.";
+
+        case "auth/operation-not-allowed":
+
+            return "Email/Password authentication is disabled in Firebase.";
+
+        default:
+
+            return error.message ||
+                "Unable to sign in.";
+
+    }
+
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+form?.addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+
+        const email =
+            emailInput.value
+                .trim()
+                .toLowerCase();
+
+        const password =
+            passwordInput.value;
+
+
+        if (!email) {
+
+            showStatus(
+                "Please enter your administrator email."
+            );
+
+            return;
+
+        }
+
+
+        if (!password) {
+
+            showStatus(
+                "Please enter your password."
+            );
+
+            return;
+
+        }
+
+
+        setLoading(true);
+
+        showStatus(
+            "Connecting to secure Firebase authentication...",
+            "success"
+        );
+
+
+        try {
+
+            /*
+             * Sign in using Firebase Authentication.
+             */
+
+            const credential =
+                await signInWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                );
+
+
+            const user =
+                credential.user;
+
+
+            console.log(
+                "Authenticated UID:",
+                user.uid
+            );
+
+
+            /*
+             * Check UID.
+             */
+
+            if (
+                !ADMIN_UIDS.has(
+                    user.uid
+                )
+            ) {
+
+                await signOut(auth);
+
+
+                showStatus(
+                    "Access denied. This Firebase account is not an administrator.",
+                    "error"
+                );
+
+
+                setLoading(false);
+
+                return;
+
+            }
+
+
+            /*
+             * Correct administrator.
+             */
+
+            showStatus(
+                "Authentication successful. Opening Admin Panel...",
+                "success"
+            );
+
+
+            /*
+             * Small delay so user sees success.
+             */
+
+            setTimeout(
+                () => {
+
+                    window.location.replace(
+                        "admin.html"
+                    );
+
+                },
+                500
+            );
+
+        }
+
+        catch (error) {
+
+            setLoading(false);
+
+            showStatus(
+                firebaseError(error),
+                "error"
+            );
 
         }
 
@@ -183,8 +398,8 @@ onAuthStateChanged(
 
 
         /*
-         * If already signed in,
-         * verify UID before entering admin.
+         * If already logged in and
+         * authorized, go directly to admin.
          */
 
         if (
@@ -195,238 +410,6 @@ onAuthStateChanged(
 
             window.location.replace(
                 "admin.html"
-            );
-
-        } else {
-
-            /*
-             * User is authenticated
-             * but is NOT an admin.
-             */
-
-            signOut(auth);
-
-            showMessage(
-                "This account is not authorized for the Admin Panel.",
-                "error"
-            );
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   LOGIN
-========================================================= */
-
-form?.addEventListener(
-    "submit",
-    async event => {
-
-        event.preventDefault();
-
-
-        showMessage("");
-
-
-        const emailValue =
-            email.value
-                .trim()
-                .toLowerCase();
-
-        const passwordValue =
-            password.value;
-
-
-        if (!emailValue) {
-
-            showMessage(
-                "Please enter your administrator email."
-            );
-
-            return;
-
-        }
-
-
-        if (!passwordValue) {
-
-            showMessage(
-                "Please enter your password."
-            );
-
-            return;
-
-        }
-
-
-        loginBtn.disabled =
-            true;
-
-        loginText.classList.add(
-            "hidden"
-        );
-
-        loginLoading.classList.remove(
-            "hidden"
-        );
-
-
-        try {
-
-            /*
-             * Firebase Email/Password login.
-             */
-
-            const credential =
-                await signInWithEmailAndPassword(
-                    auth,
-                    emailValue,
-                    passwordValue
-                );
-
-
-            const user =
-                credential.user;
-
-
-            /*
-             * UID authorization.
-             *
-             * Email alone is NOT enough.
-             */
-
-            if (
-                !ADMIN_UIDS.has(
-                    user.uid
-                )
-            ) {
-
-                await signOut(auth);
-
-                throw new Error(
-                    "This account is not an authorized administrator."
-                );
-
-            }
-
-
-            showMessage(
-                "Authentication successful. Opening Admin Panel...",
-                "success"
-            );
-
-
-            setTimeout(
-                () => {
-
-                    window.location.replace(
-                        "admin.html"
-                    );
-
-                },
-                500
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "Admin login error:",
-                error
-            );
-
-
-            let message =
-                "Unable to sign in.";
-
-
-            switch (
-                error.code
-            ) {
-
-                case
-                "auth/invalid-credential":
-
-                    message =
-                        "Incorrect email or password.";
-
-                    break;
-
-
-                case
-                "auth/invalid-email":
-
-                    message =
-                        "Please enter a valid email address.";
-
-                    break;
-
-
-                case
-                "auth/user-disabled":
-
-                    message =
-                        "This administrator account has been disabled.";
-
-                    break;
-
-
-                case
-                "auth/too-many-requests":
-
-                    message =
-                        "Too many attempts. Please try again later.";
-
-                    break;
-
-
-                case
-                "auth/network-request-failed":
-
-                    message =
-                        "Network error. Check your internet connection.";
-
-                    break;
-
-
-                case
-                "auth/admin-restricted-operation":
-
-                    message =
-                        "Email/password authentication is not enabled in Firebase.";
-
-                    break;
-
-
-                default:
-
-                    message =
-                        error.message ||
-                        message;
-
-            }
-
-
-            showMessage(
-                message,
-                "error"
-            );
-
-
-        } finally {
-
-            loginBtn.disabled =
-                false;
-
-            loginText.classList.remove(
-                "hidden"
-            );
-
-            loginLoading.classList.add(
-                "hidden"
             );
 
         }
