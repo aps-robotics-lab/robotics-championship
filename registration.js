@@ -1,7 +1,7 @@
 /* =========================================================
    APS ROBOTICS CHAMPIONSHIP 2026
    REGISTRATION SYSTEM
-   Firebase Realtime Database
+   Firebase Realtime Database + EmailJS
 ========================================================= */
 
 import { initializeApp } from
@@ -22,7 +22,8 @@ import {
 
 const firebaseConfig = {
 
-    apiKey: "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
+    apiKey:
+        "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
 
     authDomain:
         "aps-robotics-championship.firebaseapp.com",
@@ -41,6 +42,7 @@ const firebaseConfig = {
 
     appId:
         "1:1063542904891:web:82ff9bb3fba0b87384a41e"
+
 };
 
 
@@ -48,9 +50,67 @@ const firebaseConfig = {
    INITIALIZE FIREBASE
 ========================================================= */
 
-const app = initializeApp(firebaseConfig);
+const app =
+    initializeApp(firebaseConfig);
 
-const db = getDatabase(app);
+const db =
+    getDatabase(app);
+
+
+/* =========================================================
+   EMAILJS CONFIGURATION
+========================================================= */
+
+const EMAILJS_PUBLIC_KEY =
+    "GnxniZ70ndujyjDpe";
+
+const EMAILJS_SERVICE_ID =
+    "service_5m4uzhb";
+
+const EMAILJS_TEMPLATE_ID =
+    "template_5qb8b2p";
+
+
+/* =========================================================
+   LOAD EMAILJS
+========================================================= */
+
+const emailScript =
+    document.createElement("script");
+
+emailScript.src =
+    "https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";
+
+emailScript.onload = () => {
+
+    if (window.emailjs) {
+
+        window.emailjs.init({
+
+            publicKey:
+                EMAILJS_PUBLIC_KEY
+
+        });
+
+        console.log(
+            "EmailJS initialized successfully."
+        );
+
+    }
+
+};
+
+emailScript.onerror = () => {
+
+    console.error(
+        "Unable to load EmailJS."
+    );
+
+};
+
+document.head.appendChild(
+    emailScript
+);
 
 
 /* =========================================================
@@ -58,280 +118,99 @@ const db = getDatabase(app);
 ========================================================= */
 
 const form =
-    document.getElementById("registrationForm");
+    document.getElementById(
+        "registrationForm"
+    );
 
 const submitBtn =
-    document.getElementById("submitBtn");
+    document.getElementById(
+        "submitBtn"
+    );
 
 const formMessage =
-    document.getElementById("formMessage");
-
-const eventError =
-    document.getElementById("eventError");
+    document.getElementById(
+        "formMessage"
+    );
 
 const successOverlay =
-    document.getElementById("successOverlay");
+    document.getElementById(
+        "successOverlay"
+    );
 
 const successRegistrationId =
-    document.getElementById("successRegistrationId");
+    document.getElementById(
+        "successRegistrationId"
+    );
 
 const continueBtn =
-    document.getElementById("continueBtn");
+    document.getElementById(
+        "continueBtn"
+    );
+
+const eventError =
+    document.getElementById(
+        "eventError"
+    );
 
 const remarks =
-    document.getElementById("remarks");
+    document.getElementById(
+        "remarks"
+    );
 
 const characterCount =
-    document.getElementById("characterCount");
+    document.getElementById(
+        "characterCount"
+    );
 
 const participationType =
-    document.getElementById("participationType");
+    document.getElementById(
+        "participationType"
+    );
 
 const memberInstruction =
-    document.getElementById("memberInstruction");
+    document.getElementById(
+        "memberInstruction"
+    );
 
 
 /* =========================================================
-   BASIC HELPERS
+   UTILITY
 ========================================================= */
 
 function getValue(id) {
 
-    const element = document.getElementById(id);
-
-    return element
-        ? element.value.trim()
-        : "";
-}
-
-
-function setValue(id, value) {
-
     const element =
         document.getElementById(id);
 
-    if (element) {
+    if (!element) {
 
-        element.value =
-            value ?? "";
+        return "";
 
     }
+
+    return element.value.trim();
+
 }
 
 
-function escapeText(value) {
-
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-
-/* =========================================================
-   TEAM SIZE
-========================================================= */
-
-const teamSizeInputs =
-    document.querySelectorAll(
-        'input[name="TeamSize"]'
-    );
-
-
-function updateTeamSize() {
+function getTeamSize() {
 
     const selected =
         document.querySelector(
             'input[name="TeamSize"]:checked'
         );
 
-    if (!selected) return;
+    if (!selected) {
 
-    const size =
-        Number(selected.value);
-
-    const cards =
-        document.querySelectorAll(
-            ".additional-member"
-        );
-
-
-    /* Participation type */
-
-    if (size === 1) {
-
-        participationType.value =
-            "Solo";
-
-        memberInstruction.textContent =
-            "Solo participation selected. No additional members required.";
-
-    } else {
-
-        participationType.value =
-            `Team of ${size}`;
-
-        memberInstruction.textContent =
-            `${size - 1} additional member${size - 1 > 1 ? "s" : ""} required for this team.`;
+        return 1;
 
     }
 
+    return Number(
+        selected.value
+    );
 
-    /* Show / hide member cards */
-
-    cards.forEach(card => {
-
-        const memberNumber =
-            Number(
-                card.dataset.memberCard
-            );
-
-        if (memberNumber <= size) {
-
-            card.classList.remove(
-                "hidden-member"
-            );
-
-            enableMemberFields(
-                memberNumber,
-                true
-            );
-
-        } else {
-
-            card.classList.add(
-                "hidden-member"
-            );
-
-            enableMemberFields(
-                memberNumber,
-                false
-            );
-
-            clearMemberFields(
-                memberNumber
-            );
-        }
-
-    });
-
-
-    updateMemberRequiredState(size);
 }
-
-
-function enableMemberFields(
-    memberNumber,
-    enabled
-) {
-
-    const ids = [
-
-        `member${memberNumber}Name`,
-        `member${memberNumber}Class`,
-        `member${memberNumber}Section`
-
-    ];
-
-    ids.forEach(id => {
-
-        const element =
-            document.getElementById(id);
-
-        if (element) {
-
-            element.disabled =
-                !enabled;
-
-        }
-
-    });
-}
-
-
-function clearMemberFields(
-    memberNumber
-) {
-
-    setValue(
-        `member${memberNumber}Name`,
-        ""
-    );
-
-    setValue(
-        `member${memberNumber}Class`,
-        ""
-    );
-
-    setValue(
-        `member${memberNumber}Section`,
-        ""
-    );
-}
-
-
-function updateMemberRequiredState(
-    teamSize
-) {
-
-    for (
-        let number = 2;
-        number <= 5;
-        number++
-    ) {
-
-        const nameInput =
-            document.getElementById(
-                `member${number}Name`
-            );
-
-        const classInput =
-            document.getElementById(
-                `member${number}Class`
-            );
-
-        const sectionInput =
-            document.getElementById(
-                `member${number}Section`
-            );
-
-
-        const required =
-            number <= teamSize;
-
-
-        if (nameInput)
-            nameInput.required = required;
-
-        if (classInput)
-            classInput.required = required;
-
-        if (sectionInput)
-            sectionInput.required = required;
-    }
-}
-
-
-teamSizeInputs.forEach(input => {
-
-    input.addEventListener(
-        "change",
-        updateTeamSize
-    );
-
-});
-
-
-/* =========================================================
-   EVENT SELECTION
-========================================================= */
-
-const eventCheckboxes =
-    document.querySelectorAll(
-        'input[name="Events"]'
-    );
 
 
 function getSelectedEvents() {
@@ -341,181 +220,11 @@ function getSelectedEvents() {
             'input[name="Events"]:checked'
         )
     ).map(
-        checkbox => checkbox.value
-    );
-}
-
-
-function validateEvents() {
-
-    const selected =
-        getSelectedEvents();
-
-
-    if (selected.length === 0) {
-
-        eventError.textContent =
-            "Please select at least one championship event.";
-
-        document
-            .getElementById("eventSelection")
-            ?.classList.add(
-                "event-error-active"
-            );
-
-        return false;
-    }
-
-
-    eventError.textContent = "";
-
-    document
-        .getElementById("eventSelection")
-        ?.classList.remove(
-            "event-error-active"
-        );
-
-    return true;
-}
-
-
-eventCheckboxes.forEach(
-    checkbox => {
-
-        checkbox.addEventListener(
-            "change",
-            validateEvents
-        );
-
-    }
-);
-
-
-/* =========================================================
-   MOBILE NUMBER
-========================================================= */
-
-const mobileInput =
-    document.getElementById(
-        "mobileNumber"
+        input => input.value
     );
 
-
-mobileInput?.addEventListener(
-    "input",
-    () => {
-
-        mobileInput.value =
-            mobileInput.value
-                .replace(/\D/g, "")
-                .slice(0, 10);
-
-    }
-);
-
-
-/* =========================================================
-   SECTION INPUT
-========================================================= */
-
-const sectionInputs =
-    document.querySelectorAll(
-        'input[name$="Section"]'
-    );
-
-
-sectionInputs.forEach(input => {
-
-    input.addEventListener(
-        "input",
-        () => {
-
-            input.value =
-                input.value
-                    .replace(/[^a-zA-Z0-9]/g, "")
-                    .slice(0, 5)
-                    .toUpperCase();
-
-        }
-    );
-
-});
-
-
-/* =========================================================
-   REMARKS COUNTER
-========================================================= */
-
-remarks?.addEventListener(
-    "input",
-    () => {
-
-        characterCount.textContent =
-            remarks.value.length;
-
-    }
-);
-
-
-/* =========================================================
-   FORM MESSAGE
-========================================================= */
-
-function showMessage(
-    message,
-    type = "error"
-) {
-
-    formMessage.textContent =
-        message;
-
-    formMessage.className =
-        `form-message ${type}`;
-
 }
 
-
-function clearMessage() {
-
-    formMessage.textContent = "";
-
-    formMessage.className =
-        "form-message";
-
-}
-
-
-/* =========================================================
-   SUBMIT BUTTON STATE
-========================================================= */
-
-function setSubmitting(
-    state
-) {
-
-    submitBtn.disabled =
-        state;
-
-    if (state) {
-
-        submitBtn.classList.add(
-            "loading"
-        );
-
-    } else {
-
-        submitBtn.classList.remove(
-            "loading"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   GENERATE REGISTRATION ID
-========================================================= */
 
 function generateRegistrationId() {
 
@@ -532,38 +241,378 @@ function generateRegistrationId() {
         );
 
     return `APS-RBC-${year}-${random}`;
-}
-
-
-/* =========================================================
-   DATE
-========================================================= */
-
-function getRegistrationDate() {
-
-    return new Date()
-        .toISOString();
 
 }
 
 
+function showMessage(
+    message,
+    type = "error"
+) {
+
+    if (!formMessage) {
+
+        return;
+
+    }
+
+    formMessage.textContent =
+        message;
+
+    formMessage.className =
+        `form-message ${type}`;
+
+}
+
+
+function clearMessage() {
+
+    if (!formMessage) {
+
+        return;
+
+    }
+
+    formMessage.textContent =
+        "";
+
+    formMessage.className =
+        "form-message";
+
+}
+
+
 /* =========================================================
-   BUILD REGISTRATION DATA
+   TEAM SIZE
 ========================================================= */
 
-function collectRegistrationData() {
+function updateTeamSize() {
 
-    const selectedTeamSize =
-        document.querySelector(
-            'input[name="TeamSize"]:checked'
+    const size =
+        getTeamSize();
+
+
+    const memberCards =
+        document.querySelectorAll(
+            ".additional-member"
         );
 
 
-    const teamSize =
-        selectedTeamSize
-            ? Number(selectedTeamSize.value)
-            : 1;
+    memberCards.forEach(card => {
 
+        const memberNumber =
+            Number(
+                card.dataset.memberCard
+            );
+
+
+        if (memberNumber <= size) {
+
+            card.classList.remove(
+                "hidden-member"
+            );
+
+        } else {
+
+            card.classList.add(
+                "hidden-member"
+            );
+
+            clearMemberFields(
+                memberNumber
+            );
+
+        }
+
+    });
+
+
+    /*
+       Update participation type.
+    */
+
+    if (participationType) {
+
+        participationType.value =
+            size === 1
+                ? "Solo"
+                : `Team of ${size}`;
+
+    }
+
+
+    /*
+       Update instruction text.
+    */
+
+    if (memberInstruction) {
+
+        const instructions = {
+
+            1:
+                "Solo participation selected. No additional members required.",
+
+            2:
+                "Team of 2 selected. Please enter details for Participant 02.",
+
+            3:
+                "Team of 3 selected. Please enter details for Participants 02 and 03.",
+
+            4:
+                "Team of 4 selected. Please enter details for Participants 02–04.",
+
+            5:
+                "Team of 5 selected. Please enter details for Participants 02–05."
+
+        };
+
+        memberInstruction.textContent =
+            instructions[size] || "";
+
+    }
+
+
+    /*
+       Required fields.
+    */
+
+    for (
+        let i = 2;
+        i <= 5;
+        i++
+    ) {
+
+        const name =
+            document.getElementById(
+                `member${i}Name`
+            );
+
+        const memberClass =
+            document.getElementById(
+                `member${i}Class`
+            );
+
+        const section =
+            document.getElementById(
+                `member${i}Section`
+            );
+
+
+        const required =
+            i <= size;
+
+
+        if (name) {
+
+            name.required =
+                required;
+
+        }
+
+        if (memberClass) {
+
+            memberClass.required =
+                required;
+
+        }
+
+        if (section) {
+
+            section.required =
+                required;
+
+        }
+
+    }
+
+}
+
+
+function clearMemberFields(number) {
+
+    const fields = [
+
+        `member${number}Name`,
+
+        `member${number}Class`,
+
+        `member${number}Section`
+
+    ];
+
+
+    fields.forEach(id => {
+
+        const element =
+            document.getElementById(id);
+
+        if (element) {
+
+            element.value =
+                "";
+
+        }
+
+    });
+
+}
+
+
+/* =========================================================
+   TEAM SIZE EVENTS
+========================================================= */
+
+document
+    .querySelectorAll(
+        'input[name="TeamSize"]'
+    )
+    .forEach(input => {
+
+        input.addEventListener(
+            "change",
+            updateTeamSize
+        );
+
+    });
+
+
+updateTeamSize();
+
+
+/* =========================================================
+   REMARKS CHARACTER COUNTER
+========================================================= */
+
+if (
+    remarks &&
+    characterCount
+) {
+
+    remarks.addEventListener(
+        "input",
+        () => {
+
+            characterCount.textContent =
+                remarks.value.length;
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   MOBILE NUMBER
+========================================================= */
+
+const mobileInput =
+    document.getElementById(
+        "mobileNumber"
+    );
+
+
+if (mobileInput) {
+
+    mobileInput.addEventListener(
+        "input",
+        () => {
+
+            mobileInput.value =
+                mobileInput.value
+                    .replace(/\D/g, "")
+                    .slice(0, 10);
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   EMAIL LOWERCASE
+========================================================= */
+
+const emailInput =
+    document.getElementById(
+        "emailAddress"
+    );
+
+
+if (emailInput) {
+
+    emailInput.addEventListener(
+        "blur",
+        () => {
+
+            emailInput.value =
+                emailInput.value
+                    .trim()
+                    .toLowerCase();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   EVENT VALIDATION
+========================================================= */
+
+function validateEvents() {
+
+    const selectedEvents =
+        getSelectedEvents();
+
+
+    if (
+        selectedEvents.length === 0
+    ) {
+
+        if (eventError) {
+
+            eventError.textContent =
+                "Please select at least one event.";
+
+        }
+
+        return false;
+
+    }
+
+
+    if (eventError) {
+
+        eventError.textContent =
+            "";
+
+    }
+
+
+    return true;
+
+}
+
+
+document
+    .querySelectorAll(
+        'input[name="Events"]'
+    )
+    .forEach(input => {
+
+        input.addEventListener(
+            "change",
+            validateEvents
+        );
+
+    });
+
+
+/* =========================================================
+   COLLECT REGISTRATION DATA
+========================================================= */
+
+function collectRegistrationData() {
 
     const selectedEvents =
         getSelectedEvents();
@@ -573,19 +622,41 @@ function collectRegistrationData() {
         generateRegistrationId();
 
 
+    const now =
+        new Date();
+
+
     const registrationDate =
-        getRegistrationDate();
+        now.toLocaleString(
+            "en-IN",
+            {
+                dateStyle:
+                    "medium",
+
+                timeStyle:
+                    "short"
+            }
+        );
 
 
-    const data = {
+    return {
 
         registrationId:
 
             registrationId,
 
-        registrationDate:
 
-            registrationDate,
+        TeamSize:
+
+            getTeamSize(),
+
+
+        ParticipationType:
+
+            getValue(
+                "participationType"
+            ),
+
 
         StudentName:
 
@@ -593,11 +664,13 @@ function collectRegistrationData() {
                 "studentName"
             ),
 
+
         Class:
 
             getValue(
                 "studentClass"
             ),
+
 
         Section:
 
@@ -605,11 +678,13 @@ function collectRegistrationData() {
                 "studentSection"
             ),
 
+
         MobileNumber:
 
             getValue(
                 "mobileNumber"
             ),
+
 
         EmailAddress:
 
@@ -617,197 +692,116 @@ function collectRegistrationData() {
                 "emailAddress"
             ),
 
+
         TeamName:
 
             getValue(
                 "teamName"
             ),
 
-        TeamSize:
-
-            teamSize,
-
-        ParticipationType:
-
-            participationType.value,
 
         Events:
 
             selectedEvents,
 
+
         Member2Name:
 
-            teamSize >= 2
-                ? getValue("member2Name")
-                : "",
+            getValue(
+                "member2Name"
+            ),
+
 
         Member2Class:
 
-            teamSize >= 2
-                ? getValue("member2Class")
-                : "",
+            getValue(
+                "member2Class"
+            ),
+
 
         Member2Section:
 
-            teamSize >= 2
-                ? getValue("member2Section")
-                : "",
+            getValue(
+                "member2Section"
+            ),
+
 
         Member3Name:
 
-            teamSize >= 3
-                ? getValue("member3Name")
-                : "",
+            getValue(
+                "member3Name"
+            ),
+
 
         Member3Class:
 
-            teamSize >= 3
-                ? getValue("member3Class")
-                : "",
+            getValue(
+                "member3Class"
+            ),
+
 
         Member3Section:
 
-            teamSize >= 3
-                ? getValue("member3Section")
-                : "",
+            getValue(
+                "member3Section"
+            ),
+
 
         Member4Name:
 
-            teamSize >= 4
-                ? getValue("member4Name")
-                : "",
+            getValue(
+                "member4Name"
+            ),
+
 
         Member4Class:
 
-            teamSize >= 4
-                ? getValue("member4Class")
-                : "",
+            getValue(
+                "member4Class"
+            ),
+
 
         Member4Section:
 
-            teamSize >= 4
-                ? getValue("member4Section")
-                : "",
+            getValue(
+                "member4Section"
+            ),
+
 
         Member5Name:
 
-            teamSize >= 5
-                ? getValue("member5Name")
-                : "",
+            getValue(
+                "member5Name"
+            ),
+
 
         Member5Class:
 
-            teamSize >= 5
-                ? getValue("member5Class")
-                : "",
+            getValue(
+                "member5Class"
+            ),
+
 
         Member5Section:
 
-            teamSize >= 5
-                ? getValue("member5Section")
-                : "",
+            getValue(
+                "member5Section"
+            ),
+
 
         Remarks:
 
             getValue(
                 "remarks"
-            )
+            ),
+
+
+        registrationDate:
+
+            registrationDate
 
     };
 
-
-    return data;
-}
-
-
-/* =========================================================
-   VALIDATE FORM
-========================================================= */
-
-function validateForm() {
-
-    clearMessage();
-
-
-    /* Browser validation */
-
-    if (!form.checkValidity()) {
-
-        form.reportValidity();
-
-        return false;
-
-    }
-
-
-    /* Events */
-
-    if (!validateEvents()) {
-
-        showMessage(
-            "Please select at least one event.",
-            "error"
-        );
-
-        document
-            .getElementById(
-                "eventSelection"
-            )
-            ?.scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-            });
-
-        return false;
-
-    }
-
-
-    /* Mobile */
-
-    const mobile =
-        getValue(
-            "mobileNumber"
-        );
-
-
-    if (!/^[6-9]\d{9}$/.test(mobile)) {
-
-        showMessage(
-            "Please enter a valid 10-digit Indian mobile number.",
-            "error"
-        );
-
-        mobileInput.focus();
-
-        return false;
-
-    }
-
-
-    /* Terms */
-
-    const terms =
-        document.getElementById(
-            "agreeTerms"
-        );
-
-
-    if (!terms.checked) {
-
-        showMessage(
-            "Please accept the rules and guidelines before submitting.",
-            "error"
-        );
-
-        terms.focus();
-
-        return false;
-
-    }
-
-
-    return true;
 }
 
 
@@ -816,20 +810,8 @@ function validateForm() {
 ========================================================= */
 
 async function saveRegistration(
-    data
+    registrationData
 ) {
-
-    /*
-       IMPORTANT:
-
-       Every registration is stored at:
-
-       /registrations/<generated-key>
-
-       This is the same location used
-       by admin.js.
-    */
-
 
     const registrationsRef =
         ref(
@@ -846,234 +828,430 @@ async function saveRegistration(
 
     await set(
         newRegistrationRef,
-        data
+        registrationData
     );
 
 
     return newRegistrationRef.key;
+
 }
 
 
 /* =========================================================
-   SUBMIT REGISTRATION
+   WAIT FOR EMAILJS
 ========================================================= */
 
-form?.addEventListener(
-    "submit",
-    async event => {
+async function waitForEmailJS() {
 
-        event.preventDefault();
+    let attempts = 0;
 
 
-        if (!validateForm()) {
+    while (
+        !window.emailjs &&
+        attempts < 40
+    ) {
 
-            return;
+        await new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    250
+                )
+        );
 
-        }
+        attempts++;
+
+    }
 
 
-        setSubmitting(true);
+    if (!window.emailjs) {
+
+        throw new Error(
+            "EmailJS SDK failed to load."
+        );
+
+    }
+
+}
 
 
-        showMessage(
-            "Submitting your registration...",
-            "loading"
+/* =========================================================
+   SEND CONFIRMATION EMAIL
+========================================================= */
+
+async function sendConfirmationEmail(
+    data
+) {
+
+    await waitForEmailJS();
+
+
+    const templateParams = {
+
+        StudentName:
+            data.StudentName,
+
+
+        EmailAddress:
+            data.EmailAddress,
+
+
+        registrationId:
+            data.registrationId,
+
+
+        TeamName:
+            data.TeamName ||
+            "Not specified",
+
+
+        TeamSize:
+            String(
+                data.TeamSize
+            ),
+
+
+        ParticipationType:
+            data.ParticipationType,
+
+
+        Class:
+            data.Class,
+
+
+        Section:
+            data.Section,
+
+
+        MobileNumber:
+            data.MobileNumber,
+
+
+        Events:
+            data.Events.join(
+                ", "
+            ),
+
+
+        Member2Name:
+            data.Member2Name ||
+            "Not applicable",
+
+
+        Member2Class:
+            data.Member2Class ||
+            "",
+
+
+        Member2Section:
+            data.Member2Section ||
+            "",
+
+
+        Member3Name:
+            data.Member3Name ||
+            "Not applicable",
+
+
+        Member3Class:
+            data.Member3Class ||
+            "",
+
+
+        Member3Section:
+            data.Member3Section ||
+            "",
+
+
+        Member4Name:
+            data.Member4Name ||
+            "Not applicable",
+
+
+        Member4Class:
+            data.Member4Class ||
+            "",
+
+
+        Member4Section:
+            data.Member4Section ||
+            "",
+
+
+        Member5Name:
+            data.Member5Name ||
+            "Not applicable",
+
+
+        Member5Class:
+            data.Member5Class ||
+            "",
+
+
+        Member5Section:
+            data.Member5Section ||
+            "",
+
+
+        Remarks:
+            data.Remarks ||
+            "No additional remarks.",
+
+
+        registrationDate:
+            data.registrationDate
+
+    };
+
+
+    const result =
+        await window.emailjs.send(
+            EMAILJS_SERVICE_ID,
+            EMAILJS_TEMPLATE_ID,
+            templateParams
         );
 
 
-        try {
-
-            const data =
-                collectRegistrationData();
-
-
-            /*
-               Firebase write
-            */
-
-            await saveRegistration(
-                data
-            );
+    console.log(
+        "EmailJS:",
+        result.status,
+        result.text
+    );
 
 
-            /*
-               Successful registration
-            */
+    return result;
 
-            successRegistrationId.textContent =
-                data.registrationId;
+}
 
 
-            successOverlay.classList.remove(
-                "hidden"
-            );
+/* =========================================================
+   SHOW SUCCESS
+========================================================= */
+
+function showSuccess(
+    registrationId
+) {
+
+    if (
+        successRegistrationId
+    ) {
+
+        successRegistrationId.textContent =
+            registrationId;
+
+    }
 
 
-            form.reset();
+    if (
+        successOverlay
+    ) {
+
+        successOverlay.classList.remove(
+            "hidden"
+        );
+
+    }
+
+}
 
 
-            /*
-               Restore default team size
-            */
+/* =========================================================
+   SUBMIT FORM
+========================================================= */
 
-            const solo =
-                document.querySelector(
-                    'input[name="TeamSize"][value="1"]'
-                );
+if (form) {
 
+    form.addEventListener(
+        "submit",
+        async event => {
 
-            if (solo) {
-
-                solo.checked = true;
-
-            }
-
-
-            updateTeamSize();
-
-
-            /*
-               Reset remarks counter
-            */
-
-            if (characterCount) {
-
-                characterCount.textContent =
-                    "0";
-
-            }
+            event.preventDefault();
 
 
             clearMessage();
 
 
-        } catch (error) {
-
-            console.error(
-                "REGISTRATION ERROR:",
-                error
-            );
-
-
-            let message =
-                "Registration could not be submitted.";
-
-
             /*
-               Firebase permission error
+               Browser validation.
             */
 
             if (
-                error &&
-                error.code ===
-                "PERMISSION_DENIED"
+                !form.checkValidity()
             ) {
 
-                message =
-                    "Registration is currently unavailable because Firebase Database permissions are blocking submissions.";
+                form.reportValidity();
+
+                return;
 
             }
 
 
             /*
-               Network error
+               Event validation.
             */
 
-            else if (
-                error &&
-                (
-                    error.code ===
-                    "NETWORK_ERROR" ||
-
-                    error.message
-                        ?.toLowerCase()
-                        .includes(
-                            "network"
-                        )
-                )
+            if (
+                !validateEvents()
             ) {
 
-                message =
-                    "Unable to connect to the registration server. Please check your internet connection.";
+                return;
 
             }
 
 
             /*
-               Generic Firebase error
+               Prevent double submission.
             */
 
-            else if (
-                error &&
-                error.message
+            if (
+                submitBtn &&
+                submitBtn.disabled
             ) {
 
-                message =
-                    `Registration failed: ${error.message}`;
+                return;
 
             }
 
 
-            showMessage(
-                message,
-                "error"
-            );
+            const registrationData =
+                collectRegistrationData();
 
 
-        } finally {
+            /*
+               Disable submit.
+            */
 
-            setSubmitting(false);
+            if (submitBtn) {
+
+                submitBtn.disabled =
+                    true;
+
+                submitBtn.classList.add(
+                    "loading"
+                );
+
+            }
+
+
+            try {
+
+                /* -----------------------------------------
+                   STEP 1
+                   SAVE TO FIREBASE
+                ----------------------------------------- */
+
+                await saveRegistration(
+                    registrationData
+                );
+
+
+                console.log(
+                    "Registration saved to Firebase."
+                );
+
+
+                /* -----------------------------------------
+                   STEP 2
+                   SEND EMAIL
+                ----------------------------------------- */
+
+                try {
+
+                    await sendConfirmationEmail(
+                        registrationData
+                    );
+
+
+                    console.log(
+                        "Confirmation email sent."
+                    );
+
+
+                } catch (emailError) {
+
+                    /*
+                       IMPORTANT:
+                       Firebase registration has already
+                       succeeded. Do NOT delete it just
+                       because EmailJS failed.
+                    */
+
+                    console.error(
+                        "EmailJS failed:",
+                        emailError
+                    );
+
+                }
+
+
+                /* -----------------------------------------
+                   STEP 3
+                   SHOW SUCCESS
+                ----------------------------------------- */
+
+                showSuccess(
+                    registrationData.registrationId
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Registration failed:",
+                    error
+                );
+
+
+                showMessage(
+                    "Registration could not be completed. Please try again.",
+                    "error"
+                );
+
+
+            } finally {
+
+                if (submitBtn) {
+
+                    submitBtn.disabled =
+                        false;
+
+                    submitBtn.classList.remove(
+                        "loading"
+                    );
+
+                }
+
+            }
 
         }
+    );
 
-    }
-);
-
-
-/* =========================================================
-   SUCCESS → THANK YOU PAGE
-========================================================= */
-
-continueBtn?.addEventListener(
-    "click",
-    () => {
-
-        /*
-           Your previous setup uses thankyou.html.
-        */
-
-        window.location.href =
-            "thankyou.html";
-
-    }
-);
+}
 
 
 /* =========================================================
-   INITIALIZATION
+   CONTINUE BUTTON
 ========================================================= */
 
-updateTeamSize();
+if (continueBtn) {
+
+    continueBtn.addEventListener(
+        "click",
+        () => {
+
+            window.location.href =
+                "thankyou.html";
+
+        }
+    );
+
+}
 
 
 /* =========================================================
-   FIREBASE CONNECTION TEST
+   INITIALIZE
 ========================================================= */
 
 console.log(
-    "APS Robotics Registration initialized."
-);
-
-console.log(
-    "Firebase project:",
-    firebaseConfig.projectId
-);
-
-console.log(
-    "Realtime Database:",
-    firebaseConfig.databaseURL
-);
-
-console.log(
-    "Registration path: /registrations"
+    "APS Robotics Championship 2026 registration system ready."
 );
