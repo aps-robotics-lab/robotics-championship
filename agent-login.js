@@ -1,8 +1,3 @@
-/* =========================================================
-   APS ROBOTICS CHAMPIONSHIP 2026
-   AGENT LOGIN
-========================================================= */
-
 import {
     initializeApp
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
@@ -10,55 +5,39 @@ import {
 import {
     getAuth,
     signInWithEmailAndPassword,
-    onAuthStateChanged,
-    signOut
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
 
 /* =========================================================
-   FIREBASE CONFIG
+   HELP FIREBASE CONFIG
 ========================================================= */
 
 const firebaseConfig = {
 
     apiKey:
-        "AIzaSyCVfkLAc5EKDRUoHf4LgVhBFwTNmq2GMI0",
+        "YOUR_HELP_FIREBASE_API_KEY",
 
     authDomain:
-        "robotics-championship-ab248.firebaseapp.com",
+        "YOUR_HELP_PROJECT.firebaseapp.com",
 
     databaseURL:
-        "https://robotics-championship-ab248-default-rtdb.asia-southeast1.firebasedatabase.app",
+        "YOUR_HELP_DATABASE_URL",
 
     projectId:
-        "robotics-championship-ab248",
+        "YOUR_HELP_PROJECT_ID",
 
     storageBucket:
-        "robotics-championship-ab248.firebasestorage.app",
+        "YOUR_HELP_STORAGE_BUCKET",
 
     messagingSenderId:
-        "521981495733",
+        "YOUR_HELP_SENDER_ID",
 
     appId:
-        "1:521981495733:web:ecec2bc677a4450f19f1fc",
-
-    measurementId:
-        "G-NTBPB3MJ0E"
+        "YOUR_HELP_APP_ID"
 
 };
 
-
-/* =========================================================
-   ONLY AUTHORIZED AGENT UID
-========================================================= */
-
-const AGENT_UID =
-    "HgWiHPRx9gcXZtDTl0pDCpZlokt2";
-
-
-/* =========================================================
-   INITIALIZE
-========================================================= */
 
 const app =
     initializeApp(firebaseConfig);
@@ -68,108 +47,31 @@ const auth =
 
 
 /* =========================================================
+   ONLY THIS USER IS THE AGENT
+========================================================= */
+
+const AGENT_UID =
+    "HgWiHPRx9gcXZtDTl0pDCpZlokt2";
+
+
+/* =========================================================
    ELEMENTS
 ========================================================= */
 
 const form =
-    document.getElementById(
-        "agentLoginForm"
-    );
+    document.getElementById("loginForm");
 
-const emailInput =
-    document.getElementById(
-        "agentEmail"
-    );
+const email =
+    document.getElementById("email");
 
-const passwordInput =
-    document.getElementById(
-        "agentPassword"
-    );
+const password =
+    document.getElementById("password");
 
-const loginBtn =
-    document.getElementById(
-        "loginBtn"
-    );
-
-const loginBtnText =
-    document.getElementById(
-        "loginBtnText"
-    );
-
-const loginLoader =
-    document.getElementById(
-        "loginLoader"
-    );
-
-const loginMessage =
-    document.getElementById(
-        "loginMessage"
-    );
+const message =
+    document.getElementById("loginMessage");
 
 const togglePassword =
-    document.getElementById(
-        "togglePassword"
-    );
-
-
-/* =========================================================
-   MESSAGE
-========================================================= */
-
-function showMessage(
-    message,
-    type = "error"
-) {
-
-    if (!loginMessage) {
-        return;
-    }
-
-    loginMessage.textContent =
-        message;
-
-    loginMessage.className =
-        `login-message ${type}`;
-
-}
-
-
-/* =========================================================
-   LOADING
-========================================================= */
-
-function setLoading(
-    loading
-) {
-
-    if (!loginBtn) {
-        return;
-    }
-
-    loginBtn.disabled =
-        loading;
-
-
-    if (loginBtnText) {
-
-        loginBtnText.textContent =
-            loading
-                ? "AUTHENTICATING..."
-                : "ACCESS AGENT PANEL";
-
-    }
-
-
-    if (loginLoader) {
-
-        loginLoader.classList.toggle(
-            "hidden",
-            !loading
-        );
-
-    }
-
-}
+    document.getElementById("togglePassword");
 
 
 /* =========================================================
@@ -181,15 +83,12 @@ togglePassword?.addEventListener(
     () => {
 
         const isPassword =
-            passwordInput.type ===
-            "password";
+            password.type === "password";
 
-
-        passwordInput.type =
+        password.type =
             isPassword
                 ? "text"
                 : "password";
-
 
         togglePassword.textContent =
             isPassword
@@ -210,31 +109,11 @@ form?.addEventListener(
 
         event.preventDefault();
 
+        message.textContent =
+            "Authenticating...";
 
-        const email =
-            emailInput.value.trim();
-
-        const password =
-            passwordInput.value;
-
-
-        if (!email || !password) {
-
-            showMessage(
-                "Enter your agent email and password."
-            );
-
-            return;
-
-        }
-
-
-        setLoading(true);
-
-        showMessage(
-            "Verifying agent credentials...",
-            ""
-        );
+        message.className =
+            "message";
 
 
         try {
@@ -242,60 +121,41 @@ form?.addEventListener(
             const credential =
                 await signInWithEmailAndPassword(
                     auth,
-                    email,
-                    password
+                    email.value.trim(),
+                    password.value
                 );
 
 
-            const user =
-                credential.user;
-
-
-            /*
-             * VERY IMPORTANT:
-             *
-             * Authentication succeeded,
-             * but the UID must also match
-             * the authorized Agent UID.
-             */
-
             if (
-                user.uid !==
+                credential.user.uid !==
                 AGENT_UID
             ) {
 
-                await signOut(auth);
+                message.textContent =
+                    "Access denied.";
 
+                message.className =
+                    "message error";
 
-                showMessage(
-                    "Access denied. This account is not authorized as an agent."
-                );
-
-
-                setLoading(false);
+                await auth.signOut();
 
                 return;
 
             }
 
 
-            showMessage(
-                "✓ Agent verified. Opening dashboard...",
-                "success"
-            );
+            message.textContent =
+                "Access granted.";
 
+            message.className =
+                "message success";
 
-            /*
-             * Small delay so the user
-             * can see the success message.
-             */
 
             setTimeout(
                 () => {
 
-                    window.location.replace(
-                        "agent.html"
-                    );
+                    window.location.href =
+                        "agent.html";
 
                 },
                 500
@@ -304,83 +164,13 @@ form?.addEventListener(
 
         } catch (error) {
 
-            console.error(
-                "Agent login error:",
-                error
-            );
+            console.error(error);
 
+            message.textContent =
+                "Invalid agent credentials.";
 
-            let message =
-                "Unable to sign in.";
-
-
-            switch (
-                error.code
-            ) {
-
-                case "auth/invalid-credential":
-
-                    message =
-                        "Incorrect email or password.";
-
-                    break;
-
-
-                case "auth/user-not-found":
-
-                    message =
-                        "Agent account not found.";
-
-                    break;
-
-
-                case "auth/wrong-password":
-
-                    message =
-                        "Incorrect password.";
-
-                    break;
-
-
-                case "auth/too-many-requests":
-
-                    message =
-                        "Too many attempts. Please try again later.";
-
-                    break;
-
-
-                case "auth/network-request-failed":
-
-                    message =
-                        "Network error. Check your internet connection.";
-
-                    break;
-
-
-                case "auth/user-disabled":
-
-                    message =
-                        "This account has been disabled.";
-
-                    break;
-
-
-                default:
-
-                    message =
-                        error.message ||
-                        "Login failed.";
-
-            }
-
-
-            showMessage(
-                message
-            );
-
-
-            setLoading(false);
+            message.className =
+                "message error";
 
         }
 
@@ -389,46 +179,23 @@ form?.addEventListener(
 
 
 /* =========================================================
-   CHECK EXISTING SESSION
+   EXISTING LOGIN
 ========================================================= */
 
 onAuthStateChanged(
     auth,
     user => {
 
-        if (!user) {
-            return;
-        }
-
-
-        /*
-         * If an authenticated account is already
-         * logged in, only allow the exact Agent UID.
-         */
-
         if (
-            user.uid ===
-            AGENT_UID
+            user &&
+            user.uid === AGENT_UID
         ) {
 
             window.location.replace(
                 "agent.html"
             );
 
-            return;
-
         }
-
-
-        /*
-         * Someone else is logged in.
-         * Sign them out so they cannot access
-         * the agent dashboard.
-         */
-
-        signOut(auth).catch(
-            console.error
-        );
 
     }
 );
