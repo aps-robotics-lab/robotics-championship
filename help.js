@@ -107,6 +107,7 @@ async function waitForEmailJS() {
     await new Promise(
       resolve => setTimeout(resolve, 250)
     );
+
   }
 
   return !!window.emailjs;
@@ -123,9 +124,11 @@ async function sendAdminEmail(data) {
     await waitForEmailJS();
 
   if (!loaded) {
+
     throw new Error(
       "EmailJS could not be loaded."
     );
+
   }
 
 
@@ -143,8 +146,14 @@ async function sendAdminEmail(data) {
       EmailAddress:
         data.email,
 
+      /*
+       * Registration ID is OPTIONAL.
+       * If empty, EmailJS receives "Not provided".
+       */
+
       registrationId:
-        data.registrationId,
+        data.registrationId ||
+        "Not provided",
 
       TicketID:
         data.ticketId,
@@ -185,9 +194,7 @@ form?.addEventListener(
     clearStatus();
 
 
-    if (
-      !form.checkValidity()
-    ) {
+    if (!form.checkValidity()) {
 
       form.reportValidity();
 
@@ -196,11 +203,18 @@ form?.addEventListener(
 
 
     if (submitBtn.disabled) {
+
       return;
     }
 
 
     const data = {
+
+      /*
+       * OPTIONAL
+       *
+       * Empty value is allowed.
+       */
 
       registrationId:
         value("registrationId"),
@@ -247,6 +261,10 @@ form?.addEventListener(
 
           action:
             "createTicket",
+
+          /*
+           * Can be empty.
+           */
 
           registrationId:
             data.registrationId,
@@ -295,6 +313,7 @@ form?.addEventListener(
           result.message ||
           "Unable to submit support request."
         );
+
       }
 
 
@@ -305,12 +324,20 @@ form?.addEventListener(
       try {
 
         await sendAdminEmail({
+
           ...data,
+
           ticketId:
             result.ticketId
+
         });
 
       } catch (emailError) {
+
+        /*
+         * Do not block ticket creation if
+         * EmailJS has a temporary problem.
+         */
 
         console.error(
           "EmailJS admin notification failed:",
@@ -320,19 +347,31 @@ form?.addEventListener(
       }
 
 
+      /* ---------------------------------------------
+         SAVE TICKET INFORMATION
+      --------------------------------------------- */
+
       sessionStorage.setItem(
         "apsHelpTicketId",
         result.ticketId
       );
 
+
       sessionStorage.setItem(
         "apsHelpRegistrationId",
-        result.registrationId
+        result.registrationId || ""
       );
 
 
+      /* ---------------------------------------------
+         REDIRECT
+      --------------------------------------------- */
+
       window.location.href =
-        `sorry.html?ticket=${encodeURIComponent(result.ticketId)}`;
+        `sorry.html?ticket=${encodeURIComponent(
+          result.ticketId
+        )}`;
+
 
     } catch (error) {
 
@@ -355,6 +394,7 @@ form?.addEventListener(
       submitLoading.classList.add(
         "hidden"
       );
+
     }
 
   }
