@@ -345,3 +345,81 @@ form?.addEventListener(
 
     }
 );
+/* =========================================================
+   SECRET AGENT ACCESS
+   Tap APS logo 5 times
+========================================================= */
+
+const agentNav =
+    document.getElementById("agentNav");
+
+/*
+ * Change this selector if your logo has
+ * a different ID/class.
+ */
+const apsLogo =
+    document.querySelector(
+        ".brand img, .logo img, header img"
+    );
+
+let logoTapCount = 0;
+let logoTapTimer = null;
+
+if (apsLogo) {
+
+    apsLogo.addEventListener(
+        "click",
+        () => {
+
+            logoTapCount++;
+
+            clearTimeout(logoTapTimer);
+
+            logoTapTimer =
+                setTimeout(() => {
+
+                    logoTapCount = 0;
+
+                }, 1500);
+
+
+            if (logoTapCount >= 5) {
+
+                logoTapCount = 0;
+
+                if (agentNav) {
+
+                    agentNav.classList.add(
+                        "show"
+                    );
+
+                    sessionStorage.setItem(
+                        "apsAgentAccessVisible",
+                        "true"
+                    );
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   KEEP SECRET BUTTON VISIBLE DURING SESSION
+========================================================= */
+
+if (
+    sessionStorage.getItem(
+        "apsAgentAccessVisible"
+    ) === "true"
+) {
+
+    agentNav?.classList.add(
+        "show"
+    );
+
+}
