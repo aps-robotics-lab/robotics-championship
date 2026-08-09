@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<meta name="theme-color"
+      content="#050914">
+
+<title>
+Help & Support | APS Robotics Championship 2026
+</title>
+
+<link rel="preconnect"
+      href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet">
+
+<link rel="stylesheet"
+      href="help.css">
+
+</head>
+
+<body>
+
+<header class="help-header">
+
+    <a href="index.html" class="brand">
+
+        <img
+            src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+            alt="APS Logo">
+
+        <span>
+            <b>APS ROBOTICS</b>
+            <small>CHAMPIONSHIP 2026</small>
+        </span>
+
+    </a>
+
+    <a href="index.html" class="back-button">
+        ← Home
+    </a>
+
+</header>
+
+
+<main>
+
+<section class="hero">
+
+    <div class="hero-glow"></div>
+
+    <span class="eyebrow">
+        APS ROBOTICS CHAMPIONSHIP 2026
+    </span>
+
+    <h1>
+        Help & <b>Support</b>
+    </h1>
+
+    <p>
+        Facing a problem with registration, the website or the championship?
+        Submit your issue and our organising team will review it.
+    </p>
+
+</section>
+
+
+<section class="support-wrapper">
+
+    <div class="info-card">
+
+        <span class="card-number">
+            01
+        </span>
+
+        <h2>
+            Need Assistance?
+        </h2>
+
+        <p>
+            Please provide accurate information so that the organising
+            team can understand and resolve your issue quickly.
+        </p>
+
+        <div class="support-points">
+
+            <div>
+                <span>✓</span>
+                Registration problems
+            </div>
+
+            <div>
+                <span>✓</span>
+                Website problems
+            </div>
+
+            <div>
+                <span>✓</span>
+                Technical issues
+            </div>
+
+            <div>
+                <span>✓</span>
+                Championship queries
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="form-card">
+
+        <div class="form-heading">
+
+            <span>
+                SUPPORT REQUEST
+            </span>
+
+            <h2>
+                Submit an Issue
+            </h2>
+
+        </div>
+
+
+        <form id="helpForm">
+
+            <div class="form-grid">
+
+                <div class="field">
+
+                    <label for="name">
+                        Your Name
+                    </label>
+
+                    <input
+                        id="name"
+                        type="text"
+                        placeholder="Enter your name"
+                        required>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="email">
+                        Email Address
+                    </label>
+
+                    <input
+                        id="email"
+                        type="email"
+                        placeholder="Enter your email"
+                        required>
+
+                </div>
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="category">
+                    Issue Category
+                </label>
+
+                <select id="category" required>
+
+                    <option value="">
+                        Select an issue category
+                    </option>
+
+                    <option value="Registration">
+                        Registration
+                    </option>
+
+                    <option value="Website">
+                        Website
+                    </option>
+
+                    <option value="Payment">
+                        Payment
+                    </option>
+
+                    <option value="Technical">
+                        Technical
+                    </option>
+
+                    <option value="Other">
+                        Other
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="registrationId">
+                    Registration ID
+                    <span>(Optional)</span>
+                </label>
+
+                <input
+                    id="registrationId"
+                    type="text"
+                    placeholder="If applicable">
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="message">
+                    Describe Your Issue
+                </label>
+
+                <textarea
+                    id="message"
+                    rows="7"
+                    maxlength="2000"
+                    placeholder="Please describe the problem in detail..."
+                    required></textarea>
+
+                <div class="character-count">
+                    <span id="characterCount">0</span>/2000
+                </div>
+
+            </div>
+
+
+            <div
+                id="formMessage"
+                class="form-message">
+            </div>
+
+
+            <button
+                id="submitButton"
+                type="submit"
+                class="submit-button">
+
+                <span>
+                    SEND SUPPORT REQUEST
+                </span>
+
+                <b>
+                    →
+                </b>
+
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<section class="bottom-note">
+
+    <span>IMPORTANT</span>
+
+    <p>
+        Please do not submit passwords, authentication codes or other
+        confidential information through this form.
+    </p>
+
+</section>
+
+</main>
+
+
+<footer>
+
+    <img
+        src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+        alt="APS Logo">
+
+    <div>
+
+        <strong>
+            APS ROBOTICS CHAMPIONSHIP 2026
+        </strong>
+
+        <span>
+            APS Tinkering Lab • Lucknow
+        </span>
+
+    </div>
+
+</footer>
+
+
+<script
+    type="module"
+    src="help.js">
+</script>
+
+</body>
+
+</html>
