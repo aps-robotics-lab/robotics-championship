@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta name="viewport"
@@ -11,9 +10,7 @@
     <meta name="theme-color"
           content="#020711">
 
-    <title>
-        Registration | APS Robotics Championship 2026
-    </title>
+    <title>APS Robotics | Admin Panel</title>
 
     <link rel="preconnect"
           href="https://fonts.googleapis.com">
@@ -26,1366 +23,714 @@
           rel="stylesheet">
 
     <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-    <link rel="stylesheet"
-          href="registration.css">
-
+          href="admin.css">
 </head>
 
 <body>
 
-
 <!-- =====================================================
-     BACKGROUND
+     LOGIN SCREEN
 ===================================================== -->
 
-<div class="page-background">
+<section id="loginScreen" class="login-screen">
 
-    <div class="grid-overlay"></div>
+    <div class="login-background"></div>
 
-    <div class="glow glow-one"></div>
+    <div class="login-card">
 
-    <div class="glow glow-two"></div>
+        <div class="login-logo">
+            <img
+                src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+                alt="APS Logo">
+        </div>
 
-</div>
+        <span class="login-label">
+            SECURE ADMIN ACCESS
+        </span>
 
+        <h1>
+            APS ROBOTICS
+        </h1>
 
-<!-- =====================================================
-     HEADER
-===================================================== -->
+        <h2>
+            ADMIN PANEL
+        </h2>
 
-<header class="registration-header">
+        <p>
+            APS Robotics Championship 2026
+        </p>
 
-    <a href="index.html"
-       class="back-home">
+        <form id="loginForm">
 
-        <i class="fa-solid fa-arrow-left"></i>
+            <div class="input-group">
 
-        Back to Home
+                <label for="loginEmail">
+                    Email Address
+                </label>
 
-    </a>
+                <input
+                    id="loginEmail"
+                    type="email"
+                    autocomplete="username"
+                    placeholder="Enter admin email"
+                    required>
 
+            </div>
 
-    <div class="header-brand">
+            <div class="input-group">
 
-        <img
-            src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
-            alt="Army Welfare Education Society Logo">
+                <label for="loginPassword">
+                    Password
+                </label>
 
-        <div>
+                <div class="password-wrapper">
 
-            <span>
-                APS TINKERING LAB
-            </span>
+                    <input
+                        id="loginPassword"
+                        type="password"
+                        autocomplete="current-password"
+                        placeholder="Enter password"
+                        required>
 
-            <strong>
-                ROBOTICS CHAMPIONSHIP 2026
-            </strong>
+                    <button
+                        type="button"
+                        id="togglePassword"
+                        aria-label="Show password">
+                        👁
+                    </button>
 
+                </div>
+
+            </div>
+
+            <div
+                id="loginError"
+                class="login-error">
+            </div>
+
+            <button
+                type="submit"
+                id="loginBtn"
+                class="login-button">
+
+                <span id="loginButtonText">
+                    Login to Dashboard
+                </span>
+
+                <span
+                    id="loginSpinner"
+                    class="spinner hidden">
+                </span>
+
+            </button>
+
+        </form>
+
+        <div class="security-note">
+            <span>🔐</span>
+            Firebase secured administration
         </div>
 
     </div>
 
-</header>
+</section>
 
 
 <!-- =====================================================
-     MAIN
+     ADMIN APPLICATION
 ===================================================== -->
 
-<main class="registration-main">
-
-    <div class="registration-container">
-
-
-        <!-- HERO -->
-
-        <section class="registration-hero">
-
-            <span class="hero-badge">
-
-                <i class="fa-solid fa-robot"></i>
-
-                REGISTRATION OPEN
-
-            </span>
+<div
+    id="adminApp"
+    class="admin-app hidden">
 
 
-            <h1>
+    <!-- =================================================
+         SIDEBAR
+    ================================================== -->
 
-                APS ROBOTICS
+    <aside
+        id="sidebar"
+        class="sidebar">
 
-                <span>
-                    CHAMPIONSHIP 2026
-                </span>
+        <div class="sidebar-brand">
 
-            </h1>
+            <img
+                src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+                alt="APS Logo">
+
+            <div>
+
+                <strong>
+                    APS ROBOTICS
+                </strong>
+
+                <small>
+                    ADMIN PANEL
+                </small>
+
+            </div>
+
+        </div>
 
 
-            <p>
+        <nav class="sidebar-nav">
 
-                Build your team, choose your event and take
-                your robot to the championship arena.
+            <button
+                class="nav-item active"
+                data-page="dashboard">
 
-            </p>
+                <span>▣</span>
+                Dashboard
+
+            </button>
+
+            <button
+                class="nav-item"
+                data-page="registrations">
+
+                <span>☷</span>
+                Registrations
+
+            </button>
+
+            <button
+                class="nav-item"
+                data-page="events">
+
+                <span>⚡</span>
+                Events
+
+            </button>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="logged-admin">
+
+                <span class="status-dot"></span>
+
+                <div>
+                    <small>LOGGED IN AS</small>
+                    <strong id="adminEmail">
+                        Admin
+                    </strong>
+                </div>
+
+            </div>
+
+            <button
+                id="logoutBtn"
+                class="logout-button">
+
+                Logout
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =================================================
+         MAIN
+    ================================================== -->
+
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <button
+                id="sidebarToggle"
+                class="menu-button">
+
+                ☰
+
+            </button>
+
+            <div class="topbar-title">
+
+                <small>
+                    APS ROBOTICS CHAMPIONSHIP 2026
+                </small>
+
+                <h1 id="pageTitle">
+                    Dashboard
+                </h1>
+
+            </div>
+
+            <div class="live-status">
+                <span></span>
+                LIVE
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             DASHBOARD
+        ================================================== -->
+
+        <section
+            id="dashboardPage"
+            class="page active">
+
+            <div class="page-heading">
+
+                <div>
+
+                    <span>
+                        CONTROL CENTER
+                    </span>
+
+                    <h2>
+                        Championship Overview
+                    </h2>
+
+                    <p>
+                        Monitor registrations and event participation.
+                    </p>
+
+                </div>
+
+                <button
+                    id="dashboardRefresh"
+                    class="primary-button">
+
+                    Refresh
+
+                </button>
+
+            </div>
+
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <small>Total Registrations</small>
+                    <strong id="totalRegistrations">0</strong>
+                </div>
+
+                <div class="stat-card">
+                    <small>Total Teams</small>
+                    <strong id="totalTeams">0</strong>
+                </div>
+
+                <div class="stat-card">
+                    <small>Robo Race</small>
+                    <strong id="raceCount">0</strong>
+                </div>
+
+                <div class="stat-card">
+                    <small>Robo War</small>
+                    <strong id="warCount">0</strong>
+                </div>
+
+                <div class="stat-card">
+                    <small>Robo Tug of War</small>
+                    <strong id="tugCount">0</strong>
+                </div>
+
+                <div class="stat-card">
+                    <small>Robo Soccer</small>
+                    <strong id="soccerCount">0</strong>
+                </div>
+
+            </div>
+
+
+            <div class="admin-card">
+
+                <div class="card-header">
+
+                    <div>
+                        <span>LIVE DATABASE</span>
+                        <h3>
+                            Recent Registrations
+                        </h3>
+                    </div>
+
+                    <button
+                        class="small-button"
+                        data-open-page="registrations">
+
+                        View All
+
+                    </button>
+
+                </div>
+
+                <div
+                    id="recentRegistrations"
+                    class="recent-list">
+
+                    Loading registrations...
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="exportDashboard"
+                class="secondary-button">
+
+                Export All Registrations CSV
+
+            </button>
 
         </section>
 
 
         <!-- =================================================
-             FORM
+             REGISTRATIONS
         ================================================== -->
 
-        <form
-            id="registrationForm"
-            class="registration-form"
-            novalidate>
+        <section
+            id="registrationsPage"
+            class="page">
 
+            <div class="page-heading">
 
-            <!-- =================================================
-                 TEAM CONFIGURATION
-            ================================================== -->
-
-            <section class="form-section">
-
-                <div class="section-heading">
-
-                    <div class="section-number">
-                        01
-                    </div>
-
-                    <div>
-
-                        <span>
-                            TEAM CONFIGURATION
-                        </span>
-
-                        <h2>
-                            Choose Team Size
-                        </h2>
-
-                        <p>
-                            Select how many students are participating.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="team-size-grid">
-
-
-                    <label class="team-size-card">
-
-                        <input
-                            type="radio"
-                            name="TeamSize"
-                            value="1"
-                            checked>
-
-                        <span class="team-size-content">
-
-                            <i class="fa-solid fa-user"></i>
-
-                            <strong>
-                                Solo
-                            </strong>
-
-                            <small>
-                                1 Student
-                            </small>
-
-                        </span>
-
-                    </label>
-
-
-                    <label class="team-size-card">
-
-                        <input
-                            type="radio"
-                            name="TeamSize"
-                            value="2">
-
-                        <span class="team-size-content">
-
-                            <i class="fa-solid fa-user-group"></i>
-
-                            <strong>
-                                Team of 2
-                            </strong>
-
-                            <small>
-                                2 Students
-                            </small>
-
-                        </span>
-
-                    </label>
-
-
-                    <label class="team-size-card">
-
-                        <input
-                            type="radio"
-                            name="TeamSize"
-                            value="3">
-
-                        <span class="team-size-content">
-
-                            <i class="fa-solid fa-people-group"></i>
-
-                            <strong>
-                                Team of 3
-                            </strong>
-
-                            <small>
-                                3 Students
-                            </small>
-
-                        </span>
-
-                    </label>
-
-
-                    <label class="team-size-card">
-
-                        <input
-                            type="radio"
-                            name="TeamSize"
-                            value="4">
-
-                        <span class="team-size-content">
-
-                            <i class="fa-solid fa-people-group"></i>
-
-                            <strong>
-                                Team of 4
-                            </strong>
-
-                            <small>
-                                4 Students
-                            </small>
-
-                        </span>
-
-                    </label>
-
-
-                    <label class="team-size-card">
-
-                        <input
-                            type="radio"
-                            name="TeamSize"
-                            value="5">
-
-                        <span class="team-size-content">
-
-                            <i class="fa-solid fa-people-group"></i>
-
-                            <strong>
-                                Team of 5
-                            </strong>
-
-                            <small>
-                                5 Students
-                            </small>
-
-                        </span>
-
-                    </label>
-
-                </div>
-
-
-                <input
-                    type="hidden"
-                    id="participationType"
-                    name="ParticipationType"
-                    value="Solo">
-
-            </section>
-
-
-            <!-- =================================================
-                 TEAM LEADER
-            ================================================== -->
-
-            <section class="form-section">
-
-                <div class="section-heading">
-
-                    <div class="section-number">
-                        02
-                    </div>
-
-                    <div>
-
-                        <span>
-                            TEAM LEADER
-                        </span>
-
-                        <h2>
-                            Leader Information
-                        </h2>
-
-                        <p>
-                            Enter the details of the first participant.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="member-card leader-card">
-
-                    <div class="member-card-header">
-
-                        <div class="member-icon">
-                            <i class="fa-solid fa-user-astronaut"></i>
-                        </div>
-
-                        <div>
-
-                            <span>
-                                PARTICIPANT 01
-                            </span>
-
-                            <h3>
-                                Team Leader
-                            </h3>
-
-                        </div>
-
-                        <span class="required-badge">
-                            REQUIRED
-                        </span>
-
-                    </div>
-
-
-                    <div class="field-grid">
-
-
-                        <div class="field full-field">
-
-                            <label for="studentName">
-
-                                <i class="fa-solid fa-user"></i>
-
-                                Full Name
-
-                            </label>
-
-                            <input
-                                type="text"
-                                id="studentName"
-                                name="StudentName"
-                                placeholder="Enter team leader name"
-                                autocomplete="name"
-                                required>
-
-                        </div>
-
-
-                        <div class="field">
-
-                            <label for="studentClass">
-
-                                <i class="fa-solid fa-graduation-cap"></i>
-
-                                Class
-
-                            </label>
-
-                            <select
-                                id="studentClass"
-                                name="Class"
-                                required>
-
-                                <option value="">
-                                    Select Class
-                                </option>
-
-                                <option value="VI">VI</option>
-                                <option value="VII">VII</option>
-                                <option value="VIII">VIII</option>
-                                <option value="IX">IX</option>
-                                <option value="X">X</option>
-                                <option value="XI">XI</option>
-                                <option value="XII">XII</option>
-
-                            </select>
-
-                        </div>
-
-
-                        <div class="field">
-
-                            <label for="studentSection">
-
-                                <i class="fa-solid fa-layer-group"></i>
-
-                                Section
-
-                            </label>
-
-                            <input
-                                type="text"
-                                id="studentSection"
-                                name="Section"
-                                placeholder="e.g. A"
-                                maxlength="5"
-                                required>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 TEAM MEMBERS
-            ================================================== -->
-
-            <section class="form-section">
-
-                <div class="section-heading">
-
-                    <div class="section-number">
-                        03
-                    </div>
-
-                    <div>
-
-                        <span>
-                            TEAM MEMBERS
-                        </span>
-
-                        <h2>
-                            Participant Details
-                        </h2>
-
-                        <p id="memberInstruction">
-                            Solo participation selected.
-                            No additional members required.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <!-- MEMBER 2 -->
-
-                <div
-                    class="member-card additional-member hidden-member"
-                    data-member-card="2">
-
-                    <div class="member-card-header">
-
-                        <div class="member-icon">
-                            <i class="fa-solid fa-user"></i>
-                        </div>
-
-                        <div>
-
-                            <span>
-                                PARTICIPANT 02
-                            </span>
-
-                            <h3>
-                                Team Member 2
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="field-grid">
-
-                        <div class="field full-field">
-
-                            <label for="member2Name">
-
-                                <i class="fa-solid fa-user"></i>
-
-                                Full Name
-
-                            </label>
-
-                            <input
-                                type="text"
-                                id="member2Name"
-                                name="Member2Name"
-                                placeholder="Enter member 2 name">
-
-                        </div>
-
-
-                        <div class="field">
-
-                            <label for="member2Class">
-
-                                <i class="fa-solid fa-graduation-cap"></i>
-
-                                Class
-
-                            </label>
-
-                            <select
-                                id="member2Class"
-                                name="Member2Class">
-
-                                <option value="">
-                                    Select Class
-                                </option>
-
-                                <option value="VI">VI</option>
-                                <option value="VII">VII</option>
-                                <option value="VIII">VIII</option>
-                                <option value="IX">IX</option>
-                                <option value="X">X</option>
-                                <option value="XI">XI</option>
-                                <option value="XII">XII</option>
-
-                            </select>
-
-                        </div>
-
-
-                        <div class="field">
-
-                            <label for="member2Section">
-
-                                <i class="fa-solid fa-layer-group"></i>
-
-                                Section
-
-                            </label>
-
-                            <input
-                                type="text"
-                                id="member2Section"
-                                name="Member2Section"
-                                placeholder="e.g. A"
-                                maxlength="5">
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- MEMBER 3 -->
-
-                <div
-                    class="member-card additional-member hidden-member"
-                    data-member-card="3">
-
-                    <div class="member-card-header">
-
-                        <div class="member-icon">
-                            <i class="fa-solid fa-user"></i>
-                        </div>
-
-                        <div>
-
-                            <span>
-                                PARTICIPANT 03
-                            </span>
-
-                            <h3>
-                                Team Member 3
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="field-grid">
-
-                        <div class="field full-field">
-
-                            <label for="member3Name">
-
-                                <i class="fa-solid fa-user"></i>
-
-                                Full Name
-
-                            </label>
-
-                            <input
-                                type="text"
-                                id="member3Name"
-                                name="Member3Name"
-                                placeholder="Enter member 3 name">
-
-                        </div>
-
-
-                        <div class="field">
-
-                            <label for="member3Class">
-
-                                <i class="fa-solid fa-graduation-cap"></i>
-
-                                Class
-
-                            </label>
-
-                            <select
-                                id="member3Class"
-                                name="Member3Class">
-
-                                <option value="">
-                                    Select Class
-                                </option>
-
-                                <option value="VI">VI</option>
-                                <option value="VII">VII</option>
-                                <option value="VIII">VIII</option>
-                                <option value="IX">IX</option>
-                                <option value="X">X</option>
-                                <option value="XI">XI</option>
-                                <option value="XII">XII</option>
-
-                            </select>
-
-                        </div>
-
-
-                        <div class="field">
-
-                            <label for="member3Section">
-
-                                <i class="fa-solid fa-layer-group"></i>
-
-                                Section
-
-                            </label>
-
-                            <input
-                                type="text"
-                                id="member3Section"
-                                name="Member3Section"
-                                placeholder="e.g. A"
-                                maxlength="5">
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- MEMBER 4 -->
-
-                <div
-                    class="member-card additional-member hidden-member"
-                    data-member-card="4">
-
-                    <div class="member-card-header">
-
-                        <div class="member-icon">
-                            <i class="fa-solid fa-user"></i>
-                        </div>
-
-                        <div>
-
-                            <span>
-                                PARTICIPANT 04
-                            </span>
-
-                            <h3>
-                                Team Member 4
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="field-grid">
-
-                        <div class="field full-field">
-
-                            <label for="member4Name">
-
-                                <i class="fa-solid fa-user"></i>
-
-                                Full Name
-
-                            </label>
-
-                            <input
-                                type="text"
-                                id="member4Name"
-                                name="Member4Name"
-                                placeholder="Enter member 4 name">
-
-                        </div>
-
-
-                        <div class="field">
-
-                            <label for="member4Class">
-
-                                <i class="fa-solid fa-graduation-cap"></i>
-
-                                Class
-
-                            </label>
-
-                            <select
-                                id="member4Class"
-                                name="Member4Class">
-
-                                <option value="">
-                                    Select Class
-                                </option>
-
-                                <option value="VI">VI</option>
-                                <option value="VII">VII</option>
-                                <option value="VIII">VIII</option>
-                                <option value="IX">IX</option>
-                                <option value="X">X</option>
-                                <option value="XI">XI</option>
-                                <option value="XII">XII</option>
-
-                            </select>
-
-                        </div>
-
-
-                        <div class="field">
-
-                            <label for="member4Section">
-
-                                <i class="fa-solid fa-layer-group"></i>
-
-                                Section
-
-                            </label>
-
-                            <input
-                                type="text"
-                                id="member4Section"
-                                name="Member4Section"
-                                placeholder="e.g. A"
-                                maxlength="5">
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- MEMBER 5 -->
-
-                <div
-                    class="member-card additional-member hidden-member"
-                    data-member-card="5">
-
-                    <div class="member-card-header">
-
-                        <div class="member-icon">
-                            <i class="fa-solid fa-user"></i>
-                        </div>
-
-                        <div>
-
-                            <span>
-                                PARTICIPANT 05
-                            </span>
-
-                            <h3>
-                                Team Member 5
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="field-grid">
-
-                        <div class="field full-field">
-
-                            <label for="member5Name">
-
-                                <i class="fa-solid fa-user"></i>
-
-                                Full Name
-
-                            </label>
-
-                            <input
-                                type="text"
-                                id="member5Name"
-                                name="Member5Name"
-                                placeholder="Enter member 5 name">
-
-                        </div>
-
-
-                        <div class="field">
-
-                            <label for="member5Class">
-
-                                <i class="fa-solid fa-graduation-cap"></i>
-
-                                Class
-
-                            </label>
-
-                            <select
-                                id="member5Class"
-                                name="Member5Class">
-
-                                <option value="">
-                                    Select Class
-                                </option>
-
-                                <option value="VI">VI</option>
-                                <option value="VII">VII</option>
-                                <option value="VIII">VIII</option>
-                                <option value="IX">IX</option>
-                                <option value="X">X</option>
-                                <option value="XI">XI</option>
-                                <option value="XII">XII</option>
-
-                            </select>
-
-                        </div>
-
-
-                        <div class="field">
-
-                            <label for="member5Section">
-
-                                <i class="fa-solid fa-layer-group"></i>
-
-                                Section
-
-                            </label>
-
-                            <input
-                                type="text"
-                                id="member5Section"
-                                name="Member5Section"
-                                placeholder="e.g. A"
-                                maxlength="5">
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 CONTACT
-            ================================================== -->
-
-            <section class="form-section">
-
-                <div class="section-heading">
-
-                    <div class="section-number">
-                        04
-                    </div>
-
-                    <div>
-
-                        <span>
-                            CONTACT DETAILS
-                        </span>
-
-                        <h2>
-                            Communication Information
-                        </h2>
-
-                        <p>
-                            Provide contact information for
-                            registration updates.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="field-grid">
-
-                    <div class="field">
-
-                        <label for="mobileNumber">
-
-                            <i class="fa-solid fa-phone"></i>
-
-                            Mobile Number
-
-                        </label>
-
-                        <input
-                            type="tel"
-                            id="mobileNumber"
-                            name="MobileNumber"
-                            placeholder="10-digit mobile number"
-                            inputmode="numeric"
-                            maxlength="10"
-                            required>
-
-                    </div>
-
-
-                    <div class="field">
-
-                        <label for="emailAddress">
-
-                            <i class="fa-solid fa-envelope"></i>
-
-                            Email Address
-
-                        </label>
-
-                        <input
-                            type="email"
-                            id="emailAddress"
-                            name="EmailAddress"
-                            placeholder="Enter email address"
-                            autocomplete="email"
-                            required>
-
-                    </div>
-
-
-                    <div class="field full-field">
-
-                        <label for="teamName">
-
-                            <i class="fa-solid fa-flag"></i>
-
-                            Team Name
-
-                            <span class="optional">
-                                Optional
-                            </span>
-
-                        </label>
-
-                        <input
-                            type="text"
-                            id="teamName"
-                            name="TeamName"
-                            placeholder="Enter your team name">
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 EVENTS
-            ================================================== -->
-
-            <section class="form-section">
-
-                <div class="section-heading">
-
-                    <div class="section-number">
-                        05
-                    </div>
-
-                    <div>
-
-                        <span>
-                            CHAMPIONSHIP EVENTS
-                        </span>
-
-                        <h2>
-                            Select Event(s)
-                        </h2>
-
-                        <p>
-                            You may participate in one or multiple events.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div
-                    id="eventSelection"
-                    class="event-selection">
-
-
-                    <label class="event-option">
-
-                        <input
-                            type="checkbox"
-                            name="Events"
-                            value="Robo Race">
-
-                        <span class="event-option-card">
-
-                            <span class="event-icon">
-                                <i class="fa-solid fa-flag-checkered"></i>
-                            </span>
-
-                            <span class="event-text">
-
-                                <strong>
-                                    Robo Race
-                                </strong>
-
-                                <small>
-                                    Speed & precision
-                                </small>
-
-                            </span>
-
-                            <span class="event-check">
-                                <i class="fa-solid fa-check"></i>
-                            </span>
-
-                        </span>
-
-                    </label>
-
-
-                    <label class="event-option">
-
-                        <input
-                            type="checkbox"
-                            name="Events"
-                            value="Robo War">
-
-                        <span class="event-option-card">
-
-                            <span class="event-icon">
-                                <i class="fa-solid fa-shield-halved"></i>
-                            </span>
-
-                            <span class="event-text">
-
-                                <strong>
-                                    Robo War
-                                </strong>
-
-                                <small>
-                                    Strength & strategy
-                                </small>
-
-                            </span>
-
-                            <span class="event-check">
-                                <i class="fa-solid fa-check"></i>
-                            </span>
-
-                        </span>
-
-                    </label>
-
-
-                    <label class="event-option">
-
-                        <input
-                            type="checkbox"
-                            name="Events"
-                            value="Robo Tug of War">
-
-                        <span class="event-option-card">
-
-                            <span class="event-icon">
-                                <i class="fa-solid fa-handshake"></i>
-                            </span>
-
-                            <span class="event-text">
-
-                                <strong>
-                                    Robo Tug of War
-                                </strong>
-
-                                <small>
-                                    Power & teamwork
-                                </small>
-
-                            </span>
-
-                            <span class="event-check">
-                                <i class="fa-solid fa-check"></i>
-                            </span>
-
-                        </span>
-
-                    </label>
-
-
-                    <label class="event-option">
-
-                        <input
-                            type="checkbox"
-                            name="Events"
-                            value="Robo Soccer">
-
-                        <span class="event-option-card">
-
-                            <span class="event-icon">
-                                <i class="fa-solid fa-futbol"></i>
-                            </span>
-
-                            <span class="event-text">
-
-                                <strong>
-                                    Robo Soccer
-                                </strong>
-
-                                <small>
-                                    Control & coordination
-                                </small>
-
-                            </span>
-
-                            <span class="event-check">
-                                <i class="fa-solid fa-check"></i>
-                            </span>
-
-                        </span>
-
-                    </label>
-
-                </div>
-
-
-                <div
-                    id="eventError"
-                    class="field-error">
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 REMARKS
-            ================================================== -->
-
-            <section class="form-section">
-
-                <div class="section-heading">
-
-                    <div class="section-number">
-                        06
-                    </div>
-
-                    <div>
-
-                        <span>
-                            ADDITIONAL INFORMATION
-                        </span>
-
-                        <h2>
-                            Remarks
-                        </h2>
-
-                        <p>
-                            Add any additional information if required.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="field">
-
-                    <textarea
-                        id="remarks"
-                        name="Remarks"
-                        rows="5"
-                        maxlength="500"
-                        placeholder="Enter any additional information..."></textarea>
-
-
-                    <div class="character-count">
-
-                        <span id="characterCount">
-                            0
-                        </span>/500
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 AGREEMENT
-            ================================================== -->
-
-            <section class="agreement-section">
-
-                <label class="agreement">
-
-                    <input
-                        type="checkbox"
-                        id="agreeTerms"
-                        required>
-
-                    <span class="custom-checkbox">
-
-                        <i class="fa-solid fa-check"></i>
-
-                    </span>
+                <div>
 
                     <span>
-
-                        I confirm that the information provided
-                        is correct and I agree to follow the rules
-                        and guidelines of APS Robotics Championship 2026.
-
+                        REGISTRATION MANAGEMENT
                     </span>
 
-                </label>
+                    <h2>
+                        All Registrations
+                    </h2>
 
-            </section>
+                    <p>
+                        View, search, edit and manage registered teams.
+                    </p>
 
+                </div>
 
-            <!-- =================================================
-                 MESSAGE
-            ================================================== -->
+                <button
+                    id="refreshRegistrations"
+                    class="primary-button">
 
-            <div
-                id="formMessage"
-                class="form-message"
-                role="alert">
+                    Refresh
+
+                </button>
+
             </div>
 
 
-            <!-- =================================================
-                 SUBMIT
-            ================================================== -->
+            <div class="filter-card">
 
-            <div class="submit-area">
+                <input
+                    id="searchInput"
+                    type="search"
+                    placeholder="Search name, team, ID, mobile or email">
+
+
+                <select id="eventFilter">
+
+                    <option value="all">
+                        All Events
+                    </option>
+
+                    <option value="Robo Race">
+                        Robo Race
+                    </option>
+
+                    <option value="Robo War">
+                        Robo War
+                    </option>
+
+                    <option value="Robo Tug of War">
+                        Robo Tug of War
+                    </option>
+
+                    <option value="Robo Soccer">
+                        Robo Soccer
+                    </option>
+
+                </select>
+
+
+                <select id="classFilter">
+
+                    <option value="all">
+                        All Classes
+                    </option>
+
+                </select>
+
+
+                <select id="sectionFilter">
+
+                    <option value="all">
+                        All Sections
+                    </option>
+
+                </select>
+
 
                 <button
-                    type="submit"
-                    id="submitBtn"
-                    class="submit-btn">
+                    id="clearFilters"
+                    class="secondary-button">
 
-                    <span class="submit-normal">
-
-                        <i class="fa-solid fa-rocket"></i>
-
-                        Submit Registration
-
-                    </span>
-
-                    <span class="submit-loading">
-
-                        <i class="fa-solid fa-spinner fa-spin"></i>
-
-                        Submitting...
-
-                    </span>
+                    Clear
 
                 </button>
 
 
-                <p>
+                <button
+                    id="exportCsv"
+                    class="primary-button">
 
-                    <i class="fa-solid fa-lock"></i>
+                    Export CSV
 
-                    Your registration information is securely stored.
-
-                </p>
+                </button>
 
             </div>
 
-        </form>
 
-    </div>
+            <div class="admin-card table-card">
 
-</main>
+                <div class="card-header">
+
+                    <div>
+
+                        <span>
+                            FIREBASE REALTIME DATABASE
+                        </span>
+
+                        <h3>
+                            Registration Records
+                        </h3>
+
+                    </div>
+
+                    <strong id="resultCount">
+                        0 registrations
+                    </strong>
+
+                </div>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>ID</th>
+                                <th>Leader</th>
+                                <th>Team</th>
+                                <th>Class</th>
+                                <th>Section</th>
+                                <th>Mobile</th>
+                                <th>Events</th>
+                                <th>Members</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody
+                            id="registrationTableBody">
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <div
+                    id="tableEmpty"
+                    class="empty-state hidden">
+
+                    <div>📭</div>
+
+                    <h3>
+                        No Registrations Found
+                    </h3>
+
+                    <p>
+                        Registration records will appear here after students submit the form.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             EVENTS
+        ================================================== -->
+
+        <section
+            id="eventsPage"
+            class="page">
+
+            <div class="page-heading">
+
+                <div>
+
+                    <span>
+                        COMPETITION EVENTS
+                    </span>
+
+                    <h2>
+                        Event Participation
+                    </h2>
+
+                    <p>
+                        Current registration count for each competition.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="events-grid">
+
+                <div class="event-card">
+
+                    <span class="event-number">
+                        01
+                    </span>
+
+                    <h3>
+                        Robo Race
+                    </h3>
+
+                    <strong id="eventRaceCount">
+                        0
+                    </strong>
+
+                    <small>
+                        Registrations
+                    </small>
+
+                </div>
+
+
+                <div class="event-card">
+
+                    <span class="event-number">
+                        02
+                    </span>
+
+                    <h3>
+                        Robo War
+                    </h3>
+
+                    <strong id="eventWarCount">
+                        0
+                    </strong>
+
+                    <small>
+                        Registrations
+                    </small>
+
+                </div>
+
+
+                <div class="event-card">
+
+                    <span class="event-number">
+                        03
+                    </span>
+
+                    <h3>
+                        Robo Tug of War
+                    </h3>
+
+                    <strong id="eventTugCount">
+                        0
+                    </strong>
+
+                    <small>
+                        Registrations
+                    </small>
+
+                </div>
+
+
+                <div class="event-card">
+
+                    <span class="event-number">
+                        04
+                    </span>
+
+                    <h3>
+                        Robo Soccer
+                    </h3>
+
+                    <strong id="eventSoccerCount">
+                        0
+                    </strong>
+
+                    <small>
+                        Registrations
+                    </small>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
 
 
 <!-- =====================================================
-     SUCCESS MODAL
+     REGISTRATION DETAILS MODAL
 ===================================================== -->
 
 <div
-    id="successOverlay"
-    class="success-overlay hidden">
+    id="modal"
+    class="modal hidden">
 
-    <div class="success-card">
-
-        <div class="success-icon">
-
-            <i class="fa-solid fa-check"></i>
-
-        </div>
-
-        <span>
-            REGISTRATION SUCCESSFUL
-        </span>
-
-        <h2>
-            You're In!
-        </h2>
-
-        <p>
-            Your registration has been successfully submitted.
-        </p>
-
-        <div class="success-id">
-
-            <small>
-                REGISTRATION ID
-            </small>
-
-            <strong id="successRegistrationId">
-                ---
-            </strong>
-
-        </div>
+    <div class="modal-box">
 
         <button
-            type="button"
-            id="continueBtn"
-            class="continue-btn">
+            id="closeModal"
+            class="modal-close">
 
-            Continue
-
-            <i class="fa-solid fa-arrow-right"></i>
+            ×
 
         </button>
+
+        <div id="modalContent"></div>
 
     </div>
 
 </div>
 
 
+<!-- =====================================================
+     TOAST
+===================================================== -->
+
+<div
+    id="toast"
+    class="toast">
+</div>
+
+
 <script
     type="module"
-    src="registration.js">
+    src="admin.js">
 </script>
-<script type="module" src="admin.js"></script>
+
 </body>
-                              </html>
+</html>
