@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<meta name="theme-color" content="#020711">
+
+<title>Support Request Submitted | APS Robotics</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link
+href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Poppins:wght@400;500;600&display=swap"
+rel="stylesheet">
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+min-height:100vh;
+display:grid;
+place-items:center;
+padding:25px;
+font-family:Poppins,sans-serif;
+color:#f5f8ff;
+background:
+radial-gradient(circle at 50% 20%,rgba(53,217,255,.14),transparent 35%),
+#030712;
+}
+
+.card{
+width:min(560px,100%);
+padding:45px 30px;
+text-align:center;
+background:rgba(10,19,36,.9);
+border:1px solid rgba(255,255,255,.1);
+border-radius:26px;
+box-shadow:0 30px 100px rgba(0,0,0,.4);
+}
+
+.icon{
+width:80px;
+height:80px;
+margin:0 auto 25px;
+display:grid;
+place-items:center;
+border-radius:50%;
+background:rgba(52,231,161,.1);
+border:1px solid rgba(52,231,161,.35);
+font-size:38px;
+color:#34e7a1;
+}
+
+.badge{
+font-family:Orbitron,sans-serif;
+font-size:10px;
+letter-spacing:2px;
+color:#35d9ff;
+}
+
+h1{
+font-family:Orbitron,sans-serif;
+font-size:clamp(25px,6vw,38px);
+margin:13px 0;
+}
+
+p{
+color:#8e9bb2;
+line-height:1.8;
+font-size:14px;
+}
+
+.ticket{
+margin:25px 0;
+padding:20px;
+border-radius:15px;
+background:rgba(53,217,255,.06);
+border:1px solid rgba(53,217,255,.15);
+}
+
+.ticket small{
+display:block;
+font-size:9px;
+font-family:Orbitron,sans-serif;
+letter-spacing:2px;
+color:#35d9ff;
+margin-bottom:7px;
+}
+
+.ticket strong{
+font-family:Orbitron,sans-serif;
+font-size:24px;
+letter-spacing:1px;
+}
+
+.buttons{
+display:flex;
+gap:12px;
+justify-content:center;
+margin-top:25px;
+}
+
+a{
+text-decoration:none;
+padding:13px 20px;
+border-radius:11px;
+font-size:13px;
+font-weight:600;
+}
+
+.primary{
+background:#35d9ff;
+color:#031019;
+}
+
+.secondary{
+border:1px solid rgba(255,255,255,.1);
+color:#cdd6e8;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<div class="icon">✓</div>
+
+<span class="badge">
+SUPPORT REQUEST RECEIVED
+</span>
+
+<h1>We've Got It!</h1>
+
+<p>
+Your support request has been successfully submitted.
+Our organising team will review your issue and respond to you.
+</p>
+
+<div class="ticket">
+
+<small>TICKET ID</small>
+
+<strong id="ticketId">
+APS-HLP-2026-----
+</strong>
+
+</div>
+
+<p>
+Please keep your Ticket ID for future communication.
+</p>
+
+<div class="buttons">
+
+<a
+href="index.html"
+class="primary">
+Back to Website
+</a>
+
+<a
+href="help.html"
+class="secondary">
+New Request
+</a>
+
+</div>
+
+</div>
+
+
+<script>
+
+const params =
+new URLSearchParams(
+location.search
+);
+
+const ticket =
+params.get("ticket") ||
+sessionStorage.getItem(
+"apsHelpTicketId"
+);
+
+if(ticket){
+
+document.getElementById(
+"ticketId"
+).textContent = ticket;
+
+}
+
+</script>
+
+</body>
+</html>
