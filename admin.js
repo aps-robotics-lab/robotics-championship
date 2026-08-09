@@ -1,571 +1,426 @@
+/* =========================================================
+   AGENT.JS
+   APS ROBOTICS CHAMPIONSHIP 2026
+   SUPPORT / HELP CENTER AGENT
+========================================================= */
+
 import {
     initializeApp
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 
 import {
     getAuth,
     onAuthStateChanged,
     signOut
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
 import {
     getDatabase,
     ref,
     onValue,
-    update,
-    remove
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+    update
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
 
 
 /* =========================================================
-   FIREBASE
+   FIREBASE CONFIG
 ========================================================= */
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
-    authDomain: "aps-robotics-championship.firebaseapp.com",
-    databaseURL: "https://aps-robotics-championship-default-rtdb.firebaseio.com",
-    projectId: "aps-robotics-championship",
-    storageBucket: "aps-robotics-championship.firebasestorage.app",
-    messagingSenderId: "1063542904891",
-    appId: "1:1063542904891:web:82ff9bb3fba0b87384a41e"
+
+    apiKey:
+        "AIzaSyCVfkLAc5EKDRUoHf4LgVhBFwTNmq2GMI0",
+
+    authDomain:
+        "robotics-championship-ab248.firebaseapp.com",
+
+    databaseURL:
+        "https://robotics-championship-ab248-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+    projectId:
+        "robotics-championship-ab248",
+
+    storageBucket:
+        "robotics-championship-ab248.firebasestorage.app",
+
+    messagingSenderId:
+        "521981495733",
+
+    appId:
+        "1:521981495733:web:ecec2bc677a4450f19f1fc",
+
+    measurementId:
+        "G-NTBPB3MJ0E"
+
 };
-
-const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
-
-const db = getDatabase(app);
 
 
 /* =========================================================
-   ADMIN UID LIST
+   INITIALIZE FIREBASE
 ========================================================= */
 
-const ADMIN_UIDS = new Set([
-    "7pHSV8jhyBQHAGErYbALg5NqGCE2",
-    "8645cVYSFQQZeS9GDZuguc3W46y1",
-    "uGBclDQGTEYKahRKZaLYXz8Dk8y2",
-    "7MRUvQS043fA1nFwcJAyUWRxjiu1",
-    "nxAJHhZ93hZmtsDEnjWKn4nPCUH2",
-    "BrSfKmoCkWd40jVhUfWs3SO2fCE3"
-]);
+const app =
+    initializeApp(firebaseConfig);
+
+const auth =
+    getAuth(app);
+
+const db =
+    getDatabase(app);
+
+
+/* =========================================================
+   SECURITY
+   ONLY THIS UID CAN USE AGENT DASHBOARD
+========================================================= */
+
+const AGENT_UID =
+    "HgWiHPRx9gcXZtDTl0pDCpZlokt2";
+
+
+/* =========================================================
+   FIREBASE HELP PATH
+=========================================================
+
+   Your help form should save requests like:
+
+   help
+      ├── ticketKey1
+      │    ├── registrationId
+      │    ├── name
+      │    ├── className
+      │    ├── section
+      │    ├── email
+      │    ├── category
+      │    ├── subject
+      │    ├── message
+      │    └── timestamp
+      │
+      └── ticketKey2
+
+========================================================= */
+
+const HELP_PATH = "help";
 
 
 /* =========================================================
    ELEMENTS
 ========================================================= */
 
-const loadingScreen =
-    document.getElementById("loadingScreen");
-
-const appElement =
-    document.getElementById("app");
-
-const sidebar =
-    document.getElementById("sidebar");
-
-const menuBtn =
-    document.getElementById("menuBtn");
-
-const logoutBtn =
-    document.getElementById("logoutBtn");
-
-const refreshBtn =
-    document.getElementById("refreshBtn");
-
-const exportBtn =
-    document.getElementById("exportBtn");
+const issueBody =
+    document.getElementById(
+        "issueBody"
+    );
 
 const search =
-    document.getElementById("search");
-
-const clearSearch =
-    document.getElementById("clearSearch");
-
-const typeFilter =
-    document.getElementById("typeFilter");
-
-const eventFilter =
-    document.getElementById("eventFilter");
-
-const body =
-    document.getElementById("registrationBody");
-
-const mobileRegistrations =
-    document.getElementById("mobileRegistrations");
+    document.getElementById(
+        "search"
+    );
 
 const status =
-    document.getElementById("status");
+    document.getElementById(
+        "status"
+    );
 
-const totalRegistrations =
-    document.getElementById("totalRegistrations");
+const refreshBtn =
+    document.getElementById(
+        "refreshBtn"
+    );
 
-const soloCount =
-    document.getElementById("soloCount");
+const logoutBtn =
+    document.getElementById(
+        "logoutBtn"
+    );
 
-const teamCount =
-    document.getElementById("teamCount");
+const totalIssues =
+    document.getElementById(
+        "totalIssues"
+    );
 
-const eventEntries =
-    document.getElementById("eventEntries");
+const openIssues =
+    document.getElementById(
+        "openIssues"
+    );
 
-const raceCount =
-    document.getElementById("raceCount");
-
-const warCount =
-    document.getElementById("warCount");
-
-const tugCount =
-    document.getElementById("tugCount");
-
-const soccerCount =
-    document.getElementById("soccerCount");
-
-const adminName =
-    document.getElementById("adminName");
-
-const adminEmail =
-    document.getElementById("adminEmail");
+const solvedIssues =
+    document.getElementById(
+        "solvedIssues"
+    );
 
 
 /* =========================================================
-   MODALS
+   MODAL ELEMENTS
 ========================================================= */
 
-const detailOverlay =
-    document.getElementById("detailOverlay");
+const issueOverlay =
+    document.getElementById(
+        "issueOverlay"
+    );
 
-const closeDetail =
-    document.getElementById("closeDetail");
+const closeIssue =
+    document.getElementById(
+        "closeIssue"
+    );
 
-const detailId =
-    document.getElementById("detailId");
+const cancelIssue =
+    document.getElementById(
+        "cancelIssue"
+    );
 
-const detailContent =
-    document.getElementById("detailContent");
+const issueForm =
+    document.getElementById(
+        "issueForm"
+    );
 
-const editOverlay =
-    document.getElementById("editOverlay");
+const issueKey =
+    document.getElementById(
+        "issueKey"
+    );
 
-const closeEdit =
-    document.getElementById("closeEdit");
+const issueStatus =
+    document.getElementById(
+        "issueStatus"
+    );
 
-const cancelEdit =
-    document.getElementById("cancelEdit");
+const issueReply =
+    document.getElementById(
+        "issueReply"
+    );
 
-const editForm =
-    document.getElementById("editForm");
+const issueMessage =
+    document.getElementById(
+        "issueMessage"
+    );
 
-const editKey =
-    document.getElementById("editKey");
-
-const editStudentName =
-    document.getElementById("editStudentName");
-
-const editStudentClass =
-    document.getElementById("editStudentClass");
-
-const editStudentSection =
-    document.getElementById("editStudentSection");
-
-const editMobileNumber =
-    document.getElementById("editMobileNumber");
-
-const editEmailAddress =
-    document.getElementById("editEmailAddress");
-
-const editTeamName =
-    document.getElementById("editTeamName");
-
-const editMembers =
-    document.getElementById("editMembers");
-
-const editRemarks =
-    document.getElementById("editRemarks");
-
-const editMessage =
-    document.getElementById("editMessage");
-
-const toast =
-    document.getElementById("toast");
-
-const toastText =
-    document.getElementById("toastText");
+const issueDetails =
+    document.getElementById(
+        "issueDetails"
+    );
 
 
 /* =========================================================
-   STATE
+   DATA
 ========================================================= */
 
-let registrations = {};
+let tickets = {};
 
-let currentUser = null;
-
-let unsubscribeRegistrations = null;
+let firebaseListener = null;
 
 
 /* =========================================================
-   UTILITY
+   STATUS MESSAGE
+========================================================= */
+
+function showStatus(
+    message,
+    type = ""
+) {
+
+    if (!status) {
+        return;
+    }
+
+    status.textContent =
+        message;
+
+    status.className =
+        "status " + type;
+
+}
+
+
+/* =========================================================
+   HTML ESCAPE
 ========================================================= */
 
 function escapeHTML(value) {
 
-    return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+    return String(
+        value ?? ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
 }
 
 
-function getEvents(data) {
+/* =========================================================
+   GET VALUE
+========================================================= */
 
-    if (Array.isArray(data.Events)) {
-        return data.Events;
+function valueOf(
+    data,
+    field,
+    fallback = ""
+) {
+
+    if (
+        data &&
+        data[field] !== undefined &&
+        data[field] !== null &&
+        data[field] !== ""
+    ) {
+
+        return data[field];
+
     }
 
-    if (typeof data.Events === "string") {
+    return fallback;
 
-        return data.Events
-            .split(",")
-            .map(x => x.trim())
-            .filter(Boolean);
-    }
-
-    return [];
 }
 
 
-function isSolo(data) {
+/* =========================================================
+   DATE FORMAT
+========================================================= */
 
-    return (
-        Number(data.TeamSize) === 1 ||
-        String(data.ParticipationType || "")
-            .toLowerCase() === "solo"
-    );
-}
+function formatDate(
+    value
+) {
 
-
-function getType(data) {
-
-    if (isSolo(data)) {
-        return "Solo";
-    }
-
-    return (
-        data.ParticipationType ||
-        `Team of ${data.TeamSize || "?"}`
-    );
-}
-
-
-function getMemberCount(data) {
-
-    if (isSolo(data)) {
-        return 1;
-    }
-
-    let count = 1;
-
-    for (let i = 2; i <= 5; i++) {
-
-        if (data[`Member${i}Name`]) {
-            count++;
-        }
-    }
-
-    return count;
-}
-
-
-function getDate(data) {
-
-    if (!data.registrationDate) {
+    if (!value) {
         return "—";
     }
 
-    try {
 
-        const date =
-            new Date(data.registrationDate);
+    let date;
 
-        if (Number.isNaN(date.getTime())) {
-            return String(data.registrationDate);
-        }
 
-        return date.toLocaleString();
+    /*
+     * Firebase timestamp
+     */
 
-    } catch {
+    if (
+        typeof value === "number"
+    ) {
 
-        return String(data.registrationDate);
+        date =
+            new Date(value);
+
     }
-}
 
 
-/* =========================================================
-   STATUS / TOAST
-========================================================= */
+    /*
+     * Numeric string timestamp
+     */
 
-function showStatus(message, type = "") {
+    else if (
+        !Number.isNaN(
+            Number(value)
+        )
+    ) {
 
-    status.textContent = message;
-
-    status.className =
-        `status ${type}`;
-}
-
-
-function showToast(message, success = true) {
-
-    toastText.textContent = message;
-
-    toast.querySelector("i").className =
-        success
-            ? "fa-solid fa-circle-check"
-            : "fa-solid fa-circle-exclamation";
-
-    toast.classList.add("show");
-
-    clearTimeout(showToast.timer);
-
-    showToast.timer =
-        setTimeout(() => {
-            toast.classList.remove("show");
-        }, 3000);
-}
-
-
-/* =========================================================
-   AUTHENTICATION
-========================================================= */
-
-onAuthStateChanged(
-    auth,
-    user => {
-
-        if (!user) {
-
-            window.location.href =
-                "login.html";
-
-            return;
-        }
-
-
-        if (!ADMIN_UIDS.has(user.uid)) {
-
-            alert(
-                "Access denied. This account is not an authorized administrator."
+        date =
+            new Date(
+                Number(value)
             );
 
-            signOut(auth);
-
-            return;
-        }
+    }
 
 
-        currentUser = user;
+    /*
+     * ISO/date string
+     */
 
-        adminEmail.textContent =
-            user.email || "Admin";
+    else {
 
-        adminName.textContent =
-            user.displayName ||
-            "Administrator";
-
-
-        loadingScreen.classList.add(
-            "hidden"
-        );
-
-        appElement.classList.remove(
-            "hidden"
-        );
-
-
-        loadRegistrations();
+        date =
+            new Date(value);
 
     }
-);
 
 
-/* =========================================================
-   LOAD FIREBASE REGISTRATIONS
-========================================================= */
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
 
-function loadRegistrations() {
+        return String(value);
 
-    showStatus(
-        "Connecting to Firebase database..."
+    }
+
+
+    return date.toLocaleString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        }
     );
 
-
-    const registrationsRef =
-        ref(db, "registrations");
+}
 
 
-    if (unsubscribeRegistrations) {
-        unsubscribeRegistrations();
+/* =========================================================
+   NORMALIZE STATUS
+========================================================= */
+
+function getStatus(
+    data
+) {
+
+    const current =
+        String(
+            valueOf(
+                data,
+                "status",
+                "Open"
+            )
+        )
+        .trim()
+        .toLowerCase();
+
+
+    if (
+        current === "solved" ||
+        current === "closed"
+    ) {
+
+        return "Solved";
+
     }
 
 
-    unsubscribeRegistrations =
-        onValue(
+    return "Open";
 
-            registrationsRef,
-
-            snapshot => {
-
-                registrations =
-                    snapshot.val() || {};
-
-                updateStatistics();
-
-                renderRegistrations();
-
-                showStatus(
-                    `${Object.keys(registrations).length} registration(s) loaded successfully.`,
-                    "success"
-                );
-
-            },
-
-            error => {
-
-                console.error(
-                    "Firebase read error:",
-                    error
-                );
-
-                let message =
-                    "Unable to load registrations.";
-
-                if (
-                    error &&
-                    error.code ===
-                    "PERMISSION_DENIED"
-                ) {
-
-                    message =
-                        "Permission denied. Make sure you are signed in with one of the six authorized admin accounts.";
-
-                } else if (error?.message) {
-
-                    message +=
-                        ` ${error.message}`;
-                }
-
-                showStatus(
-                    message,
-                    "error"
-                );
-
-            }
-        );
 }
 
 
 /* =========================================================
-   STATISTICS
+   SEARCH
 ========================================================= */
 
-function updateStatistics() {
-
-    const values =
-        Object.values(registrations);
-
-    const total =
-        values.length;
-
-    const solo =
-        values.filter(
-            isSolo
-        ).length;
-
-    const teams =
-        total - solo;
-
-
-    let race = 0;
-    let war = 0;
-    let tug = 0;
-    let soccer = 0;
-
-    values.forEach(data => {
-
-        getEvents(data)
-            .forEach(event => {
-
-                const normalized =
-                    String(event)
-                        .toLowerCase();
-
-                if (
-                    normalized ===
-                    "robo race"
-                ) race++;
-
-                if (
-                    normalized ===
-                    "robo war"
-                ) war++;
-
-                if (
-                    normalized ===
-                    "robo tug of war"
-                ) tug++;
-
-                if (
-                    normalized ===
-                    "robo soccer"
-                ) soccer++;
-
-            });
-
-    });
-
-
-    totalRegistrations.textContent =
-        total;
-
-    soloCount.textContent =
-        solo;
-
-    teamCount.textContent =
-        teams;
-
-    raceCount.textContent =
-        race;
-
-    warCount.textContent =
-        war;
-
-    tugCount.textContent =
-        tug;
-
-    soccerCount.textContent =
-        soccer;
-
-    eventEntries.textContent =
-        race + war + tug + soccer;
-}
-
-
-/* =========================================================
-   FILTER
-========================================================= */
-
-function matchesSearch(data, key) {
+function matchesSearch(
+    data,
+    key
+) {
 
     const query =
-        search.value
-            .trim()
-            .toLowerCase();
-
-    const events =
-        getEvents(data);
+        search?.value
+            ?.trim()
+            .toLowerCase() || "";
 
 
     if (!query) {
@@ -573,767 +428,963 @@ function matchesSearch(data, key) {
     }
 
 
-    const text = [
+    const searchable = [
 
         key,
 
-        data.registrationId,
+        valueOf(
+            data,
+            "registrationId"
+        ),
 
-        data.StudentName,
+        valueOf(
+            data,
+            "name"
+        ),
 
-        data.Class,
+        valueOf(
+            data,
+            "className"
+        ),
 
-        data.Section,
+        valueOf(
+            data,
+            "section"
+        ),
 
-        data.MobileNumber,
+        valueOf(
+            data,
+            "email"
+        ),
 
-        data.EmailAddress,
+        valueOf(
+            data,
+            "category"
+        ),
 
-        data.TeamName,
+        valueOf(
+            data,
+            "subject"
+        ),
 
-        data.ParticipationType,
+        valueOf(
+            data,
+            "message"
+        ),
 
-        ...events,
-
-        data.Member2Name,
-        data.Member2Class,
-        data.Member2Section,
-
-        data.Member3Name,
-        data.Member3Class,
-        data.Member3Section,
-
-        data.Member4Name,
-        data.Member4Class,
-        data.Member4Section,
-
-        data.Member5Name,
-        data.Member5Class,
-        data.Member5Section
+        valueOf(
+            data,
+            "status"
+        )
 
     ]
-        .filter(Boolean)
         .join(" ")
         .toLowerCase();
 
 
-    return text.includes(query);
-}
+    return searchable.includes(
+        query
+    );
 
-
-function matchesFilters(data) {
-
-    const type =
-        typeFilter.value;
-
-    const event =
-        eventFilter.value;
-
-
-    if (
-        type === "solo" &&
-        !isSolo(data)
-    ) {
-        return false;
-    }
-
-
-    if (
-        type === "team" &&
-        isSolo(data)
-    ) {
-        return false;
-    }
-
-
-    if (
-        event !== "all" &&
-        !getEvents(data)
-            .some(
-                item =>
-                    String(item)
-                        .toLowerCase() ===
-                    event.toLowerCase()
-            )
-    ) {
-        return false;
-    }
-
-
-    return true;
 }
 
 
 /* =========================================================
-   RENDER
+   RENDER DASHBOARD
 ========================================================= */
 
-function renderRegistrations() {
+function renderTickets() {
 
-    const entries =
-        Object.entries(
-            registrations
-        )
-        .filter(
-            ([key, data]) =>
-                matchesSearch(data, key) &&
-                matchesFilters(data)
-        )
-        .reverse();
-
-
-    if (!entries.length) {
-
-        body.innerHTML = `
-            <tr>
-                <td colspan="8">
-                    <div style="
-                        padding:50px;
-                        text-align:center;
-                        color:#8da3bd;
-                    ">
-                        <i class="fa-solid fa-folder-open"
-                           style="font-size:30px;color:#00d9ff"></i>
-                        <p style="margin-top:12px">
-                            No registrations found.
-                        </p>
-                    </div>
-                </td>
-            </tr>
-        `;
-
-        mobileRegistrations.innerHTML = `
-            <div class="mobile-card"
-                 style="text-align:center;color:#8da3bd">
-                No registrations found.
-            </div>
-        `;
-
+    if (!issueBody) {
         return;
     }
 
 
-    body.innerHTML =
-        entries
-            .map(
+    const allEntries =
+        Object.entries(
+            tickets
+        );
+
+
+    const filteredEntries =
+        allEntries
+            .filter(
                 ([key, data]) =>
-                    renderTableRow(
-                        key,
-                        data
+                    matchesSearch(
+                        data,
+                        key
                     )
             )
-            .join("");
+            .reverse();
 
 
-    mobileRegistrations.innerHTML =
-        entries
-            .map(
-                ([key, data]) =>
-                    renderMobileCard(
-                        key,
-                        data
-                    )
-            )
-            .join("");
+    /* =====================================================
+       STATISTICS
+    ===================================================== */
 
+    const total =
+        allEntries.length;
 
-    attachActionEvents();
 
-}
+    const solved =
+        allEntries.filter(
+            ([key, data]) =>
+                getStatus(data) === "Solved"
+        ).length;
 
 
-/* =========================================================
-   TABLE ROW
-========================================================= */
+    const open =
+        total - solved;
 
-function renderTableRow(
-    key,
-    data
-) {
 
-    const events =
-        getEvents(data);
+    if (totalIssues) {
 
-    const type =
-        getType(data);
+        totalIssues.textContent =
+            total;
 
-    const memberCount =
-        getMemberCount(data);
-
-
-    return `
-        <tr>
-
-            <td>
-                <span class="registration-id">
-                    ${escapeHTML(
-                        data.registrationId || key
-                    )}
-                </span>
-
-                <span class="sub-text">
-                    ${escapeHTML(
-                        getDate(data)
-                    )}
-                </span>
-            </td>
-
-            <td>
-                <span class="leader-name">
-                    ${escapeHTML(
-                        data.StudentName || "—"
-                    )}
-                </span>
-
-                <span class="sub-text">
-                    ${escapeHTML(
-                        `${data.Class || ""} ${data.Section || ""}`
-                    )}
-                </span>
-            </td>
-
-            <td>
-                ${escapeHTML(
-                    data.TeamName || "Solo Participant"
-                )}
-            </td>
-
-            <td>
-                <span class="type-badge">
-                    ${escapeHTML(type)}
-                </span>
-            </td>
-
-            <td>
-                ${memberCount}
-                participant${memberCount === 1 ? "" : "s"}
-            </td>
-
-            <td>
-                ${escapeHTML(
-                    data.EmailAddress || "—"
-                )}
-
-                <span class="sub-text">
-                    ${escapeHTML(
-                        data.MobileNumber || ""
-                    )}
-                </span>
-            </td>
-
-            <td>
-                ${
-                    events.length
-                    ? events
-                        .map(
-                            event =>
-                                `<span class="event-tag">
-                                    ${escapeHTML(event)}
-                                </span>`
-                        )
-                        .join("")
-                    : "—"
-                }
-            </td>
-
-            <td>
-                <div class="action-buttons">
-
-                    <button
-                        class="view"
-                        data-action="view"
-                        data-key="${escapeHTML(key)}"
-                        title="View">
-                        <i class="fa-solid fa-eye"></i>
-                    </button>
-
-                    <button
-                        data-action="edit"
-                        data-key="${escapeHTML(key)}"
-                        title="Edit">
-                        <i class="fa-solid fa-pen"></i>
-                    </button>
-
-                    <button
-                        class="delete"
-                        data-action="delete"
-                        data-key="${escapeHTML(key)}"
-                        title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-
-                </div>
-            </td>
-
-        </tr>
-    `;
-}
-
-
-/* =========================================================
-   MOBILE CARD
-========================================================= */
-
-function renderMobileCard(
-    key,
-    data
-) {
-
-    const events =
-        getEvents(data);
-
-    return `
-        <div class="mobile-card">
-
-            <div class="mobile-card-top">
-
-                <div>
-                    <span class="registration-id">
-                        ${escapeHTML(
-                            data.registrationId || key
-                        )}
-                    </span>
-
-                    <h3>
-                        ${escapeHTML(
-                            data.StudentName || "—"
-                        )}
-                    </h3>
-
-                    <p>
-                        ${escapeHTML(
-                            `${data.Class || ""} ${data.Section || ""}`
-                        )}
-                    </p>
-                </div>
-
-                <span class="type-badge">
-                    ${escapeHTML(
-                        getType(data)
-                    )}
-                </span>
-
-            </div>
-
-            <p>
-                ${escapeHTML(
-                    data.EmailAddress || "—"
-                )}
-            </p>
-
-            <div class="mobile-events">
-
-                ${
-                    events.length
-                    ? events
-                        .map(
-                            event =>
-                                `<span class="event-tag">
-                                    ${escapeHTML(event)}
-                                </span>`
-                        )
-                        .join("")
-                    : "No event"
-                }
-
-            </div>
-
-            <div class="mobile-actions">
-
-                <button
-                    data-action="view"
-                    data-key="${escapeHTML(key)}">
-                    <i class="fa-solid fa-eye"></i>
-                    View
-                </button>
-
-                <button
-                    data-action="edit"
-                    data-key="${escapeHTML(key)}">
-                    <i class="fa-solid fa-pen"></i>
-                    Edit
-                </button>
-
-                <button
-                    data-action="delete"
-                    data-key="${escapeHTML(key)}">
-                    <i class="fa-solid fa-trash"></i>
-                    Delete
-                </button>
-
-            </div>
-
-        </div>
-    `;
-}
-
-
-/* =========================================================
-   ACTION EVENTS
-========================================================= */
-
-function attachActionEvents() {
-
-    document
-        .querySelectorAll(
-            "[data-action]"
-        )
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    const action =
-                        button.dataset.action;
-
-                    const key =
-                        button.dataset.key;
-
-
-                    if (action === "view") {
-                        openDetails(key);
-                    }
-
-                    if (action === "edit") {
-                        openEdit(key);
-                    }
-
-                    if (action === "delete") {
-                        deleteRegistration(key);
-                    }
-
-                }
-            );
-
-        });
-}
-
-
-/* =========================================================
-   DETAILS
-========================================================= */
-
-function openDetails(key) {
-
-    const data =
-        registrations[key];
-
-    if (!data) return;
-
-
-    detailId.textContent =
-        data.registrationId ||
-        key;
-
-
-    const events =
-        getEvents(data);
-
-
-    let membersHTML = "";
-
-
-    for (let i = 2; i <= 5; i++) {
-
-        if (!data[`Member${i}Name`]) {
-            continue;
-        }
-
-        membersHTML += `
-            <div class="member-detail">
-
-                <strong>
-                    Participant ${String(i).padStart(2, "0")}
-                </strong>
-
-                <div class="sub-text">
-                    ${escapeHTML(
-                        data[`Member${i}Name`]
-                    )}
-                    •
-                    ${escapeHTML(
-                        data[`Member${i}Class`] || "—"
-                    )}
-                    -
-                    ${escapeHTML(
-                        data[`Member${i}Section`] || "—"
-                    )}
-                </div>
-
-            </div>
-        `;
     }
 
 
-    detailContent.innerHTML = `
+    if (openIssues) {
 
-        <div class="detail-grid">
+        openIssues.textContent =
+            open;
 
-            <div class="detail-item">
-                <small>TEAM LEADER</small>
-                <strong>
-                    ${escapeHTML(
-                        data.StudentName || "—"
-                    )}
-                </strong>
-            </div>
+    }
 
-            <div class="detail-item">
-                <small>PARTICIPATION</small>
-                <strong>
-                    ${escapeHTML(
-                        getType(data)
-                    )}
-                </strong>
-            </div>
 
-            <div class="detail-item">
-                <small>CLASS</small>
-                <strong>
-                    ${escapeHTML(
-                        data.Class || "—"
-                    )}
-                </strong>
-            </div>
+    if (solvedIssues) {
 
-            <div class="detail-item">
-                <small>SECTION</small>
-                <strong>
-                    ${escapeHTML(
-                        data.Section || "—"
-                    )}
-                </strong>
-            </div>
+        solvedIssues.textContent =
+            solved;
 
-            <div class="detail-item">
-                <small>MOBILE</small>
-                <strong>
-                    ${escapeHTML(
-                        data.MobileNumber || "—"
-                    )}
-                </strong>
-            </div>
+    }
 
-            <div class="detail-item">
-                <small>EMAIL</small>
-                <strong>
-                    ${escapeHTML(
-                        data.EmailAddress || "—"
-                    )}
-                </strong>
-            </div>
 
-            <div class="detail-item full">
-                <small>TEAM NAME</small>
-                <strong>
-                    ${escapeHTML(
-                        data.TeamName ||
-                        "Solo Participant"
-                    )}
-                </strong>
-            </div>
+    /* =====================================================
+       EMPTY
+    ===================================================== */
 
-            <div class="detail-item full">
-                <small>EVENTS</small>
-                <strong>
-                    ${escapeHTML(
-                        events.join(" • ") || "—"
-                    )}
-                </strong>
-            </div>
+    if (
+        filteredEntries.length === 0
+    ) {
 
-            <div class="detail-item full">
-                <small>TEAM MEMBERS</small>
-                ${
-                    membersHTML ||
-                    `<div class="sub-text">
-                        No additional members.
-                    </div>`
+        issueBody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="8"
+                    style="
+                        text-align:center;
+                        padding:55px 20px;
+                    "
+                >
+
+                    <div
+                        style="
+                            font-size:35px;
+                        "
+                    >
+                        🎫
+                    </div>
+
+                    <div
+                        style="
+                            margin-top:10px;
+                            font-weight:600;
+                        "
+                    >
+                        No support requests found.
+                    </div>
+
+                    <div
+                        style="
+                            margin-top:5px;
+                            opacity:.6;
+                            font-size:11px;
+                        "
+                    >
+                        New requests submitted through
+                        the Help Center will appear here.
+                    </div>
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       CREATE ROWS
+    ===================================================== */
+
+    issueBody.innerHTML =
+        filteredEntries
+            .map(
+                ([key, data]) => {
+
+                    const registrationId =
+                        valueOf(
+                            data,
+                            "registrationId",
+                            "—"
+                        );
+
+
+                    const name =
+                        valueOf(
+                            data,
+                            "name",
+                            "—"
+                        );
+
+
+                    const className =
+                        valueOf(
+                            data,
+                            "className",
+                            ""
+                        );
+
+
+                    const section =
+                        valueOf(
+                            data,
+                            "section",
+                            ""
+                        );
+
+
+                    const email =
+                        valueOf(
+                            data,
+                            "email",
+                            "—"
+                        );
+
+
+                    const category =
+                        valueOf(
+                            data,
+                            "category",
+                            "General"
+                        );
+
+
+                    const subject =
+                        valueOf(
+                            data,
+                            "subject",
+                            "No subject"
+                        );
+
+
+                    const message =
+                        valueOf(
+                            data,
+                            "message",
+                            "—"
+                        );
+
+
+                    const date =
+                        valueOf(
+                            data,
+                            "timestamp",
+                            valueOf(
+                                data,
+                                "createdAt",
+                                valueOf(
+                                    data,
+                                    "created_at",
+                                    ""
+                                )
+                            )
+                        );
+
+
+                    const currentStatus =
+                        getStatus(
+                            data
+                        );
+
+
+                    const statusClass =
+                        currentStatus === "Solved"
+                            ? "solved"
+                            : "open";
+
+
+                    return `
+
+                        <tr>
+
+                            <!-- TICKET -->
+
+                            <td>
+
+                                <strong>
+                                    ${escapeHTML(
+                                        registrationId
+                                    )}
+                                </strong>
+
+                                <small>
+                                    Ticket:
+                                    ${escapeHTML(
+                                        key
+                                    )}
+                                </small>
+
+                            </td>
+
+
+                            <!-- STUDENT -->
+
+                            <td>
+
+                                <strong>
+                                    ${escapeHTML(
+                                        name
+                                    )}
+                                </strong>
+
+                                <small>
+                                    ${escapeHTML(
+                                        className
+                                    )}
+                                    ${
+                                        section
+                                            ? " - " +
+                                              escapeHTML(
+                                                  section
+                                              )
+                                            : ""
+                                    }
+                                </small>
+
+                            </td>
+
+
+                            <!-- CONTACT -->
+
+                            <td>
+
+                                <strong>
+                                    ${escapeHTML(
+                                        email
+                                    )}
+                                </strong>
+
+                            </td>
+
+
+                            <!-- CATEGORY -->
+
+                            <td>
+
+                                <span
+                                    class="category-badge"
+                                >
+                                    ${escapeHTML(
+                                        category
+                                    )}
+                                </span>
+
+                            </td>
+
+
+                            <!-- ISSUE -->
+
+                            <td>
+
+                                <strong>
+                                    ${escapeHTML(
+                                        subject
+                                    )}
+                                </strong>
+
+                                <small
+                                    class="message-preview"
+                                    title="${escapeHTML(
+                                        message
+                                    )}"
+                                >
+                                    ${escapeHTML(
+                                        message.length > 80
+                                            ? message.substring(
+                                                  0,
+                                                  80
+                                              ) + "..."
+                                            : message
+                                    )}
+                                </small>
+
+                            </td>
+
+
+                            <!-- STATUS -->
+
+                            <td>
+
+                                <span
+                                    class="
+                                        issue-status
+                                        ${statusClass}
+                                    "
+                                >
+                                    ${escapeHTML(
+                                        currentStatus
+                                    )}
+                                </span>
+
+                            </td>
+
+
+                            <!-- DATE -->
+
+                            <td>
+
+                                ${escapeHTML(
+                                    formatDate(
+                                        date
+                                    )
+                                )}
+
+                            </td>
+
+
+                            <!-- ACTION -->
+
+                            <td>
+
+                                <button
+                                    type="button"
+                                    class="solve-btn"
+                                    data-key="${escapeHTML(
+                                        key
+                                    )}"
+                                >
+
+                                    ${
+                                        currentStatus ===
+                                        "Solved"
+                                            ? "View"
+                                            : "Solve"
+                                    }
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                    `;
+
                 }
-            </div>
-
-            <div class="detail-item full">
-                <small>REMARKS</small>
-                <strong>
-                    ${escapeHTML(
-                        data.Remarks || "No remarks."
-                    )}
-                </strong>
-            </div>
-
-            <div class="detail-item full">
-                <small>REGISTRATION DATE</small>
-                <strong>
-                    ${escapeHTML(
-                        getDate(data)
-                    )}
-                </strong>
-            </div>
-
-        </div>
-    `;
+            )
+            .join("");
 
 
-    detailOverlay.classList.remove(
-        "hidden"
-    );
+    /* =====================================================
+       BUTTON EVENTS
+    ===================================================== */
+
+    issueBody
+        .querySelectorAll(
+            ".solve-btn"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        openTicket(
+                            button.dataset.key
+                        );
+
+                    }
+                );
+
+            }
+        );
+
 }
 
 
 /* =========================================================
-   CLOSE DETAILS
+   LOAD TICKETS
 ========================================================= */
 
-closeDetail.addEventListener(
-    "click",
-    () => {
-        detailOverlay.classList.add(
-            "hidden"
+function loadTickets() {
+
+    showStatus(
+        "Connecting to Firebase Help Center..."
+    );
+
+
+    const helpRef =
+        ref(
+            db,
+            HELP_PATH
         );
+
+
+    /*
+     * Remove previous realtime listener.
+     */
+
+    if (firebaseListener) {
+
+        firebaseListener();
+
+        firebaseListener = null;
+
+    }
+
+
+    /*
+     * Realtime listener.
+     */
+
+    firebaseListener =
+        onValue(
+
+            helpRef,
+
+            snapshot => {
+
+                const data =
+                    snapshot.val();
+
+
+                tickets =
+                    data &&
+                    typeof data === "object"
+                        ? data
+                        : {};
+
+
+                console.log(
+                    "HELP CENTER DATA:",
+                    tickets
+                );
+
+
+                renderTickets();
+
+
+                showStatus(
+
+                    `${Object.keys(
+                        tickets
+                    ).length} support request(s) loaded.`,
+
+                    "success"
+
+                );
+
+            },
+
+            error => {
+
+                console.error(
+                    "Firebase Help Center read error:",
+                    error
+                );
+
+
+                tickets = {};
+
+                renderTickets();
+
+
+                showStatus(
+
+                    "Firebase could not load help requests. Check your Firebase Database Rules and HELP_PATH.",
+
+                    "error"
+
+                );
+
+            }
+
+        );
+
+}
+
+
+/* =========================================================
+   OPEN TICKET
+========================================================= */
+
+function openTicket(
+    key
+) {
+
+    const data =
+        tickets[key];
+
+
+    if (!data) {
+
+        showStatus(
+            "Ticket no longer exists.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       BASIC FIELDS
+    ===================================================== */
+
+    const registrationId =
+        valueOf(
+            data,
+            "registrationId",
+            "—"
+        );
+
+
+    const name =
+        valueOf(
+            data,
+            "name",
+            "—"
+        );
+
+
+    const className =
+        valueOf(
+            data,
+            "className",
+            "—"
+        );
+
+
+    const section =
+        valueOf(
+            data,
+            "section",
+            "—"
+        );
+
+
+    const email =
+        valueOf(
+            data,
+            "email",
+            "—"
+        );
+
+
+    const category =
+        valueOf(
+            data,
+            "category",
+            "General"
+        );
+
+
+    const subject =
+        valueOf(
+            data,
+            "subject",
+            "—"
+        );
+
+
+    const message =
+        valueOf(
+            data,
+            "message",
+            "—"
+        );
+
+
+    const date =
+        valueOf(
+            data,
+            "timestamp",
+            valueOf(
+                data,
+                "createdAt",
+                ""
+            )
+        );
+
+
+    /* =====================================================
+       HIDDEN KEY
+    ===================================================== */
+
+    if (issueKey) {
+
+        issueKey.value =
+            key;
+
+    }
+
+
+    /* =====================================================
+       STATUS
+    ===================================================== */
+
+    if (issueStatus) {
+
+        issueStatus.value =
+            getStatus(data);
+
+    }
+
+
+    /* =====================================================
+       PREVIOUS REPLY
+    ===================================================== */
+
+    if (issueReply) {
+
+        issueReply.value =
+            valueOf(
+                data,
+                "agentReply",
+                valueOf(
+                    data,
+                    "reply",
+                    ""
+                )
+            );
+
+    }
+
+
+    /* =====================================================
+       DETAILS
+    ===================================================== */
+
+    if (issueDetails) {
+
+        issueDetails.innerHTML = `
+
+            <div class="detail-grid">
+
+                <div class="detail-item">
+
+                    <span>
+                        REGISTRATION ID
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            registrationId
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span>
+                        STUDENT NAME
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            name
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span>
+                        CLASS
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            className
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span>
+                        SECTION
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            section
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span>
+                        EMAIL
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            email
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span>
+                        CATEGORY
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            category
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span>
+                        SUBMITTED
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            formatDate(
+                                date
+                            )
+                        )}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="detail-block">
+
+                <span>
+                    SUBJECT
+                </span>
+
+                <h3>
+                    ${escapeHTML(
+                        subject
+                    )}
+                </h3>
+
+            </div>
+
+
+            <div class="detail-block">
+
+                <span>
+                    STUDENT MESSAGE
+                </span>
+
+                <p>
+                    ${escapeHTML(
+                        message
+                    )}
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+
+    if (issueMessage) {
+
+        issueMessage.textContent =
+            "";
+
+    }
+
+
+    issueOverlay?.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+/* =========================================================
+   CLOSE MODAL
+========================================================= */
+
+function closeTicketModal() {
+
+    issueOverlay?.classList.add(
+        "hidden"
+    );
+
+}
+
+
+closeIssue?.addEventListener(
+    "click",
+    closeTicketModal
+);
+
+
+cancelIssue?.addEventListener(
+    "click",
+    closeTicketModal
+);
+
+
+issueOverlay?.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target ===
+            issueOverlay
+        ) {
+
+            closeTicketModal();
+
+        }
+
     }
 );
 
 
 /* =========================================================
-   EDIT
+   SAVE TICKET / AGENT RESPONSE
 ========================================================= */
 
-function openEdit(key) {
-
-    const data =
-        registrations[key];
-
-    if (!data) return;
-
-
-    editKey.value =
-        key;
-
-    editStudentName.value =
-        data.StudentName || "";
-
-    editStudentClass.value =
-        data.Class || "";
-
-    editStudentSection.value =
-        data.Section || "";
-
-    editMobileNumber.value =
-        data.MobileNumber || "";
-
-    editEmailAddress.value =
-        data.EmailAddress || "";
-
-    editTeamName.value =
-        data.TeamName || "";
-
-    editRemarks.value =
-        data.Remarks || "";
-
-    editMessage.textContent = "";
-
-
-    editMembers.innerHTML = "";
-
-
-    const teamSize =
-        Math.min(
-            Math.max(
-                Number(data.TeamSize || 1),
-                1
-            ),
-            5
-        );
-
-
-    for (
-        let i = 2;
-        i <= teamSize;
-        i++
-    ) {
-
-        editMembers.insertAdjacentHTML(
-            "beforeend",
-
-            `
-            <div class="edit-member">
-
-                <label>
-                    Member ${i} Name
-
-                    <input
-                        id="editMember${i}Name"
-                        value="${escapeHTML(
-                            data[`Member${i}Name`] || ""
-                        )}">
-                </label>
-
-                <label>
-                    Class
-
-                    <select
-                        id="editMember${i}Class">
-
-                        <option value="">
-                            Select
-                        </option>
-
-                        ${
-                            [
-                                "VI",
-                                "VII",
-                                "VIII",
-                                "IX",
-                                "X",
-                                "XI",
-                                "XII"
-                            ]
-                            .map(
-                                cls =>
-                                    `<option
-                                        value="${cls}"
-                                        ${
-                                            data[`Member${i}Class`] === cls
-                                            ? "selected"
-                                            : ""
-                                        }>
-                                        ${cls}
-                                    </option>`
-                            )
-                            .join("")
-                        }
-
-                    </select>
-                </label>
-
-                <label>
-                    Section
-
-                    <input
-                        id="editMember${i}Section"
-                        value="${escapeHTML(
-                            data[`Member${i}Section`] || ""
-                        )}">
-                </label>
-
-            </div>
-            `
-        );
-    }
-
-
-    editOverlay.classList.remove(
-        "hidden"
-    );
-}
-
-
-/* =========================================================
-   SAVE EDIT
-========================================================= */
-
-editForm.addEventListener(
+issueForm?.addEventListener(
     "submit",
     async event => {
 
@@ -1341,158 +1392,129 @@ editForm.addEventListener(
 
 
         const key =
-            editKey.value;
-
-        if (!key) return;
+            issueKey?.value;
 
 
-        const oldData =
-            registrations[key];
+        if (!key) {
 
-        if (!oldData) return;
+            return;
 
-
-        editMessage.textContent =
-            "Saving changes...";
+        }
 
 
-        const updatedData = {
-
-            ...oldData,
-
-            StudentName:
-                editStudentName.value.trim(),
-
-            Class:
-                editStudentClass.value,
-
-            Section:
-                editStudentSection.value.trim(),
-
-            MobileNumber:
-                editMobileNumber.value.trim(),
-
-            EmailAddress:
-                editEmailAddress.value
-                    .trim()
-                    .toLowerCase(),
-
-            TeamName:
-                editTeamName.value.trim(),
-
-            Remarks:
-                editRemarks.value.trim(),
-
-            updatedAt:
-                Date.now()
-        };
+        const currentTicket =
+            tickets[key];
 
 
-        const teamSize =
-            Math.min(
-                Math.max(
-                    Number(oldData.TeamSize || 1),
-                    1
-                ),
-                5
-            );
+        if (!currentTicket) {
 
+            if (issueMessage) {
 
-        for (
-            let i = 2;
-            i <= 5;
-            i++
-        ) {
-
-            if (i <= teamSize) {
-
-                updatedData[
-                    `Member${i}Name`
-                ] =
-                    document
-                        .getElementById(
-                            `editMember${i}Name`
-                        )
-                        ?.value
-                        .trim() || "";
-
-                updatedData[
-                    `Member${i}Class`
-                ] =
-                    document
-                        .getElementById(
-                            `editMember${i}Class`
-                        )
-                        ?.value || "";
-
-                updatedData[
-                    `Member${i}Section`
-                ] =
-                    document
-                        .getElementById(
-                            `editMember${i}Section`
-                        )
-                        ?.value
-                        .trim() || "";
-
-            } else {
-
-                updatedData[
-                    `Member${i}Name`
-                ] = "";
-
-                updatedData[
-                    `Member${i}Class`
-                ] = "";
-
-                updatedData[
-                    `Member${i}Section`
-                ] = "";
+                issueMessage.textContent =
+                    "Ticket no longer exists.";
 
             }
 
+            return;
+
         }
+
+
+        const selectedStatus =
+            issueStatus?.value ||
+            "Open";
+
+
+        const reply =
+            issueReply?.value
+                ?.trim() || "";
 
 
         try {
 
-            await update(
+            if (issueMessage) {
+
+                issueMessage.textContent =
+                    "Saving response...";
+
+            }
+
+
+            const ticketRef =
                 ref(
                     db,
-                    `registrations/${key}`
-                ),
-                updatedData
-            );
-
-
-            editMessage.textContent =
-                "Changes saved successfully.";
-
-            showToast(
-                "Registration updated successfully."
-            );
-
-
-            setTimeout(() => {
-
-                editOverlay.classList.add(
-                    "hidden"
+                    `${HELP_PATH}/${key}`
                 );
 
-            }, 700);
+
+            await update(
+
+                ticketRef,
+
+                {
+
+                    status:
+                        selectedStatus,
+
+                    agentReply:
+                        reply,
+
+                    repliedAt:
+                        Date.now(),
+
+                    repliedBy:
+                        AGENT_UID
+
+                }
+
+            );
+
+
+            if (issueMessage) {
+
+                issueMessage.textContent =
+                    "✓ Response saved successfully.";
+
+            }
+
+
+            showStatus(
+
+                "Support ticket updated successfully.",
+
+                "success"
+
+            );
+
+
+            setTimeout(
+                closeTicketModal,
+                700
+            );
 
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                "Firebase ticket update error:",
+                error
+            );
 
-            editMessage.textContent =
-                "Firebase could not save the changes.";
 
-            showToast(
-                error.message ||
-                "Unable to update registration.",
-                false
+            if (issueMessage) {
+
+                issueMessage.textContent =
+                    "Unable to save response.";
+
+            }
+
+
+            showStatus(
+
+                "Firebase denied this update. Check your Database Rules.",
+
+                "error"
+
             );
 
         }
@@ -1502,111 +1524,12 @@ editForm.addEventListener(
 
 
 /* =========================================================
-   DELETE
+   SEARCH
 ========================================================= */
 
-async function deleteRegistration(key) {
-
-    const data =
-        registrations[key];
-
-    if (!data) return;
-
-
-    const id =
-        data.registrationId ||
-        key;
-
-
-    const confirmed =
-        confirm(
-            `Delete registration ${id}?\n\n` +
-            `This action cannot be undone.`
-        );
-
-
-    if (!confirmed) {
-        return;
-    }
-
-
-    try {
-
-        showStatus(
-            "Deleting registration..."
-        );
-
-
-        await remove(
-            ref(
-                db,
-                `registrations/${key}`
-            )
-        );
-
-
-        showToast(
-            "Registration deleted successfully."
-        );
-
-
-        showStatus(
-            "Registration deleted successfully.",
-            "success"
-        );
-
-
-    } catch (error) {
-
-        console.error(error);
-
-        showStatus(
-            "Unable to delete registration: " +
-            error.message,
-            "error"
-        );
-
-
-        showToast(
-            "Delete failed.",
-            false
-        );
-
-    }
-}
-
-
-/* =========================================================
-   SEARCH / FILTER
-========================================================= */
-
-search.addEventListener(
+search?.addEventListener(
     "input",
-    renderRegistrations
-);
-
-typeFilter.addEventListener(
-    "change",
-    renderRegistrations
-);
-
-eventFilter.addEventListener(
-    "change",
-    renderRegistrations
-);
-
-
-clearSearch.addEventListener(
-    "click",
-    () => {
-
-        search.value = "";
-
-        renderRegistrations();
-
-        search.focus();
-
-    }
+    renderTickets
 );
 
 
@@ -1614,324 +1537,11 @@ clearSearch.addEventListener(
    REFRESH
 ========================================================= */
 
-refreshBtn.addEventListener(
+refreshBtn?.addEventListener(
     "click",
     () => {
 
-        refreshBtn
-            .querySelector("i")
-            .classList.add("fa-spin");
-
-
-        loadRegistrations();
-
-
-        setTimeout(() => {
-
-            refreshBtn
-                .querySelector("i")
-                .classList.remove("fa-spin");
-
-        }, 800);
-
-    }
-);
-
-
-/* =========================================================
-   EXPORT CSV
-========================================================= */
-
-exportBtn.addEventListener(
-    "click",
-    () => {
-
-        const entries =
-            Object.entries(
-                registrations
-            );
-
-
-        if (!entries.length) {
-
-            showToast(
-                "There are no registrations to export.",
-                false
-            );
-
-            return;
-        }
-
-
-        const headers = [
-            "Registration ID",
-            "Team Size",
-            "Participation Type",
-            "Student Name",
-            "Class",
-            "Section",
-            "Mobile",
-            "Email",
-            "Team Name",
-            "Events",
-            "Member 2 Name",
-            "Member 2 Class",
-            "Member 2 Section",
-            "Member 3 Name",
-            "Member 3 Class",
-            "Member 3 Section",
-            "Member 4 Name",
-            "Member 4 Class",
-            "Member 4 Section",
-            "Member 5 Name",
-            "Member 5 Class",
-            "Member 5 Section",
-            "Remarks"
-        ];
-
-
-        const rows = entries.map(
-            ([key, data]) => [
-
-                data.registrationId || key,
-
-                data.TeamSize || "",
-
-                data.ParticipationType || "",
-
-                data.StudentName || "",
-
-                data.Class || "",
-
-                data.Section || "",
-
-                data.MobileNumber || "",
-
-                data.EmailAddress || "",
-
-                data.TeamName || "",
-
-                getEvents(data).join(" | "),
-
-                data.Member2Name || "",
-                data.Member2Class || "",
-                data.Member2Section || "",
-
-                data.Member3Name || "",
-                data.Member3Class || "",
-                data.Member3Section || "",
-
-                data.Member4Name || "",
-                data.Member4Class || "",
-                data.Member4Section || "",
-
-                data.Member5Name || "",
-                data.Member5Class || "",
-                data.Member5Section || "",
-
-                data.Remarks || ""
-
-            ]
-        );
-
-
-        const csv = [
-
-            headers,
-
-            ...rows
-
-        ]
-        .map(
-            row =>
-                row
-                    .map(
-                        value =>
-                            `"${String(value)
-                                .replaceAll('"', '""')}"`
-                    )
-                    .join(",")
-        )
-        .join("\n");
-
-
-        const blob =
-            new Blob(
-                [csv],
-                {
-                    type:
-                        "text/csv;charset=utf-8;"
-                }
-            );
-
-
-        const url =
-            URL.createObjectURL(blob);
-
-
-        const link =
-            document.createElement("a");
-
-        link.href = url;
-
-        link.download =
-            `APS-Robotics-Registrations-${new Date()
-                .toISOString()
-                .slice(0,10)}.csv`;
-
-        link.click();
-
-
-        URL.revokeObjectURL(url);
-
-
-        showToast(
-            "Registration CSV exported."
-        );
-
-    }
-);
-
-
-/* =========================================================
-   SIDEBAR
-========================================================= */
-
-menuBtn.addEventListener(
-    "click",
-    () => {
-
-        sidebar.classList.toggle(
-            "open"
-        );
-
-    }
-);
-
-
-/* =========================================================
-   NAVIGATION
-========================================================= */
-
-document
-    .querySelectorAll(".nav-link")
-    .forEach(link => {
-
-        link.addEventListener(
-            "click",
-            () => {
-
-                document
-                    .querySelectorAll(
-                        ".nav-link"
-                    )
-                    .forEach(
-                        item =>
-                            item.classList.remove(
-                                "active"
-                            )
-                    );
-
-                link.classList.add(
-                    "active"
-                );
-
-                sidebar.classList.remove(
-                    "open"
-                );
-
-            }
-        );
-
-    });
-
-
-/* =========================================================
-   CLOSE MODALS
-========================================================= */
-
-cancelEdit.addEventListener(
-    "click",
-    () => {
-
-        editOverlay.classList.add(
-            "hidden"
-        );
-
-    }
-);
-
-closeEdit.addEventListener(
-    "click",
-    () => {
-
-        editOverlay.classList.add(
-            "hidden"
-        );
-
-    }
-);
-
-
-detailOverlay.addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target ===
-            detailOverlay
-        ) {
-
-            detailOverlay.classList.add(
-                "hidden"
-            );
-
-        }
-
-    }
-);
-
-
-editOverlay.addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target ===
-            editOverlay
-        ) {
-
-            editOverlay.classList.add(
-                "hidden"
-            );
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   ESC KEY
-========================================================= */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "Escape"
-        ) {
-
-            detailOverlay.classList.add(
-                "hidden"
-            );
-
-            editOverlay.classList.add(
-                "hidden"
-            );
-
-        }
+        loadTickets();
 
     }
 );
@@ -1941,38 +1551,106 @@ document.addEventListener(
    LOGOUT
 ========================================================= */
 
-logoutBtn.addEventListener(
+logoutBtn?.addEventListener(
     "click",
     async () => {
 
-        const confirmed =
-            confirm(
-                "Are you sure you want to logout?"
-            );
-
-
-        if (!confirmed) {
-            return;
-        }
-
-
         try {
 
-            await signOut(auth);
+            await signOut(
+                auth
+            );
 
-            window.location.href =
-                "login.html";
+            window.location.replace(
+                "agent-login.html"
+            );
 
         } catch (error) {
 
-            console.error(error);
-
-            showToast(
-                "Logout failed.",
-                false
+            console.error(
+                "Logout error:",
+                error
             );
 
         }
 
     }
+);
+
+
+/* =========================================================
+   AUTHENTICATION
+========================================================= */
+
+onAuthStateChanged(
+
+    auth,
+
+    user => {
+
+        /*
+         * Not logged in.
+         */
+
+        if (!user) {
+
+            window.location.replace(
+                "agent-login.html"
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * ONLY ONE UID.
+         */
+
+        if (
+            user.uid !== AGENT_UID
+        ) {
+
+            alert(
+                "Access denied. This account is not authorized as a support agent."
+            );
+
+
+            signOut(
+                auth
+            )
+            .finally(
+                () => {
+
+                    window.location.replace(
+                        "agent-login.html"
+                    );
+
+                }
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * Authorized.
+         */
+
+        showStatus(
+
+            `Support agent authenticated: ${
+                user.email || user.uid
+            }`,
+
+            "success"
+
+        );
+
+
+        loadTickets();
+
+    }
+
 );
