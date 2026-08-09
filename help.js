@@ -1,326 +1,361 @@
+const HELP_API_URL =
+"https://script.google.com/macros/s/AKfycbzvOYOxu2gT2uPAucMN6bb2H9bdCMDrGhSa1eE4jDVcuwMs6QSqLfm2m9cnDkk1wJ50Xw/exec";
+
 
 /* =========================================================
-   APS ROBOTICS CHAMPIONSHIP 2026
-   HELP CENTER
-   Firebase: NOT USED
-   FormSubmit: Support request delivery
-   EmailJS: Student confirmation
-   ========================================================= */
+   EMAILJS
+========================================================= */
+
+const EMAILJS_PUBLIC_KEY =
+"GnxniZ70ndujyjDpe";
+
+const EMAILJS_SERVICE_ID =
+"service_5m4uzhb";
+
+const EMAILJS_TEMPLATE_ID =
+"template_5qb8b2p";
 
 
-/* -----------------------------
-   EMAILJS CONFIGURATION
------------------------------- */
+const emailScript =
+document.createElement("script");
 
-const EMAILJS_PUBLIC_KEY = "GnxniZ70ndujyjDpe";
-const EMAILJS_SERVICE_ID = "service_5m4uzhb";
-const EMAILJS_TEMPLATE_ID = "template_5qb8b2p";
+emailScript.src =
+"https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";
 
+emailScript.onload = () => {
 
-/* -----------------------------
-   ELEMENTS
------------------------------- */
+  if (window.emailjs) {
 
-const form = document.getElementById("helpForm");
-const submitBtn = document.getElementById("submitBtn");
-const submitText = document.getElementById("submitText");
-const formStatus = document.getElementById("formStatus");
-
-const registrationIdInput =
-    document.getElementById("registrationId");
-
-const emailInput =
-    document.getElementById("email");
-
-
-/* -----------------------------
-   INITIALIZE EMAILJS
------------------------------- */
-
-if (window.emailjs) {
-
-    emailjs.init({
-        publicKey: EMAILJS_PUBLIC_KEY
+    window.emailjs.init({
+      publicKey: EMAILJS_PUBLIC_KEY
     });
 
-}
+  }
+
+};
+
+document.head.appendChild(emailScript);
 
 
-/* -----------------------------
-   AUTO-FILL REGISTRATION ID
------------------------------- */
+/* =========================================================
+   ELEMENTS
+========================================================= */
 
-const savedRegistrationId =
-    sessionStorage.getItem("apsRegistrationId");
+const form =
+document.getElementById("helpForm");
 
-const savedRegistrationName =
-    sessionStorage.getItem("apsRegistrationName");
+const submitBtn =
+document.getElementById("submitBtn");
 
+const submitText =
+document.getElementById("submitText");
 
-if (
-    savedRegistrationId &&
-    registrationIdInput &&
-    !registrationIdInput.value
-) {
+const submitLoading =
+document.getElementById("submitLoading");
 
-    registrationIdInput.value =
-        savedRegistrationId;
-
-}
+const formStatus =
+document.getElementById("formStatus");
 
 
-if (
-    savedRegistrationName &&
-    document.getElementById("name") &&
-    !document.getElementById("name").value
-) {
-
-    document.getElementById("name").value =
-        savedRegistrationName;
-
-}
-
-
-/* -----------------------------
-   EMAIL NORMALIZATION
------------------------------- */
-
-emailInput?.addEventListener(
-    "blur",
-    () => {
-
-        emailInput.value =
-            emailInput.value
-            .trim()
-            .toLowerCase();
-
-    }
-);
-
-
-/* -----------------------------
-   SECTION NORMALIZATION
------------------------------- */
-
-document
-.getElementById("section")
-?.addEventListener(
-    "input",
-    event => {
-
-        event.target.value =
-            event.target.value
-            .toUpperCase()
-            .replace(/\s/g, "")
-            .slice(0, 5);
-
-    }
-);
-
-
-/* -----------------------------
+/* =========================================================
    STATUS
------------------------------- */
+========================================================= */
 
-function showStatus(message, type) {
+function showStatus(message, type = "error") {
 
-    if (!formStatus) return;
+  formStatus.textContent =
+    message;
 
-    formStatus.textContent = message;
-
-    formStatus.className =
-        `form-status ${type}`;
-
+  formStatus.className =
+    `form-status ${type}`;
 }
 
 
-/* -----------------------------
-   EMAILJS CONFIRMATION
------------------------------- */
+function clearStatus() {
 
-async function sendStudentConfirmation(data) {
+  formStatus.textContent = "";
 
-    if (!window.emailjs) {
+  formStatus.className =
+    "form-status";
+}
 
-        throw new Error(
-            "EmailJS is not available."
-        );
+
+/* =========================================================
+   VALUE
+========================================================= */
+
+function value(id) {
+
+  return (
+    document.getElementById(id)?.value || ""
+  ).trim();
+}
+
+
+/* =========================================================
+   EMAILJS WAIT
+========================================================= */
+
+async function waitForEmailJS() {
+
+  for (
+    let i = 0;
+    i < 40 && !window.emailjs;
+    i++
+  ) {
+
+    await new Promise(
+      resolve => setTimeout(resolve, 250)
+    );
+  }
+
+  return !!window.emailjs;
+}
+
+
+/* =========================================================
+   SEND ADMIN EMAIL
+========================================================= */
+
+async function sendAdminEmail(data) {
+
+  const loaded =
+    await waitForEmailJS();
+
+  if (!loaded) {
+    throw new Error(
+      "EmailJS could not be loaded."
+    );
+  }
+
+
+  return window.emailjs.send(
+    EMAILJS_SERVICE_ID,
+    EMAILJS_TEMPLATE_ID,
+    {
+
+      to_email:
+        "ayusshh@outlook.in",
+
+      StudentName:
+        data.name,
+
+      EmailAddress:
+        data.email,
+
+      registrationId:
+        data.registrationId,
+
+      TicketID:
+        data.ticketId,
+
+      Class:
+        data.className,
+
+      Section:
+        data.section,
+
+      Category:
+        data.category,
+
+      Subject:
+        data.subject,
+
+      Message:
+        data.message,
+
+      ticketStatus:
+        "Open"
 
     }
-
-
-    return emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
-
-            StudentName:
-                data.studentName,
-
-            EmailAddress:
-                data.email,
-
-            Class:
-                data.className,
-
-            Section:
-                data.section,
-
-            registrationId:
-                data.registrationId,
-
-            Category:
-                data.category,
-
-            Subject:
-                data.subject,
-
-            Message:
-                data.message,
-
-            SupportEmail:
-                "ayusshh@outlook.in"
-
-        }
-    );
-
+  );
 }
 
 
-/* -----------------------------
-   FORM SUBMISSION
------------------------------- */
+/* =========================================================
+   SUBMIT
+========================================================= */
 
 form?.addEventListener(
-    "submit",
-    async event => {
+  "submit",
+  async event => {
 
-        /*
-         * We allow FormSubmit to handle the actual
-         * form POST, so do not preventDefault().
-         *
-         * EmailJS is triggered before navigation.
-         */
+    event.preventDefault();
 
-        if (!form.checkValidity()) {
-
-            event.preventDefault();
-
-            form.reportValidity();
-
-            return;
-
-        }
+    clearStatus();
 
 
-        const data = {
+    if (
+      !form.checkValidity()
+    ) {
 
-            studentName:
-                document
-                .getElementById("name")
-                .value
-                .trim(),
+      form.reportValidity();
 
-            className:
-                document
-                .getElementById("class")
-                .value,
-
-            section:
-                document
-                .getElementById("section")
-                .value
-                .trim(),
-
-            email:
-                document
-                .getElementById("email")
-                .value
-                .trim()
-                .toLowerCase(),
-
-            registrationId:
-                document
-                .getElementById("registrationId")
-                .value
-                .trim(),
-
-            category:
-                document
-                .getElementById("category")
-                .value,
-
-            subject:
-                document
-                .getElementById("subject")
-                .value
-                .trim(),
-
-            message:
-                document
-                .getElementById("message")
-                .value
-                .trim()
-
-        };
-
-
-        /*
-         * Prevent double-click submissions.
-         */
-
-        submitBtn.disabled = true;
-
-        submitText.textContent =
-            "Sending Request...";
-
-
-        showStatus(
-            "Sending your support request...",
-            "loading"
-        );
-
-
-        /*
-         * EmailJS confirmation.
-         *
-         * We don't stop FormSubmit if EmailJS fails.
-         * The important support request still goes
-         * to your Outlook address through FormSubmit.
-         */
-
-        try {
-
-            await sendStudentConfirmation(data);
-
-        }
-
-        catch (error) {
-
-            console.error(
-                "EmailJS confirmation failed:",
-                error
-            );
-
-        }
-
-
-        /*
-         * Give FormSubmit a moment to process the
-         * form before allowing the browser to navigate.
-         */
-
-        setTimeout(
-            () => {
-
-                /*
-                 * FormSubmit will now receive the
-                 * normal POST request.
-                 */
-
-            },
-            250
-        );
-
+      return;
     }
+
+
+    if (submitBtn.disabled) {
+      return;
+    }
+
+
+    const data = {
+
+      registrationId:
+        value("registrationId"),
+
+      name:
+        value("name"),
+
+      className:
+        value("className"),
+
+      section:
+        value("section"),
+
+      email:
+        value("email").toLowerCase(),
+
+      category:
+        value("category"),
+
+      subject:
+        value("subject"),
+
+      message:
+        value("message")
+
+    };
+
+
+    submitBtn.disabled = true;
+
+    submitText.classList.add(
+      "hidden"
+    );
+
+    submitLoading.classList.remove(
+      "hidden"
+    );
+
+
+    try {
+
+      const params =
+        new URLSearchParams({
+
+          action:
+            "createTicket",
+
+          registrationId:
+            data.registrationId,
+
+          name:
+            data.name,
+
+          className:
+            data.className,
+
+          section:
+            data.section,
+
+          email:
+            data.email,
+
+          category:
+            data.category,
+
+          subject:
+            data.subject,
+
+          message:
+            data.message
+
+        });
+
+
+      const response =
+        await fetch(
+          `${HELP_API_URL}?${params.toString()}`,
+          {
+            method: "GET",
+            cache: "no-store"
+          }
+        );
+
+
+      const result =
+        await response.json();
+
+
+      if (!result.success) {
+
+        throw new Error(
+          result.message ||
+          "Unable to submit support request."
+        );
+      }
+
+
+      /* ---------------------------------------------
+         EMAIL ADMIN
+      --------------------------------------------- */
+
+      try {
+
+        await sendAdminEmail({
+          ...data,
+          ticketId:
+            result.ticketId
+        });
+
+      } catch (emailError) {
+
+        console.error(
+          "EmailJS admin notification failed:",
+          emailError
+        );
+
+      }
+
+
+      sessionStorage.setItem(
+        "apsHelpTicketId",
+        result.ticketId
+      );
+
+      sessionStorage.setItem(
+        "apsHelpRegistrationId",
+        result.registrationId
+      );
+
+
+      window.location.href =
+        `sorry.html?ticket=${encodeURIComponent(result.ticketId)}`;
+
+    } catch (error) {
+
+      console.error(error);
+
+      showStatus(
+        error.message ||
+        "Something went wrong. Please try again.",
+        "error"
+      );
+
+    } finally {
+
+      submitBtn.disabled = false;
+
+      submitText.classList.remove(
+        "hidden"
+      );
+
+      submitLoading.classList.add(
+        "hidden"
+      );
+    }
+
+  }
 );
