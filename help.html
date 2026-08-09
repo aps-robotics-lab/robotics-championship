@@ -3,58 +3,60 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-<meta
-    name="theme-color"
-    content="#020711"
->
+    <meta
+        name="theme-color"
+        content="#020711">
 
-<meta
-    name="description"
-    content="APS Robotics Championship 2026 Support"
->
+    <meta
+        name="description"
+        content="APS Robotics Championship 2026 Help and Support">
 
-<title>Help & Support | APS Robotics Championship 2026</title>
+    <title>
+        Help & Support | APS Robotics Championship 2026
+    </title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com">
 
-<link
-    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap"
-    rel="stylesheet"
->
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
 
-<link
-    rel="stylesheet"
-    href="help.css"
->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="help.css">
 
 </head>
 
 
 <body>
 
+<div class="page-bg"></div>
 
-<div class="background"></div>
 
+<!-- =====================================================
+     NAVIGATION
+===================================================== -->
 
 <header class="topbar">
 
-    <a
-        href="index.html"
-        class="brand"
-    >
+    <div class="brand">
 
         <img
             src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
-            alt="APS Logo"
-        >
+            alt="APS Logo">
 
         <div class="brand-text">
 
@@ -68,10 +70,10 @@
 
         </div>
 
-    </a>
+    </div>
 
 
-    <nav class="main-nav">
+    <nav class="nav">
 
         <a href="index.html">
             Home
@@ -85,14 +87,21 @@
             Registration
         </a>
 
-        <!-- Hidden agent/admin access -->
+        <!--
+            Agent link is intentionally hidden.
+
+            It will only become visible when
+            authorized Agent authentication is detected.
+        -->
+
         <a
             href="agent.html"
-            class="agent-hidden-link"
-            aria-label="Agent"
-            tabindex="-1"
-        >
-            •
+            id="agentNavLink"
+            class="agent-nav-link"
+            hidden>
+
+            Agent Portal
+
         </a>
 
     </nav>
@@ -100,67 +109,70 @@
 </header>
 
 
+<!-- =====================================================
+     MAIN
+===================================================== -->
 
-<main class="page">
-
-
-<section class="hero">
-
-    <div class="hero-badge">
-        APS SUPPORT CENTER
-    </div>
-
-    <h1>
-        How Can We
-        <span>Help You?</span>
-    </h1>
-
-    <p>
-        Need assistance with APS Robotics Championship 2026?
-        Submit a support request and our team will help you.
-    </p>
-
-</section>
+<main class="help-page">
 
 
+    <section class="help-hero">
 
-<section class="support-card">
-
-
-    <div class="card-header">
-
-        <div class="header-icon">
-            ?
+        <div class="hero-badge">
+            APS SUPPORT CENTER
         </div>
 
-        <div>
+        <h1>
+            How Can We
+            <span>Help?</span>
+        </h1>
 
-            <h2>
-                Contact Support
-            </h2>
+        <p>
+            Having a problem with your registration,
+            event selection, or APS Robotics Championship
+            2026 account? Submit a support request below.
+        </p>
 
-            <p>
-                Tell us about your issue
-            </p>
+    </section>
+
+
+    <!-- =================================================
+         HELP CARD
+    ================================================= -->
+
+    <section class="help-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <span>
+                    SUPPORT REQUEST
+                </span>
+
+                <h2>
+                    Contact Support
+                </h2>
+
+            </div>
+
+            <div class="support-icon">
+                ?
+            </div>
 
         </div>
 
-    </div>
+
+        <form
+            id="helpForm"
+            novalidate>
 
 
+            <!-- =========================================
+                 REGISTRATION ID
+            ========================================== -->
 
-    <form
-        id="helpForm"
-        novalidate
-    >
-
-
-        <div class="form-grid">
-
-
-            <!-- REGISTRATION ID OPTIONAL -->
-
-            <div class="field">
+            <div class="field full">
 
                 <label for="registrationId">
 
@@ -173,103 +185,77 @@
                 </label>
 
                 <input
+                    type="text"
                     id="registrationId"
                     name="registrationId"
-                    type="text"
-                    autocomplete="off"
-                    placeholder="Example: APS26-001"
-                >
+                    placeholder="Example: APSRC-2026-001">
+
+                <small>
+                    Leave this blank if you do not have
+                    a Registration ID.
+                </small>
 
             </div>
 
 
-
-            <!-- NAME -->
+            <!-- =========================================
+                 NAME
+            ========================================== -->
 
             <div class="field">
 
                 <label for="name">
-
                     Student Name
-
-                    <span class="required">
-                        *
-                    </span>
-
+                    <span class="required">*</span>
                 </label>
 
                 <input
+                    type="text"
                     id="name"
                     name="name"
-                    type="text"
-                    required
-                    autocomplete="name"
                     placeholder="Enter your full name"
-                >
+                    autocomplete="name"
+                    required>
 
             </div>
 
 
-
-            <!-- CLASS -->
+            <!-- =========================================
+                 CLASS
+            ========================================== -->
 
             <div class="field">
 
                 <label for="className">
-
                     Class
-
-                    <span class="required">
-                        *
-                    </span>
-
+                    <span class="required">*</span>
                 </label>
 
                 <select
                     id="className"
                     name="className"
-                    required
-                >
+                    required>
 
                     <option value="">
                         Select Class
                     </option>
 
-                    <option value="VI">
-                        VI
-                    </option>
-
-                    <option value="VII">
-                        VII
-                    </option>
-
-                    <option value="VIII">
-                        VIII
-                    </option>
-
-                    <option value="IX">
-                        IX
-                    </option>
-
-                    <option value="X">
-                        X
-                    </option>
-
-                    <option value="XI">
-                        XI
-                    </option>
-
-                    <option value="XII">
-                        XII
-                    </option>
+                    <option value="VI">VI</option>
+                    <option value="VII">VII</option>
+                    <option value="VIII">VIII</option>
+                    <option value="IX">IX</option>
+                    <option value="X">X</option>
+                    <option value="XI">XI</option>
+                    <option value="XII">XII</option>
 
                 </select>
 
             </div>
 
 
-
-            <!-- SECTION -->
+            <!-- =========================================
+                 SECTION
+            ========================================== -->
 
             <div class="field">
 
@@ -277,26 +263,24 @@
 
                     Section
 
-                    <span class="required">
-                        *
-                    </span>
+                    <span class="required">*</span>
 
                 </label>
 
                 <input
+                    type="text"
                     id="section"
                     name="section"
-                    type="text"
-                    required
-                    maxlength="10"
                     placeholder="Example: A"
-                >
+                    maxlength="10"
+                    required>
 
             </div>
 
 
-
-            <!-- EMAIL -->
+            <!-- =========================================
+                 EMAIL
+            ========================================== -->
 
             <div class="field">
 
@@ -304,62 +288,53 @@
 
                     Email Address
 
-                    <span class="required">
-                        *
-                    </span>
+                    <span class="required">*</span>
 
                 </label>
 
                 <input
+                    type="email"
                     id="email"
                     name="email"
-                    type="email"
-                    required
+                    placeholder="you@example.com"
                     autocomplete="email"
-                    placeholder="Enter your email"
-                >
+                    required>
 
             </div>
 
 
-
-            <!-- CATEGORY -->
+            <!-- =========================================
+                 CATEGORY
+            ========================================== -->
 
             <div class="field">
 
                 <label for="category">
-
                     Category
-
-                    <span class="optional">
-                        Optional
-                    </span>
-
                 </label>
 
                 <select
                     id="category"
-                    name="category"
-                >
-
-                    <option value="General">
-                        General
-                    </option>
+                    name="category">
 
                     <option value="Registration">
                         Registration
-                    </option>
-
-                    <option value="Technical">
-                        Technical
                     </option>
 
                     <option value="Event">
                         Event
                     </option>
 
-                    <option value="Team">
-                        Team
+                    <option value="Payment">
+                        Payment
+                    </option>
+
+                    <option value="Technical">
+                        Technical
+                    </option>
+
+                    <option value="General">
+                        General
                     </option>
 
                     <option value="Other">
@@ -371,210 +346,194 @@
             </div>
 
 
-        </div>
+            <!-- =========================================
+                 SUBJECT
+            ========================================== -->
 
+            <div class="field full">
 
+                <label for="subject">
 
-        <!-- SUBJECT -->
+                    Subject
 
-        <div class="field">
+                    <span class="required">*</span>
 
-            <label for="subject">
+                </label>
 
-                Subject
+                <input
+                    type="text"
+                    id="subject"
+                    name="subject"
+                    placeholder="Briefly describe your issue"
+                    maxlength="150"
+                    required>
 
-                <span class="required">
-                    *
-                </span>
-
-            </label>
-
-            <input
-                id="subject"
-                name="subject"
-                type="text"
-                required
-                maxlength="150"
-                placeholder="What do you need help with?"
-            >
-
-        </div>
-
-
-
-        <!-- MESSAGE -->
-
-        <div class="field">
-
-            <label for="message">
-
-                Message
-
-                <span class="required">
-                    *
-                </span>
-
-            </label>
-
-            <textarea
-                id="message"
-                name="message"
-                rows="7"
-                required
-                maxlength="2000"
-                placeholder="Describe your issue in detail..."
-            ></textarea>
-
-            <div class="character-count">
-                <span id="messageCount">
-                    0
-                </span>
-                / 2000
             </div>
 
+
+            <!-- =========================================
+                 MESSAGE
+            ========================================== -->
+
+            <div class="field full">
+
+                <label for="message">
+
+                    Message
+
+                    <span class="required">*</span>
+
+                </label>
+
+                <textarea
+                    id="message"
+                    name="message"
+                    rows="7"
+                    maxlength="2000"
+                    placeholder="Describe your problem in detail..."
+                    required></textarea>
+
+                <div class="character-count">
+
+                    <span id="messageCount">
+                        0
+                    </span>
+
+                    / 2000
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================================
+                 STATUS
+            ========================================== -->
+
+            <div
+                id="formStatus"
+                class="form-status"
+                aria-live="polite">
+            </div>
+
+
+            <!-- =========================================
+                 SUBMIT
+            ========================================== -->
+
+            <button
+                type="submit"
+                id="submitBtn"
+                class="submit-btn">
+
+                <span id="submitText">
+                    Submit Support Request
+                </span>
+
+                <span
+                    id="submitLoading"
+                    class="loading hidden">
+
+                    <span class="spinner"></span>
+
+                    Submitting...
+
+                </span>
+
+            </button>
+
+
+            <p class="privacy-note">
+
+                Your information will only be used to
+                process your support request.
+
+            </p>
+
+        </form>
+
+    </section>
+
+
+    <!-- =================================================
+         INFO CARDS
+    ================================================= -->
+
+    <section class="info-grid">
+
+        <div class="info-card">
+
+            <div class="info-icon">
+                🎫
+            </div>
+
+            <h3>
+                Ticket Tracking
+            </h3>
+
+            <p>
+                After submission, you will receive a
+                unique support ticket ID.
+            </p>
+
         </div>
 
 
+        <div class="info-card">
 
-        <!-- STATUS -->
+            <div class="info-icon">
+                ⚡
+            </div>
 
-        <div
-            id="formStatus"
-            class="form-status"
-            role="alert"
-            aria-live="polite"
-        ></div>
+            <h3>
+                Quick Support
+            </h3>
 
+            <p>
+                Our support team will review your request
+                and respond as soon as possible.
+            </p>
 
-
-        <!-- SUBMIT -->
-
-        <button
-            id="submitBtn"
-            type="submit"
-            class="submit-btn"
-        >
-
-            <span id="submitText">
-                Submit Support Request
-            </span>
-
-            <span
-                id="submitLoading"
-                class="loading hidden"
-            >
-                <span class="spinner"></span>
-                Submitting...
-            </span>
-
-        </button>
-
-
-        <p class="privacy-note">
-
-            Your information is used only to process your
-            support request.
-
-        </p>
-
-
-    </form>
-
-
-</section>
-
-
-
-<section class="info-grid">
-
-
-    <div class="info-card">
-
-        <div class="info-icon">
-            🎫
         </div>
 
-        <h3>
-            Ticket ID
-        </h3>
 
-        <p>
-            After submission you will receive a unique
-            support ticket ID.
-        </p>
+        <div class="info-card">
 
-    </div>
+            <div class="info-icon">
+                🔒
+            </div>
 
+            <h3>
+                Secure
+            </h3>
 
-    <div class="info-card">
+            <p>
+                Your support information is securely
+                stored using Firebase.
+            </p>
 
-        <div class="info-icon">
-            🔒
         </div>
 
-        <h3>
-            Secure
-        </h3>
-
-        <p>
-            Your support request is securely stored
-            in Firebase.
-        </p>
-
-    </div>
-
-
-    <div class="info-card">
-
-        <div class="info-icon">
-            ⚡
-        </div>
-
-        <h3>
-            Quick Support
-        </h3>
-
-        <p>
-            Our event support team can review your
-            request from the admin panel.
-        </p>
-
-    </div>
-
-
-</section>
-
+    </section>
 
 </main>
 
 
-
-<footer>
+<footer class="footer">
 
     <p>
-        © 2026 APS Tinkering Lab
+        © 2026 APS Tinkering Lab ·
+        Robotics Championship 2026
     </p>
-
-    <span>
-        APS Robotics Championship 2026
-    </span>
 
 </footer>
 
 
-
 <script
     type="module"
-    src="help.js"
-></script>
-<!-- Hidden Agent Portal -->
-<a
-    href="agent.html"
-    id="agentNavLink"
-    class="agent-nav-link"
-    aria-label="Agent Portal">
-    Agent
-</a>
+    src="help.js">
+</script>
 
 </body>
+
 </html>
