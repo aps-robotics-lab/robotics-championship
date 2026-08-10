@@ -1408,3 +1408,4 @@ tbody tr:hover {
     }
 
     }
+.message-editor{display:grid;gap:18px}.message-selector{display:grid;gap:8px;max-width:520px}.message-selector select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(83,161,255,.18);background:#071120;color:#fff}.message-panel{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:18px;border:1px solid rgba(83,161,255,.15);border-radius:16px;background:rgba(255,255,255,.02)}.message-panel.hidden{display:none}.message-panel label{display:grid;gap:7px}.message-panel textarea,.message-panel input{width:100%}@media(max-width:800px){.message-panel{grid-template-columns:1fr}}

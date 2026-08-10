@@ -328,19 +328,27 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                     <button id="saveContentBtn" class="export-btn"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
                 </div>
                 <div id="contentStatus" class="status"></div>
-                
-                <div class="form-grid">
-                    <label>Principal's Message<textarea id="editPrincipalText" rows="4"></textarea></label>
-                    <label>Principal's Name<input id="editPrincipalName"></label>
-                    
-                    <label>Mentor's Message<textarea id="editMentorText" rows="4"></textarea></label>
-                    <label>Mentor's Name<input id="editMentorName"></label>
-
-                    <label>Coordinator's Message<textarea id="editCoordText" rows="4"></textarea></label>
-                    <label>Coordinator's Name<input id="editCoordName"></label>
-
-                    <label>Team's Message<textarea id="editTeamText" rows="4"></textarea></label>
-                    <label>Team's Name<input id="editTeamName"></label>
+                <div class="message-editor">
+                    <label class="message-selector">Write a message for
+                        <select id="messageTarget">
+                            <option value="principal">Principal — Sadhna Devi</option>
+                            <option value="mentor">Mentor — Akansha Rani</option>
+                            <option value="coordinator">Coordinator — Championship Coordination Team</option>
+                            <option value="team">Team — APS Robotics Championship</option>
+                        </select>
+                    </label>
+                    <div class="message-panel" data-message-panel="principal">
+                        <label>Principal's Message<textarea id="editPrincipalText" rows="5"></textarea></label><label>Principal's Name<input id="editPrincipalName"></label>
+                    </div>
+                    <div class="message-panel hidden" data-message-panel="mentor">
+                        <label>Mentor's Message<textarea id="editMentorText" rows="5"></textarea></label><label>Mentor's Name<input id="editMentorName"></label>
+                    </div>
+                    <div class="message-panel hidden" data-message-panel="coordinator">
+                        <label>Coordinator's Message<textarea id="editCoordText" rows="5"></textarea></label><label>Coordinator's Name<input id="editCoordName"></label>
+                    </div>
+                    <div class="message-panel hidden" data-message-panel="team">
+                        <label>APS Team's Message<textarea id="editTeamText" rows="5"></textarea></label><label>Team Name<input id="editTeamName"></label>
+                    </div>
                 </div>
             </section>
 

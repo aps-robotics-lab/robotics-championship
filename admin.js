@@ -1,3 +1,5 @@
+
+
 /* =========================================================
    ADMIN.JS
    APS ROBOTICS CHAMPIONSHIP 2026
@@ -56,6 +58,15 @@ const eventFilter = document.getElementById("eventFilter");
 const registrationBody = document.getElementById("registrationBody");
 const mobileRegistrations = document.getElementById("mobileRegistrations");
 const status = document.getElementById("status");
+
+const messageTarget = document.getElementById("messageTarget");
+if (messageTarget) {
+    messageTarget.addEventListener("change", () => {
+        document.querySelectorAll("[data-message-panel]").forEach(panel => {
+            panel.classList.toggle("hidden", panel.dataset.messagePanel !== messageTarget.value);
+        });
+    });
+}
 
 /* =========================================================
    DASHBOARD STATS
@@ -127,13 +138,13 @@ function loadWebsiteContent() {
         if(snapshot.exists()) {
             const data = snapshot.val();
             document.getElementById("editPrincipalText").value = data.principalText || "";
-            document.getElementById("editPrincipalName").value = data.principalName || "";
+            document.getElementById("editPrincipalName").value = "Sadhna Devi";
             document.getElementById("editMentorText").value = data.mentorText || "";
-            document.getElementById("editMentorName").value = data.mentorName || "";
+            document.getElementById("editMentorName").value = "Akansha Rani";
             document.getElementById("editCoordText").value = data.coordText || "";
-            document.getElementById("editCoordName").value = data.coordName || "";
+            document.getElementById("editCoordName").value = (data.coordName && data.coordName !== "Ayush Kumar Singh") ? data.coordName : "Championship Coordination Team";
             document.getElementById("editTeamText").value = data.teamText || "";
-            document.getElementById("editTeamName").value = data.teamName || "";
+            document.getElementById("editTeamName").value = data.teamName || "APS Robotics Championship Team";
         }
     });
 }

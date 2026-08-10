@@ -451,3 +451,5 @@ footer {
 .hidden-agent-link:active {
     opacity: 1;
 }
+.help-card{border-color:rgba(53,185,255,.22)}.help-info{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.help-info>div{padding:18px;border:1px solid var(--border);border-radius:16px;background:rgba(7,17,32,.55)}
+@media(max-width:700px){.help-nav{padding:10px 4%}.help-nav nav{gap:10px}.help-nav nav a:not(:first-child){display:none}.help-container{width:min(94%,900px);padding:38px 0}.help-card{padding:20px}.form-row,.help-info{grid-template-columns:1fr}.card-header{align-items:flex-start}.nav-brand strong{font-size:10px}.nav-brand span{font-size:9px}}

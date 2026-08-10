@@ -6,8 +6,6 @@ import { mainFirebaseConfig } from "./firebase-config.js";
 const app = initializeApp(mainFirebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
-
-// DOM Elements
 const form = document.getElementById("registrationForm");
 const submitBtn = document.getElementById("submitBtn");
 const formMessage = document.getElementById("formMessage");
@@ -15,124 +13,94 @@ const successOverlay = document.getElementById("successOverlay");
 const successRegistrationId = document.getElementById("successRegistrationId");
 const continueBtn = document.getElementById("continueBtn");
 const eventError = document.getElementById("eventError");
+const membersSection = document.getElementById("membersSection");
+const memberCards = document.getElementById("memberCards");
+const memberInstruction = document.getElementById("memberInstruction");
 
-// Progressive Step Logic
-const steps = document.querySelectorAll(".step-section");
-const nextBtns = document.querySelectorAll(".next-step");
-
-nextBtns.forEach((btn, index) => {
-    btn.addEventListener("click", () => {
-        // Simple HTML5 Validation before proceeding
-        const currentStepInputs = steps[index].querySelectorAll("input[required], select[required]");
-        let valid = true;
-        currentStepInputs.forEach(input => {
-            if (!input.reportValidity()) valid = false;
-        });
-        
-        if (valid && index + 1 < steps.length) {
-            steps[index + 1].classList.remove("hidden-member");
-            steps[index + 1].scrollIntoView({ behavior: 'smooth', block: 'start' });
-            btn.style.display = 'none'; // hide next button once passed
-        }
-    });
-});
-
-// Helper Functions
-const getValue = (id) => document.getElementById(id)?.value.trim() || "";
+const getValue = id => document.getElementById(id)?.value.trim() || "";
 const getTeamSize = () => Number(document.querySelector('input[name="TeamSize"]:checked')?.value || 1);
-const getSelectedEvents = () => Array.from(document.querySelectorAll('input[name="Events"]:checked')).map(i => i.value);
+const getSelectedEvents = () => [...document.querySelectorAll('input[name="Events"]:checked')].map(x => x.value);
 const generateId = () => `APS-RBC-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
-const showMessage = (msg, type = "error") => { formMessage.textContent = msg; formMessage.className = `form-message ${type}`; };
+const showMessage = (msg, type="error") => { formMessage.textContent = msg; formMessage.className = `form-message ${type}`; };
 
-// Formatting Inputs
-document.getElementById("mobileNumber")?.addEventListener("input", e => e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10));
+function createMemberCard(number) {
+  const card = document.createElement("div");
+  card.className = "member-card additional-member";
+  card.dataset.member = number;
+  card.innerHTML = `<div class="member-card-title"><span>MEMBER ${number}</span><strong>Participant ${number}</strong></div>
+  <div class="field-grid">
+    <div class="field full-field"><label for="member${number}Name">Full Name <span>*</span></label><input type="text" id="member${number}Name"></div>
+    <div class="field"><label for="member${number}Class">Class <span>*</span></label><select id="member${number}Class"><option value="">Select</option><option>VI</option><option>VII</option><option>VIII</option><option>IX</option><option>X</option><option>XI</option><option>XII</option></select></div>
+    <div class="field"><label for="member${number}Section">Section <span>*</span></label><input type="text" id="member${number}Section" maxlength="5"></div>
+  </div>`;
+  return card;
+}
+
+function updateMembers() {
+  const size = getTeamSize();
+  document.getElementById("participationType").value = size === 1 ? "Solo" : `Team of ${size}`;
+  const team = size > 1;
+  membersSection.hidden = !team;
+  memberInstruction.textContent = team ? `This team has ${size} participants. Enter details for members 2–${size}.` : "Solo participation selected.";
+  memberCards.replaceChildren();
+  for (let i = 2; i <= size; i++) {
+    const card = createMemberCard(i);
+    memberCards.appendChild(card);
+    ["Name","Class","Section"].forEach(part => { const el = document.getElementById(`member${i}${part}`); if (el) el.required = true; });
+  }
+}
+
+document.querySelectorAll('input[name="TeamSize"]').forEach(input => input.addEventListener("change", updateMembers));
+document.getElementById("mobileNumber")?.addEventListener("input", e => e.target.value = e.target.value.replace(/\D/g, "").slice(0,10));
 document.getElementById("emailAddress")?.addEventListener("blur", e => e.target.value = e.target.value.trim().toLowerCase());
 
-// Update Team Size Logic
-document.querySelectorAll('input[name="TeamSize"]').forEach(input => {
-    input.addEventListener("change", () => {
-        const size = getTeamSize();
-        if(size === 1) {
-            document.getElementById("step3").style.display = "none"; 
-        } else {
-            document.getElementById("step3").style.display = "block";
-        }
-        document.querySelectorAll(".additional-member").forEach(card => {
-            const num = Number(card.dataset.memberCard);
-            card.classList.toggle("hidden-member", num > size);
-            const req = num <= size;
-            ["Name", "Class", "Section"].forEach(f => {
-                const el = document.getElementById(`member${num}${f}`);
-                if(el) el.required = req;
-            });
-        });
-    });
-});
+document.querySelectorAll('input[name="Events"]').forEach(input => input.addEventListener("change", () => { if (getSelectedEvents().length) eventError.textContent = ""; }));
 
-// Submit Logic
-form?.addEventListener("submit", async event => {
-    event.preventDefault();
-    if (!form.checkValidity()) { form.reportValidity(); return; }
-    if (getSelectedEvents().length === 0) { eventError.textContent = "Select at least one event."; return; }
-    
-    const email = getValue("emailAddress");
-    const phone = getValue("mobileNumber");
-    if(phone.length !== 10) { showMessage("Phone number must be exactly 10 digits."); return; }
-
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = "Processing...";
-
-    try {
-        // Use anonymous Firebase Authentication so public registration can
-        // write without exposing existing registrations to the browser.
-        if (!auth.currentUser) await signInAnonymously(auth);
-
-        const regRef = ref(db, "registrations");
-
-        // Collect Data
-        const teamSize = getTeamSize();
-        const data = {
-            registrationId: generateId(),
-            TeamSize: teamSize,
-            ParticipationType: teamSize === 1 ? "Solo" : `Team of ${teamSize}`,
-            StudentName: getValue("studentName"),
-            Class: getValue("studentClass"),
-            Section: getValue("studentSection"),
-            MobileNumber: phone,
-            EmailAddress: email,
-            TeamName: getValue("teamName"),
-            Events: getSelectedEvents(),
-            Remarks: getValue("remarks"),
-            createdBy: auth.currentUser.uid,
-            timestamp: Date.now()
-        };
-
-        // Add dynamic members
-        for(let i=2; i<=teamSize; i++) {
-            data[`Member${i}Name`] = getValue(`member${i}Name`);
-            data[`Member${i}Class`] = getValue(`member${i}Class`);
-            data[`Member${i}Section`] = getValue(`member${i}Section`);
-        }
-
-        // Save to Firebase
-        await set(push(regRef), data);
-
-        // Send Email via EmailJS
-        if(window.emailjs) {
-            emailjs.send("service_5m4uzhb", "template_5qb8b2p", data).catch(console.error);
-        }
-
-        sessionStorage.setItem("apsRegistrationId", data.registrationId);
-        sessionStorage.setItem("apsRegistrationName", data.StudentName);
-        
-        successRegistrationId.textContent = data.registrationId;
-        successOverlay.classList.remove("hidden");
-
-    } catch (error) {
-        showMessage(error.message || "Registration failed. Check connection.");
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = "Submit Registration";
+form?.addEventListener("submit", async e => {
+  e.preventDefault();
+  eventError.textContent = "";
+  showMessage("");
+  if (!form.checkValidity()) { form.reportValidity(); return; }
+  const events = getSelectedEvents();
+  if (!events.length) { eventError.textContent = "Please select at least one event."; document.getElementById("eventsSection").scrollIntoView({behavior:"smooth"}); return; }
+  const phone = getValue("mobileNumber");
+  if (!/^[6-9]\d{9}$/.test(phone)) { showMessage("Enter a valid 10-digit Indian mobile number."); return; }
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
+  try {
+    if (!auth.currentUser) await signInAnonymously(auth);
+    const teamSize = getTeamSize();
+    const data = {
+      registrationId: generateId(),
+      TeamSize: teamSize,
+      ParticipationType: teamSize === 1 ? "Solo" : `Team of ${teamSize}`,
+      StudentName: getValue("studentName"),
+      Class: getValue("studentClass"),
+      Section: getValue("studentSection").toUpperCase(),
+      MobileNumber: phone,
+      EmailAddress: getValue("emailAddress").toLowerCase(),
+      TeamName: getValue("teamName"),
+      Events: events,
+      Remarks: getValue("remarks"),
+      createdBy: auth.currentUser.uid,
+      timestamp: Date.now()
+    };
+    for (let i=2;i<=teamSize;i++) {
+      data[`Member${i}Name`] = getValue(`member${i}Name`);
+      data[`Member${i}Class`] = getValue(`member${i}Class`);
+      data[`Member${i}Section`] = getValue(`member${i}Section`).toUpperCase();
     }
+    await set(push(ref(db,"registrations")), data);
+    if (window.emailjs) emailjs.send("service_5m4uzhb","template_5qb8b2p",data).catch(()=>{});
+    sessionStorage.setItem("apsRegistrationId", data.registrationId);
+    sessionStorage.setItem("apsRegistrationName", data.StudentName);
+    successRegistrationId.textContent = data.registrationId;
+    successOverlay.classList.remove("hidden");
+  } catch (err) {
+    showMessage("Registration could not be submitted. Please check your internet connection and try again.");
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = 'Submit Registration <i class="fa-solid fa-arrow-right"></i>';
+  }
 });
-
-continueBtn?.addEventListener("click", () => window.location.href = "thankyou.html");
+continueBtn?.addEventListener("click", () => location.href="thankyou.html");
+updateMembers();

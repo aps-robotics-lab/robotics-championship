@@ -30,3 +30,15 @@
 .hidden-admin-link a:hover {
     color: rgba(255, 255, 255, 0.75);
 }
+/* Final polish */
+.menu-btn{width:44px;height:44px;display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;border:1px solid rgba(25,230,255,.22);border-radius:12px;background:rgba(25,230,255,.05);padding:0}
+.menu-btn span{display:block;width:22px;height:2px;border-radius:2px;background:#fff;transition:.25s}
+.menu-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}.menu-btn.open span:nth-child(2){opacity:0}.menu-btn.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.welcome-section{padding:70px 8%;background:linear-gradient(180deg,rgba(25,230,255,.035),rgba(141,114,255,.035));border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05)}
+.welcome-inner{max-width:1000px;margin:auto;text-align:center;padding:42px 34px;border:1px solid rgba(25,230,255,.16);border-radius:28px;background:rgba(6,15,29,.72);box-shadow:0 25px 70px rgba(0,0,0,.25)}
+.welcome-badge{display:inline-block;color:#19e6ff;font:700 10px Orbitron;letter-spacing:2.5px;padding:8px 14px;border:1px solid rgba(25,230,255,.2);border-radius:999px;background:rgba(25,230,255,.05)}
+.welcome-inner h2{font:800 clamp(28px,4vw,48px) Orbitron;margin:16px 0 12px}.welcome-inner h2 b{color:#19e6ff}.welcome-inner p{max-width:800px;margin:auto;color:#9eafc4}.welcome-points{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:24px}.welcome-points span{padding:9px 14px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:12px}
+.team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.team-card{padding:26px;border:1px solid rgba(255,255,255,.08);border-radius:20px;background:rgba(8,18,34,.72);transition:.3s}.team-card:hover{transform:translateY(-5px);border-color:rgba(25,230,255,.25)}.team-avatar{width:58px;height:58px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(25,230,255,.14),rgba(141,114,255,.14));border:1px solid rgba(25,230,255,.2);font:800 16px Orbitron;color:#19e6ff;margin-bottom:18px}.team-card small{font:700 9px Orbitron;letter-spacing:2px;color:#19e6ff}.team-card h3{font-size:16px;margin:7px 0}.team-card p{font-size:12px;color:#91a3b9}
+@media (max-width:1050px){.team-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:800px){.site-header{height:70px;padding:9px 5%}.menu-btn{display:flex}#mainNav{position:absolute;top:70px;left:4%;right:4%;display:none;flex-direction:column;gap:5px;padding:10px;border:1px solid rgba(25,230,255,.14);border-radius:16px;background:rgba(3,7,18,.97);box-shadow:0 20px 50px rgba(0,0,0,.45)}#mainNav.open{display:flex}#mainNav a{width:100%;padding:12px 14px}.hero{padding-top:125px}.robot-visual{opacity:.18;right:-120px}.team-grid{grid-template-columns:1fr}}
+@media (max-width:520px){.brand img{width:40px;height:40px}.brand b{font-size:12px}.brand small{font-size:7px}.hero h1{font-size:40px}.welcome-section{padding:45px 5%}.welcome-inner{padding:30px 18px}.contact-grid{grid-template-columns:1fr!important}}

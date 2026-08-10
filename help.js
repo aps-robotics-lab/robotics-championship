@@ -57,6 +57,7 @@ form?.addEventListener("submit", async event => {
             section: document.getElementById("section").value,
             email: document.getElementById("email").value.toLowerCase(),
             category: document.getElementById("category").value,
+            messageRecipient: document.getElementById("messageRecipient")?.value || "General Help",
             subject: document.getElementById("subject").value,
             message: document.getElementById("message").value,
             status: "Open",
