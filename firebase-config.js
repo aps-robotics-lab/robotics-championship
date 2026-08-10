@@ -1,33 +1,45 @@
-// Keep the two Firebase projects separate.
-// mainFirebaseConfig = registration/admin project
-// helpFirebaseConfig = support/agent project
+/* =========================================================
+   FIREBASE CENTRAL CONFIGURATION
+   APS Robotics Championship 2026
 
-export const mainFirebaseConfig = {
-    apiKey: "PASTE_MAIN_FIREBASE_API_KEY",
-    authDomain: "PASTE_MAIN_PROJECT.firebaseapp.com",
-    databaseURL: "https://PASTE_MAIN_PROJECT-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "PASTE_MAIN_PROJECT_ID",
-    storageBucket: "PASTE_MAIN_PROJECT.firebasestorage.app",
-    messagingSenderId: "PASTE_MAIN_SENDER_ID",
-    appId: "PASTE_MAIN_APP_ID"
-};
+   TWO SEPARATE FIREBASE PROJECTS:
+
+   1) HELP + AGENT
+      Project: robotics-championship-ab248
+      Database: asia-southeast1
+
+   2) REGISTRATION + ADMIN + HOME CONTENT
+      Project: aps-robotics-championship
+      Database: default (us-central style URL)
+========================================================= */
 
 export const helpFirebaseConfig = {
-    apiKey: "PASTE_HELP_FIREBASE_API_KEY",
-    authDomain: "PASTE_HELP_PROJECT.firebaseapp.com",
+    apiKey: "AIzaSyCVfkLAc5EKDRUoHf4LgVhBFwTNmq2GMI0",
+    authDomain: "robotics-championship-ab248.firebaseapp.com",
     databaseURL: "https://robotics-championship-ab248-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "robotics-championship-ab248",
     storageBucket: "robotics-championship-ab248.firebasestorage.app",
-    messagingSenderId: "PASTE_HELP_SENDER_ID",
-    appId: "PASTE_HELP_APP_ID"
+    messagingSenderId: "521981495733",
+    appId: "1:521981495733:web:ecec2bc677a4450f19f1fc",
+    measurementId: "G-NTBPB3MJ0E"
 };
 
-// Replace these after creating the Firebase Auth users.
-export const ADMIN_UID = "PASTE_MAIN_ADMIN_UID";
-export const AGENT_UID = "HgWiHPRx9gcXZtDTl0pDCpZlokt2";
+export const mainFirebaseConfig = {
+    apiKey: "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
+    authDomain: "aps-robotics-championship.firebaseapp.com",
+    databaseURL: "https://aps-robotics-championship-default-rtdb.firebaseio.com",
+    projectId: "aps-robotics-championship",
+    storageBucket: "aps-robotics-championship.firebasestorage.app",
+    messagingSenderId: "1063542904891",
+    appId: "1:1063542904891:web:82ff9bb3fba0b87384a41e",
+    measurementId: "G-MJSYYZS50Z"
+};
 
-// Multi-agent allow-list.
-// Add authenticated agent UIDs here after creating them in Firebase Auth.
-export const AGENT_UIDS = [
-    AGENT_UID
-];
+/* IMPORTANT:
+   Replace this with the UID of the administrator account that
+   exists in Firebase Authentication of aps-robotics-championship.
+*/
+export const ADMIN_UID = "REPLACE_WITH_MAIN_PROJECT_ADMIN_UID";
+
+/* Only this Firebase Auth UID may access /tickets as an agent. */
+export const AGENT_UID = "HgWiHPRx9gcXZtDTl0pDCpZlokt2";

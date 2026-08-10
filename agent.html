@@ -1,1 +1,645 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Agent Help Desk</title><style>body{margin:0;background:#020711;color:#fff;font-family:Arial;padding:20px}.wrap{max-width:1200px;margin:auto}.stats{display:flex;gap:12px;flex-wrap:wrap}.stat{padding:18px;background:#09182a;border-radius:14px}.filters{display:flex;gap:10px;margin:20px 0}input,select,button{padding:10px;border-radius:8px}table{width:100%;border-collapse:collapse}th,td{padding:12px;border-bottom:1px solid #18334d;text-align:left}.table{overflow:auto}.status-badge{padding:4px 8px;border-radius:20px;background:#18334d}.resolved{color:#3ee8a8}</style></head><body><main class="wrap"><h1>🤖 Agent Help Desk</h1><p id="agentName"></p><p id="agentEmail"></p><button id="logoutBtn">Logout</button><div class="stats"><div class="stat">Total <b id="totalTickets">0</b></div><div class="stat">Open <b id="openTickets">0</b></div><div class="stat">Resolved <b id="resolvedTickets">0</b></div></div><div class="filters"><input id="search" placeholder="Search tickets"><select id="statusFilter"><option value="all">All</option><option value="open">Open</option><option value="resolved">Resolved</option></select></div><p id="status"></p><div class="table"><table><thead><tr><th>Ticket</th><th>Name</th><th>Email</th><th>Issue</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead><tbody id="ticketBody"></tbody></table></div><div id="detailOverlay" class="hidden" style="display:none"><div id="detailContent"></div><button id="closeDetail">Close</button></div></main><script type="module" src="agent.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#020711"
+    >
+
+    <title>
+        Agent Help Center | APS Robotics Championship 2026
+    </title>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="agent.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     TOP BAR
+===================================================== -->
+
+<header class="topbar">
+
+    <div class="brand">
+
+        <img
+            src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+            alt="APS"
+        >
+
+        <div>
+
+            <span>
+                APS TINKERING LAB
+            </span>
+
+            <strong>
+                ROBOTICS CHAMPIONSHIP 2026
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="agent-area">
+
+        <div class="agent-status">
+
+            <span></span>
+
+            AGENT ONLINE
+
+        </div>
+
+
+        <button
+            id="logoutBtn"
+            class="logout-btn"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main>
+
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <div>
+
+            <span class="badge">
+                SUPPORT CONTROL CENTER
+            </span>
+
+            <h1>
+                Help
+                <span>Tickets</span>
+            </h1>
+
+            <p>
+                View student problems and help resolve them quickly.
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         STATS
+    ================================================= -->
+
+    <section class="stats-grid">
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                🎫
+            </div>
+
+            <div>
+
+                <small>
+                    TOTAL TICKETS
+                </small>
+
+                <strong id="totalTickets">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card open-card">
+
+            <div class="stat-icon">
+                🔴
+            </div>
+
+            <div>
+
+                <small>
+                    OPEN
+                </small>
+
+                <strong id="openTickets">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card progress-card">
+
+            <div class="stat-icon">
+                🟡
+            </div>
+
+            <div>
+
+                <small>
+                    IN PROGRESS
+                </small>
+
+                <strong id="progressTickets">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card closed-card">
+
+            <div class="stat-icon">
+                🟢
+            </div>
+
+            <div>
+
+                <small>
+                    SOLVED
+                </small>
+
+                <strong id="closedTickets">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =================================================
+         TICKET AREA
+    ================================================= -->
+
+    <section class="panel">
+
+
+        <div class="toolbar">
+
+
+            <div>
+
+                <h2>
+                    Student Support Requests
+                </h2>
+
+                <p>
+                    Select a ticket to view the complete problem.
+                </p>
+
+            </div>
+
+
+            <div class="toolbar-actions">
+
+
+                <input
+                    id="searchInput"
+                    type="search"
+                    placeholder="Search ticket, name, email..."
+                >
+
+
+                <select id="statusFilter">
+
+                    <option value="All">
+                        All Tickets
+                    </option>
+
+                    <option value="Open">
+                        Open
+                    </option>
+
+                    <option value="In Progress">
+                        In Progress
+                    </option>
+
+                    <option value="Closed">
+                        Solved
+                    </option>
+
+                </select>
+
+
+                <button
+                    id="refreshBtn"
+                    class="refresh-btn"
+                >
+                    ↻
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="statusMessage"
+            class="status-message"
+        ></div>
+
+
+        <!-- TICKETS -->
+
+        <div
+            id="ticketList"
+            class="ticket-list"
+        ></div>
+
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     TICKET DETAIL MODAL
+===================================================== -->
+
+<div
+    id="ticketOverlay"
+    class="overlay hidden"
+>
+
+
+    <div class="ticket-modal">
+
+
+        <!-- HEADER -->
+
+        <div class="modal-header">
+
+            <div>
+
+                <span class="modal-label">
+                    SUPPORT TICKET
+                </span>
+
+                <h2 id="modalSubject">
+                    Ticket
+                </h2>
+
+                <div
+                    id="modalTicketId"
+                    class="ticket-id"
+                ></div>
+
+            </div>
+
+
+            <button
+                id="closeModal"
+                class="close-btn"
+                type="button"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+
+        <!-- STUDENT INFORMATION -->
+
+        <div class="section-title">
+            STUDENT INFORMATION
+        </div>
+
+
+        <div class="student-grid">
+
+
+            <div class="info-box">
+
+                <span>
+                    STUDENT NAME
+                </span>
+
+                <strong id="modalName">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <span>
+                    REGISTRATION ID
+                </span>
+
+                <strong id="modalRegistrationId">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <span>
+                    CLASS
+                </span>
+
+                <strong id="modalClass">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <span>
+                    SECTION
+                </span>
+
+                <strong id="modalSection">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <span>
+                    EMAIL
+                </span>
+
+                <strong id="modalEmail">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <span>
+                    CATEGORY
+                </span>
+
+                <strong id="modalCategory">
+                    -
+                </strong>
+
+            </div>
+
+            <div class="info-box">
+
+                <span>
+                    MESSAGE FOR
+                </span>
+
+                <strong id="modalRecipient">
+                    General Help
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ORIGINAL MESSAGE -->
+
+        <div class="section-title">
+            STUDENT'S PROBLEM
+        </div>
+
+
+        <div class="problem-box">
+
+            <div class="problem-subject">
+
+                <span>
+                    SUBJECT
+                </span>
+
+                <strong id="problemSubject">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div
+                id="problemMessage"
+                class="problem-message"
+            >
+            </div>
+
+        </div>
+
+
+
+        <!-- TICKET INFORMATION -->
+
+        <div class="section-title">
+            TICKET INFORMATION
+        </div>
+
+
+        <div class="ticket-info-grid">
+
+
+            <div>
+
+                <span>
+                    STATUS
+                </span>
+
+                <strong id="modalStatus">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    PRIORITY
+                </span>
+
+                <strong id="modalPriority">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    CREATED
+                </span>
+
+                <strong id="modalCreated">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    LAST UPDATED
+                </span>
+
+                <strong id="modalUpdated">
+                    -
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- AGENT RESPONSE -->
+
+        <div class="section-title">
+            AGENT RESPONSE
+        </div>
+
+
+        <textarea
+            id="agentReply"
+            class="reply-box"
+            placeholder="Write a helpful response to the student..."
+            rows="5"
+        ></textarea>
+
+
+
+        <div
+            id="modalMessage"
+            class="modal-message"
+        ></div>
+
+
+
+        <!-- ACTIONS -->
+
+        <div class="modal-actions">
+
+
+            <button
+                id="setOpenBtn"
+                class="status-btn open-btn"
+                type="button"
+            >
+                🔴 Open
+            </button>
+
+
+            <button
+                id="setProgressBtn"
+                class="status-btn progress-btn"
+                type="button"
+            >
+                🟡 In Progress
+            </button>
+
+
+            <button
+                id="saveReplyBtn"
+                class="reply-btn"
+                type="button"
+            >
+                💬 Save Reply
+            </button>
+
+
+            <button
+                id="setClosedBtn"
+                class="status-btn closed-btn"
+                type="button"
+            >
+                🟢 Mark Solved
+            </button>
+
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<script
+    type="module"
+    src="agent.js"
+></script>
+
+
+</body>
+
+</html>

@@ -1,120 +1,1576 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-import { getDatabase, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
-import { helpFirebaseConfig, AGENT_UIDS } from "./firebase-config.js";
+/* =========================================================
+   APS ROBOTICS CHAMPIONSHIP 2026
+   AGENT HELP CENTER
+   ---------------------------------------------------------
+   IMPORTANT:
+   This file MUST use the Firebase project used by help.js.
+   Database path:
+       /tickets
 
-const app = initializeApp(helpFirebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
+   ONLY THIS UID IS ALLOWED:
+       HgWiHPRx9gcXZtDTl0pDCpZlokt2
+========================================================= */
 
-const TICKETS_PATH = "tickets";
-const allowed = new Set((AGENT_UIDS || []).filter(Boolean));
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+
+import {
+    getDatabase,
+    ref,
+    onValue,
+    update
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+
+import { helpFirebaseConfig, AGENT_UID } from "./firebase-config.js";
+
+
+/* =========================================================
+   HELP FIREBASE CONFIG
+   =========================================================
+
+   ⚠️ PUT THE CONFIG FROM THE FIREBASE PROJECT USED BY help.js
+
+   DO NOT USE YOUR REGISTRATION FIREBASE HERE IF HELP
+   HAS A DIFFERENT FIREBASE PROJECT.
+========================================================= */
+
+
+/* =========================================================
+   FIREBASE INITIALIZATION
+========================================================= */
+
+let app;
+
+let auth;
+
+let db;
+
+try {
+
+    app = initializeApp(helpFirebaseConfig);
+
+    auth = getAuth(app);
+
+    db = getDatabase(app);
+
+} catch (error) {
+
+    console.error(
+        "Firebase initialization error:",
+        error
+    );
+
+}
+
+
+/* =========================================================
+   ONLY AUTHORIZED AGENT
+========================================================= */
+
+const ALLOWED_AGENT_UID = AGENT_UID;
+
+
+/* =========================================================
+   DATA
+========================================================= */
+
 let tickets = {};
-let currentKey = null;
 
-const $ = id => document.getElementById(id);
-const body = $("ticketBody") || $("ticketsBody") || $("registrationBody");
-const status = $("status");
-const search = $("search");
-const filter = $("statusFilter");
-const logout = $("logoutBtn");
+let selectedTicketKey = null;
 
-function setStatus(text, type="") {
-    if (!status) return;
-    status.textContent = text;
-    status.className = `status ${type}`.trim();
+let firebaseUnsubscribe = null;
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const ticketList =
+    document.getElementById(
+        "ticketList"
+    );
+
+const searchInput =
+    document.getElementById(
+        "searchInput"
+    );
+
+const statusFilter =
+    document.getElementById(
+        "statusFilter"
+    );
+
+const refreshBtn =
+    document.getElementById(
+        "refreshBtn"
+    );
+
+const logoutBtn =
+    document.getElementById(
+        "logoutBtn"
+    );
+
+const statusMessage =
+    document.getElementById(
+        "statusMessage"
+    );
+
+
+/* =========================================================
+   STATS
+========================================================= */
+
+const totalTickets =
+    document.getElementById(
+        "totalTickets"
+    );
+
+const openTickets =
+    document.getElementById(
+        "openTickets"
+    );
+
+const progressTickets =
+    document.getElementById(
+        "progressTickets"
+    );
+
+const closedTickets =
+    document.getElementById(
+        "closedTickets"
+    );
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+const ticketOverlay =
+    document.getElementById(
+        "ticketOverlay"
+    );
+
+const closeModal =
+    document.getElementById(
+        "closeModal"
+    );
+
+const modalSubject =
+    document.getElementById(
+        "modalSubject"
+    );
+
+const modalTicketId =
+    document.getElementById(
+        "modalTicketId"
+    );
+
+const modalName =
+    document.getElementById(
+        "modalName"
+    );
+
+const modalRegistrationId =
+    document.getElementById(
+        "modalRegistrationId"
+    );
+
+const modalClass =
+    document.getElementById(
+        "modalClass"
+    );
+
+const modalSection =
+    document.getElementById(
+        "modalSection"
+    );
+
+const modalEmail =
+    document.getElementById(
+        "modalEmail"
+    );
+
+const modalCategory =
+    document.getElementById(
+        "modalCategory"
+    );
+
+const problemSubject =
+    document.getElementById(
+        "problemSubject"
+    );
+
+const problemMessage =
+    document.getElementById(
+        "problemMessage"
+    );
+
+const modalStatus =
+    document.getElementById(
+        "modalStatus"
+    );
+
+const modalPriority =
+    document.getElementById(
+        "modalPriority"
+    );
+
+const modalCreated =
+    document.getElementById(
+        "modalCreated"
+    );
+
+const modalUpdated =
+    document.getElementById(
+        "modalUpdated"
+    );
+
+const agentReply =
+    document.getElementById(
+        "agentReply"
+    );
+
+const modalMessage =
+    document.getElementById(
+        "modalMessage"
+    );
+
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+const setOpenBtn =
+    document.getElementById(
+        "setOpenBtn"
+    );
+
+const setProgressBtn =
+    document.getElementById(
+        "setProgressBtn"
+    );
+
+const saveReplyBtn =
+    document.getElementById(
+        "saveReplyBtn"
+    );
+
+const setClosedBtn =
+    document.getElementById(
+        "setClosedBtn"
+    );
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(value) {
+
+    return String(
+        value ?? ""
+    )
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
 }
 
-function esc(v) {
-    return String(v ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+
+/* =========================================================
+   STATUS MESSAGE
+========================================================= */
+
+function showStatus(
+    message,
+    type = ""
+) {
+
+    if (!statusMessage) {
+        return;
+    }
+
+    statusMessage.textContent =
+        message;
+
+    statusMessage.className =
+        `status-message ${type}`;
+
 }
 
-function val(d, keys, fallback="—") {
-    for (const k of keys) if (d?.[k] !== undefined && d?.[k] !== null && String(d[k]).trim() !== "") return d[k];
-    return fallback;
+
+/* =========================================================
+   DATE FORMAT
+========================================================= */
+
+function formatDate(value) {
+
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+
+        return "-";
+
+    }
+
+
+    let date;
+
+
+    if (
+        typeof value === "number"
+    ) {
+
+        date =
+            new Date(value);
+
+    }
+
+    else if (
+        typeof value === "object" &&
+        value.seconds
+    ) {
+
+        date =
+            new Date(
+                value.seconds * 1000
+            );
+
+    }
+
+    else {
+
+        date =
+            new Date(value);
+
+    }
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return String(value);
+
+    }
+
+
+    return date.toLocaleString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        }
+    );
+
 }
 
-function ticketId(d,k) { return val(d, ["ticketId","ticketID","id"], k); }
-function name(d) { return val(d, ["name","studentName","student","fullName"], "—"); }
-function email(d) { return val(d, ["email","emailAddress"], "—"); }
-function phone(d) { return val(d, ["mobile","mobileNumber","phone","phoneNumber"], "—"); }
-function issue(d) { return val(d, ["issue","message","description","query","problem"], "—"); }
-function ticketStatus(d) { return String(val(d, ["status"], "open")).toLowerCase(); }
 
-function render() {
-    if (!body) return;
-    const q = search?.value.trim().toLowerCase() || "";
-    const sf = filter?.value || "all";
-    const entries = Object.entries(tickets).filter(([k,d]) => {
-        const hay = [k,ticketId(d,k),name(d),email(d),phone(d),issue(d),ticketStatus(d)].join(" ").toLowerCase();
-        return (!q || hay.includes(q)) && (sf === "all" || ticketStatus(d) === sf);
-    }).reverse();
+/* =========================================================
+   GET STATUS
+========================================================= */
+
+function getTicketStatus(ticket) {
+
+    return (
+        ticket?.status ||
+        "Open"
+    );
+
+}
+
+
+/* =========================================================
+   GET PRIORITY
+========================================================= */
+
+function getPriority(ticket) {
+
+    return (
+        ticket?.priority ||
+        "Normal"
+    );
+
+}
+
+
+/* =========================================================
+   SEARCH MATCH
+========================================================= */
+
+function matchesSearch(
+    key,
+    ticket
+) {
+
+    const query =
+        searchInput?.value
+            ?.trim()
+            .toLowerCase() || "";
+
+
+    if (!query) {
+        return true;
+    }
+
+
+    const searchable = [
+
+        key,
+
+        ticket.ticketId,
+
+        ticket.registrationId,
+
+        ticket.name,
+
+        ticket.className,
+
+        ticket.section,
+
+        ticket.email,
+
+        ticket.category,
+
+        ticket.subject,
+
+        ticket.message,
+
+        ticket.status,
+
+        ticket.agentReply
+
+    ]
+        .filter(
+            value =>
+                value !== null &&
+                value !== undefined
+        )
+        .join(" ")
+        .toLowerCase();
+
+
+    return searchable.includes(
+        query
+    );
+
+}
+
+
+/* =========================================================
+   FILTER
+========================================================= */
+
+function matchesFilter(
+    ticket
+) {
+
+    const selected =
+        statusFilter?.value || "All";
+
+
+    if (
+        selected === "All"
+    ) {
+
+        return true;
+
+    }
+
+
+    return (
+        getTicketStatus(ticket)
+        === selected
+    );
+
+}
+
+
+/* =========================================================
+   UPDATE STATS
+========================================================= */
+
+function updateStats() {
+
+    const list =
+        Object.values(
+            tickets
+        );
+
+
+    const total =
+        list.length;
+
+
+    const open =
+        list.filter(
+            ticket =>
+                getTicketStatus(ticket)
+                === "Open"
+        ).length;
+
+
+    const progress =
+        list.filter(
+            ticket =>
+                getTicketStatus(ticket)
+                === "In Progress"
+        ).length;
+
+
+    const closed =
+        list.filter(
+            ticket =>
+                getTicketStatus(ticket)
+                === "Closed"
+        ).length;
+
+
+    if (totalTickets) {
+
+        totalTickets.textContent =
+            total;
+
+    }
+
+
+    if (openTickets) {
+
+        openTickets.textContent =
+            open;
+
+    }
+
+
+    if (progressTickets) {
+
+        progressTickets.textContent =
+            progress;
+
+    }
+
+
+    if (closedTickets) {
+
+        closedTickets.textContent =
+            closed;
+
+    }
+
+}
+
+
+/* =========================================================
+   RENDER TICKETS
+========================================================= */
+
+function renderTickets() {
+
+    if (!ticketList) {
+        return;
+    }
+
+
+    updateStats();
+
+
+    const entries =
+        Object.entries(
+            tickets
+        )
+        .filter(
+            ([key, ticket]) =>
+                matchesSearch(
+                    key,
+                    ticket
+                )
+                &&
+                matchesFilter(
+                    ticket
+                )
+        )
+        .sort(
+            ([, a], [, b]) => {
+
+                const dateA =
+                    Number(
+                        a.updatedAt ||
+                        a.createdAt ||
+                        0
+                    );
+
+                const dateB =
+                    Number(
+                        b.updatedAt ||
+                        b.createdAt ||
+                        0
+                    );
+
+                return dateB - dateA;
+
+            }
+        );
+
 
     if (!entries.length) {
-        body.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:35px">No support tickets found.</td></tr>`;
+
+        ticketList.innerHTML = `
+
+            <div class="empty-state">
+
+                <div>
+                    🎫
+                </div>
+
+                <h3>
+                    No tickets found
+                </h3>
+
+                <p>
+                    There are no support requests
+                    matching your search.
+                </p>
+
+            </div>
+
+        `;
+
         return;
+
     }
 
-    body.innerHTML = entries.map(([k,d]) => `
-        <tr>
-            <td><strong>${esc(ticketId(d,k))}</strong></td>
-            <td>${esc(name(d))}</td>
-            <td>${esc(email(d))}</td>
-            <td>${esc(issue(d))}</td>
-            <td><span class="status-badge ${esc(ticketStatus(d))}">${esc(ticketStatus(d))}</span></td>
-            <td>${esc(d.createdAt || d.timestamp || "—")}</td>
-            <td>
-                <button data-action="view" data-key="${esc(k)}">View</button>
-                <button data-action="resolve" data-key="${esc(k)}">Resolve</button>
-                <button data-action="delete" data-key="${esc(k)}">Delete</button>
-            </td>
-        </tr>`).join("");
 
-    body.querySelectorAll("button[data-key]").forEach(btn => btn.addEventListener("click", () => action(btn.dataset.action, btn.dataset.key)));
+    ticketList.innerHTML =
+        entries
+            .map(
+                ([key, ticket]) => {
+
+                    const status =
+                        getTicketStatus(
+                            ticket
+                        );
+
+
+                    const priority =
+                        getPriority(
+                            ticket
+                        );
+
+
+                    const statusClass =
+                        status
+                            .toLowerCase()
+                            .replace(
+                                /\s+/g,
+                                "-"
+                            );
+
+
+                    return `
+
+                        <button
+                            type="button"
+                            class="ticket-card"
+                            data-key="${escapeHTML(key)}"
+                        >
+
+                            <div class="ticket-card-top">
+
+                                <span class="ticket-number">
+
+                                    #${escapeHTML(
+                                        ticket.ticketId ||
+                                        key
+                                    )}
+
+                                </span>
+
+
+                                <span
+                                    class="ticket-status ${escapeHTML(
+                                        statusClass
+                                    )}"
+                                >
+
+                                    ${escapeHTML(
+                                        status
+                                    )}
+
+                                </span>
+
+                            </div>
+
+
+                            <h3>
+
+                                ${escapeHTML(
+                                    ticket.subject ||
+                                    "No subject"
+                                )}
+
+                            </h3>
+
+
+                            <p class="ticket-preview">
+
+                                ${escapeHTML(
+                                    ticket.message ||
+                                    "No message"
+                                )}
+
+                            </p>
+
+
+                            <div class="ticket-card-info">
+
+                                <span>
+
+                                    👤
+                                    ${escapeHTML(
+                                        ticket.name ||
+                                        "-"
+                                    )}
+
+                                </span>
+
+
+                                <span>
+
+                                    ✉
+                                    ${escapeHTML(
+                                        ticket.email ||
+                                        "-"
+                                    )}
+
+                                </span>
+
+
+                                <span>
+
+                                    🏷
+                                    ${escapeHTML(
+                                        ticket.category ||
+                                        "General"
+                                    )}
+
+                                </span>
+
+
+                                <span>
+
+                                    ⚡
+                                    ${escapeHTML(
+                                        priority
+                                    )}
+
+                                </span>
+
+                            </div>
+
+
+                            <div class="ticket-card-bottom">
+
+                                <span>
+
+                                    ${
+                                        ticket.registrationId
+                                            ? `Registration:
+                                               ${escapeHTML(
+                                                   ticket.registrationId
+                                               )}`
+                                            : "No Registration ID"
+                                    }
+
+                                </span>
+
+
+                                <span>
+
+                                    ${escapeHTML(
+                                        formatDate(
+                                            ticket.updatedAt ||
+                                            ticket.createdAt
+                                        )
+                                    )}
+
+                                </span>
+
+                            </div>
+
+                        </button>
+
+                    `;
+
+                }
+            )
+            .join("");
+
+
+    ticketList
+        .querySelectorAll(
+            ".ticket-card"
+        )
+        .forEach(
+            card => {
+
+                card.addEventListener(
+                    "click",
+                    () => {
+
+                        openTicket(
+                            card.dataset.key
+                        );
+
+                    }
+                );
+
+            }
+        );
+
 }
 
-function action(type, key) {
-    const d = tickets[key];
-    if (!d) return;
-    currentKey = key;
-    if (type === "view") {
-        const panel = $("detailContent");
-        if (panel) panel.innerHTML = `
-            <h3>${esc(ticketId(d,key))}</h3>
-            <p><b>Name:</b> ${esc(name(d))}</p>
-            <p><b>Email:</b> ${esc(email(d))}</p>
-            <p><b>Phone:</b> ${esc(phone(d))}</p>
-            <p><b>Issue:</b> ${esc(issue(d))}</p>
-            <p><b>Status:</b> ${esc(ticketStatus(d))}</p>`;
-        $("detailOverlay")?.classList.remove("hidden");
-    } else if (type === "resolve") {
-        update(ref(db, `${TICKETS_PATH}/${key}`), { status: "resolved", resolvedAt: new Date().toISOString(), resolvedBy: auth.currentUser?.uid || "" })
-            .then(() => setStatus("Ticket resolved.", "success")).catch(e => { console.error(e); setStatus("Could not resolve ticket.", "error"); });
-    } else if (type === "delete") {
-        if (confirm(`Delete ticket ${ticketId(d,key)} permanently?`))
-            remove(ref(db, `${TICKETS_PATH}/${key}`)).then(() => setStatus("Ticket deleted.", "success")).catch(e => { console.error(e); setStatus("Delete denied by Firebase rules.", "error"); });
+
+/* =========================================================
+   OPEN TICKET
+========================================================= */
+
+function openTicket(key) {
+
+    const ticket =
+        tickets[key];
+
+
+    if (!ticket) {
+
+        showStatus(
+            "Ticket could not be found.",
+            "error"
+        );
+
+        return;
+
     }
+
+
+    selectedTicketKey =
+        key;
+
+
+    if (modalSubject) {
+
+        modalSubject.textContent =
+            ticket.subject ||
+            "Support Ticket";
+
+    }
+
+
+    if (modalTicketId) {
+
+        modalTicketId.textContent =
+            ticket.ticketId ||
+            key;
+
+    }
+
+
+    if (modalName) {
+
+        modalName.textContent =
+            ticket.name ||
+            "-";
+
+    }
+
+
+    if (modalRegistrationId) {
+
+        modalRegistrationId.textContent =
+            ticket.registrationId ||
+            "-";
+
+    }
+
+
+    if (modalClass) {
+
+        modalClass.textContent =
+            ticket.className ||
+            "-";
+
+    }
+
+
+    if (modalSection) {
+
+        modalSection.textContent =
+            ticket.section ||
+            "-";
+
+    }
+
+
+    if (modalEmail) {
+
+        modalEmail.textContent =
+            ticket.email ||
+            "-";
+
+    }
+
+
+    if (modalCategory) {
+
+        modalCategory.textContent =
+            ticket.category ||
+            "General";
+
+    }
+
+    const modalRecipient = document.getElementById("modalRecipient");
+    if (modalRecipient) {
+        modalRecipient.textContent = ticket.messageRecipient || "General Help";
+    }
+
+
+    if (problemSubject) {
+
+        problemSubject.textContent =
+            ticket.subject ||
+            "-";
+
+    }
+
+
+    if (problemMessage) {
+
+        problemMessage.textContent =
+            ticket.message ||
+            "No message provided.";
+
+    }
+
+
+    if (modalStatus) {
+
+        modalStatus.textContent =
+            getTicketStatus(
+                ticket
+            );
+
+    }
+
+
+    if (modalPriority) {
+
+        modalPriority.textContent =
+            getPriority(
+                ticket
+            );
+
+    }
+
+
+    if (modalCreated) {
+
+        modalCreated.textContent =
+            formatDate(
+                ticket.createdAt
+            );
+
+    }
+
+
+    if (modalUpdated) {
+
+        modalUpdated.textContent =
+            formatDate(
+                ticket.updatedAt
+            );
+
+    }
+
+
+    if (agentReply) {
+
+        agentReply.value =
+            ticket.agentReply ||
+            "";
+
+    }
+
+
+    if (modalMessage) {
+
+        modalMessage.textContent =
+            "";
+
+    }
+
+
+    ticketOverlay
+        ?.classList
+        .remove("hidden");
+
 }
 
-$("closeDetail")?.addEventListener("click", () => $("detailOverlay")?.classList.add("hidden"));
-search?.addEventListener("input", render);
-filter?.addEventListener("change", render);
-logout?.addEventListener("click", async () => { await signOut(auth); window.location.replace("login-agent.html"); });
 
-onAuthStateChanged(auth, user => {
-    if (!user || (allowed.size && !allowed.has(user.uid))) {
-        signOut(auth).finally(() => window.location.replace("login-agent.html"));
-        return;
+/* =========================================================
+   CLOSE MODAL
+========================================================= */
+
+function closeTicketModal() {
+
+    ticketOverlay
+        ?.classList
+        .add("hidden");
+
+    selectedTicketKey =
+        null;
+
+}
+
+
+closeModal?.addEventListener(
+    "click",
+    closeTicketModal
+);
+
+
+ticketOverlay?.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target ===
+            ticketOverlay
+        ) {
+
+            closeTicketModal();
+
+        }
+
     }
-    $("agentName") && ($("agentName").textContent = user.displayName || user.email?.split("@")[0] || "Agent");
-    $("agentEmail") && ($("agentEmail").textContent = user.email || "");
-    setStatus(`Agent authenticated: ${user.email || user.uid}`, "success");
+);
 
-    onValue(ref(db, TICKETS_PATH), snap => {
-        tickets = snap.val() || {};
-        render();
-        $("totalTickets") && ($("totalTickets").textContent = Object.keys(tickets).length);
-        $("openTickets") && ($("openTickets").textContent = Object.values(tickets).filter(t => ticketStatus(t) === "open").length);
-        $("resolvedTickets") && ($("resolvedTickets").textContent = Object.values(tickets).filter(t => ticketStatus(t) === "resolved").length);
-    }, err => { console.error(err); setStatus("Could not load tickets. Check Firebase rules.", "error"); });
-});
+
+/* =========================================================
+   UPDATE TICKET
+========================================================= */
+
+async function updateTicket(
+    changes,
+    successMessage
+) {
+
+    if (!selectedTicketKey) {
+
+        return;
+
+    }
+
+
+    const ticket =
+        tickets[
+            selectedTicketKey
+        ];
+
+
+    if (!ticket) {
+
+        return;
+
+    }
+
+
+    try {
+
+        if (modalMessage) {
+
+            modalMessage.textContent =
+                "Saving...";
+
+        }
+
+
+        await update(
+
+            ref(
+                db,
+                `tickets/${selectedTicketKey}`
+            ),
+
+            {
+
+                ...changes,
+
+                updatedAt:
+                    Date.now(),
+
+                updatedBy:
+                    auth.currentUser?.uid ||
+                    ALLOWED_AGENT_UID
+
+            }
+
+        );
+
+
+        if (modalMessage) {
+
+            modalMessage.textContent =
+                successMessage;
+
+        }
+
+
+        showStatus(
+            successMessage,
+            "success"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Ticket update error:",
+            error
+        );
+
+
+        if (modalMessage) {
+
+            modalMessage.textContent =
+                "Unable to save changes.";
+
+        }
+
+
+        showStatus(
+
+            "Unable to update ticket. Check Firebase Database Rules.",
+
+            "error"
+
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   SAVE AGENT REPLY
+========================================================= */
+
+saveReplyBtn?.addEventListener(
+    "click",
+    async () => {
+
+        if (!selectedTicketKey) {
+
+            return;
+
+        }
+
+
+        const reply =
+            agentReply?.value
+                ?.trim() || "";
+
+
+        if (!reply) {
+
+            if (modalMessage) {
+
+                modalMessage.textContent =
+                    "Please write a reply first.";
+
+            }
+
+            return;
+
+        }
+
+
+        await updateTicket(
+
+            {
+
+                agentReply:
+                    reply
+
+            },
+
+            "✓ Agent reply saved."
+
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SET OPEN
+========================================================= */
+
+setOpenBtn?.addEventListener(
+    "click",
+    async () => {
+
+        await updateTicket(
+
+            {
+
+                status:
+                    "Open"
+
+            },
+
+            "✓ Ticket marked Open."
+
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SET IN PROGRESS
+========================================================= */
+
+setProgressBtn?.addEventListener(
+    "click",
+    async () => {
+
+        await updateTicket(
+
+            {
+
+                status:
+                    "In Progress"
+
+            },
+
+            "✓ Ticket marked In Progress."
+
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SET CLOSED
+========================================================= */
+
+setClosedBtn?.addEventListener(
+    "click",
+    async () => {
+
+        await updateTicket(
+
+            {
+
+                status:
+                    "Closed",
+
+                resolvedAt:
+                    Date.now(),
+
+                resolvedBy:
+                    auth.currentUser?.uid ||
+                    ALLOWED_AGENT_UID
+
+            },
+
+            "✓ Ticket marked as solved."
+
+        );
+
+    }
+);
+
+
+/* =========================================================
+   LOAD TICKETS
+========================================================= */
+
+function loadTickets() {
+
+    if (!db) {
+
+        showStatus(
+            "Firebase is not initialized.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    showStatus(
+        "Connecting to support database..."
+    );
+
+
+    const ticketsRef =
+        ref(
+            db,
+            "tickets"
+        );
+
+
+    if (firebaseUnsubscribe) {
+
+        firebaseUnsubscribe();
+
+    }
+
+
+    firebaseUnsubscribe =
+        onValue(
+
+            ticketsRef,
+
+            snapshot => {
+
+                tickets =
+                    snapshot.val() || {};
+
+
+                renderTickets();
+
+
+                showStatus(
+
+                    `${Object.keys(
+                        tickets
+                    ).length} support ticket(s) loaded.`,
+
+                    "success"
+
+                );
+
+            },
+
+            error => {
+
+                console.error(
+                    "TICKETS READ ERROR:",
+                    error
+                );
+
+
+                showStatus(
+
+                    "Unable to load support tickets. Check the Help Firebase Database Rules.",
+
+                    "error"
+
+                );
+
+            }
+
+        );
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+searchInput?.addEventListener(
+    "input",
+    renderTickets
+);
+
+
+/* =========================================================
+   FILTER
+========================================================= */
+
+statusFilter?.addEventListener(
+    "change",
+    renderTickets
+);
+
+
+/* =========================================================
+   REFRESH
+========================================================= */
+
+refreshBtn?.addEventListener(
+    "click",
+    () => {
+
+        renderTickets();
+
+        showStatus(
+            "Tickets refreshed.",
+            "success"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+logoutBtn?.addEventListener(
+    "click",
+    async () => {
+
+        try {
+
+            await signOut(
+                auth
+            );
+
+
+            window.location.replace(
+                "agent-login.html"
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Logout error:",
+                error
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   AUTHORIZATION
+========================================================= */
+
+onAuthStateChanged(
+
+    auth,
+
+    user => {
+
+        /* -----------------------------------------------
+           NOT LOGGED IN
+        ----------------------------------------------- */
+
+        if (!user) {
+
+            window.location.replace(
+                "agent-login.html"
+            );
+
+            return;
+
+        }
+
+
+        /* -----------------------------------------------
+           ONLY ONE AGENT
+        ----------------------------------------------- */
+
+        if (
+            user.uid !==
+            ALLOWED_AGENT_UID
+        ) {
+
+            console.error(
+                "Unauthorized UID:",
+                user.uid
+            );
+
+
+            alert(
+                "Access denied. You are not an authorized support agent."
+            );
+
+
+            signOut(
+                auth
+            )
+            .finally(
+                () => {
+
+                    window.location.replace(
+                        "agent-login.html"
+                    );
+
+                }
+            );
+
+
+            return;
+
+        }
+
+
+        /* -----------------------------------------------
+           AUTHORIZED
+        ----------------------------------------------- */
+
+        console.log(
+            "Authorized support agent:",
+            user.uid
+        );
+
+
+        showStatus(
+            `Agent authenticated: ${
+                user.email ||
+                "Authorized Agent"
+            }`,
+            "success"
+        );
+
+
+        loadTickets();
+
+    }
+
+);
+
+
+/* =========================================================
+   ESC KEY
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            closeTicketModal();
+
+        }
+
+    }
+);
