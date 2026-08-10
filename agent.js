@@ -2,13 +2,14 @@
    APS ROBOTICS CHAMPIONSHIP 2026
    AGENT HELP CENTER
    ---------------------------------------------------------
-   IMPORTANT:
-   This file MUST use the Firebase project used by help.js.
-   Database path:
+   Firebase Database:
        /tickets
 
-   ONLY THIS UID IS ALLOWED:
+   AUTHORIZED AGENT:
        HgWiHPRx9gcXZtDTl0pDCpZlokt2
+
+   IMPORTANT:
+   This file uses the SAME Firebase project as help.js.
 ========================================================= */
 
 import {
@@ -28,28 +29,18 @@ import {
     update
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
-import { helpFirebaseConfig, AGENT_UID } from "./firebase-config.js";
+import {
+    helpFirebaseConfig,
+    AGENT_UID
+} from "./firebase-config.js";
 
 
 /* =========================================================
-   HELP FIREBASE CONFIG
-   =========================================================
-
-   ⚠️ PUT THE CONFIG FROM THE FIREBASE PROJECT USED BY help.js
-
-   DO NOT USE YOUR REGISTRATION FIREBASE HERE IF HELP
-   HAS A DIFFERENT FIREBASE PROJECT.
-========================================================= */
-
-
-/* =========================================================
-   FIREBASE INITIALIZATION
+   FIREBASE
 ========================================================= */
 
 let app;
-
 let auth;
-
 let db;
 
 try {
@@ -71,10 +62,19 @@ try {
 
 
 /* =========================================================
-   ONLY AUTHORIZED AGENT
+   AUTHORIZED AGENT
 ========================================================= */
 
-const ALLOWED_AGENT_UID = AGENT_UID;
+const ALLOWED_AGENT_UID =
+    AGENT_UID ||
+    "HgWiHPRx9gcXZtDTl0pDCpZlokt2";
+
+
+/* =========================================================
+   DATABASE
+========================================================= */
+
+const TICKETS_PATH = "tickets";
 
 
 /* =========================================================
@@ -82,9 +82,7 @@ const ALLOWED_AGENT_UID = AGENT_UID;
 ========================================================= */
 
 let tickets = {};
-
 let selectedTicketKey = null;
-
 let firebaseUnsubscribe = null;
 
 
@@ -93,34 +91,22 @@ let firebaseUnsubscribe = null;
 ========================================================= */
 
 const ticketList =
-    document.getElementById(
-        "ticketList"
-    );
+    document.getElementById("ticketList");
 
 const searchInput =
-    document.getElementById(
-        "searchInput"
-    );
+    document.getElementById("searchInput");
 
 const statusFilter =
-    document.getElementById(
-        "statusFilter"
-    );
+    document.getElementById("statusFilter");
 
 const refreshBtn =
-    document.getElementById(
-        "refreshBtn"
-    );
+    document.getElementById("refreshBtn");
 
 const logoutBtn =
-    document.getElementById(
-        "logoutBtn"
-    );
+    document.getElementById("logoutBtn");
 
 const statusMessage =
-    document.getElementById(
-        "statusMessage"
-    );
+    document.getElementById("statusMessage");
 
 
 /* =========================================================
@@ -128,24 +114,16 @@ const statusMessage =
 ========================================================= */
 
 const totalTickets =
-    document.getElementById(
-        "totalTickets"
-    );
+    document.getElementById("totalTickets");
 
 const openTickets =
-    document.getElementById(
-        "openTickets"
-    );
+    document.getElementById("openTickets");
 
 const progressTickets =
-    document.getElementById(
-        "progressTickets"
-    );
+    document.getElementById("progressTickets");
 
 const closedTickets =
-    document.getElementById(
-        "closedTickets"
-    );
+    document.getElementById("closedTickets");
 
 
 /* =========================================================
@@ -153,94 +131,58 @@ const closedTickets =
 ========================================================= */
 
 const ticketOverlay =
-    document.getElementById(
-        "ticketOverlay"
-    );
+    document.getElementById("ticketOverlay");
 
 const closeModal =
-    document.getElementById(
-        "closeModal"
-    );
+    document.getElementById("closeModal");
 
 const modalSubject =
-    document.getElementById(
-        "modalSubject"
-    );
+    document.getElementById("modalSubject");
 
 const modalTicketId =
-    document.getElementById(
-        "modalTicketId"
-    );
+    document.getElementById("modalTicketId");
 
 const modalName =
-    document.getElementById(
-        "modalName"
-    );
+    document.getElementById("modalName");
 
 const modalRegistrationId =
-    document.getElementById(
-        "modalRegistrationId"
-    );
+    document.getElementById("modalRegistrationId");
 
 const modalClass =
-    document.getElementById(
-        "modalClass"
-    );
+    document.getElementById("modalClass");
 
 const modalSection =
-    document.getElementById(
-        "modalSection"
-    );
+    document.getElementById("modalSection");
 
 const modalEmail =
-    document.getElementById(
-        "modalEmail"
-    );
+    document.getElementById("modalEmail");
 
 const modalCategory =
-    document.getElementById(
-        "modalCategory"
-    );
+    document.getElementById("modalCategory");
 
 const problemSubject =
-    document.getElementById(
-        "problemSubject"
-    );
+    document.getElementById("problemSubject");
 
 const problemMessage =
-    document.getElementById(
-        "problemMessage"
-    );
+    document.getElementById("problemMessage");
 
 const modalStatus =
-    document.getElementById(
-        "modalStatus"
-    );
+    document.getElementById("modalStatus");
 
 const modalPriority =
-    document.getElementById(
-        "modalPriority"
-    );
+    document.getElementById("modalPriority");
 
 const modalCreated =
-    document.getElementById(
-        "modalCreated"
-    );
+    document.getElementById("modalCreated");
 
 const modalUpdated =
-    document.getElementById(
-        "modalUpdated"
-    );
+    document.getElementById("modalUpdated");
 
 const agentReply =
-    document.getElementById(
-        "agentReply"
-    );
+    document.getElementById("agentReply");
 
 const modalMessage =
-    document.getElementById(
-        "modalMessage"
-    );
+    document.getElementById("modalMessage");
 
 
 /* =========================================================
@@ -248,24 +190,16 @@ const modalMessage =
 ========================================================= */
 
 const setOpenBtn =
-    document.getElementById(
-        "setOpenBtn"
-    );
+    document.getElementById("setOpenBtn");
 
 const setProgressBtn =
-    document.getElementById(
-        "setProgressBtn"
-    );
+    document.getElementById("setProgressBtn");
 
 const saveReplyBtn =
-    document.getElementById(
-        "saveReplyBtn"
-    );
+    document.getElementById("saveReplyBtn");
 
 const setClosedBtn =
-    document.getElementById(
-        "setClosedBtn"
-    );
+    document.getElementById("setClosedBtn");
 
 
 /* =========================================================
@@ -274,14 +208,340 @@ const setClosedBtn =
 
 function escapeHTML(value) {
 
-    return String(
-        value ?? ""
-    )
+    return String(value ?? "")
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
+
+}
+
+
+/* =========================================================
+   GENERIC VALUE HELPER
+========================================================= */
+
+function firstValue(
+    object,
+    fields,
+    fallback = ""
+) {
+
+    if (!object) {
+        return fallback;
+    }
+
+    for (const field of fields) {
+
+        const value =
+            object[field];
+
+        if (
+            value !== undefined &&
+            value !== null &&
+            String(value).trim() !== ""
+        ) {
+
+            return value;
+
+        }
+
+    }
+
+    return fallback;
+
+}
+
+
+/* =========================================================
+   🔥 IMPORTANT:
+   GET REGISTRATION REFERENCE ID
+=========================================================
+
+   Different versions of help.js may save the ID using
+   different field names.
+
+   This function supports all of them.
+========================================================= */
+
+function getRegistrationReference(ticket) {
+
+    return firstValue(
+        ticket,
+        [
+
+            /* Current/common */
+            "registrationId",
+
+            /* Capitalization variants */
+            "registrationID",
+            "RegistrationId",
+            "RegistrationID",
+
+            /* Short variants */
+            "regId",
+            "regID",
+            "registrationRef",
+            "registrationReference",
+
+            /* Reference-ID variants */
+            "referenceId",
+            "referenceID",
+            "referenceId",
+
+            /* Ticket form variants */
+            "registrationReferenceId",
+            "registrationReferenceID",
+
+            /* Possible form field names */
+            "registrationNumber",
+            "registrationNo",
+            "registration",
+
+            /* Legacy */
+            "regNumber",
+            "regNo"
+
+        ],
+        ""
+    );
+
+}
+
+
+/* =========================================================
+   GET TICKET ID
+========================================================= */
+
+function getTicketId(
+    ticket,
+    key
+) {
+
+    return firstValue(
+        ticket,
+        [
+            "ticketId",
+            "ticketID",
+            "TicketId",
+            "TicketID",
+            "id"
+        ],
+        key
+    );
+
+}
+
+
+/* =========================================================
+   GET NAME
+========================================================= */
+
+function getName(ticket) {
+
+    return firstValue(
+        ticket,
+        [
+            "name",
+            "studentName",
+            "student",
+            "leaderName",
+            "participantName",
+            "fullName"
+        ],
+        "-"
+    );
+
+}
+
+
+/* =========================================================
+   GET CLASS
+========================================================= */
+
+function getClassName(ticket) {
+
+    return firstValue(
+        ticket,
+        [
+            "className",
+            "studentClass",
+            "class",
+            "Class"
+        ],
+        "-"
+    );
+
+}
+
+
+/* =========================================================
+   GET SECTION
+========================================================= */
+
+function getSection(ticket) {
+
+    return firstValue(
+        ticket,
+        [
+            "section",
+            "studentSection",
+            "Section"
+        ],
+        "-"
+    );
+
+}
+
+
+/* =========================================================
+   GET EMAIL
+========================================================= */
+
+function getEmail(ticket) {
+
+    return firstValue(
+        ticket,
+        [
+            "email",
+            "emailAddress",
+            "Email",
+            "EmailAddress"
+        ],
+        "-"
+    );
+
+}
+
+
+/* =========================================================
+   GET CATEGORY
+========================================================= */
+
+function getCategory(ticket) {
+
+    return firstValue(
+        ticket,
+        [
+            "category",
+            "issueCategory",
+            "type"
+        ],
+        "General"
+    );
+
+}
+
+
+/* =========================================================
+   GET SUBJECT
+========================================================= */
+
+function getSubject(ticket) {
+
+    return firstValue(
+        ticket,
+        [
+            "subject",
+            "title",
+            "problemSubject"
+        ],
+        "Support Ticket"
+    );
+
+}
+
+
+/* =========================================================
+   GET MESSAGE
+========================================================= */
+
+function getMessage(ticket) {
+
+    return firstValue(
+        ticket,
+        [
+            "message",
+            "problemMessage",
+            "description",
+            "issue",
+            "details"
+        ],
+        "No message provided."
+    );
+
+}
+
+
+/* =========================================================
+   GET STATUS
+========================================================= */
+
+function getTicketStatus(ticket) {
+
+    return firstValue(
+        ticket,
+        [
+            "status",
+            "ticketStatus"
+        ],
+        "Open"
+    );
+
+}
+
+
+/* =========================================================
+   GET PRIORITY
+========================================================= */
+
+function getPriority(ticket) {
+
+    return firstValue(
+        ticket,
+        [
+            "priority",
+            "ticketPriority"
+        ],
+        "Normal"
+    );
+
+}
+
+
+/* =========================================================
+   GET TIMESTAMP
+========================================================= */
+
+function getCreatedAt(ticket) {
+
+    return firstValue(
+        ticket,
+        [
+            "createdAt",
+            "created_at",
+            "timestamp",
+            "submittedAt",
+            "date"
+        ],
+        ""
+    );
+
+}
+
+
+function getUpdatedAt(ticket) {
+
+    return firstValue(
+        ticket,
+        [
+            "updatedAt",
+            "updated_at",
+            "lastUpdated"
+        ],
+        getCreatedAt(ticket)
+    );
 
 }
 
@@ -324,16 +584,11 @@ function formatDate(value) {
 
     }
 
-
     let date;
 
+    if (typeof value === "number") {
 
-    if (
-        typeof value === "number"
-    ) {
-
-        date =
-            new Date(value);
+        date = new Date(value);
 
     }
 
@@ -356,7 +611,6 @@ function formatDate(value) {
 
     }
 
-
     if (
         Number.isNaN(
             date.getTime()
@@ -366,7 +620,6 @@ function formatDate(value) {
         return String(value);
 
     }
-
 
     return date.toLocaleString(
         "en-IN",
@@ -383,35 +636,7 @@ function formatDate(value) {
 
 
 /* =========================================================
-   GET STATUS
-========================================================= */
-
-function getTicketStatus(ticket) {
-
-    return (
-        ticket?.status ||
-        "Open"
-    );
-
-}
-
-
-/* =========================================================
-   GET PRIORITY
-========================================================= */
-
-function getPriority(ticket) {
-
-    return (
-        ticket?.priority ||
-        "Normal"
-    );
-
-}
-
-
-/* =========================================================
-   SEARCH MATCH
+   SEARCH
 ========================================================= */
 
 function matchesSearch(
@@ -424,37 +649,45 @@ function matchesSearch(
             ?.trim()
             .toLowerCase() || "";
 
-
     if (!query) {
         return true;
     }
 
+    const registrationReference =
+        getRegistrationReference(
+            ticket
+        );
 
     const searchable = [
 
         key,
 
-        ticket.ticketId,
+        getTicketId(
+            ticket,
+            key
+        ),
 
-        ticket.registrationId,
+        registrationReference,
 
-        ticket.name,
+        getName(ticket),
 
-        ticket.className,
+        getClassName(ticket),
 
-        ticket.section,
+        getSection(ticket),
 
-        ticket.email,
+        getEmail(ticket),
 
-        ticket.category,
+        getCategory(ticket),
 
-        ticket.subject,
+        getSubject(ticket),
 
-        ticket.message,
+        getMessage(ticket),
 
-        ticket.status,
+        getTicketStatus(ticket),
 
-        ticket.agentReply
+        getPriority(ticket),
+
+        ticket.agentReply || ""
 
     ]
         .filter(
@@ -464,7 +697,6 @@ function matchesSearch(
         )
         .join(" ")
         .toLowerCase();
-
 
     return searchable.includes(
         query
@@ -477,13 +709,11 @@ function matchesSearch(
    FILTER
 ========================================================= */
 
-function matchesFilter(
-    ticket
-) {
+function matchesFilter(ticket) {
 
     const selected =
-        statusFilter?.value || "All";
-
+        statusFilter?.value ||
+        "All";
 
     if (
         selected === "All"
@@ -492,7 +722,6 @@ function matchesFilter(
         return true;
 
     }
-
 
     return (
         getTicketStatus(ticket)
@@ -513,10 +742,8 @@ function updateStats() {
             tickets
         );
 
-
     const total =
         list.length;
-
 
     const open =
         list.filter(
@@ -525,14 +752,12 @@ function updateStats() {
                 === "Open"
         ).length;
 
-
     const progress =
         list.filter(
             ticket =>
                 getTicketStatus(ticket)
                 === "In Progress"
         ).length;
-
 
     const closed =
         list.filter(
@@ -541,14 +766,12 @@ function updateStats() {
                 === "Closed"
         ).length;
 
-
     if (totalTickets) {
 
         totalTickets.textContent =
             total;
 
     }
-
 
     if (openTickets) {
 
@@ -557,14 +780,12 @@ function updateStats() {
 
     }
 
-
     if (progressTickets) {
 
         progressTickets.textContent =
             progress;
 
     }
-
 
     if (closedTickets) {
 
@@ -586,9 +807,7 @@ function renderTickets() {
         return;
     }
 
-
     updateStats();
-
 
     const entries =
         Object.entries(
@@ -596,29 +815,33 @@ function renderTickets() {
         )
         .filter(
             ([key, ticket]) =>
+
                 matchesSearch(
                     key,
                     ticket
                 )
+
                 &&
+
                 matchesFilter(
                     ticket
                 )
+
         )
         .sort(
             ([, a], [, b]) => {
 
                 const dateA =
                     Number(
-                        a.updatedAt ||
-                        a.createdAt ||
+                        getUpdatedAt(a) ||
+                        getCreatedAt(a) ||
                         0
                     );
 
                 const dateB =
                     Number(
-                        b.updatedAt ||
-                        b.createdAt ||
+                        getUpdatedAt(b) ||
+                        getCreatedAt(b) ||
                         0
                     );
 
@@ -634,9 +857,7 @@ function renderTickets() {
 
             <div class="empty-state">
 
-                <div>
-                    🎫
-                </div>
+                <div>🎫</div>
 
                 <h3>
                     No tickets found
@@ -666,12 +887,21 @@ function renderTickets() {
                             ticket
                         );
 
-
                     const priority =
                         getPriority(
                             ticket
                         );
 
+                    const ticketId =
+                        getTicketId(
+                            ticket,
+                            key
+                        );
+
+                    const registrationReference =
+                        getRegistrationReference(
+                            ticket
+                        );
 
                     const statusClass =
                         status
@@ -687,16 +917,21 @@ function renderTickets() {
                         <button
                             type="button"
                             class="ticket-card"
-                            data-key="${escapeHTML(key)}"
+                            data-key="${escapeHTML(
+                                key
+                            )}"
                         >
 
-                            <div class="ticket-card-top">
+                            <div
+                                class="ticket-card-top"
+                            >
 
-                                <span class="ticket-number">
+                                <span
+                                    class="ticket-number"
+                                >
 
                                     #${escapeHTML(
-                                        ticket.ticketId ||
-                                        key
+                                        ticketId
                                     )}
 
                                 </span>
@@ -720,31 +955,38 @@ function renderTickets() {
                             <h3>
 
                                 ${escapeHTML(
-                                    ticket.subject ||
-                                    "No subject"
+                                    getSubject(
+                                        ticket
+                                    )
                                 )}
 
                             </h3>
 
 
-                            <p class="ticket-preview">
+                            <p
+                                class="ticket-preview"
+                            >
 
                                 ${escapeHTML(
-                                    ticket.message ||
-                                    "No message"
+                                    getMessage(
+                                        ticket
+                                    )
                                 )}
 
                             </p>
 
 
-                            <div class="ticket-card-info">
+                            <div
+                                class="ticket-card-info"
+                            >
 
                                 <span>
 
                                     👤
                                     ${escapeHTML(
-                                        ticket.name ||
-                                        "-"
+                                        getName(
+                                            ticket
+                                        )
                                     )}
 
                                 </span>
@@ -754,8 +996,9 @@ function renderTickets() {
 
                                     ✉
                                     ${escapeHTML(
-                                        ticket.email ||
-                                        "-"
+                                        getEmail(
+                                            ticket
+                                        )
                                     )}
 
                                 </span>
@@ -765,8 +1008,9 @@ function renderTickets() {
 
                                     🏷
                                     ${escapeHTML(
-                                        ticket.category ||
-                                        "General"
+                                        getCategory(
+                                            ticket
+                                        )
                                     )}
 
                                 </span>
@@ -784,17 +1028,24 @@ function renderTickets() {
                             </div>
 
 
-                            <div class="ticket-card-bottom">
+                            <div
+                                class="ticket-card-bottom"
+                            >
 
                                 <span>
 
                                     ${
-                                        ticket.registrationId
-                                            ? `Registration:
-                                               ${escapeHTML(
-                                                   ticket.registrationId
-                                               )}`
-                                            : "No Registration ID"
+                                        registrationReference
+                                            ?
+
+                                            `Registration:
+                                             ${escapeHTML(
+                                                 registrationReference
+                                             )}`
+
+                                            :
+
+                                            "No Registration ID"
                                     }
 
                                 </span>
@@ -804,8 +1055,9 @@ function renderTickets() {
 
                                     ${escapeHTML(
                                         formatDate(
-                                            ticket.updatedAt ||
-                                            ticket.createdAt
+                                            getUpdatedAt(
+                                                ticket
+                                            )
                                         )
                                     )}
 
@@ -855,7 +1107,6 @@ function openTicket(key) {
     const ticket =
         tickets[key];
 
-
     if (!ticket) {
 
         showStatus(
@@ -867,16 +1118,29 @@ function openTicket(key) {
 
     }
 
-
     selectedTicketKey =
         key;
+
+
+    const ticketId =
+        getTicketId(
+            ticket,
+            key
+        );
+
+
+    const registrationReference =
+        getRegistrationReference(
+            ticket
+        );
 
 
     if (modalSubject) {
 
         modalSubject.textContent =
-            ticket.subject ||
-            "Support Ticket";
+            getSubject(
+                ticket
+            );
 
     }
 
@@ -884,8 +1148,7 @@ function openTicket(key) {
     if (modalTicketId) {
 
         modalTicketId.textContent =
-            ticket.ticketId ||
-            key;
+            ticketId;
 
     }
 
@@ -893,17 +1156,22 @@ function openTicket(key) {
     if (modalName) {
 
         modalName.textContent =
-            ticket.name ||
-            "-";
+            getName(
+                ticket
+            );
 
     }
 
 
+    /* =====================================================
+       🔥 FIXED REFERENCE ID
+    ===================================================== */
+
     if (modalRegistrationId) {
 
         modalRegistrationId.textContent =
-            ticket.registrationId ||
-            "-";
+            registrationReference ||
+            "Not provided";
 
     }
 
@@ -911,8 +1179,9 @@ function openTicket(key) {
     if (modalClass) {
 
         modalClass.textContent =
-            ticket.className ||
-            "-";
+            getClassName(
+                ticket
+            );
 
     }
 
@@ -920,8 +1189,9 @@ function openTicket(key) {
     if (modalSection) {
 
         modalSection.textContent =
-            ticket.section ||
-            "-";
+            getSection(
+                ticket
+            );
 
     }
 
@@ -929,8 +1199,9 @@ function openTicket(key) {
     if (modalEmail) {
 
         modalEmail.textContent =
-            ticket.email ||
-            "-";
+            getEmail(
+                ticket
+            );
 
     }
 
@@ -938,22 +1209,19 @@ function openTicket(key) {
     if (modalCategory) {
 
         modalCategory.textContent =
-            ticket.category ||
-            "General";
+            getCategory(
+                ticket
+            );
 
-    }
-
-    const modalRecipient = document.getElementById("modalRecipient");
-    if (modalRecipient) {
-        modalRecipient.textContent = ticket.messageRecipient || "General Help";
     }
 
 
     if (problemSubject) {
 
         problemSubject.textContent =
-            ticket.subject ||
-            "-";
+            getSubject(
+                ticket
+            );
 
     }
 
@@ -961,8 +1229,9 @@ function openTicket(key) {
     if (problemMessage) {
 
         problemMessage.textContent =
-            ticket.message ||
-            "No message provided.";
+            getMessage(
+                ticket
+            );
 
     }
 
@@ -991,7 +1260,9 @@ function openTicket(key) {
 
         modalCreated.textContent =
             formatDate(
-                ticket.createdAt
+                getCreatedAt(
+                    ticket
+                )
             );
 
     }
@@ -1001,7 +1272,9 @@ function openTicket(key) {
 
         modalUpdated.textContent =
             formatDate(
-                ticket.updatedAt
+                getUpdatedAt(
+                    ticket
+                )
             );
 
     }
@@ -1080,24 +1353,17 @@ async function updateTicket(
 ) {
 
     if (!selectedTicketKey) {
-
         return;
-
     }
-
 
     const ticket =
         tickets[
             selectedTicketKey
         ];
 
-
     if (!ticket) {
-
         return;
-
     }
-
 
     try {
 
@@ -1113,7 +1379,7 @@ async function updateTicket(
 
             ref(
                 db,
-                `tickets/${selectedTicketKey}`
+                `${TICKETS_PATH}/${selectedTicketKey}`
             ),
 
             {
@@ -1163,11 +1429,8 @@ async function updateTicket(
 
 
         showStatus(
-
             "Unable to update ticket. Check Firebase Database Rules.",
-
             "error"
-
         );
 
     }
@@ -1176,7 +1439,7 @@ async function updateTicket(
 
 
 /* =========================================================
-   SAVE AGENT REPLY
+   SAVE REPLY
 ========================================================= */
 
 saveReplyBtn?.addEventListener(
@@ -1184,16 +1447,12 @@ saveReplyBtn?.addEventListener(
     async () => {
 
         if (!selectedTicketKey) {
-
             return;
-
         }
-
 
         const reply =
             agentReply?.value
                 ?.trim() || "";
-
 
         if (!reply) {
 
@@ -1212,10 +1471,8 @@ saveReplyBtn?.addEventListener(
         await updateTicket(
 
             {
-
                 agentReply:
                     reply
-
             },
 
             "✓ Agent reply saved."
@@ -1227,7 +1484,7 @@ saveReplyBtn?.addEventListener(
 
 
 /* =========================================================
-   SET OPEN
+   OPEN
 ========================================================= */
 
 setOpenBtn?.addEventListener(
@@ -1237,10 +1494,8 @@ setOpenBtn?.addEventListener(
         await updateTicket(
 
             {
-
                 status:
                     "Open"
-
             },
 
             "✓ Ticket marked Open."
@@ -1252,7 +1507,7 @@ setOpenBtn?.addEventListener(
 
 
 /* =========================================================
-   SET IN PROGRESS
+   IN PROGRESS
 ========================================================= */
 
 setProgressBtn?.addEventListener(
@@ -1262,10 +1517,8 @@ setProgressBtn?.addEventListener(
         await updateTicket(
 
             {
-
                 status:
                     "In Progress"
-
             },
 
             "✓ Ticket marked In Progress."
@@ -1277,7 +1530,7 @@ setProgressBtn?.addEventListener(
 
 
 /* =========================================================
-   SET CLOSED
+   CLOSED
 ========================================================= */
 
 setClosedBtn?.addEventListener(
@@ -1334,13 +1587,16 @@ function loadTickets() {
     const ticketsRef =
         ref(
             db,
-            "tickets"
+            TICKETS_PATH
         );
 
 
     if (firebaseUnsubscribe) {
 
         firebaseUnsubscribe();
+
+        firebaseUnsubscribe =
+            null;
 
     }
 
@@ -1352,8 +1608,53 @@ function loadTickets() {
 
             snapshot => {
 
+                const data =
+                    snapshot.val();
+
+
                 tickets =
-                    snapshot.val() || {};
+                    data &&
+                    typeof data === "object"
+                        ? data
+                        : {};
+
+
+                console.log(
+                    "HELP CENTER TICKETS:",
+                    tickets
+                );
+
+
+                /*
+                 * DEBUG:
+                 * This lets you inspect the exact
+                 * Firebase structure in the browser.
+                 */
+
+                Object.entries(
+                    tickets
+                ).forEach(
+                    ([key, ticket]) => {
+
+                        console.log(
+                            "Ticket:",
+                            key,
+                            {
+                                ticket,
+                                ticketId:
+                                    getTicketId(
+                                        ticket,
+                                        key
+                                    ),
+                                registrationReference:
+                                    getRegistrationReference(
+                                        ticket
+                                    )
+                            }
+                        );
+
+                    }
+                );
 
 
                 renderTickets();
@@ -1377,6 +1678,11 @@ function loadTickets() {
                     "TICKETS READ ERROR:",
                     error
                 );
+
+
+                tickets = {};
+
+                renderTickets();
 
 
                 showStatus(
@@ -1422,12 +1728,7 @@ refreshBtn?.addEventListener(
     "click",
     () => {
 
-        renderTickets();
-
-        showStatus(
-            "Tickets refreshed.",
-            "success"
-        );
+        loadTickets();
 
     }
 );
@@ -1447,11 +1748,9 @@ logoutBtn?.addEventListener(
                 auth
             );
 
-
             window.location.replace(
                 "agent-login.html"
             );
-
 
         } catch (error) {
 
@@ -1476,10 +1775,6 @@ onAuthStateChanged(
 
     user => {
 
-        /* -----------------------------------------------
-           NOT LOGGED IN
-        ----------------------------------------------- */
-
         if (!user) {
 
             window.location.replace(
@@ -1491,9 +1786,9 @@ onAuthStateChanged(
         }
 
 
-        /* -----------------------------------------------
-           ONLY ONE AGENT
-        ----------------------------------------------- */
+        /* =================================================
+           ONLY AUTHORIZED AGENT
+        ================================================= */
 
         if (
             user.uid !==
@@ -1529,10 +1824,6 @@ onAuthStateChanged(
 
         }
 
-
-        /* -----------------------------------------------
-           AUTHORIZED
-        ----------------------------------------------- */
 
         console.log(
             "Authorized support agent:",
