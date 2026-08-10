@@ -7,68 +7,89 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <link rel="stylesheet" href="registration.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script type="text/javascript">
+  (function() { emailjs.init({ publicKey: "GnxniZ70ndujyjDpe" }); })();
+</script>
 </head>
 <body>
 <div class="page-background"><div class="grid-overlay"></div><div class="glow glow-one"></div><div class="glow glow-two"></div></div>
 <header class="registration-header">
 <a href="index.html" class="back-home"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
-<div class="header-brand"><img src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png" alt="Army Welfare Education Society Logo"><div><span>APS TINKERING LAB</span><strong>ROBOTICS CHAMPIONSHIP 2026</strong></div></div>
+<div class="header-brand"><img src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png" alt="APS Logo"><div><span>APS TINKERING LAB</span><strong>ROBOTICS CHAMPIONSHIP 2026</strong></div></div>
 </header>
 <main class="registration-main"><div class="registration-container">
-<section class="registration-hero"><span class="hero-badge"><i class="fa-solid fa-robot"></i> REGISTRATION OPEN</span><h1>APS ROBOTICS <span>CHAMPIONSHIP 2026</span></h1><p>Build your team, choose your event and take your robot to the championship arena.</p></section>
+<section class="registration-hero"><span class="hero-badge"><i class="fa-solid fa-robot"></i> REGISTRATION OPEN</span><h1>APS ROBOTICS <span>CHAMPIONSHIP 2026</span></h1><p>Step-by-step registration. Fill out each section to proceed.</p></section>
+
 <form id="registrationForm" class="registration-form" novalidate>
-<section class="form-section"><div class="section-heading"><div class="section-number">01</div><div><span>TEAM CONFIGURATION</span><h2>Choose Team Size</h2><p>Select how many students are participating.</p></div></div>
-<div class="team-size-grid">
-<label class="team-size-card"><input type="radio" name="TeamSize" value="1" checked><span class="team-size-content"><i class="fa-solid fa-user"></i><strong>Solo</strong><small>1 Student</small></span></label>
-<label class="team-size-card"><input type="radio" name="TeamSize" value="2"><span class="team-size-content"><i class="fa-solid fa-user-group"></i><strong>Team of 2</strong><small>2 Students</small></span></label>
-<label class="team-size-card"><input type="radio" name="TeamSize" value="3"><span class="team-size-content"><i class="fa-solid fa-people-group"></i><strong>Team of 3</strong><small>3 Students</small></span></label>
-<label class="team-size-card"><input type="radio" name="TeamSize" value="4"><span class="team-size-content"><i class="fa-solid fa-people-group"></i><strong>Team of 4</strong><small>4 Students</small></span></label>
-<label class="team-size-card"><input type="radio" name="TeamSize" value="5"><span class="team-size-content"><i class="fa-solid fa-people-group"></i><strong>Team of 5</strong><small>5 Students</small></span></label>
-</div><input type="hidden" id="participationType" name="ParticipationType" value="Solo"></section>
+  
+  <section class="form-section step-section" id="step1">
+    <div class="section-heading"><div class="section-number">01</div><div><span>TEAM CONFIGURATION</span><h2>Choose Team Size</h2></div></div>
+    <div class="team-size-grid">
+      <label class="team-size-card"><input type="radio" name="TeamSize" value="1" checked><span class="team-size-content"><i class="fa-solid fa-user"></i><strong>Solo</strong></span></label>
+      <label class="team-size-card"><input type="radio" name="TeamSize" value="2"><span class="team-size-content"><i class="fa-solid fa-user-group"></i><strong>Team of 2</strong></span></label>
+      <label class="team-size-card"><input type="radio" name="TeamSize" value="3"><span class="team-size-content"><i class="fa-solid fa-people-group"></i><strong>Team of 3</strong></span></label>
+      <label class="team-size-card"><input type="radio" name="TeamSize" value="4"><span class="team-size-content"><i class="fa-solid fa-people-group"></i><strong>Team of 4</strong></span></label>
+      <label class="team-size-card"><input type="radio" name="TeamSize" value="5"><span class="team-size-content"><i class="fa-solid fa-people-group"></i><strong>Team of 5</strong></span></label>
+    </div>
+    <input type="hidden" id="participationType" name="ParticipationType" value="Solo">
+    <div style="text-align: right; margin-top: 20px;"><button type="button" class="btn primary next-step">Next Step →</button></div>
+  </section>
 
-<section class="form-section"><div class="section-heading"><div class="section-number">02</div><div><span>TEAM LEADER</span><h2>Leader Information</h2><p>Enter the details of the first participant.</p></div></div>
-<div class="member-card leader-card"><div class="member-card-header"><div class="member-icon"><i class="fa-solid fa-user-astronaut"></i></div><div><span>PARTICIPANT 01</span><h3>Team Leader</h3></div><span class="required-badge">REQUIRED</span></div>
-<div class="field-grid"><div class="field full-field"><label for="studentName"><i class="fa-solid fa-user"></i> Full Name</label><input type="text" id="studentName" name="StudentName" placeholder="Enter team leader name" autocomplete="name" required></div>
-<div class="field"><label for="studentClass"><i class="fa-solid fa-graduation-cap"></i> Class</label><select id="studentClass" name="Class" required><option value="">Select Class</option><option value="VI">VI</option><option value="VII">VII</option><option value="VIII">VIII</option><option value="IX">IX</option><option value="X">X</option><option value="XI">XI</option><option value="XII">XII</option></select></div>
-<div class="field"><label for="studentSection"><i class="fa-solid fa-layer-group"></i> Section</label><input type="text" id="studentSection" name="Section" placeholder="e.g. A" maxlength="5" required></div></div></div></section>
-<section class="form-section"><div class="section-heading"><div class="section-number">03</div><div><span>TEAM MEMBERS</span><h2>Participant Details</h2><p id="memberInstruction">Solo participation selected. No additional members required.</p></div></div>
+  <section class="form-section step-section hidden-member" id="step2">
+    <div class="section-heading"><div class="section-number">02</div><div><span>TEAM LEADER</span><h2>Leader Information</h2></div></div>
+    <div class="member-card leader-card">
+      <div class="field-grid">
+        <div class="field full-field"><label for="studentName">Full Name</label><input type="text" id="studentName" required></div>
+        <div class="field"><label for="studentClass">Class</label><select id="studentClass" required><option value="">Select</option><option value="VI">VI</option><option value="VII">VII</option><option value="VIII">VIII</option><option value="IX">IX</option><option value="X">X</option><option value="XI">XI</option><option value="XII">XII</option></select></div>
+        <div class="field"><label for="studentSection">Section</label><input type="text" id="studentSection" maxlength="5" required></div>
+      </div>
+    </div>
+    <div style="text-align: right; margin-top: 20px;"><button type="button" class="btn primary next-step">Next Step →</button></div>
+  </section>
 
-<div class="member-card additional-member hidden-member" data-member-card="2">
-<div class="member-card-header"><div class="member-icon"><i class="fa-solid fa-user"></i></div><div><span>PARTICIPANT 02</span><h3>Team Member 2</h3></div></div>
-<div class="field-grid"><div class="field full-field"><label for="member2Name"><i class="fa-solid fa-user"></i> Full Name</label><input type="text" id="member2Name" name="Member2Name" placeholder="Enter member 2 name"></div>
-<div class="field"><label for="member2Class"><i class="fa-solid fa-graduation-cap"></i> Class</label><select id="member2Class" name="Member2Class"><option value="">Select Class</option><option value="VI">VI</option><option value="VII">VII</option><option value="VIII">VIII</option><option value="IX">IX</option><option value="X">X</option><option value="XI">XI</option><option value="XII">XII</option></select></div>
-<div class="field"><label for="member2Section"><i class="fa-solid fa-layer-group"></i> Section</label><input type="text" id="member2Section" name="Member2Section" placeholder="e.g. A" maxlength="5"></div></div></div>
+  <section class="form-section step-section hidden-member" id="step3">
+    <div class="section-heading"><div class="section-number">03</div><div><span>TEAM MEMBERS</span><h2>Participant Details</h2><p id="memberInstruction">Solo participation selected.</p></div></div>
+    <div class="member-card additional-member hidden-member" data-member-card="2"><div class="field-grid"><div class="field full-field"><label>Member 2 Name</label><input type="text" id="member2Name"></div><div class="field"><label>Class</label><select id="member2Class"><option value="">Select</option><option value="VI">VI</option><option value="VII">VII</option><option value="VIII">VIII</option><option value="IX">IX</option><option value="X">X</option><option value="XI">XI</option><option value="XII">XII</option></select></div><div class="field"><label>Section</label><input type="text" id="member2Section"></div></div></div>
+    <div class="member-card additional-member hidden-member" data-member-card="3"><div class="field-grid"><div class="field full-field"><label>Member 3 Name</label><input type="text" id="member3Name"></div><div class="field"><label>Class</label><select id="member3Class"><option value="">Select</option><option value="VI">VI</option><option value="VII">VII</option><option value="VIII">VIII</option><option value="IX">IX</option><option value="X">X</option><option value="XI">XI</option><option value="XII">XII</option></select></div><div class="field"><label>Section</label><input type="text" id="member3Section"></div></div></div>
+    <div class="member-card additional-member hidden-member" data-member-card="4"><div class="field-grid"><div class="field full-field"><label>Member 4 Name</label><input type="text" id="member4Name"></div><div class="field"><label>Class</label><select id="member4Class"><option value="">Select</option><option value="VI">VI</option><option value="VII">VII</option><option value="VIII">VIII</option><option value="IX">IX</option><option value="X">X</option><option value="XI">XI</option><option value="XII">XII</option></select></div><div class="field"><label>Section</label><input type="text" id="member4Section"></div></div></div>
+    <div class="member-card additional-member hidden-member" data-member-card="5"><div class="field-grid"><div class="field full-field"><label>Member 5 Name</label><input type="text" id="member5Name"></div><div class="field"><label>Class</label><select id="member5Class"><option value="">Select</option><option value="VI">VI</option><option value="VII">VII</option><option value="VIII">VIII</option><option value="IX">IX</option><option value="X">X</option><option value="XI">XI</option><option value="XII">XII</option></select></div><div class="field"><label>Section</label><input type="text" id="member5Section"></div></div></div>
+    <div style="text-align: right; margin-top: 20px;"><button type="button" class="btn primary next-step">Next Step →</button></div>
+  </section>
 
-<div class="member-card additional-member hidden-member" data-member-card="3">
-<div class="member-card-header"><div class="member-icon"><i class="fa-solid fa-user"></i></div><div><span>PARTICIPANT 03</span><h3>Team Member 3</h3></div></div>
-<div class="field-grid"><div class="field full-field"><label for="member3Name"><i class="fa-solid fa-user"></i> Full Name</label><input type="text" id="member3Name" name="Member3Name" placeholder="Enter member 3 name"></div>
-<div class="field"><label for="member3Class"><i class="fa-solid fa-graduation-cap"></i> Class</label><select id="member3Class" name="Member3Class"><option value="">Select Class</option><option value="VI">VI</option><option value="VII">VII</option><option value="VIII">VIII</option><option value="IX">IX</option><option value="X">X</option><option value="XI">XI</option><option value="XII">XII</option></select></div>
-<div class="field"><label for="member3Section"><i class="fa-solid fa-layer-group"></i> Section</label><input type="text" id="member3Section" name="Member3Section" placeholder="e.g. A" maxlength="5"></div></div></div>
+  <section class="form-section step-section hidden-member" id="step4">
+    <div class="section-heading"><div class="section-number">04</div><div><span>CONTACT DETAILS</span><h2>Communication Information</h2></div></div>
+    <div class="field-grid">
+      <div class="field"><label for="mobileNumber">Mobile Number (10 Digits)</label><input type="tel" id="mobileNumber" maxlength="10" required></div>
+      <div class="field"><label for="emailAddress">Email Address</label><input type="email" id="emailAddress" required></div>
+      <div class="field full-field"><label for="teamName">Team Name <span class="optional">Optional</span></label><input type="text" id="teamName"></div>
+    </div>
+    <div style="text-align: right; margin-top: 20px;"><button type="button" class="btn primary next-step">Next Step →</button></div>
+  </section>
 
-<div class="member-card additional-member hidden-member" data-member-card="4">
-<div class="member-card-header"><div class="member-icon"><i class="fa-solid fa-user"></i></div><div><span>PARTICIPANT 04</span><h3>Team Member 4</h3></div></div>
-<div class="field-grid"><div class="field full-field"><label for="member4Name"><i class="fa-solid fa-user"></i> Full Name</label><input type="text" id="member4Name" name="Member4Name" placeholder="Enter member 4 name"></div>
-<div class="field"><label for="member4Class"><i class="fa-solid fa-graduation-cap"></i> Class</label><select id="member4Class" name="Member4Class"><option value="">Select Class</option><option value="VI">VI</option><option value="VII">VII</option><option value="VIII">VIII</option><option value="IX">IX</option><option value="X">X</option><option value="XI">XI</option><option value="XII">XII</option></select></div>
-<div class="field"><label for="member4Section"><i class="fa-solid fa-layer-group"></i> Section</label><input type="text" id="member4Section" name="Member4Section" placeholder="e.g. A" maxlength="5"></div></div></div>
+  <section class="form-section step-section hidden-member" id="step5">
+    <div class="section-heading"><div class="section-number">05</div><div><span>EVENTS</span><h2>Select Event(s)</h2></div></div>
+    <div id="eventSelection" class="event-selection">
+      <label class="event-option"><input type="checkbox" name="Events" value="Robo Race"><span class="event-option-card"><span class="event-icon"><i class="fa-solid fa-flag-checkered"></i></span><span class="event-text"><strong>Robo Race</strong></span></span></label>
+      <label class="event-option"><input type="checkbox" name="Events" value="Robo War"><span class="event-option-card"><span class="event-icon"><i class="fa-solid fa-shield-halved"></i></span><span class="event-text"><strong>Robo War</strong></span></span></label>
+      <label class="event-option"><input type="checkbox" name="Events" value="Robo Tug of War"><span class="event-option-card"><span class="event-icon"><i class="fa-solid fa-handshake"></i></span><span class="event-text"><strong>Robo Tug of War</strong></span></span></label>
+      <label class="event-option"><input type="checkbox" name="Events" value="Robo Soccer"><span class="event-option-card"><span class="event-icon"><i class="fa-solid fa-futbol"></i></span><span class="event-text"><strong>Robo Soccer</strong></span></span></label>
+    </div>
+    <div id="eventError" class="field-error"></div>
+    <div class="field" style="margin-top:20px;"><label>Remarks</label><textarea id="remarks" rows="3" maxlength="500"></textarea></div>
+    
+    <div style="margin-top:20px;">
+      <label class="agreement"><input type="checkbox" id="agreeTerms" required><span class="custom-checkbox"><i class="fa-solid fa-check"></i></span><span>I confirm that the information provided is correct and I agree to the rules.</span></label>
+    </div>
+    
+    <div id="formMessage" class="form-message" role="alert"></div>
+    <div class="submit-area" style="margin-top:20px;">
+      <button type="submit" id="submitBtn" class="submit-btn"><span class="submit-normal">Submit Registration</span><span class="submit-loading hidden-member">Submitting...</span></button>
+    </div>
+  </section>
+</form>
+</div></main>
 
-<div class="member-card additional-member hidden-member" data-member-card="5">
-<div class="member-card-header"><div class="member-icon"><i class="fa-solid fa-user"></i></div><div><span>PARTICIPANT 05</span><h3>Team Member 5</h3></div></div>
-<div class="field-grid"><div class="field full-field"><label for="member5Name"><i class="fa-solid fa-user"></i> Full Name</label><input type="text" id="member5Name" name="Member5Name" placeholder="Enter member 5 name"></div>
-<div class="field"><label for="member5Class"><i class="fa-solid fa-graduation-cap"></i> Class</label><select id="member5Class" name="Member5Class"><option value="">Select Class</option><option value="VI">VI</option><option value="VII">VII</option><option value="VIII">VIII</option><option value="IX">IX</option><option value="X">X</option><option value="XI">XI</option><option value="XII">XII</option></select></div>
-<div class="field"><label for="member5Section"><i class="fa-solid fa-layer-group"></i> Section</label><input type="text" id="member5Section" name="Member5Section" placeholder="e.g. A" maxlength="5"></div></div></div>
-</section>
-<section class="form-section"><div class="section-heading"><div class="section-number">04</div><div><span>CONTACT DETAILS</span><h2>Communication Information</h2><p>Provide contact information for registration updates.</p></div></div>
-<div class="field-grid"><div class="field"><label for="mobileNumber"><i class="fa-solid fa-phone"></i> Mobile Number</label><input type="tel" id="mobileNumber" name="MobileNumber" placeholder="10-digit mobile number" inputmode="numeric" maxlength="10" required></div>
-<div class="field"><label for="emailAddress"><i class="fa-solid fa-envelope"></i> Email Address</label><input type="email" id="emailAddress" name="EmailAddress" placeholder="Enter email address" autocomplete="email" required></div>
-<div class="field full-field"><label for="teamName"><i class="fa-solid fa-flag"></i> Team Name <span class="optional">Optional</span></label><input type="text" id="teamName" name="TeamName" placeholder="Enter your team name"></div></div></section>
-<section class="form-section"><div class="section-heading"><div class="section-number">05</div><div><span>CHAMPIONSHIP EVENTS</span><h2>Select Event(s)</h2><p>You may participate in one or multiple events.</p></div></div>
-<div id="eventSelection" class="event-selection"><label class="event-option"><input type="checkbox" name="Events" value="Robo Race"><span class="event-option-card"><span class="event-icon"><i class="fa-solid fa-flag-checkered"></i></span><span class="event-text"><strong>Robo Race</strong><small>Speed & precision</small></span><span class="event-check"><i class="fa-solid fa-check"></i></span></span></label><label class="event-option"><input type="checkbox" name="Events" value="Robo War"><span class="event-option-card"><span class="event-icon"><i class="fa-solid fa-shield-halved"></i></span><span class="event-text"><strong>Robo War</strong><small>Strength & strategy</small></span><span class="event-check"><i class="fa-solid fa-check"></i></span></span></label><label class="event-option"><input type="checkbox" name="Events" value="Robo Tug of War"><span class="event-option-card"><span class="event-icon"><i class="fa-solid fa-handshake"></i></span><span class="event-text"><strong>Robo Tug of War</strong><small>Power & teamwork</small></span><span class="event-check"><i class="fa-solid fa-check"></i></span></span></label><label class="event-option"><input type="checkbox" name="Events" value="Robo Soccer"><span class="event-option-card"><span class="event-icon"><i class="fa-solid fa-futbol"></i></span><span class="event-text"><strong>Robo Soccer</strong><small>Control & coordination</small></span><span class="event-check"><i class="fa-solid fa-check"></i></span></span></label></div><div id="eventError" class="field-error"></div></section>
-<section class="form-section"><div class="section-heading"><div class="section-number">06</div><div><span>ADDITIONAL INFORMATION</span><h2>Remarks</h2><p>Add any additional information if required.</p></div></div>
-<div class="field"><textarea id="remarks" name="Remarks" rows="5" maxlength="500" placeholder="Enter any additional information..."></textarea><div class="character-count"><span id="characterCount">0</span>/500</div></div></section>
-<section class="agreement-section"><label class="agreement"><input type="checkbox" id="agreeTerms" required><span class="custom-checkbox"><i class="fa-solid fa-check"></i></span><span>I confirm that the information provided is correct and I agree to follow the rules and guidelines of APS Robotics Championship 2026.</span></label></section>
-<div id="formMessage" class="form-message" role="alert"></div>
-<div class="submit-area"><button type="submit" id="submitBtn" class="submit-btn"><span class="submit-normal"><i class="fa-solid fa-rocket"></i> Submit Registration</span><span class="submit-loading"><i class="fa-solid fa-spinner fa-spin"></i> Submitting...</span></button><p><i class="fa-solid fa-lock"></i> Your registration information is securely stored.</p></div>
-</form></div></main>
-<div id="successOverlay" class="success-overlay hidden"><div class="success-card"><div class="success-icon"><i class="fa-solid fa-check"></i></div><span>REGISTRATION SUCCESSFUL</span><h2>You're In!</h2><p>Your registration has been successfully submitted.</p><div class="success-id"><small>REGISTRATION ID</small><strong id="successRegistrationId">---</strong></div><button type="button" id="continueBtn" class="continue-btn">Continue <i class="fa-solid fa-arrow-right"></i></button></div></div>
+<div id="successOverlay" class="success-overlay hidden"><div class="success-card"><div class="success-icon"><i class="fa-solid fa-check"></i></div><span>REGISTRATION SUCCESSFUL</span><h2>You're In!</h2><div class="success-id"><small>REGISTRATION ID</small><strong id="successRegistrationId">---</strong></div><button type="button" id="continueBtn" class="continue-btn">Continue →</button></div></div>
 <script type="module" src="registration.js"></script>
 </body></html>
