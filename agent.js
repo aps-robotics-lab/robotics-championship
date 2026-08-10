@@ -1,3 +1,16 @@
+/* =========================================================
+   APS ROBOTICS CHAMPIONSHIP 2026
+   AGENT HELP CENTER
+   ---------------------------------------------------------
+   IMPORTANT:
+   This file MUST use the Firebase project used by help.js.
+   Database path:
+       /tickets
+
+   ONLY THIS UID IS ALLOWED:
+       HgWiHPRx9gcXZtDTl0pDCpZlokt2
+========================================================= */
+
 import {
     initializeApp
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
@@ -12,56 +25,70 @@ import {
     getDatabase,
     ref,
     onValue,
-    update,
-    remove
+    update
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
 
 
 /* =========================================================
-   FIREBASE CONFIG
+   HELP FIREBASE CONFIG
+   =========================================================
+
+   ⚠️ PUT THE CONFIG FROM THE FIREBASE PROJECT USED BY help.js
+
+   DO NOT USE YOUR REGISTRATION FIREBASE HERE IF HELP
+   HAS A DIFFERENT FIREBASE PROJECT.
 ========================================================= */
 
 const firebaseConfig = {
 
-    apiKey:
-        "AIzaSyCVfkLAc5EKDRUoHf4LgVhBFwTNmq2GMI0",
+    apiKey: "PUT_HELP_FIREBASE_API_KEY_HERE",
 
-    authDomain:
-        "robotics-championship-ab248.firebaseapp.com",
+    authDomain: "PUT_HELP_PROJECT.firebaseapp.com",
 
     databaseURL:
-        "https://robotics-championship-ab248-default-rtdb.asia-southeast1.firebasedatabase.app",
+        "PUT_HELP_FIREBASE_DATABASE_URL_HERE",
 
     projectId:
-        "robotics-championship-ab248",
+        "PUT_HELP_PROJECT_ID_HERE",
 
     storageBucket:
-        "robotics-championship-ab248.firebasestorage.app",
+        "PUT_HELP_PROJECT.appspot.com",
 
     messagingSenderId:
-        "521981495733",
+        "PUT_HELP_SENDER_ID_HERE",
 
     appId:
-        "1:521981495733:web:ecec2bc677a4450f19f1fc",
-
-    measurementId:
-        "G-NTBPB3MJ0E"
+        "PUT_HELP_APP_ID_HERE"
 
 };
 
 
 /* =========================================================
-   INITIALIZE
+   FIREBASE INITIALIZATION
 ========================================================= */
 
-const app =
-    initializeApp(firebaseConfig);
+let app;
 
-const auth =
-    getAuth(app);
+let auth;
 
-const db =
-    getDatabase(app);
+let db;
+
+try {
+
+    app = initializeApp(firebaseConfig);
+
+    auth = getAuth(app);
+
+    db = getDatabase(app);
+
+} catch (error) {
+
+    console.error(
+        "Firebase initialization error:",
+        error
+    );
+
+}
 
 
 /* =========================================================
@@ -73,29 +100,49 @@ const ALLOWED_AGENT_UID =
 
 
 /* =========================================================
+   DATA
+========================================================= */
+
+let tickets = {};
+
+let selectedTicketKey = null;
+
+let firebaseUnsubscribe = null;
+
+
+/* =========================================================
    ELEMENTS
 ========================================================= */
 
-const ticketBody =
-    document.getElementById("ticketBody");
+const ticketList =
+    document.getElementById(
+        "ticketList"
+    );
 
-const search =
-    document.getElementById("search");
+const searchInput =
+    document.getElementById(
+        "searchInput"
+    );
 
 const statusFilter =
-    document.getElementById("statusFilter");
-
-const categoryFilter =
-    document.getElementById("categoryFilter");
+    document.getElementById(
+        "statusFilter"
+    );
 
 const refreshBtn =
-    document.getElementById("refreshBtn");
+    document.getElementById(
+        "refreshBtn"
+    );
 
 const logoutBtn =
-    document.getElementById("logoutBtn");
+    document.getElementById(
+        "logoutBtn"
+    );
 
-const status =
-    document.getElementById("status");
+const statusMessage =
+    document.getElementById(
+        "statusMessage"
+    );
 
 
 /* =========================================================
@@ -103,76 +150,144 @@ const status =
 ========================================================= */
 
 const totalTickets =
-    document.getElementById("totalTickets");
+    document.getElementById(
+        "totalTickets"
+    );
 
 const openTickets =
-    document.getElementById("openTickets");
+    document.getElementById(
+        "openTickets"
+    );
 
-const pendingTickets =
-    document.getElementById("pendingTickets");
+const progressTickets =
+    document.getElementById(
+        "progressTickets"
+    );
 
-const solvedTickets =
-    document.getElementById("solvedTickets");
+const closedTickets =
+    document.getElementById(
+        "closedTickets"
+    );
 
 
 /* =========================================================
-   TICKET MODAL
+   MODAL
 ========================================================= */
 
 const ticketOverlay =
-    document.getElementById("ticketOverlay");
+    document.getElementById(
+        "ticketOverlay"
+    );
 
-const closeTicket =
-    document.getElementById("closeTicket");
+const closeModal =
+    document.getElementById(
+        "closeModal"
+    );
 
-const ticketDetails =
-    document.getElementById("ticketDetails");
+const modalSubject =
+    document.getElementById(
+        "modalSubject"
+    );
 
-const replyForm =
-    document.getElementById("replyForm");
+const modalTicketId =
+    document.getElementById(
+        "modalTicketId"
+    );
 
-const replyTicketId =
-    document.getElementById("replyTicketId");
+const modalName =
+    document.getElementById(
+        "modalName"
+    );
+
+const modalRegistrationId =
+    document.getElementById(
+        "modalRegistrationId"
+    );
+
+const modalClass =
+    document.getElementById(
+        "modalClass"
+    );
+
+const modalSection =
+    document.getElementById(
+        "modalSection"
+    );
+
+const modalEmail =
+    document.getElementById(
+        "modalEmail"
+    );
+
+const modalCategory =
+    document.getElementById(
+        "modalCategory"
+    );
+
+const problemSubject =
+    document.getElementById(
+        "problemSubject"
+    );
+
+const problemMessage =
+    document.getElementById(
+        "problemMessage"
+    );
+
+const modalStatus =
+    document.getElementById(
+        "modalStatus"
+    );
+
+const modalPriority =
+    document.getElementById(
+        "modalPriority"
+    );
+
+const modalCreated =
+    document.getElementById(
+        "modalCreated"
+    );
+
+const modalUpdated =
+    document.getElementById(
+        "modalUpdated"
+    );
 
 const agentReply =
-    document.getElementById("agentReply");
+    document.getElementById(
+        "agentReply"
+    );
 
-const ticketStatus =
-    document.getElementById("ticketStatus");
-
-const replyMessage =
-    document.getElementById("replyMessage");
-
-
-/* =========================================================
-   DATA
-========================================================= */
-
-let tickets = {};
-
-let firebaseListener = null;
+const modalMessage =
+    document.getElementById(
+        "modalMessage"
+    );
 
 
 /* =========================================================
-   STATUS
+   ACTION BUTTONS
 ========================================================= */
 
-function showStatus(
-    message,
-    type = ""
-) {
+const setOpenBtn =
+    document.getElementById(
+        "setOpenBtn"
+    );
 
-    if (!status) {
-        return;
-    }
+const setProgressBtn =
+    document.getElementById(
+        "setProgressBtn"
+    );
 
-    status.textContent =
-        message;
+const saveReplyBtn =
+    document.getElementById(
+        "saveReplyBtn"
+    );
 
-    status.className =
-        "status " + type;
-
-}
+const setClosedBtn =
+    document.getElementById(
+        "setClosedBtn"
+    );
 
 
 /* =========================================================
@@ -181,7 +296,9 @@ function showStatus(
 
 function escapeHTML(value) {
 
-    return String(value ?? "")
+    return String(
+        value ?? ""
+    )
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
@@ -192,17 +309,75 @@ function escapeHTML(value) {
 
 
 /* =========================================================
+   STATUS MESSAGE
+========================================================= */
+
+function showStatus(
+    message,
+    type = ""
+) {
+
+    if (!statusMessage) {
+        return;
+    }
+
+    statusMessage.textContent =
+        message;
+
+    statusMessage.className =
+        `status-message ${type}`;
+
+}
+
+
+/* =========================================================
    DATE FORMAT
 ========================================================= */
 
 function formatDate(value) {
 
-    if (!value) {
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+
         return "-";
+
     }
 
-    const date =
-        new Date(value);
+
+    let date;
+
+
+    if (
+        typeof value === "number"
+    ) {
+
+        date =
+            new Date(value);
+
+    }
+
+    else if (
+        typeof value === "object" &&
+        value.seconds
+    ) {
+
+        date =
+            new Date(
+                value.seconds * 1000
+            );
+
+    }
+
+    else {
+
+        date =
+            new Date(value);
+
+    }
+
 
     if (
         Number.isNaN(
@@ -210,9 +385,10 @@ function formatDate(value) {
         )
     ) {
 
-        return "-";
+        return String(value);
 
     }
+
 
     return date.toLocaleString(
         "en-IN",
@@ -229,40 +405,44 @@ function formatDate(value) {
 
 
 /* =========================================================
-   NORMALIZE STATUS
+   GET STATUS
 ========================================================= */
 
-function normalizeStatus(value) {
+function getTicketStatus(ticket) {
 
-    const s =
-        String(
-            value || "Open"
-        ).toLowerCase();
-
-    if (s === "solved") {
-        return "Solved";
-    }
-
-    if (s === "pending") {
-        return "Pending";
-    }
-
-    return "Open";
+    return (
+        ticket?.status ||
+        "Open"
+    );
 
 }
 
 
 /* =========================================================
-   SEARCH
+   GET PRIORITY
+========================================================= */
+
+function getPriority(ticket) {
+
+    return (
+        ticket?.priority ||
+        "Normal"
+    );
+
+}
+
+
+/* =========================================================
+   SEARCH MATCH
 ========================================================= */
 
 function matchesSearch(
-    data,
-    key
+    key,
+    ticket
 ) {
 
     const query =
-        search?.value
+        searchInput?.value
             ?.trim()
             .toLowerCase() || "";
 
@@ -276,33 +456,33 @@ function matchesSearch(
 
         key,
 
-        data.ticketId,
+        ticket.ticketId,
 
-        data.registrationId,
+        ticket.registrationId,
 
-        data.name,
+        ticket.name,
 
-        data.className,
+        ticket.className,
 
-        data.section,
+        ticket.section,
 
-        data.email,
+        ticket.email,
 
-        data.category,
+        ticket.category,
 
-        data.subject,
+        ticket.subject,
 
-        data.message,
+        ticket.message,
 
-        data.agentReply,
+        ticket.status,
 
-        data.status
+        ticket.agentReply
 
     ]
         .filter(
             value =>
-                value !== undefined &&
-                value !== null
+                value !== null &&
+                value !== undefined
         )
         .join(" ")
         .toLowerCase();
@@ -319,178 +499,177 @@ function matchesSearch(
    FILTER
 ========================================================= */
 
-function matchesFilters(data) {
+function matchesFilter(
+    ticket
+) {
 
-    const selectedStatus =
+    const selected =
         statusFilter?.value || "All";
 
-    const selectedCategory =
-        categoryFilter?.value || "All";
-
-
-    const currentStatus =
-        normalizeStatus(
-            data.status
-        );
-
 
     if (
-        selectedStatus !== "All" &&
-        currentStatus !== selectedStatus
+        selected === "All"
     ) {
 
-        return false;
+        return true;
 
     }
 
 
-    if (
-        selectedCategory !== "All" &&
-        String(
-            data.category || "Other"
-        ) !== selectedCategory
-    ) {
-
-        return false;
-
-    }
-
-
-    return true;
+    return (
+        getTicketStatus(ticket)
+        === selected
+    );
 
 }
 
 
 /* =========================================================
-   RENDER
+   UPDATE STATS
 ========================================================= */
 
-function renderTickets() {
+function updateStats() {
 
-    if (!ticketBody) {
-        return;
-    }
-
-
-    const allEntries =
-        Object.entries(
+    const list =
+        Object.values(
             tickets
         );
 
 
-    /* =====================================================
-       STATS
-    ===================================================== */
-
     const total =
-        allEntries.length;
+        list.length;
 
 
     const open =
-        allEntries.filter(
-            ([, data]) =>
-                normalizeStatus(
-                    data.status
-                ) === "Open"
+        list.filter(
+            ticket =>
+                getTicketStatus(ticket)
+                === "Open"
         ).length;
 
 
-    const pending =
-        allEntries.filter(
-            ([, data]) =>
-                normalizeStatus(
-                    data.status
-                ) === "Pending"
+    const progress =
+        list.filter(
+            ticket =>
+                getTicketStatus(ticket)
+                === "In Progress"
         ).length;
 
 
-    const solved =
-        allEntries.filter(
-            ([, data]) =>
-                normalizeStatus(
-                    data.status
-                ) === "Solved"
+    const closed =
+        list.filter(
+            ticket =>
+                getTicketStatus(ticket)
+                === "Closed"
         ).length;
 
 
     if (totalTickets) {
+
         totalTickets.textContent =
             total;
+
     }
 
 
     if (openTickets) {
+
         openTickets.textContent =
             open;
+
     }
 
 
-    if (pendingTickets) {
-        pendingTickets.textContent =
-            pending;
+    if (progressTickets) {
+
+        progressTickets.textContent =
+            progress;
+
     }
 
 
-    if (solvedTickets) {
-        solvedTickets.textContent =
-            solved;
+    if (closedTickets) {
+
+        closedTickets.textContent =
+            closed;
+
+    }
+
+}
+
+
+/* =========================================================
+   RENDER TICKETS
+========================================================= */
+
+function renderTickets() {
+
+    if (!ticketList) {
+        return;
     }
 
 
-    /* =====================================================
-       FILTERED
-    ===================================================== */
+    updateStats();
+
 
     const entries =
-        allEntries
-            .filter(
-                ([key, data]) =>
-                    matchesSearch(
-                        data,
-                        key
-                    ) &&
-                    matchesFilters(data)
-            )
-            .sort(
-                ([, a], [, b]) =>
-                    Number(
-                        b.createdAt || 0
-                    ) -
-                    Number(
-                        a.createdAt || 0
-                    )
-            );
+        Object.entries(
+            tickets
+        )
+        .filter(
+            ([key, ticket]) =>
+                matchesSearch(
+                    key,
+                    ticket
+                )
+                &&
+                matchesFilter(
+                    ticket
+                )
+        )
+        .sort(
+            ([, a], [, b]) => {
 
+                const dateA =
+                    Number(
+                        a.updatedAt ||
+                        a.createdAt ||
+                        0
+                    );
 
-    /* =====================================================
-       EMPTY
-    ===================================================== */
+                const dateB =
+                    Number(
+                        b.updatedAt ||
+                        b.createdAt ||
+                        0
+                    );
+
+                return dateB - dateA;
+
+            }
+        );
+
 
     if (!entries.length) {
 
-        ticketBody.innerHTML = `
+        ticketList.innerHTML = `
 
-            <tr>
+            <div class="empty-state">
 
-                <td
-                    colspan="8"
-                    style="
-                        text-align:center;
-                        padding:50px;
-                    "
-                >
+                <div>
+                    🎫
+                </div>
 
-                    <div style="font-size:30px;">
-                        🎫
-                    </div>
+                <h3>
+                    No tickets found
+                </h3>
 
-                    <div style="margin-top:10px;">
-                        No support tickets found.
-                    </div>
+                <p>
+                    There are no support requests
+                    matching your search.
+                </p>
 
-                </td>
-
-            </tr>
+            </div>
 
         `;
 
@@ -499,169 +678,164 @@ function renderTickets() {
     }
 
 
-    /* =====================================================
-       TABLE
-    ===================================================== */
-
-    ticketBody.innerHTML =
+    ticketList.innerHTML =
         entries
             .map(
-                ([key, data]) => {
+                ([key, ticket]) => {
 
-                    const currentStatus =
-                        normalizeStatus(
-                            data.status
+                    const status =
+                        getTicketStatus(
+                            ticket
                         );
+
+
+                    const priority =
+                        getPriority(
+                            ticket
+                        );
+
+
+                    const statusClass =
+                        status
+                            .toLowerCase()
+                            .replace(
+                                /\s+/g,
+                                "-"
+                            );
 
 
                     return `
 
-                        <tr>
+                        <button
+                            type="button"
+                            class="ticket-card"
+                            data-key="${escapeHTML(key)}"
+                        >
 
-                            <td>
+                            <div class="ticket-card-top">
 
-                                <strong>
-                                    ${escapeHTML(
-                                        data.ticketId ||
+                                <span class="ticket-number">
+
+                                    #${escapeHTML(
+                                        ticket.ticketId ||
                                         key
                                     )}
-                                </strong>
 
-                                <small>
-                                    ${escapeHTML(
-                                        formatDate(
-                                            data.createdAt
-                                        )
-                                    )}
-                                </small>
-
-                            </td>
-
-
-                            <td>
-
-                                <strong>
-                                    ${escapeHTML(
-                                        data.name ||
-                                        "-"
-                                    )}
-                                </strong>
-
-                                <small>
-                                    Class ${escapeHTML(
-                                        data.className ||
-                                        "-"
-                                    )}
-                                    -
-                                    ${escapeHTML(
-                                        data.section ||
-                                        "-"
-                                    )}
-                                </small>
-
-                            </td>
-
-
-                            <td>
-
-                                <strong>
-                                    ${escapeHTML(
-                                        data.subject ||
-                                        "-"
-                                    )}
-                                </strong>
-
-                                <small>
-                                    ${escapeHTML(
-                                        data.category ||
-                                        "Other"
-                                    )}
-                                </small>
-
-                            </td>
-
-
-                            <td>
-
-                                <small>
-                                    Registration ID
-                                </small>
-
-                                <strong>
-                                    ${escapeHTML(
-                                        data.registrationId ||
-                                        "Not provided"
-                                    )}
-                                </strong>
-
-                            </td>
-
-
-                            <td>
-
-                                <strong>
-                                    ${escapeHTML(
-                                        data.email ||
-                                        "-"
-                                    )}
-                                </strong>
-
-                            </td>
-
-
-                            <td>
-
-                                <span
-                                    class="
-                                        ticket-status
-                                        status-${currentStatus.toLowerCase()}
-                                    "
-                                >
-                                    ${currentStatus}
                                 </span>
 
-                            </td>
 
-
-                            <td>
-
-                                <small>
-                                    ${escapeHTML(
-                                        String(
-                                            data.message ||
-                                            ""
-                                        ).slice(
-                                            0,
-                                            80
-                                        )
-                                    )}
-                                    ${
-                                        String(
-                                            data.message ||
-                                            ""
-                                        ).length > 80
-                                            ? "..."
-                                            : ""
-                                    }
-                                </small>
-
-                            </td>
-
-
-                            <td>
-
-                                <button
-                                    class="view-btn"
-                                    data-key="${escapeHTML(
-                                        key
+                                <span
+                                    class="ticket-status ${escapeHTML(
+                                        statusClass
                                     )}"
                                 >
-                                    View
-                                </button>
 
-                            </td>
+                                    ${escapeHTML(
+                                        status
+                                    )}
 
-                        </tr>
+                                </span>
+
+                            </div>
+
+
+                            <h3>
+
+                                ${escapeHTML(
+                                    ticket.subject ||
+                                    "No subject"
+                                )}
+
+                            </h3>
+
+
+                            <p class="ticket-preview">
+
+                                ${escapeHTML(
+                                    ticket.message ||
+                                    "No message"
+                                )}
+
+                            </p>
+
+
+                            <div class="ticket-card-info">
+
+                                <span>
+
+                                    👤
+                                    ${escapeHTML(
+                                        ticket.name ||
+                                        "-"
+                                    )}
+
+                                </span>
+
+
+                                <span>
+
+                                    ✉
+                                    ${escapeHTML(
+                                        ticket.email ||
+                                        "-"
+                                    )}
+
+                                </span>
+
+
+                                <span>
+
+                                    🏷
+                                    ${escapeHTML(
+                                        ticket.category ||
+                                        "General"
+                                    )}
+
+                                </span>
+
+
+                                <span>
+
+                                    ⚡
+                                    ${escapeHTML(
+                                        priority
+                                    )}
+
+                                </span>
+
+                            </div>
+
+
+                            <div class="ticket-card-bottom">
+
+                                <span>
+
+                                    ${
+                                        ticket.registrationId
+                                            ? `Registration:
+                                               ${escapeHTML(
+                                                   ticket.registrationId
+                                               )}`
+                                            : "No Registration ID"
+                                    }
+
+                                </span>
+
+
+                                <span>
+
+                                    ${escapeHTML(
+                                        formatDate(
+                                            ticket.updatedAt ||
+                                            ticket.createdAt
+                                        )
+                                    )}
+
+                                </span>
+
+                            </div>
+
+                        </button>
 
                     `;
 
@@ -670,23 +844,19 @@ function renderTickets() {
             .join("");
 
 
-    /* =====================================================
-       VIEW BUTTONS
-    ===================================================== */
-
-    ticketBody
+    ticketList
         .querySelectorAll(
-            ".view-btn"
+            ".ticket-card"
         )
         .forEach(
-            button => {
+            card => {
 
-                button.addEventListener(
+                card.addEventListener(
                     "click",
                     () => {
 
                         openTicket(
-                            button.dataset.key
+                            card.dataset.key
                         );
 
                     }
@@ -699,24 +869,484 @@ function renderTickets() {
 
 
 /* =========================================================
+   OPEN TICKET
+========================================================= */
+
+function openTicket(key) {
+
+    const ticket =
+        tickets[key];
+
+
+    if (!ticket) {
+
+        showStatus(
+            "Ticket could not be found.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    selectedTicketKey =
+        key;
+
+
+    if (modalSubject) {
+
+        modalSubject.textContent =
+            ticket.subject ||
+            "Support Ticket";
+
+    }
+
+
+    if (modalTicketId) {
+
+        modalTicketId.textContent =
+            ticket.ticketId ||
+            key;
+
+    }
+
+
+    if (modalName) {
+
+        modalName.textContent =
+            ticket.name ||
+            "-";
+
+    }
+
+
+    if (modalRegistrationId) {
+
+        modalRegistrationId.textContent =
+            ticket.registrationId ||
+            "-";
+
+    }
+
+
+    if (modalClass) {
+
+        modalClass.textContent =
+            ticket.className ||
+            "-";
+
+    }
+
+
+    if (modalSection) {
+
+        modalSection.textContent =
+            ticket.section ||
+            "-";
+
+    }
+
+
+    if (modalEmail) {
+
+        modalEmail.textContent =
+            ticket.email ||
+            "-";
+
+    }
+
+
+    if (modalCategory) {
+
+        modalCategory.textContent =
+            ticket.category ||
+            "General";
+
+    }
+
+
+    if (problemSubject) {
+
+        problemSubject.textContent =
+            ticket.subject ||
+            "-";
+
+    }
+
+
+    if (problemMessage) {
+
+        problemMessage.textContent =
+            ticket.message ||
+            "No message provided.";
+
+    }
+
+
+    if (modalStatus) {
+
+        modalStatus.textContent =
+            getTicketStatus(
+                ticket
+            );
+
+    }
+
+
+    if (modalPriority) {
+
+        modalPriority.textContent =
+            getPriority(
+                ticket
+            );
+
+    }
+
+
+    if (modalCreated) {
+
+        modalCreated.textContent =
+            formatDate(
+                ticket.createdAt
+            );
+
+    }
+
+
+    if (modalUpdated) {
+
+        modalUpdated.textContent =
+            formatDate(
+                ticket.updatedAt
+            );
+
+    }
+
+
+    if (agentReply) {
+
+        agentReply.value =
+            ticket.agentReply ||
+            "";
+
+    }
+
+
+    if (modalMessage) {
+
+        modalMessage.textContent =
+            "";
+
+    }
+
+
+    ticketOverlay
+        ?.classList
+        .remove("hidden");
+
+}
+
+
+/* =========================================================
+   CLOSE MODAL
+========================================================= */
+
+function closeTicketModal() {
+
+    ticketOverlay
+        ?.classList
+        .add("hidden");
+
+    selectedTicketKey =
+        null;
+
+}
+
+
+closeModal?.addEventListener(
+    "click",
+    closeTicketModal
+);
+
+
+ticketOverlay?.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target ===
+            ticketOverlay
+        ) {
+
+            closeTicketModal();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   UPDATE TICKET
+========================================================= */
+
+async function updateTicket(
+    changes,
+    successMessage
+) {
+
+    if (!selectedTicketKey) {
+
+        return;
+
+    }
+
+
+    const ticket =
+        tickets[
+            selectedTicketKey
+        ];
+
+
+    if (!ticket) {
+
+        return;
+
+    }
+
+
+    try {
+
+        if (modalMessage) {
+
+            modalMessage.textContent =
+                "Saving...";
+
+        }
+
+
+        await update(
+
+            ref(
+                db,
+                `tickets/${selectedTicketKey}`
+            ),
+
+            {
+
+                ...changes,
+
+                updatedAt:
+                    Date.now(),
+
+                updatedBy:
+                    auth.currentUser?.uid ||
+                    ALLOWED_AGENT_UID
+
+            }
+
+        );
+
+
+        if (modalMessage) {
+
+            modalMessage.textContent =
+                successMessage;
+
+        }
+
+
+        showStatus(
+            successMessage,
+            "success"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Ticket update error:",
+            error
+        );
+
+
+        if (modalMessage) {
+
+            modalMessage.textContent =
+                "Unable to save changes.";
+
+        }
+
+
+        showStatus(
+
+            "Unable to update ticket. Check Firebase Database Rules.",
+
+            "error"
+
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   SAVE AGENT REPLY
+========================================================= */
+
+saveReplyBtn?.addEventListener(
+    "click",
+    async () => {
+
+        if (!selectedTicketKey) {
+
+            return;
+
+        }
+
+
+        const reply =
+            agentReply?.value
+                ?.trim() || "";
+
+
+        if (!reply) {
+
+            if (modalMessage) {
+
+                modalMessage.textContent =
+                    "Please write a reply first.";
+
+            }
+
+            return;
+
+        }
+
+
+        await updateTicket(
+
+            {
+
+                agentReply:
+                    reply
+
+            },
+
+            "✓ Agent reply saved."
+
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SET OPEN
+========================================================= */
+
+setOpenBtn?.addEventListener(
+    "click",
+    async () => {
+
+        await updateTicket(
+
+            {
+
+                status:
+                    "Open"
+
+            },
+
+            "✓ Ticket marked Open."
+
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SET IN PROGRESS
+========================================================= */
+
+setProgressBtn?.addEventListener(
+    "click",
+    async () => {
+
+        await updateTicket(
+
+            {
+
+                status:
+                    "In Progress"
+
+            },
+
+            "✓ Ticket marked In Progress."
+
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SET CLOSED
+========================================================= */
+
+setClosedBtn?.addEventListener(
+    "click",
+    async () => {
+
+        await updateTicket(
+
+            {
+
+                status:
+                    "Closed",
+
+                resolvedAt:
+                    Date.now(),
+
+                resolvedBy:
+                    auth.currentUser?.uid ||
+                    ALLOWED_AGENT_UID
+
+            },
+
+            "✓ Ticket marked as solved."
+
+        );
+
+    }
+);
+
+
+/* =========================================================
    LOAD TICKETS
 ========================================================= */
 
 function loadTickets() {
 
+    if (!db) {
+
+        showStatus(
+            "Firebase is not initialized.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
     showStatus(
-        "Connecting to Help Center Firebase..."
+        "Connecting to support database..."
     );
 
-
-    /*
-     * IMPORTANT:
-     *
-     * help.js writes to:
-     *
-     * /tickets
-     *
-     */
 
     const ticketsRef =
         ref(
@@ -725,14 +1355,14 @@ function loadTickets() {
         );
 
 
-    if (firebaseListener) {
+    if (firebaseUnsubscribe) {
 
-        firebaseListener();
+        firebaseUnsubscribe();
 
     }
 
 
-    firebaseListener =
+    firebaseUnsubscribe =
         onValue(
 
             ticketsRef,
@@ -761,14 +1391,14 @@ function loadTickets() {
             error => {
 
                 console.error(
-                    "HELP FIREBASE READ ERROR:",
+                    "TICKETS READ ERROR:",
                     error
                 );
 
 
                 showStatus(
 
-                    "Unable to load support tickets. Check Firebase Realtime Database Rules.",
+                    "Unable to load support tickets. Check the Help Firebase Database Rules.",
 
                     "error"
 
@@ -782,527 +1412,20 @@ function loadTickets() {
 
 
 /* =========================================================
-   OPEN TICKET
-========================================================= */
-
-function openTicket(key) {
-
-    const data =
-        tickets[key];
-
-
-    if (!data) {
-        return;
-    }
-
-
-    if (replyTicketId) {
-
-        replyTicketId.value =
-            key;
-
-    }
-
-
-    if (agentReply) {
-
-        agentReply.value =
-            data.agentReply || "";
-
-    }
-
-
-    if (ticketStatus) {
-
-        ticketStatus.value =
-            normalizeStatus(
-                data.status
-            );
-
-    }
-
-
-    if (ticketDetails) {
-
-        ticketDetails.innerHTML = `
-
-            <div class="ticket-detail-grid">
-
-                <div>
-
-                    <span>
-                        TICKET ID
-                    </span>
-
-                    <strong>
-                        ${escapeHTML(
-                            data.ticketId ||
-                            key
-                        )}
-                    </strong>
-
-                </div>
-
-
-                <div>
-
-                    <span>
-                        STATUS
-                    </span>
-
-                    <strong>
-                        ${escapeHTML(
-                            normalizeStatus(
-                                data.status
-                            )
-                        )}
-                    </strong>
-
-                </div>
-
-
-                <div>
-
-                    <span>
-                        STUDENT
-                    </span>
-
-                    <strong>
-                        ${escapeHTML(
-                            data.name ||
-                            "-"
-                        )}
-                    </strong>
-
-                </div>
-
-
-                <div>
-
-                    <span>
-                        CLASS
-                    </span>
-
-                    <strong>
-                        ${escapeHTML(
-                            data.className ||
-                            "-"
-                        )}
-                        -
-                        ${escapeHTML(
-                            data.section ||
-                            "-"
-                        )}
-                    </strong>
-
-                </div>
-
-
-                <div>
-
-                    <span>
-                        EMAIL
-                    </span>
-
-                    <strong>
-                        ${escapeHTML(
-                            data.email ||
-                            "-"
-                        )}
-                    </strong>
-
-                </div>
-
-
-                <div>
-
-                    <span>
-                        REGISTRATION ID
-                    </span>
-
-                    <strong>
-                        ${escapeHTML(
-                            data.registrationId ||
-                            "Not provided"
-                        )}
-                    </strong>
-
-                </div>
-
-
-                <div>
-
-                    <span>
-                        CATEGORY
-                    </span>
-
-                    <strong>
-                        ${escapeHTML(
-                            data.category ||
-                            "Other"
-                        )}
-                    </strong>
-
-                </div>
-
-
-                <div>
-
-                    <span>
-                        CREATED
-                    </span>
-
-                    <strong>
-                        ${escapeHTML(
-                            formatDate(
-                                data.createdAt
-                            )
-                        )}
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <div class="ticket-message">
-
-                <h3>
-                    SUBJECT
-                </h3>
-
-                <p>
-                    ${escapeHTML(
-                        data.subject ||
-                        "-"
-                    )}
-                </p>
-
-            </div>
-
-
-            <div class="ticket-message">
-
-                <h3>
-                    STUDENT MESSAGE
-                </h3>
-
-                <p>
-                    ${escapeHTML(
-                        data.message ||
-                        "-"
-                    )}
-                </p>
-
-            </div>
-
-
-            ${
-                data.agentReply
-                ?
-                `
-
-                    <div class="ticket-message">
-
-                        <h3>
-                            PREVIOUS AGENT REPLY
-                        </h3>
-
-                        <p>
-                            ${escapeHTML(
-                                data.agentReply
-                            )}
-                        </p>
-
-                    </div>
-
-                `
-                :
-                ""
-            }
-
-        `;
-
-    }
-
-
-    replyMessage.textContent =
-        "";
-
-
-    ticketOverlay?.classList.remove(
-        "hidden"
-    );
-
-}
-
-
-/* =========================================================
-   CLOSE TICKET
-========================================================= */
-
-function closeTicketModal() {
-
-    ticketOverlay?.classList.add(
-        "hidden"
-    );
-
-}
-
-
-closeTicket?.addEventListener(
-    "click",
-    closeTicketModal
-);
-
-
-ticketOverlay?.addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target ===
-            ticketOverlay
-        ) {
-
-            closeTicketModal();
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   SAVE REPLY
-========================================================= */
-
-replyForm?.addEventListener(
-    "submit",
-    async event => {
-
-        event.preventDefault();
-
-
-        const key =
-            replyTicketId?.value;
-
-
-        if (!key) {
-
-            return;
-
-        }
-
-
-        const data =
-            tickets[key];
-
-
-        if (!data) {
-
-            return;
-
-        }
-
-
-        const reply =
-            agentReply?.value
-                ?.trim() || "";
-
-
-        const newStatus =
-            ticketStatus?.value ||
-            "Open";
-
-
-        try {
-
-            if (replyMessage) {
-
-                replyMessage.textContent =
-                    "Saving...";
-
-            }
-
-
-            await update(
-
-                ref(
-                    db,
-                    `tickets/${key}`
-                ),
-
-                {
-
-                    agentReply:
-                        reply,
-
-                    status:
-                        newStatus,
-
-                    updatedAt:
-                        Date.now(),
-
-                    solvedBy:
-                        auth.currentUser?.uid ||
-                        ALLOWED_AGENT_UID
-
-                }
-
-            );
-
-
-            if (replyMessage) {
-
-                replyMessage.textContent =
-                    "✓ Ticket updated successfully.";
-
-            }
-
-
-            showStatus(
-                "Ticket updated successfully.",
-                "success"
-            );
-
-
-            setTimeout(
-                closeTicketModal,
-                700
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "TICKET UPDATE ERROR:",
-                error
-            );
-
-
-            if (replyMessage) {
-
-                replyMessage.textContent =
-                    "Unable to update ticket.";
-
-            }
-
-
-            showStatus(
-
-                "Firebase denied this update. Check your Realtime Database Rules.",
-
-                "error"
-
-            );
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   DELETE TICKET
-========================================================= */
-
-async function deleteTicket(key) {
-
-    const data =
-        tickets[key];
-
-
-    if (!data) {
-        return;
-    }
-
-
-    const confirmed =
-        confirm(
-
-            `DELETE SUPPORT TICKET?\n\n` +
-            `Ticket: ${
-                data.ticketId || key
-            }\n` +
-            `Student: ${
-                data.name || "-"
-            }\n\n` +
-            `This cannot be undone.`
-
-        );
-
-
-    if (!confirmed) {
-        return;
-    }
-
-
-    try {
-
-        showStatus(
-            "Deleting ticket..."
-        );
-
-
-        await remove(
-
-            ref(
-                db,
-                `tickets/${key}`
-            )
-
-        );
-
-
-        showStatus(
-            "Ticket deleted successfully.",
-            "success"
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "DELETE TICKET ERROR:",
-            error
-        );
-
-
-        showStatus(
-
-            "Firebase denied ticket deletion.",
-
-            "error"
-
-        );
-
-    }
-
-}
-
-
-/* =========================================================
    SEARCH
 ========================================================= */
 
-search?.addEventListener(
+searchInput?.addEventListener(
     "input",
     renderTickets
 );
 
 
 /* =========================================================
-   FILTERS
+   FILTER
 ========================================================= */
 
 statusFilter?.addEventListener(
-    "change",
-    renderTickets
-);
-
-
-categoryFilter?.addEventListener(
     "change",
     renderTickets
 );
@@ -1350,7 +1473,7 @@ logoutBtn?.addEventListener(
         } catch (error) {
 
             console.error(
-                "LOGOUT ERROR:",
+                "Logout error:",
                 error
             );
 
@@ -1386,7 +1509,7 @@ onAuthStateChanged(
 
 
         /* -----------------------------------------------
-           UID CHECK
+           ONLY ONE AGENT
         ----------------------------------------------- */
 
         if (
@@ -1394,12 +1517,30 @@ onAuthStateChanged(
             ALLOWED_AGENT_UID
         ) {
 
-            alert(
-                "Access denied. You are not authorized to access the Agent Portal."
+            console.error(
+                "Unauthorized UID:",
+                user.uid
             );
 
 
-            signOut(auth);
+            alert(
+                "Access denied. You are not an authorized support agent."
+            );
+
+
+            signOut(
+                auth
+            )
+            .finally(
+                () => {
+
+                    window.location.replace(
+                        "agent-login.html"
+                    );
+
+                }
+            );
+
 
             return;
 
@@ -1410,15 +1551,18 @@ onAuthStateChanged(
            AUTHORIZED
         ----------------------------------------------- */
 
-        showStatus(
+        console.log(
+            "Authorized support agent:",
+            user.uid
+        );
 
+
+        showStatus(
             `Agent authenticated: ${
                 user.email ||
-                user.uid
+                "Authorized Agent"
             }`,
-
             "success"
-
         );
 
 
@@ -1426,4 +1570,24 @@ onAuthStateChanged(
 
     }
 
+);
+
+
+/* =========================================================
+   ESC KEY
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            closeTicketModal();
+
+        }
+
+    }
 );
