@@ -10,14 +10,31 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
-  authDomain: "aps-robotics-championship.firebaseapp.com",
-  databaseURL: "https://aps-robotics-championship-default-rtdb.firebaseio.com",
-  projectId: "aps-robotics-championship",
-  storageBucket: "aps-robotics-championship.firebasestorage.app",
-  messagingSenderId: "1063542904891",
-  appId: "1:1063542904891:web:82ff9bb3fba0b87384a41e"
+    apiKey: "AIzaSyD83i25yCvb17M66YILnPISTrP3p4ZND6I",
+
+    authDomain:
+        "aps-robotic-champs-2026.firebaseapp.com",
+
+    databaseURL:
+        "https://aps-robotic-champs-2026-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+    projectId:
+        "aps-robotic-champs-2026",
+
+    storageBucket:
+        "aps-robotic-champs-2026.firebasestorage.app",
+
+    messagingSenderId:
+        "583098137656",
+
+    appId:
+        "1:583098137656:web:b59467faab54a67271facd",
+
+    measurementId:
+        "G-1G58X0KSD0"
 };
+
+
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
