@@ -12,16 +12,19 @@ import {
     getDatabase,
     ref,
     onValue,
-    update
+    update,
+    remove
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
 
 
 /* =========================================================
-   FIREBASE
+   FIREBASE CONFIG
 ========================================================= */
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCVfkLAc5EKDRUoHf4LgVhBFwTNmq2GMI0",
+
+    apiKey:
+        "AIzaSyCVfkLAc5EKDRUoHf4LgVhBFwTNmq2GMI0",
 
     authDomain:
         "robotics-championship-ab248.firebaseapp.com",
@@ -43,6 +46,7 @@ const firebaseConfig = {
 
     measurementId:
         "G-NTBPB3MJ0E"
+
 };
 
 
@@ -50,18 +54,21 @@ const firebaseConfig = {
    INITIALIZE
 ========================================================= */
 
-const app = initializeApp(firebaseConfig);
+const app =
+    initializeApp(firebaseConfig);
 
-const auth = getAuth(app);
+const auth =
+    getAuth(app);
 
-const db = getDatabase(app);
+const db =
+    getDatabase(app);
 
 
 /* =========================================================
    ONLY AUTHORIZED AGENT
 ========================================================= */
 
-const AGENT_UID =
+const ALLOWED_AGENT_UID =
     "HgWiHPRx9gcXZtDTl0pDCpZlokt2";
 
 
@@ -69,14 +76,17 @@ const AGENT_UID =
    ELEMENTS
 ========================================================= */
 
-const issueBody =
-    document.getElementById("issueBody");
+const ticketBody =
+    document.getElementById("ticketBody");
 
 const search =
     document.getElementById("search");
 
-const status =
-    document.getElementById("status");
+const statusFilter =
+    document.getElementById("statusFilter");
+
+const categoryFilter =
+    document.getElementById("categoryFilter");
 
 const refreshBtn =
     document.getElementById("refreshBtn");
@@ -84,45 +94,61 @@ const refreshBtn =
 const logoutBtn =
     document.getElementById("logoutBtn");
 
-const totalIssues =
-    document.getElementById("totalIssues");
+const status =
+    document.getElementById("status");
 
-const openIssues =
-    document.getElementById("openIssues");
 
-const solvedIssues =
-    document.getElementById("solvedIssues");
+/* =========================================================
+   STATS
+========================================================= */
 
-const issueOverlay =
-    document.getElementById("issueOverlay");
+const totalTickets =
+    document.getElementById("totalTickets");
 
-const closeIssue =
-    document.getElementById("closeIssue");
+const openTickets =
+    document.getElementById("openTickets");
 
-const cancelIssue =
-    document.getElementById("cancelIssue");
+const pendingTickets =
+    document.getElementById("pendingTickets");
 
-const issueForm =
-    document.getElementById("issueForm");
+const solvedTickets =
+    document.getElementById("solvedTickets");
 
-const issueKey =
-    document.getElementById("issueKey");
 
-const issueStatus =
-    document.getElementById("issueStatus");
+/* =========================================================
+   TICKET MODAL
+========================================================= */
 
-const issueReply =
-    document.getElementById("issueReply");
+const ticketOverlay =
+    document.getElementById("ticketOverlay");
 
-const issueMessage =
-    document.getElementById("issueMessage");
+const closeTicket =
+    document.getElementById("closeTicket");
+
+const ticketDetails =
+    document.getElementById("ticketDetails");
+
+const replyForm =
+    document.getElementById("replyForm");
+
+const replyTicketId =
+    document.getElementById("replyTicketId");
+
+const agentReply =
+    document.getElementById("agentReply");
+
+const ticketStatus =
+    document.getElementById("ticketStatus");
+
+const replyMessage =
+    document.getElementById("replyMessage");
 
 
 /* =========================================================
    DATA
 ========================================================= */
 
-let issues = {};
+let tickets = {};
 
 let firebaseListener = null;
 
@@ -131,14 +157,21 @@ let firebaseListener = null;
    STATUS
 ========================================================= */
 
-function showStatus(message, type = "") {
+function showStatus(
+    message,
+    type = ""
+) {
 
-    if (!status) return;
+    if (!status) {
+        return;
+    }
 
-    status.textContent = message;
+    status.textContent =
+        message;
 
     status.className =
         "status " + type;
+
 }
 
 
@@ -154,35 +187,30 @@ function escapeHTML(value) {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
+
 }
 
 
 /* =========================================================
-   DATE
+   DATE FORMAT
 ========================================================= */
 
 function formatDate(value) {
 
-    if (!value) return "—";
-
-    let date;
-
-    if (
-        typeof value === "number" ||
-        !isNaN(Number(value))
-    ) {
-
-        date = new Date(Number(value));
-
-    } else {
-
-        date = new Date(value);
-
+    if (!value) {
+        return "-";
     }
 
-    if (isNaN(date.getTime())) {
+    const date =
+        new Date(value);
 
-        return String(value);
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return "-";
 
     }
 
@@ -196,6 +224,31 @@ function formatDate(value) {
             minute: "2-digit"
         }
     );
+
+}
+
+
+/* =========================================================
+   NORMALIZE STATUS
+========================================================= */
+
+function normalizeStatus(value) {
+
+    const s =
+        String(
+            value || "Open"
+        ).toLowerCase();
+
+    if (s === "solved") {
+        return "Solved";
+    }
+
+    if (s === "pending") {
+        return "Pending";
+    }
+
+    return "Open";
+
 }
 
 
@@ -203,81 +256,108 @@ function formatDate(value) {
    SEARCH
 ========================================================= */
 
-function matchesSearch(data, key) {
+function matchesSearch(
+    data,
+    key
+) {
 
     const query =
         search?.value
             ?.trim()
             .toLowerCase() || "";
 
-    if (!query) return true;
+
+    if (!query) {
+        return true;
+    }
+
 
     const searchable = [
 
         key,
 
-        data.name,
-        data.Name,
+        data.ticketId,
 
-        data.studentName,
-        data.StudentName,
+        data.registrationId,
+
+        data.name,
+
+        data.className,
+
+        data.section,
 
         data.email,
-        data.Email,
-        data.EmailAddress,
 
-        data.mobile,
-        data.Mobile,
-        data.MobileNumber,
+        data.category,
 
         data.subject,
-        data.Subject,
-
-        data.issue,
-        data.Issue,
 
         data.message,
-        data.Message,
 
-        data.description,
-        data.Description,
-
-        data.reply,
         data.agentReply,
 
         data.status
 
     ]
-        .filter(Boolean)
+        .filter(
+            value =>
+                value !== undefined &&
+                value !== null
+        )
         .join(" ")
         .toLowerCase();
 
-    return searchable.includes(query);
+
+    return searchable.includes(
+        query
+    );
+
 }
 
 
 /* =========================================================
-   GET FIELD
+   FILTER
 ========================================================= */
 
-function getField(data, ...names) {
+function matchesFilters(data) {
 
-    for (const name of names) {
+    const selectedStatus =
+        statusFilter?.value || "All";
 
-        if (
-            data &&
-            data[name] !== undefined &&
-            data[name] !== null &&
-            data[name] !== ""
-        ) {
+    const selectedCategory =
+        categoryFilter?.value || "All";
 
-            return data[name];
 
-        }
+    const currentStatus =
+        normalizeStatus(
+            data.status
+        );
+
+
+    if (
+        selectedStatus !== "All" &&
+        currentStatus !== selectedStatus
+    ) {
+
+        return false;
 
     }
 
-    return "";
+
+    if (
+        selectedCategory !== "All" &&
+        String(
+            data.category || "Other"
+        ) !== selectedCategory
+    ) {
+
+        return false;
+
+    }
+
+
+    return true;
+
 }
 
 
@@ -285,21 +365,17 @@ function getField(data, ...names) {
    RENDER
 ========================================================= */
 
-function renderIssues() {
+function renderTickets() {
 
-    if (!issueBody) return;
+    if (!ticketBody) {
+        return;
+    }
 
 
     const allEntries =
-        Object.entries(issues);
-
-
-    const entries =
-        allEntries
-            .filter(([key, data]) =>
-                matchesSearch(data, key)
-            )
-            .reverse();
+        Object.entries(
+            tickets
+        );
 
 
     /* =====================================================
@@ -310,45 +386,80 @@ function renderIssues() {
         allEntries.length;
 
 
-    const solved =
+    const open =
         allEntries.filter(
-            ([key, data]) =>
-                String(
-                    getField(
-                        data,
-                        "status",
-                        "Status"
-                    )
-                ).toLowerCase() === "solved"
+            ([, data]) =>
+                normalizeStatus(
+                    data.status
+                ) === "Open"
         ).length;
 
 
-    const open =
-        total - solved;
+    const pending =
+        allEntries.filter(
+            ([, data]) =>
+                normalizeStatus(
+                    data.status
+                ) === "Pending"
+        ).length;
 
 
-    if (totalIssues) {
+    const solved =
+        allEntries.filter(
+            ([, data]) =>
+                normalizeStatus(
+                    data.status
+                ) === "Solved"
+        ).length;
 
-        totalIssues.textContent =
+
+    if (totalTickets) {
+        totalTickets.textContent =
             total;
-
     }
 
 
-    if (openIssues) {
-
-        openIssues.textContent =
+    if (openTickets) {
+        openTickets.textContent =
             open;
-
     }
 
 
-    if (solvedIssues) {
+    if (pendingTickets) {
+        pendingTickets.textContent =
+            pending;
+    }
 
-        solvedIssues.textContent =
+
+    if (solvedTickets) {
+        solvedTickets.textContent =
             solved;
-
     }
+
+
+    /* =====================================================
+       FILTERED
+    ===================================================== */
+
+    const entries =
+        allEntries
+            .filter(
+                ([key, data]) =>
+                    matchesSearch(
+                        data,
+                        key
+                    ) &&
+                    matchesFilters(data)
+            )
+            .sort(
+                ([, a], [, b]) =>
+                    Number(
+                        b.createdAt || 0
+                    ) -
+                    Number(
+                        a.createdAt || 0
+                    )
+            );
 
 
     /* =====================================================
@@ -357,7 +468,7 @@ function renderIssues() {
 
     if (!entries.length) {
 
-        issueBody.innerHTML = `
+        ticketBody.innerHTML = `
 
             <tr>
 
@@ -370,11 +481,11 @@ function renderIssues() {
                 >
 
                     <div style="font-size:30px;">
-                        🔎
+                        🎫
                     </div>
 
                     <div style="margin-top:10px;">
-                        No help requests found.
+                        No support tickets found.
                     </div>
 
                 </td>
@@ -384,227 +495,233 @@ function renderIssues() {
         `;
 
         return;
+
     }
 
 
     /* =====================================================
-       ROWS
+       TABLE
     ===================================================== */
 
-    issueBody.innerHTML =
+    ticketBody.innerHTML =
         entries
-            .map(([key, data]) => {
+            .map(
+                ([key, data]) => {
 
-                const name =
-                    getField(
-                        data,
-                        "name",
-                        "Name",
-                        "studentName",
-                        "StudentName"
-                    ) || "—";
+                    const currentStatus =
+                        normalizeStatus(
+                            data.status
+                        );
 
 
-                const email =
-                    getField(
-                        data,
-                        "email",
-                        "Email",
-                        "EmailAddress"
-                    ) || "—";
+                    return `
+
+                        <tr>
+
+                            <td>
+
+                                <strong>
+                                    ${escapeHTML(
+                                        data.ticketId ||
+                                        key
+                                    )}
+                                </strong>
+
+                                <small>
+                                    ${escapeHTML(
+                                        formatDate(
+                                            data.createdAt
+                                        )
+                                    )}
+                                </small>
+
+                            </td>
 
 
-                const mobile =
-                    getField(
-                        data,
-                        "mobile",
-                        "Mobile",
-                        "MobileNumber"
-                    ) || "—";
+                            <td>
+
+                                <strong>
+                                    ${escapeHTML(
+                                        data.name ||
+                                        "-"
+                                    )}
+                                </strong>
+
+                                <small>
+                                    Class ${escapeHTML(
+                                        data.className ||
+                                        "-"
+                                    )}
+                                    -
+                                    ${escapeHTML(
+                                        data.section ||
+                                        "-"
+                                    )}
+                                </small>
+
+                            </td>
 
 
-                const subject =
-                    getField(
-                        data,
-                        "subject",
-                        "Subject",
-                        "issue",
-                        "Issue"
-                    ) || "Help Request";
+                            <td>
+
+                                <strong>
+                                    ${escapeHTML(
+                                        data.subject ||
+                                        "-"
+                                    )}
+                                </strong>
+
+                                <small>
+                                    ${escapeHTML(
+                                        data.category ||
+                                        "Other"
+                                    )}
+                                </small>
+
+                            </td>
 
 
-                const message =
-                    getField(
-                        data,
-                        "message",
-                        "Message",
-                        "description",
-                        "Description"
-                    ) || "—";
+                            <td>
+
+                                <small>
+                                    Registration ID
+                                </small>
+
+                                <strong>
+                                    ${escapeHTML(
+                                        data.registrationId ||
+                                        "Not provided"
+                                    )}
+                                </strong>
+
+                            </td>
 
 
-                const currentStatus =
-                    getField(
-                        data,
-                        "status",
-                        "Status"
-                    ) || "Open";
+                            <td>
+
+                                <strong>
+                                    ${escapeHTML(
+                                        data.email ||
+                                        "-"
+                                    )}
+                                </strong>
+
+                            </td>
 
 
-                const date =
-                    getField(
-                        data,
-                        "timestamp",
-                        "createdAt",
-                        "date",
-                        "created",
-                        "time"
-                    );
+                            <td>
+
+                                <span
+                                    class="
+                                        ticket-status
+                                        status-${currentStatus.toLowerCase()}
+                                    "
+                                >
+                                    ${currentStatus}
+                                </span>
+
+                            </td>
 
 
-                const statusClass =
-                    String(currentStatus)
-                        .toLowerCase() === "solved"
-                        ? "solved"
-                        : "open";
+                            <td>
+
+                                <small>
+                                    ${escapeHTML(
+                                        String(
+                                            data.message ||
+                                            ""
+                                        ).slice(
+                                            0,
+                                            80
+                                        )
+                                    )}
+                                    ${
+                                        String(
+                                            data.message ||
+                                            ""
+                                        ).length > 80
+                                            ? "..."
+                                            : ""
+                                    }
+                                </small>
+
+                            </td>
 
 
-                return `
+                            <td>
 
-                    <tr>
+                                <button
+                                    class="view-btn"
+                                    data-key="${escapeHTML(
+                                        key
+                                    )}"
+                                >
+                                    View
+                                </button>
 
-                        <td>
+                            </td>
 
-                            <strong>
-                                ${escapeHTML(key)}
-                            </strong>
+                        </tr>
 
-                        </td>
+                    `;
 
-
-                        <td>
-
-                            <strong>
-                                ${escapeHTML(name)}
-                            </strong>
-
-                            <small>
-                                ${escapeHTML(email)}
-                            </small>
-
-                        </td>
-
-
-                        <td>
-
-                            ${escapeHTML(mobile)}
-
-                        </td>
-
-
-                        <td>
-
-                            <strong>
-                                ${escapeHTML(subject)}
-                            </strong>
-
-                            <small>
-                                ${escapeHTML(message)}
-                            </small>
-
-                        </td>
-
-
-                        <td>
-
-                            <span
-                                class="issue-status ${statusClass}"
-                            >
-                                ${escapeHTML(
-                                    currentStatus
-                                )}
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            ${escapeHTML(
-                                formatDate(date)
-                            )}
-
-                        </td>
-
-
-                        <td>
-
-                            <button
-                                class="solve-btn"
-                                data-key="${escapeHTML(key)}"
-                            >
-                                ${
-                                    statusClass === "solved"
-                                    ? "View"
-                                    : "Solve"
-                                }
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-                `;
-
-            })
+                }
+            )
             .join("");
 
 
-    document
-        .querySelectorAll(".solve-btn")
-        .forEach(button => {
+    /* =====================================================
+       VIEW BUTTONS
+    ===================================================== */
 
-            button.addEventListener(
-                "click",
-                () => {
+    ticketBody
+        .querySelectorAll(
+            ".view-btn"
+        )
+        .forEach(
+            button => {
 
-                    openIssue(
-                        button.dataset.key
-                    );
+                button.addEventListener(
+                    "click",
+                    () => {
 
-                }
-            );
+                        openTicket(
+                            button.dataset.key
+                        );
 
-        });
+                    }
+                );
+
+            }
+        );
+
 }
 
 
 /* =========================================================
-   LOAD HELP REQUESTS
+   LOAD TICKETS
 ========================================================= */
 
-function loadIssues() {
+function loadTickets() {
 
     showStatus(
-        "Connecting to help database..."
+        "Connecting to Help Center Firebase..."
     );
 
 
     /*
      * IMPORTANT:
      *
-     * This reads:
+     * help.js writes to:
      *
-     * help
+     * /tickets
      *
-     * Change this ONE path if your
-     * help form stores data somewhere else.
      */
 
-    const helpRef =
+    const ticketsRef =
         ref(
             db,
-            "help"
+            "tickets"
         );
 
 
@@ -618,28 +735,22 @@ function loadIssues() {
     firebaseListener =
         onValue(
 
-            helpRef,
+            ticketsRef,
 
             snapshot => {
 
-                issues =
+                tickets =
                     snapshot.val() || {};
 
 
-                console.log(
-                    "HELP DATA:",
-                    issues
-                );
-
-
-                renderIssues();
+                renderTickets();
 
 
                 showStatus(
 
                     `${Object.keys(
-                        issues
-                    ).length} help request(s) loaded.`,
+                        tickets
+                    ).length} support ticket(s) loaded.`,
 
                     "success"
 
@@ -650,14 +761,14 @@ function loadIssues() {
             error => {
 
                 console.error(
-                    "Help Firebase error:",
+                    "HELP FIREBASE READ ERROR:",
                     error
                 );
 
 
                 showStatus(
 
-                    "Unable to read help requests. Check Firebase Database Rules and the help database path.",
+                    "Unable to load support tickets. Check Firebase Realtime Database Rules.",
 
                     "error"
 
@@ -666,214 +777,295 @@ function loadIssues() {
             }
 
         );
+
 }
 
 
 /* =========================================================
-   OPEN ISSUE
+   OPEN TICKET
 ========================================================= */
 
-function openIssue(key) {
+function openTicket(key) {
 
     const data =
-        issues[key];
+        tickets[key];
 
 
-    if (!data) return;
+    if (!data) {
+        return;
+    }
 
 
-    if (issueKey) {
+    if (replyTicketId) {
 
-        issueKey.value = key;
+        replyTicketId.value =
+            key;
 
     }
 
 
-    if (issueStatus) {
+    if (agentReply) {
 
-        issueStatus.value =
-            getField(
-                data,
-                "status",
-                "Status"
-            ) || "Open";
+        agentReply.value =
+            data.agentReply || "";
 
     }
 
 
-    if (issueReply) {
+    if (ticketStatus) {
 
-        issueReply.value =
-            getField(
-                data,
-                "agentReply",
-                "reply",
-                "Reply"
-            ) || "";
+        ticketStatus.value =
+            normalizeStatus(
+                data.status
+            );
 
     }
 
 
-    const details =
-        document.getElementById(
-            "issueDetails"
-        );
+    if (ticketDetails) {
+
+        ticketDetails.innerHTML = `
+
+            <div class="ticket-detail-grid">
+
+                <div>
+
+                    <span>
+                        TICKET ID
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            data.ticketId ||
+                            key
+                        )}
+                    </strong>
+
+                </div>
 
 
-    if (details) {
+                <div>
 
-        const name =
-            getField(
-                data,
-                "name",
-                "Name",
-                "studentName",
-                "StudentName"
-            );
+                    <span>
+                        STATUS
+                    </span>
 
+                    <strong>
+                        ${escapeHTML(
+                            normalizeStatus(
+                                data.status
+                            )
+                        )}
+                    </strong>
 
-        const email =
-            getField(
-                data,
-                "email",
-                "Email",
-                "EmailAddress"
-            );
+                </div>
 
 
-        const mobile =
-            getField(
-                data,
-                "mobile",
-                "Mobile",
-                "MobileNumber"
-            );
+                <div>
+
+                    <span>
+                        STUDENT
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            data.name ||
+                            "-"
+                        )}
+                    </strong>
+
+                </div>
 
 
-        const subject =
-            getField(
-                data,
-                "subject",
-                "Subject",
-                "issue",
-                "Issue"
-            );
+                <div>
+
+                    <span>
+                        CLASS
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            data.className ||
+                            "-"
+                        )}
+                        -
+                        ${escapeHTML(
+                            data.section ||
+                            "-"
+                        )}
+                    </strong>
+
+                </div>
 
 
-        const message =
-            getField(
-                data,
-                "message",
-                "Message",
-                "description",
-                "Description"
-            );
+                <div>
+
+                    <span>
+                        EMAIL
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            data.email ||
+                            "-"
+                        )}
+                    </strong>
+
+                </div>
 
 
-        details.innerHTML = `
+                <div>
 
-            <div class="detail-item">
+                    <span>
+                        REGISTRATION ID
+                    </span>
 
-                <span>Name</span>
+                    <strong>
+                        ${escapeHTML(
+                            data.registrationId ||
+                            "Not provided"
+                        )}
+                    </strong>
 
-                <strong>
-                    ${escapeHTML(name || "—")}
-                </strong>
+                </div>
+
+
+                <div>
+
+                    <span>
+                        CATEGORY
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            data.category ||
+                            "Other"
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        CREATED
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            formatDate(
+                                data.createdAt
+                            )
+                        )}
+                    </strong>
+
+                </div>
 
             </div>
 
 
-            <div class="detail-item">
+            <div class="ticket-message">
 
-                <span>Email</span>
-
-                <strong>
-                    ${escapeHTML(email || "—")}
-                </strong>
-
-            </div>
-
-
-            <div class="detail-item">
-
-                <span>Mobile</span>
-
-                <strong>
-                    ${escapeHTML(mobile || "—")}
-                </strong>
-
-            </div>
-
-
-            <div class="detail-item">
-
-                <span>Subject</span>
-
-                <strong>
-                    ${escapeHTML(subject || "—")}
-                </strong>
-
-            </div>
-
-
-            <div class="detail-message">
-
-                <span>MESSAGE / ISSUE</span>
+                <h3>
+                    SUBJECT
+                </h3>
 
                 <p>
-                    ${escapeHTML(message || "—")}
+                    ${escapeHTML(
+                        data.subject ||
+                        "-"
+                    )}
                 </p>
 
             </div>
+
+
+            <div class="ticket-message">
+
+                <h3>
+                    STUDENT MESSAGE
+                </h3>
+
+                <p>
+                    ${escapeHTML(
+                        data.message ||
+                        "-"
+                    )}
+                </p>
+
+            </div>
+
+
+            ${
+                data.agentReply
+                ?
+                `
+
+                    <div class="ticket-message">
+
+                        <h3>
+                            PREVIOUS AGENT REPLY
+                        </h3>
+
+                        <p>
+                            ${escapeHTML(
+                                data.agentReply
+                            )}
+                        </p>
+
+                    </div>
+
+                `
+                :
+                ""
+            }
 
         `;
 
     }
 
 
-    issueMessage.textContent = "";
+    replyMessage.textContent =
+        "";
 
 
-    issueOverlay?.classList.remove(
+    ticketOverlay?.classList.remove(
         "hidden"
     );
+
 }
 
 
 /* =========================================================
-   CLOSE ISSUE
+   CLOSE TICKET
 ========================================================= */
 
-function closeIssueModal() {
+function closeTicketModal() {
 
-    issueOverlay?.classList.add(
+    ticketOverlay?.classList.add(
         "hidden"
     );
+
 }
 
 
-closeIssue?.addEventListener(
+closeTicket?.addEventListener(
     "click",
-    closeIssueModal
+    closeTicketModal
 );
 
 
-cancelIssue?.addEventListener(
-    "click",
-    closeIssueModal
-);
-
-
-issueOverlay?.addEventListener(
+ticketOverlay?.addEventListener(
     "click",
     event => {
 
         if (
             event.target ===
-            issueOverlay
+            ticketOverlay
         ) {
 
-            closeIssueModal();
+            closeTicketModal();
 
         }
 
@@ -882,10 +1074,10 @@ issueOverlay?.addEventListener(
 
 
 /* =========================================================
-   SOLVE ISSUE
+   SAVE REPLY
 ========================================================= */
 
-issueForm?.addEventListener(
+replyForm?.addEventListener(
     "submit",
     async event => {
 
@@ -893,18 +1085,43 @@ issueForm?.addEventListener(
 
 
         const key =
-            issueKey?.value;
+            replyTicketId?.value;
 
 
-        if (!key) return;
+        if (!key) {
+
+            return;
+
+        }
+
+
+        const data =
+            tickets[key];
+
+
+        if (!data) {
+
+            return;
+
+        }
+
+
+        const reply =
+            agentReply?.value
+                ?.trim() || "";
+
+
+        const newStatus =
+            ticketStatus?.value ||
+            "Open";
 
 
         try {
 
-            if (issueMessage) {
+            if (replyMessage) {
 
-                issueMessage.textContent =
-                    "Saving response...";
+                replyMessage.textContent =
+                    "Saving...";
 
             }
 
@@ -913,44 +1130,45 @@ issueForm?.addEventListener(
 
                 ref(
                     db,
-                    `help/${key}`
+                    `tickets/${key}`
                 ),
 
                 {
 
-                    status:
-                        issueStatus.value,
-
                     agentReply:
-                        issueReply.value.trim(),
+                        reply,
 
-                    repliedAt:
+                    status:
+                        newStatus,
+
+                    updatedAt:
                         Date.now(),
 
-                    repliedBy:
-                        auth.currentUser?.uid || ""
+                    solvedBy:
+                        auth.currentUser?.uid ||
+                        ALLOWED_AGENT_UID
 
                 }
 
             );
 
 
-            if (issueMessage) {
+            if (replyMessage) {
 
-                issueMessage.textContent =
-                    "✓ Response saved successfully.";
+                replyMessage.textContent =
+                    "✓ Ticket updated successfully.";
 
             }
 
 
             showStatus(
-                "Help request updated successfully.",
+                "Ticket updated successfully.",
                 "success"
             );
 
 
             setTimeout(
-                closeIssueModal,
+                closeTicketModal,
                 700
             );
 
@@ -958,22 +1176,25 @@ issueForm?.addEventListener(
         } catch (error) {
 
             console.error(
-                "Update help request error:",
+                "TICKET UPDATE ERROR:",
                 error
             );
 
 
-            if (issueMessage) {
+            if (replyMessage) {
 
-                issueMessage.textContent =
-                    "Unable to save response.";
+                replyMessage.textContent =
+                    "Unable to update ticket.";
 
             }
 
 
             showStatus(
-                "Firebase denied the update. Check your Database Rules.",
+
+                "Firebase denied this update. Check your Realtime Database Rules.",
+
                 "error"
+
             );
 
         }
@@ -983,12 +1204,107 @@ issueForm?.addEventListener(
 
 
 /* =========================================================
+   DELETE TICKET
+========================================================= */
+
+async function deleteTicket(key) {
+
+    const data =
+        tickets[key];
+
+
+    if (!data) {
+        return;
+    }
+
+
+    const confirmed =
+        confirm(
+
+            `DELETE SUPPORT TICKET?\n\n` +
+            `Ticket: ${
+                data.ticketId || key
+            }\n` +
+            `Student: ${
+                data.name || "-"
+            }\n\n` +
+            `This cannot be undone.`
+
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    try {
+
+        showStatus(
+            "Deleting ticket..."
+        );
+
+
+        await remove(
+
+            ref(
+                db,
+                `tickets/${key}`
+            )
+
+        );
+
+
+        showStatus(
+            "Ticket deleted successfully.",
+            "success"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "DELETE TICKET ERROR:",
+            error
+        );
+
+
+        showStatus(
+
+            "Firebase denied ticket deletion.",
+
+            "error"
+
+        );
+
+    }
+
+}
+
+
+/* =========================================================
    SEARCH
 ========================================================= */
 
 search?.addEventListener(
     "input",
-    renderIssues
+    renderTickets
+);
+
+
+/* =========================================================
+   FILTERS
+========================================================= */
+
+statusFilter?.addEventListener(
+    "change",
+    renderTickets
+);
+
+
+categoryFilter?.addEventListener(
+    "change",
+    renderTickets
 );
 
 
@@ -1000,10 +1316,10 @@ refreshBtn?.addEventListener(
     "click",
     () => {
 
-        renderIssues();
+        renderTickets();
 
         showStatus(
-            "Help dashboard refreshed.",
+            "Tickets refreshed.",
             "success"
         );
 
@@ -1019,23 +1335,44 @@ logoutBtn?.addEventListener(
     "click",
     async () => {
 
-        await signOut(auth);
+        try {
 
-        window.location.replace(
-            "agent-login.html"
-        );
+            await signOut(
+                auth
+            );
+
+
+            window.location.replace(
+                "agent-login.html"
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "LOGOUT ERROR:",
+                error
+            );
+
+        }
 
     }
 );
 
 
 /* =========================================================
-   AUTH
+   AUTHORIZATION
 ========================================================= */
 
 onAuthStateChanged(
+
     auth,
+
     user => {
+
+        /* -----------------------------------------------
+           NOT LOGGED IN
+        ----------------------------------------------- */
 
         if (!user) {
 
@@ -1044,19 +1381,21 @@ onAuthStateChanged(
             );
 
             return;
+
         }
 
 
-        /*
-         * ONLY THIS UID
-         */
+        /* -----------------------------------------------
+           UID CHECK
+        ----------------------------------------------- */
 
         if (
-            user.uid !== AGENT_UID
+            user.uid !==
+            ALLOWED_AGENT_UID
         ) {
 
             alert(
-                "Access denied. You are not an authorized support agent."
+                "Access denied. You are not authorized to access the Agent Portal."
             );
 
 
@@ -1067,10 +1406,15 @@ onAuthStateChanged(
         }
 
 
+        /* -----------------------------------------------
+           AUTHORIZED
+        ----------------------------------------------- */
+
         showStatus(
 
             `Agent authenticated: ${
-                user.email || user.uid
+                user.email ||
+                user.uid
             }`,
 
             "success"
@@ -1078,7 +1422,8 @@ onAuthStateChanged(
         );
 
 
-        loadIssues();
+        loadTickets();
 
     }
+
 );
