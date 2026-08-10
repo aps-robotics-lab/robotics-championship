@@ -42,3 +42,6 @@
 @media (max-width:1050px){.team-grid{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:800px){.site-header{height:70px;padding:9px 5%}.menu-btn{display:flex}#mainNav{position:absolute;top:70px;left:4%;right:4%;display:none;flex-direction:column;gap:5px;padding:10px;border:1px solid rgba(25,230,255,.14);border-radius:16px;background:rgba(3,7,18,.97);box-shadow:0 20px 50px rgba(0,0,0,.45)}#mainNav.open{display:flex}#mainNav a{width:100%;padding:12px 14px}.hero{padding-top:125px}.robot-visual{opacity:.18;right:-120px}.team-grid{grid-template-columns:1fr}}
 @media (max-width:520px){.brand img{width:40px;height:40px}.brand b{font-size:12px}.brand small{font-size:7px}.hero h1{font-size:40px}.welcome-section{padding:45px 5%}.welcome-inner{padding:30px 18px}.contact-grid{grid-template-columns:1fr!important}}
+.admin-agent-links {
+    display: none;
+}
