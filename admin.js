@@ -619,3 +619,161 @@ onAuthStateChanged(auth, user => {
     loadRegistrations();
     loadWebsiteContent(); // Added for the new Content feature
 });
+/* =========================================
+   ADMIN MOBILE MENU
+========================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const menuToggle =
+        document.getElementById("menuToggle");
+
+    const adminSidebar =
+        document.getElementById("adminSidebar");
+
+    const sidebarOverlay =
+        document.getElementById("sidebarOverlay");
+
+
+    if (!menuToggle || !adminSidebar || !sidebarOverlay) {
+
+        console.error(
+            "Admin menu: Required elements were not found."
+        );
+
+        return;
+    }
+
+
+    function openMenu() {
+
+        adminSidebar.classList.add("active");
+
+        sidebarOverlay.classList.add("active");
+
+        menuToggle.classList.add("active");
+
+        menuToggle.setAttribute(
+            "aria-expanded",
+            "true"
+        );
+
+        menuToggle.setAttribute(
+            "aria-label",
+            "Close navigation"
+        );
+    }
+
+
+    function closeMenu() {
+
+        adminSidebar.classList.remove("active");
+
+        sidebarOverlay.classList.remove("active");
+
+        menuToggle.classList.remove("active");
+
+        menuToggle.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+        menuToggle.setAttribute(
+            "aria-label",
+            "Open navigation"
+        );
+    }
+
+
+    function toggleMenu() {
+
+        if (
+            adminSidebar.classList.contains("active")
+        ) {
+
+            closeMenu();
+
+        } else {
+
+            openMenu();
+
+        }
+    }
+
+
+    /* Hamburger button */
+
+    menuToggle.addEventListener(
+        "click",
+        toggleMenu
+    );
+
+
+    /* Overlay */
+
+    sidebarOverlay.addEventListener(
+        "click",
+        closeMenu
+    );
+
+
+    /* Sidebar links */
+
+    const sidebarLinks =
+        adminSidebar.querySelectorAll(
+            ".sidebar-link"
+        );
+
+
+    sidebarLinks.forEach(function (link) {
+
+        link.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    window.innerWidth <= 900
+                ) {
+
+                    closeMenu();
+
+                }
+
+            }
+        );
+
+    });
+
+
+    /* ESC closes menu */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Escape") {
+
+                closeMenu();
+
+            }
+
+        }
+    );
+
+
+    /* Close menu when screen becomes desktop */
+
+    window.addEventListener(
+        "resize",
+        function () {
+
+            if (window.innerWidth > 900) {
+
+                closeMenu();
+
+            }
+
+        }
+    );
+
+});
