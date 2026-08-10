@@ -1,19 +1,44 @@
+
 /* =========================================================
    APS ROBOTICS CHAMPIONSHIP 2026
    AGENT HELP CENTER
    ---------------------------------------------------------
-   IMPORTANT:
-   This file MUST use the Firebase project used by help.js.
-   Database path:
+   MULTI-AGENT VERSION
+
+   Firebase project:
+       Same project used by help.js
+
+   Tickets:
        /tickets
 
-   ONLY THIS UID IS ALLOWED:
-       HgWiHPRx9gcXZtDTl0pDCpZlokt2
+   Agents:
+       /agents/{AUTH_UID}
+
+   Example:
+
+   /agents
+       /UID_OF_AGENT_1
+           name: "Agent 1"
+           email: "agent1@example.com"
+           role: "agent"
+           active: true
+
+       /UID_OF_AGENT_2
+           name: "Agent 2"
+           email: "agent2@example.com"
+           role: "agent"
+           active: true
+
+   IMPORTANT:
+   - No agent UID is hard-coded in this file.
+   - Add/remove agents from Firebase instead.
 ========================================================= */
+
 
 import {
     initializeApp
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+
 
 import {
     getAuth,
@@ -21,40 +46,35 @@ import {
     signOut
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
+
 import {
     getDatabase,
     ref,
     onValue,
-    update
+    update,
+    get
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
-import { helpFirebaseConfig, AGENT_UID } from "./firebase-config.js";
+
+import {
+    helpFirebaseConfig
+} from "./firebase-config.js";
 
 
 /* =========================================================
-   HELP FIREBASE CONFIG
-   =========================================================
-
-   ⚠️ PUT THE CONFIG FROM THE FIREBASE PROJECT USED BY help.js
-
-   DO NOT USE YOUR REGISTRATION FIREBASE HERE IF HELP
-   HAS A DIFFERENT FIREBASE PROJECT.
+   FIREBASE
 ========================================================= */
 
+let app = null;
+let auth = null;
+let db = null;
 
-/* =========================================================
-   FIREBASE INITIALIZATION
-========================================================= */
-
-let app;
-
-let auth;
-
-let db;
 
 try {
 
-    app = initializeApp(helpFirebaseConfig);
+    app = initializeApp(
+        helpFirebaseConfig
+    );
 
     auth = getAuth(app);
 
@@ -71,10 +91,18 @@ try {
 
 
 /* =========================================================
-   ONLY AUTHORIZED AGENT
+   DATABASE PATHS
 ========================================================= */
 
-const ALLOWED_AGENT_UID = AGENT_UID;
+const TICKETS_PATH = "tickets";
+const AGENTS_PATH = "agents";
+
+
+/* =========================================================
+   CURRENT AGENT
+========================================================= */
+
+let currentAgent = null;
 
 
 /* =========================================================
@@ -97,29 +125,50 @@ const ticketList =
         "ticketList"
     );
 
+
 const searchInput =
     document.getElementById(
         "searchInput"
     );
+
 
 const statusFilter =
     document.getElementById(
         "statusFilter"
     );
 
+
 const refreshBtn =
     document.getElementById(
         "refreshBtn"
     );
+
 
 const logoutBtn =
     document.getElementById(
         "logoutBtn"
     );
 
+
 const statusMessage =
     document.getElementById(
         "statusMessage"
+    );
+
+
+/* =========================================================
+   OPTIONAL AGENT UI ELEMENTS
+========================================================= */
+
+const agentNameElement =
+    document.getElementById(
+        "agentName"
+    );
+
+
+const agentEmailElement =
+    document.getElementById(
+        "agentEmail"
     );
 
 
@@ -132,15 +181,18 @@ const totalTickets =
         "totalTickets"
     );
 
+
 const openTickets =
     document.getElementById(
         "openTickets"
     );
 
+
 const progressTickets =
     document.getElementById(
         "progressTickets"
     );
+
 
 const closedTickets =
     document.getElementById(
@@ -157,85 +209,102 @@ const ticketOverlay =
         "ticketOverlay"
     );
 
+
 const closeModal =
     document.getElementById(
         "closeModal"
     );
+
 
 const modalSubject =
     document.getElementById(
         "modalSubject"
     );
 
+
 const modalTicketId =
     document.getElementById(
         "modalTicketId"
     );
+
 
 const modalName =
     document.getElementById(
         "modalName"
     );
 
+
 const modalRegistrationId =
     document.getElementById(
         "modalRegistrationId"
     );
+
 
 const modalClass =
     document.getElementById(
         "modalClass"
     );
 
+
 const modalSection =
     document.getElementById(
         "modalSection"
     );
+
 
 const modalEmail =
     document.getElementById(
         "modalEmail"
     );
 
+
 const modalCategory =
     document.getElementById(
         "modalCategory"
     );
+
 
 const problemSubject =
     document.getElementById(
         "problemSubject"
     );
 
+
 const problemMessage =
     document.getElementById(
         "problemMessage"
     );
+
 
 const modalStatus =
     document.getElementById(
         "modalStatus"
     );
 
+
 const modalPriority =
     document.getElementById(
         "modalPriority"
     );
+
 
 const modalCreated =
     document.getElementById(
         "modalCreated"
     );
 
+
 const modalUpdated =
     document.getElementById(
         "modalUpdated"
     );
 
+
 const agentReply =
     document.getElementById(
         "agentReply"
     );
+
 
 const modalMessage =
     document.getElementById(
@@ -252,15 +321,18 @@ const setOpenBtn =
         "setOpenBtn"
     );
 
+
 const setProgressBtn =
     document.getElementById(
         "setProgressBtn"
     );
 
+
 const saveReplyBtn =
     document.getElementById(
         "saveReplyBtn"
     );
+
 
 const setClosedBtn =
     document.getElementById(
@@ -411,6 +483,224 @@ function getPriority(ticket) {
 
 
 /* =========================================================
+   MULTI-AGENT AUTHORIZATION
+   ---------------------------------------------------------
+   Checks:
+
+       /agents/{currentUser.uid}
+
+   Agent must exist and active !== false.
+
+   This means:
+
+       active: true
+           = allowed
+
+       active: false
+           = blocked
+
+       missing agent record
+           = blocked
+========================================================= */
+
+async function verifyAgent(user) {
+
+    if (!user) {
+
+        return {
+            allowed: false,
+            reason: "No authenticated user."
+        };
+
+    }
+
+
+    if (!db) {
+
+        return {
+            allowed: false,
+            reason: "Database is not initialized."
+        };
+
+    }
+
+
+    try {
+
+        const agentRef =
+            ref(
+                db,
+                `${AGENTS_PATH}/${user.uid}`
+            );
+
+
+        const snapshot =
+            await get(agentRef);
+
+
+        if (!snapshot.exists()) {
+
+            console.warn(
+                "Agent not found:",
+                user.uid
+            );
+
+
+            return {
+                allowed: false,
+                reason:
+                    "Your account is not registered as a support agent."
+            };
+
+        }
+
+
+        const agentData =
+            snapshot.val() || {};
+
+
+        /* ---------------------------------------------
+           ACTIVE CHECK
+
+           active === false means disabled.
+
+           If active is missing, we allow it for
+           backwards compatibility.
+        --------------------------------------------- */
+
+        if (
+            agentData.active === false
+        ) {
+
+            return {
+                allowed: false,
+                reason:
+                    "Your support agent account is currently disabled."
+            };
+
+        }
+
+
+        /* ---------------------------------------------
+           ROLE CHECK
+
+           role can be:
+               agent
+               admin
+               support
+
+           If role is missing, allow for compatibility.
+        --------------------------------------------- */
+
+        if (
+            agentData.role &&
+            ![
+                "agent",
+                "admin",
+                "support"
+            ].includes(
+                String(
+                    agentData.role
+                ).toLowerCase()
+            )
+        ) {
+
+            return {
+                allowed: false,
+                reason:
+                    "Your Firebase account does not have a valid support role."
+            };
+
+        }
+
+
+        return {
+
+            allowed: true,
+
+            data: {
+
+                uid:
+                    user.uid,
+
+                name:
+                    agentData.name ||
+                    user.displayName ||
+                    user.email?.split("@")[0] ||
+                    "Support Agent",
+
+                email:
+                    agentData.email ||
+                    user.email ||
+                    "",
+
+                role:
+                    agentData.role ||
+                    "agent",
+
+                active:
+                    agentData.active !== false
+
+            }
+
+        };
+
+    } catch (error) {
+
+        console.error(
+            "Agent verification error:",
+            error
+        );
+
+
+        return {
+            allowed: false,
+            reason:
+                "Unable to verify agent account. Check Firebase Database Rules."
+        };
+
+    }
+
+}
+
+
+/* =========================================================
+   SET AGENT UI
+========================================================= */
+
+function setAgentUI(agent) {
+
+    currentAgent =
+        agent;
+
+
+    if (agentNameElement) {
+
+        agentNameElement.textContent =
+            agent.name ||
+            "Support Agent";
+
+    }
+
+
+    if (agentEmailElement) {
+
+        agentEmailElement.textContent =
+            agent.email ||
+            "";
+
+    }
+
+
+    console.log(
+        "Current support agent:",
+        agent
+    );
+
+}
+
+
+/* =========================================================
    SEARCH MATCH
 ========================================================= */
 
@@ -426,7 +716,9 @@ function matchesSearch(
 
 
     if (!query) {
+
         return true;
+
     }
 
 
@@ -583,7 +875,9 @@ function updateStats() {
 function renderTickets() {
 
     if (!ticketList) {
+
         return;
+
     }
 
 
@@ -615,12 +909,14 @@ function renderTickets() {
                         0
                     );
 
+
                 const dateB =
                     Number(
                         b.updatedAt ||
                         b.createdAt ||
                         0
                     );
+
 
                 return dateB - dateA;
 
@@ -1036,6 +1332,7 @@ function closeTicketModal() {
         ?.classList
         .add("hidden");
 
+
     selectedTicketKey =
         null;
 
@@ -1094,6 +1391,20 @@ async function updateTicket(
     }
 
 
+    if (
+        !auth?.currentUser
+    ) {
+
+        showStatus(
+            "Authentication expired. Please log in again.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
     try {
 
         if (modalMessage) {
@@ -1108,7 +1419,7 @@ async function updateTicket(
 
             ref(
                 db,
-                `tickets/${selectedTicketKey}`
+                `${TICKETS_PATH}/${selectedTicketKey}`
             ),
 
             {
@@ -1119,8 +1430,13 @@ async function updateTicket(
                     Date.now(),
 
                 updatedBy:
-                    auth.currentUser?.uid ||
-                    ALLOWED_AGENT_UID
+                    auth.currentUser.uid,
+
+                updatedByName:
+                    currentAgent?.name ||
+                    auth.currentUser.displayName ||
+                    auth.currentUser.email ||
+                    "Support Agent"
 
             }
 
@@ -1291,7 +1607,12 @@ setClosedBtn?.addEventListener(
 
                 resolvedBy:
                     auth.currentUser?.uid ||
-                    ALLOWED_AGENT_UID
+                    "",
+
+                resolvedByName:
+                    currentAgent?.name ||
+                    auth.currentUser?.email ||
+                    "Support Agent"
 
             },
 
@@ -1329,13 +1650,16 @@ function loadTickets() {
     const ticketsRef =
         ref(
             db,
-            "tickets"
+            TICKETS_PATH
         );
 
 
     if (firebaseUnsubscribe) {
 
         firebaseUnsubscribe();
+
+        firebaseUnsubscribe =
+            null;
 
     }
 
@@ -1463,92 +1787,134 @@ logoutBtn?.addEventListener(
 
 /* =========================================================
    AUTHORIZATION
+   ---------------------------------------------------------
+   IMPORTANT:
+
+   There is NO hard-coded UID here.
+
+   Firebase decides who is an agent.
+
+   Example:
+
+       /agents/USER_UID
+
+   If that record exists and active is not false,
+   access is granted.
 ========================================================= */
 
-onAuthStateChanged(
+if (!auth) {
 
-    auth,
+    showStatus(
+        "Firebase authentication could not be initialized.",
+        "error"
+    );
 
-    user => {
+} else {
 
-        /* -----------------------------------------------
-           NOT LOGGED IN
-        ----------------------------------------------- */
+    onAuthStateChanged(
 
-        if (!user) {
+        auth,
 
-            window.location.replace(
-                "agent-login.html"
+        async user => {
+
+            /* -------------------------------------------
+               NOT LOGGED IN
+            ------------------------------------------- */
+
+            if (!user) {
+
+                window.location.replace(
+                    "agent-login.html"
+                );
+
+                return;
+
+            }
+
+
+            showStatus(
+                "Verifying support agent account..."
             );
 
-            return;
+
+            /* -------------------------------------------
+               VERIFY AGAINST /agents
+            ------------------------------------------- */
+
+            const verification =
+                await verifyAgent(
+                    user
+                );
+
+
+            /* -------------------------------------------
+               NOT AUTHORIZED
+            ------------------------------------------- */
+
+            if (
+                !verification.allowed
+            ) {
+
+                console.error(
+                    "Agent access denied:",
+                    verification.reason
+                );
+
+
+                alert(
+                    verification.reason ||
+                    "Access denied."
+                );
+
+
+                await signOut(
+                    auth
+                );
+
+
+                window.location.replace(
+                    "agent-login.html"
+                );
+
+
+                return;
+
+            }
+
+
+            /* -------------------------------------------
+               AUTHORIZED AGENT
+            ------------------------------------------- */
+
+            setAgentUI(
+                verification.data
+            );
+
+
+            console.log(
+                "Authorized support agent:",
+                verification.data.uid
+            );
+
+
+            showStatus(
+
+                `Agent authenticated: ${
+                    verification.data.name
+                }`,
+
+                "success"
+
+            );
+
+
+            loadTickets();
 
         }
 
+    );
 
-        /* -----------------------------------------------
-           ONLY ONE AGENT
-        ----------------------------------------------- */
-
-        if (
-            user.uid !==
-            ALLOWED_AGENT_UID
-        ) {
-
-            console.error(
-                "Unauthorized UID:",
-                user.uid
-            );
-
-
-            alert(
-                "Access denied. You are not an authorized support agent."
-            );
-
-
-            signOut(
-                auth
-            )
-            .finally(
-                () => {
-
-                    window.location.replace(
-                        "agent-login.html"
-                    );
-
-                }
-            );
-
-
-            return;
-
-        }
-
-
-        /* -----------------------------------------------
-           AUTHORIZED
-        ----------------------------------------------- */
-
-        console.log(
-            "Authorized support agent:",
-            user.uid
-        );
-
-
-        showStatus(
-            `Agent authenticated: ${
-                user.email ||
-                "Authorized Agent"
-            }`,
-            "success"
-        );
-
-
-        loadTickets();
-
-    }
-
-);
+}
 
 
 /* =========================================================
