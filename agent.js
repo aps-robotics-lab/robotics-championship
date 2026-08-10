@@ -1,125 +1,120 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-import { getDatabase, ref, get, onValue, update } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
-import { helpFirebaseConfig } from "./firebase-config.js";
+import { getDatabase, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+import { helpFirebaseConfig, AGENT_UIDS } from "./firebase-config.js";
 
 const app = initializeApp(helpFirebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
+const TICKETS_PATH = "tickets";
+const allowed = new Set((AGENT_UIDS || []).filter(Boolean));
 let tickets = {};
+let currentKey = null;
 
-const esc = (v) => String(v ?? "").replace(/[&<>"']/g, c =>
-  ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[c])
-);
+const $ = id => document.getElementById(id);
+const body = $("ticketBody") || $("ticketsBody") || $("registrationBody");
+const status = $("status");
+const search = $("search");
+const filter = $("statusFilter");
+const logout = $("logoutBtn");
 
-async function boot(user) {
-  const agentSnap = await get(ref(db, `agents/${user.uid}`));
-
-  if (!agentSnap.exists() || agentSnap.val()?.active === false) {
-    await signOut(auth);
-    location.replace("agent-login.html");
-    return;
-  }
-
-  const agent = agentSnap.val();
-
-  if (document.getElementById("agentName")) {
-    document.getElementById("agentName").textContent =
-      agent.name || user.displayName || user.email || "Agent";
-  }
-
-  if (document.getElementById("agentEmail")) {
-    document.getElementById("agentEmail").textContent = user.email || "";
-  }
-
-  onValue(ref(db, "tickets"), (snapshot) => {
-    tickets = snapshot.val() || {};
-    renderTickets();
-  });
+function setStatus(text, type="") {
+    if (!status) return;
+    status.textContent = text;
+    status.className = `status ${type}`.trim();
 }
 
-function renderTickets() {
-  const box = document.getElementById("ticketList");
-  if (!box) return;
-
-  const entries = Object.entries(tickets).reverse();
-
-  box.innerHTML = entries.length ? entries.map(([key, t]) => `
-    <article class="ticket-card">
-      <div><strong>${esc(t.ticketId || key)}</strong></div>
-      <h3>${esc(t.subject || "Support request")}</h3>
-      <p>${esc(t.message || "")}</p>
-      <small>${esc(t.studentName || "")} · ${esc(t.email || "")}</small>
-
-      <select data-status="${esc(key)}">
-        <option value="open" ${t.status === "open" ? "selected" : ""}>Open</option>
-        <option value="in-progress" ${t.status === "in-progress" ? "selected" : ""}>In Progress</option>
-        <option value="resolved" ${t.status === "resolved" ? "selected" : ""}>Resolved</option>
-      </select>
-    </article>
-  `).join("") : "<p>No support tickets.</p>";
-
-  box.querySelectorAll("[data-status]").forEach(select => {
-    select.addEventListener("change", async () => {
-      await update(ref(db, `tickets/${select.dataset.status}`), {
-        status: select.value,
-        updatedAt: Date.now(),
-        updatedBy: auth.currentUser.uid
-      });
-    });
-  });
+function esc(v) {
+    return String(v ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
 }
+
+function val(d, keys, fallback="—") {
+    for (const k of keys) if (d?.[k] !== undefined && d?.[k] !== null && String(d[k]).trim() !== "") return d[k];
+    return fallback;
+}
+
+function ticketId(d,k) { return val(d, ["ticketId","ticketID","id"], k); }
+function name(d) { return val(d, ["name","studentName","student","fullName"], "—"); }
+function email(d) { return val(d, ["email","emailAddress"], "—"); }
+function phone(d) { return val(d, ["mobile","mobileNumber","phone","phoneNumber"], "—"); }
+function issue(d) { return val(d, ["issue","message","description","query","problem"], "—"); }
+function ticketStatus(d) { return String(val(d, ["status"], "open")).toLowerCase(); }
+
+function render() {
+    if (!body) return;
+    const q = search?.value.trim().toLowerCase() || "";
+    const sf = filter?.value || "all";
+    const entries = Object.entries(tickets).filter(([k,d]) => {
+        const hay = [k,ticketId(d,k),name(d),email(d),phone(d),issue(d),ticketStatus(d)].join(" ").toLowerCase();
+        return (!q || hay.includes(q)) && (sf === "all" || ticketStatus(d) === sf);
+    }).reverse();
+
+    if (!entries.length) {
+        body.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:35px">No support tickets found.</td></tr>`;
+        return;
+    }
+
+    body.innerHTML = entries.map(([k,d]) => `
+        <tr>
+            <td><strong>${esc(ticketId(d,k))}</strong></td>
+            <td>${esc(name(d))}</td>
+            <td>${esc(email(d))}</td>
+            <td>${esc(issue(d))}</td>
+            <td><span class="status-badge ${esc(ticketStatus(d))}">${esc(ticketStatus(d))}</span></td>
+            <td>${esc(d.createdAt || d.timestamp || "—")}</td>
+            <td>
+                <button data-action="view" data-key="${esc(k)}">View</button>
+                <button data-action="resolve" data-key="${esc(k)}">Resolve</button>
+                <button data-action="delete" data-key="${esc(k)}">Delete</button>
+            </td>
+        </tr>`).join("");
+
+    body.querySelectorAll("button[data-key]").forEach(btn => btn.addEventListener("click", () => action(btn.dataset.action, btn.dataset.key)));
+}
+
+function action(type, key) {
+    const d = tickets[key];
+    if (!d) return;
+    currentKey = key;
+    if (type === "view") {
+        const panel = $("detailContent");
+        if (panel) panel.innerHTML = `
+            <h3>${esc(ticketId(d,key))}</h3>
+            <p><b>Name:</b> ${esc(name(d))}</p>
+            <p><b>Email:</b> ${esc(email(d))}</p>
+            <p><b>Phone:</b> ${esc(phone(d))}</p>
+            <p><b>Issue:</b> ${esc(issue(d))}</p>
+            <p><b>Status:</b> ${esc(ticketStatus(d))}</p>`;
+        $("detailOverlay")?.classList.remove("hidden");
+    } else if (type === "resolve") {
+        update(ref(db, `${TICKETS_PATH}/${key}`), { status: "resolved", resolvedAt: new Date().toISOString(), resolvedBy: auth.currentUser?.uid || "" })
+            .then(() => setStatus("Ticket resolved.", "success")).catch(e => { console.error(e); setStatus("Could not resolve ticket.", "error"); });
+    } else if (type === "delete") {
+        if (confirm(`Delete ticket ${ticketId(d,key)} permanently?`))
+            remove(ref(db, `${TICKETS_PATH}/${key}`)).then(() => setStatus("Ticket deleted.", "success")).catch(e => { console.error(e); setStatus("Delete denied by Firebase rules.", "error"); });
+    }
+}
+
+$("closeDetail")?.addEventListener("click", () => $("detailOverlay")?.classList.add("hidden"));
+search?.addEventListener("input", render);
+filter?.addEventListener("change", render);
+logout?.addEventListener("click", async () => { await signOut(auth); window.location.replace("login-agent.html"); });
 
 onAuthStateChanged(auth, user => {
-  if (!user) {
-    location.replace("agent-login.html");
-    return;
-  }
+    if (!user || (allowed.size && !allowed.has(user.uid))) {
+        signOut(auth).finally(() => window.location.replace("login-agent.html"));
+        return;
+    }
+    $("agentName") && ($("agentName").textContent = user.displayName || user.email?.split("@")[0] || "Agent");
+    $("agentEmail") && ($("agentEmail").textContent = user.email || "");
+    setStatus(`Agent authenticated: ${user.email || user.uid}`, "success");
 
-  boot(user).catch(error => {
-    console.error(error);
-    signOut(auth).finally(() => location.replace("agent-login.html"));
-  });
-});
-
-document.getElementById("logoutBtn")?.addEventListener("click", () => {
-  signOut(auth).then(() => location.replace("agent-login.html"));
-});
-
-/*
-  AI HELPER
-  Never put an OpenAI/Gemini secret directly in this browser file.
-  Set window.AI_HELP_ENDPOINT to your own secure server endpoint.
-*/
-document.getElementById("aiHelpBtn")?.addEventListener("click", async () => {
-  const question = document.getElementById("aiQuestion")?.value.trim();
-  const answer = document.getElementById("aiAnswer");
-
-  if (!question || !answer) return;
-
-  if (!window.AI_HELP_ENDPOINT) {
-    answer.textContent =
-      "AI helper is not configured yet. Connect a secure server-side AI endpoint.";
-    return;
-  }
-
-  answer.textContent = "Thinking...";
-
-  try {
-    const response = await fetch(window.AI_HELP_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        question,
-        context: "APS Robotics Championship 2026 support"
-      })
-    });
-
-    const data = await response.json();
-    answer.textContent = data.answer || "No answer returned.";
-  } catch (error) {
-    console.error(error);
-    answer.textContent = "AI service is currently unavailable.";
-  }
+    onValue(ref(db, TICKETS_PATH), snap => {
+        tickets = snap.val() || {};
+        render();
+        $("totalTickets") && ($("totalTickets").textContent = Object.keys(tickets).length);
+        $("openTickets") && ($("openTickets").textContent = Object.values(tickets).filter(t => ticketStatus(t) === "open").length);
+        $("resolvedTickets") && ($("resolvedTickets").textContent = Object.values(tickets).filter(t => ticketStatus(t) === "resolved").length);
+    }, err => { console.error(err); setStatus("Could not load tickets. Check Firebase rules.", "error"); });
 });

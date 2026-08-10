@@ -1,41 +1,23 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>APS Robotics Championship 2026 | Registration</title>
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="theme-color" content="#020711"><title>Registration | APS Robotics Championship 2026</title>
 <style>
-body{margin:0;background:#020711;color:#fff;font-family:Poppins,Arial;padding:30px}
-main{max-width:720px;margin:auto;background:#09182a;padding:30px;border-radius:24px;border:1px solid #32e7ff33}
-input,select,textarea{width:100%;padding:13px;margin:7px 0;box-sizing:border-box;border-radius:10px;border:1px solid #ffffff22;background:#071221;color:#fff}
-fieldset{border:1px solid #ffffff22;border-radius:14px;margin:15px 0;padding:15px}
-label{display:inline-block;width:48%;padding:10px 0}
-button{padding:13px 22px;border:0;border-radius:10px;background:#32e7ff;font-weight:bold;cursor:pointer}
-</style>
-</head>
-<body>
-<main>
-<h1>APS Robotics Championship 2026</h1>
+body{margin:0;background:#020711;color:#fff;font-family:Poppins,Arial,sans-serif;padding:25px}.wrap{max-width:850px;margin:auto;padding:35px;border:1px solid #18334d;border-radius:24px;background:#071629}h1{font-family:Orbitron;color:#40dfff}form{display:grid;gap:14px}input,select,textarea{width:100%;padding:13px;border-radius:10px;border:1px solid #24435f;background:#06111f;color:#fff}label{font-weight:600}.events{display:grid;grid-template-columns:1fr 1fr;gap:10px}.events label{padding:12px;border:1px solid #24435f;border-radius:10px}.events input{width:auto}.member-fields{padding:15px;border:1px solid #24435f;border-radius:14px;margin-top:10px}.btn{padding:14px;border:0;border-radius:10px;background:linear-gradient(90deg,#3d9cff,#40dfff);font-weight:800;cursor:pointer}.message{min-height:22px}.error{color:#ff7777}@media(max-width:600px){.events{grid-template-columns:1fr}.wrap{padding:22px}}
+</style></head><body><main class="wrap"><h1>APS Robotics Championship 2026</h1><p>Register your team.</p>
 <form id="registrationForm">
-<input name="studentName" placeholder="Student / Team Leader Name" required>
-<input name="class" placeholder="Class" required>
-<input name="section" placeholder="Section" required>
-<input name="mobile" type="tel" placeholder="Mobile Number" required>
-<input name="email" type="email" placeholder="Email" required>
-<input name="teamName" placeholder="Team Name">
-<select name="type"><option value="solo">Solo</option><option value="team">Team</option></select>
-<input name="teamSize" type="number" min="1" max="10" value="1" placeholder="Team Size">
-<fieldset>
-<legend>Select Event(s)</legend>
+<label>Team Leader Name<input name="studentName" required></label>
+<label>Class<input name="studentClass" required></label>
+<label>Section<input name="studentSection" required></label>
+<label>Mobile Number<input name="mobileNumber" type="tel" required></label>
+<label>Email Address<input name="emailAddress" type="email" required></label>
+<label>Team Name<input name="teamName" placeholder="Optional for solo"></label>
+<label>Team Size<select id="teamSize" name="teamSize"><option value="1">1 Member (Solo)</option><option value="2">2 Members</option><option value="3">3 Members</option><option value="4">4 Members</option><option value="5">5 Members</option></select></label>
+<div><label>Event(s)</label><div class="events">
 <label><input type="checkbox" name="events" value="Robo Race"> 🏁 Robo Race</label>
 <label><input type="checkbox" name="events" value="Robo War"> ⚔️ Robo War</label>
 <label><input type="checkbox" name="events" value="Robo Tug of War"> 🤝 Robo Tug of War</label>
 <label><input type="checkbox" name="events" value="Robo Soccer"> ⚽ Robo Soccer</label>
-</fieldset>
-<textarea name="remarks" placeholder="Remarks"></textarea>
-<button type="submit">Register Team</button>
-</form>
-</main>
-<script type="module" src="./js/registration.js"></script>
-</body>
-</html>
+</div></div>
+<div id="teamMembers"></div>
+<label>Remarks<textarea name="remarks" rows="3"></textarea></label>
+<div id="registrationMessage" class="message"></div><button class="btn" type="submit">Submit Registration</button>
+</form></main><script type="module" src="registration.js"></script></body></html>

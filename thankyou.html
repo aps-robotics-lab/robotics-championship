@@ -1,31 +1,33 @@
-<!doctype html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Registration Successful | APS Robotics Championship 2026</title>
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#020711">
+<title>Registration Successful | APS Robotics Championship 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at 20% 20%,#174f7a44,transparent 30%),#020711;color:#fff;font-family:Arial;padding:20px}
-.card{text-align:center;max-width:620px;width:100%;padding:50px 25px;background:#08172aee;border:1px solid #32e7ff33;border-radius:28px;box-shadow:0 25px 80px #000}
-.icon{font-size:70px;color:#3ee8a8}
-h1{font-size:38px}b,#registrationId{color:#32e7ff}
-a{display:inline-block;margin:8px;padding:13px 18px;border-radius:10px;background:#32e7ff;color:#021019;text-decoration:none;font-weight:bold}
-</style>
-</head>
-<body>
-<div class="card">
-<div class="icon">✓</div>
-<h1>Registration <b>Successful</b></h1>
-<p id="welcome">Your registration has been successfully submitted for APS Robotics Championship 2026.</p>
-<h2 id="registrationId">Loading...</h2>
-<a href="index.html">Return Home</a>
-<a href="registration.html">New Registration</a>
-</div>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;overflow:hidden;color:#f4f8ff;font-family:Poppins;background:radial-gradient(circle at 15% 15%,rgba(61,156,255,.2),transparent 30%),radial-gradient(circle at 85% 80%,rgba(64,223,255,.15),transparent 32%),linear-gradient(135deg,#020711,#081b31)}
+body:before,body:after{content:"";position:fixed;border:1px solid rgba(64,223,255,.15);border-radius:50%;width:420px;height:420px;animation:float 8s ease-in-out infinite;pointer-events:none}body:before{left:-230px;top:-230px}body:after{right:-250px;bottom:-250px;animation-delay:-3s}
+.card{position:relative;width:min(680px,100%);padding:54px 34px;text-align:center;border:1px solid rgba(126,181,255,.2);border-radius:30px;background:rgba(7,22,41,.82);backdrop-filter:blur(22px);box-shadow:0 30px 100px rgba(0,0,0,.48)}
+.logo{width:82px;height:82px;object-fit:contain;filter:drop-shadow(0 0 20px rgba(64,223,255,.22))}
+.check{width:92px;height:92px;margin:22px auto;border-radius:50%;display:grid;place-items:center;font-size:48px;font-weight:800;color:#021019;background:linear-gradient(135deg,#3ee8a8,#40dfff);box-shadow:0 0 50px rgba(62,232,168,.3);animation:pop .7s ease}
+.badge{display:inline-block;padding:8px 14px;border-radius:999px;color:#3ee8a8;background:rgba(62,232,168,.08);font:700 10px Orbitron;letter-spacing:1.6px}
+h1{margin:20px 0 12px;font:800 clamp(28px,6vw,48px) Orbitron}h1 b{color:#40dfff}p{max-width:540px;margin:0 auto;color:#9caec5;line-height:1.8}
+.idbox{margin:30px 0 12px;padding:22px;border:1px solid rgba(64,223,255,.2);border-radius:18px;background:rgba(0,0,0,.18)}.idbox span{display:block;color:#9caec5;font-size:10px;letter-spacing:1.4px}.idbox strong{display:block;margin-top:9px;color:#40dfff;font:800 clamp(16px,4vw,26px) Orbitron;word-break:break-all}
+.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:30px}a{padding:13px 20px;border-radius:11px;text-decoration:none;font-weight:700}.primary{color:#021019;background:linear-gradient(90deg,#3d9cff,#40dfff)}.secondary{color:#f4f8ff;background:rgba(255,255,255,.05);border:1px solid rgba(126,181,255,.2)}
+@keyframes pop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}@keyframes float{50%{transform:translate(20px,15px) scale(1.04)}}
+</style></head><body><main class="card">
+<img class="logo" src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png" alt="APS Logo">
+<div class="check">✓</div><div class="badge">REGISTRATION CONFIRMED</div>
+<h1>You're <b>Registered!</b></h1>
+<p id="welcome">Your team has been successfully registered for APS Robotics Championship 2026.</p>
+<div class="idbox"><span>YOUR REGISTRATION ID</span><strong id="registrationId">Loading...</strong></div>
+<p style="font-size:12px;color:#ffd98a">Please save your Registration ID for your records.</p>
+<div class="actions"><a class="primary" href="index.html">Return Home</a><a class="secondary" href="registration.html">Register Another Team</a></div>
+</main>
 <script>
-const p=new URLSearchParams(location.search);
-const id=p.get("id")||sessionStorage.getItem("apsRegistrationId");
-const name=sessionStorage.getItem("apsRegistrationName");
-document.getElementById("registrationId").textContent=id||"Submitted";
-if(name) document.getElementById("welcome").textContent=`Thank you, ${name}. Your registration has been successfully submitted for APS Robotics Championship 2026.`;
-sessionStorage.removeItem("apsRegistrationId");
-sessionStorage.removeItem("apsRegistrationName");
-</script>
-</body>
-</html>
+const id=sessionStorage.getItem("apsRegistrationId")||"Not available",name=sessionStorage.getItem("apsRegistrationName");
+document.getElementById("registrationId").textContent=id;
+if(name) document.getElementById("welcome").textContent=`Thank you, ${name}. Your team has been successfully registered for APS Robotics Championship 2026.`;
+sessionStorage.removeItem("apsRegistrationId");sessionStorage.removeItem("apsRegistrationName");
+</script></body></html>
