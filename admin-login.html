@@ -3,284 +3,131 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#020711">
+<meta name="theme-color" content="#050914">
 
 <title>Admin Login | APS Robotics Championship 2026</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<style>
-*{box-sizing:border-box}
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-body{
-    margin:0;
-    min-height:100vh;
-    display:grid;
-    place-items:center;
-    padding:20px;
-    background:
-        radial-gradient(circle at 20% 10%,rgba(0,234,255,.1),transparent 30%),
-        radial-gradient(circle at 80% 80%,rgba(155,108,255,.1),transparent 30%),
-        #020711;
-    color:#f5f9ff;
-    font-family:"Poppins",sans-serif;
-}
-
-.login-card{
-    width:min(430px,100%);
-    padding:38px 28px;
-    background:linear-gradient(
-        145deg,
-        rgba(10,25,45,.96),
-        rgba(3,10,21,.96)
-    );
-    border:1px solid rgba(0,234,255,.22);
-    border-radius:24px;
-    box-shadow:0 25px 80px rgba(0,0,0,.55);
-}
-
-.logo{
-    display:block;
-    width:75px;
-    height:75px;
-    object-fit:contain;
-    margin:0 auto 20px;
-}
-
-.badge{
-    text-align:center;
-    color:#00eaff;
-    font-size:.65rem;
-    font-weight:700;
-    letter-spacing:2px;
-}
-
-h1{
-    margin:8px 0;
-    text-align:center;
-    font-family:"Orbitron",sans-serif;
-    font-size:1.8rem;
-}
-
-h1 span{color:#00eaff}
-
-.subtitle{
-    text-align:center;
-    color:#8fa5bf;
-    font-size:.8rem;
-    margin-bottom:28px;
-}
-
-label{
-    display:block;
-    margin-bottom:7px;
-    color:#c7d7e9;
-    font-size:.78rem;
-    font-weight:600;
-}
-
-input{
-    width:100%;
-    padding:13px 14px;
-    margin-bottom:17px;
-    border:1px solid rgba(83,161,255,.18);
-    border-radius:11px;
-    outline:none;
-    background:rgba(1,8,18,.8);
-    color:#fff;
-}
-
-input:focus{
-    border-color:#00eaff;
-    box-shadow:0 0 0 3px rgba(0,234,255,.07);
-}
-
-button{
-    width:100%;
-    padding:14px;
-    border:0;
-    border-radius:12px;
-    background:linear-gradient(100deg,#00eaff,#4f8cff);
-    color:#001018;
-    font-family:"Orbitron",sans-serif;
-    font-weight:800;
-    cursor:pointer;
-}
-
-button:disabled{
-    opacity:.6;
-    cursor:not-allowed;
-}
-
-#loginMessage{
-    min-height:22px;
-    margin-top:15px;
-    text-align:center;
-    color:#ff9dad;
-    font-size:.75rem;
-}
-
-.back{
-    display:block;
-    margin-top:20px;
-    text-align:center;
-    color:#8fa5bf;
-    font-size:.75rem;
-    text-decoration:none;
-}
-
-.back:hover{color:#00eaff}
-</style>
+<link rel="stylesheet" href="admin-login.css">
 </head>
 
 <body>
 
-<div class="login-card">
-
-    <img
-        class="logo"
-        src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
-        alt="APS Logo">
-
-    <div class="badge">APS TINKERING LAB</div>
-
-    <h1>ADMIN <span>LOGIN</span></h1>
-
-    <p class="subtitle">
-        APS Robotics Championship 2026
-    </p>
-
-    <form id="loginForm">
-
-        <label for="email">Admin Email</label>
-
-        <input
-            type="email"
-            id="email"
-            placeholder="Enter admin email"
-            autocomplete="username"
-            required>
-
-        <label for="password">Password</label>
-
-        <input
-            type="password"
-            id="password"
-            placeholder="Enter password"
-            autocomplete="current-password"
-            required>
-
-        <button id="loginBtn" type="submit">
-            LOGIN
-        </button>
-
-        <div id="loginMessage"></div>
-
-    </form>
-
-    <a href="index.html" class="back">
-        ← Back to Home
-    </a>
-
+<div class="background">
+    <div class="grid"></div>
+    <div class="glow glow-one"></div>
+    <div class="glow glow-two"></div>
 </div>
 
-<script type="module">
+<div id="loadingScreen" class="loading-screen">
+    <div class="loader-ring"></div>
+    <h2>CHECKING SESSION</h2>
+    <p>Verifying administrator access...</p>
+</div>
 
-import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+<main class="login-main hidden" id="loginMain">
 
-import {
-    getAuth,
-    signInWithEmailAndPassword,
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+    <div class="login-card">
 
-const firebaseConfig = {
-    apiKey: "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
-    authDomain: "aps-robotics-championship.firebaseapp.com",
-    databaseURL: "https://aps-robotics-championship-default-rtdb.firebaseio.com",
-    projectId: "aps-robotics-championship",
-    storageBucket: "aps-robotics-championship.firebasestorage.app",
-    messagingSenderId: "1063542904891",
-    appId: "1:1063542904891:web:82ff9bb3fba0b87384a41e"
-};
+        <a href="index.html" class="back-home">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Website
+        </a>
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+        <div class="login-brand">
+            <img
+                src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+                alt="APS Logo">
 
-const form = document.getElementById("loginForm");
-const email = document.getElementById("email");
-const password = document.getElementById("password");
-const loginBtn = document.getElementById("loginBtn");
-const message = document.getElementById("loginMessage");
+            <div>
+                <strong>APS ROBOTICS</strong>
+                <span>CHAMPIONSHIP 2026</span>
+            </div>
+        </div>
 
-onAuthStateChanged(auth, user => {
-    if (user) {
-        window.location.replace("admin.html");
-    }
-});
+        <span class="login-badge">
+            <i class="fa-solid fa-lock"></i>
+            ADMIN ACCESS
+        </span>
 
-form.addEventListener("submit", async event => {
+        <h1>Administrator Login</h1>
 
-    event.preventDefault();
+        <p>
+            Sign in with your authorized admin account
+            to access the control center.
+        </p>
 
-    message.textContent = "";
+        <form id="loginForm" novalidate>
 
-    loginBtn.disabled = true;
-    loginBtn.textContent = "LOGGING IN...";
+            <label class="login-field">
+                <span>
+                    <i class="fa-solid fa-envelope"></i>
+                    Email Address
+                </span>
+                <input
+                    type="email"
+                    id="loginEmail"
+                    placeholder="admin@example.com"
+                    autocomplete="username"
+                    required>
+            </label>
 
-    try {
+            <label class="login-field">
+                <span>
+                    <i class="fa-solid fa-lock"></i>
+                    Password
+                </span>
+                <div class="password-wrap">
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        placeholder="Enter password"
+                        autocomplete="current-password"
+                        required>
+                    <button
+                        type="button"
+                        id="togglePassword"
+                        class="toggle-password"
+                        tabindex="-1"
+                        title="Show password">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+            </label>
 
-        await signInWithEmailAndPassword(
-            auth,
-            email.value.trim(),
-            password.value
-        );
+            <div id="loginMessage" class="login-message"></div>
 
-        window.location.replace("admin.html");
+            <button type="submit" id="loginBtn" class="login-btn">
+                <span class="login-normal">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    Sign In
+                </span>
+                <span class="login-loading">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    Signing in...
+                </span>
+            </button>
 
-    } catch (error) {
+            <button
+                type="button"
+                id="forgotPasswordBtn"
+                class="forgot-link">
+                Forgot your password?
+            </button>
 
-        console.error(error);
+        </form>
 
-        switch(error.code){
+    </div>
 
-            case "auth/invalid-credential":
-                message.textContent =
-                    "Invalid email or password.";
-                break;
+</main>
 
-            case "auth/invalid-email":
-                message.textContent =
-                    "Please enter a valid email.";
-                break;
-
-            case "auth/user-disabled":
-                message.textContent =
-                    "This admin account has been disabled.";
-                break;
-
-            case "auth/too-many-requests":
-                message.textContent =
-                    "Too many attempts. Please try again later.";
-                break;
-
-            default:
-                message.textContent =
-                    error.message;
-        }
-
-        loginBtn.disabled = false;
-        loginBtn.textContent = "LOGIN";
-    }
-
-});
-
-</script>
-
+<script type="module" src="admin-login.js"></script>
 </body>
 </html>
