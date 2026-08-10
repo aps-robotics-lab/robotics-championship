@@ -45,3 +45,40 @@
 .admin-agent-links {
     display: none;
 }
+/* ================================
+   HIDDEN ADMIN ACCESS
+================================ */
+
+.hidden-admin-link {
+    position: fixed;
+    bottom: 8px;
+    right: 8px;
+
+    width: 10px;
+    height: 10px;
+
+    opacity: 0;
+    overflow: hidden;
+
+    color: transparent;
+    background: transparent;
+    border: none;
+
+    font-size: 1px;
+    line-height: 1px;
+
+    text-decoration: none;
+
+    z-index: 99999;
+
+    cursor: pointer;
+}
+
+/* Still clickable even though invisible */
+.hidden-admin-link:hover,
+.hidden-admin-link:focus {
+    opacity: 0;
+    color: transparent;
+    background: transparent;
+    outline: none;
+}
