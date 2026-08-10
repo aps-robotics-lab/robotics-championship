@@ -530,7 +530,123 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     <i class="fa-solid fa-circle-check"></i>
     <span id="toastText"></span>
 </div>
+<!-- MOBILE MENU BUTTON -->
+<button
+    class="menu-toggle"
+    id="menuToggle"
+    type="button"
+    aria-label="Open navigation"
+    aria-expanded="false">
 
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+
+<!-- SIDEBAR OVERLAY -->
+<div
+    class="sidebar-overlay"
+    id="sidebarOverlay">
+</div>
+
+
+<!-- ADMIN SIDEBAR -->
+<aside
+    class="admin-sidebar"
+    id="adminSidebar">
+
+    <div class="sidebar-header">
+
+        <div class="sidebar-logo">
+            APS
+        </div>
+
+        <div>
+            <h2>Admin Panel</h2>
+            <p>Robotics Championship 2026</p>
+        </div>
+
+    </div>
+
+
+    <nav class="sidebar-nav">
+
+        <a
+            href="#dashboard"
+            class="sidebar-link active">
+
+            <span class="sidebar-icon">⌂</span>
+            <span>Dashboard</span>
+
+        </a>
+
+
+        <a
+            href="#registrations"
+            class="sidebar-link">
+
+            <span class="sidebar-icon">▣</span>
+            <span>Registrations</span>
+
+        </a>
+
+
+        <a
+            href="#events"
+            class="sidebar-link">
+
+            <span class="sidebar-icon">⚙</span>
+            <span>Events</span>
+
+        </a>
+
+
+        <a
+            href="#messages"
+            class="sidebar-link">
+
+            <span class="sidebar-icon">✉</span>
+            <span>Messages</span>
+
+        </a>
+
+
+        <a
+            href="index.html"
+            class="sidebar-link">
+
+            <span class="sidebar-icon">↗</span>
+            <span>Public Website</span>
+
+        </a>
+
+    </nav>
+
+
+    <div class="sidebar-bottom">
+
+        <button
+            type="button"
+            class="logout-button"
+            id="logoutButton">
+
+            <span>↪</span>
+            <span>Logout</span>
+
+        </button>
+
+    </div>
+
+</aside>
+
+
+<!-- MAIN CONTENT -->
+<main class="admin-main" id="adminMain">
+
+    <!-- Your existing admin dashboard goes here -->
+
+</main>
 <script type="module" src="admin.js"></script>
 </body>
 </html>
