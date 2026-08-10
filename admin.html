@@ -481,6 +481,45 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
 </div>
 
+<!-- DELETE CONFIRM MODAL -->
+<div id="confirmOverlay" class="modal-overlay hidden">
+
+    <div class="confirm-modal">
+
+        <div class="confirm-icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+
+        <h2>Delete Registration?</h2>
+
+        <p id="confirmMessage">
+            This will permanently remove this registration
+            from the database. This action cannot be undone.
+        </p>
+
+        <div class="modal-actions">
+
+            <button
+                type="button"
+                id="cancelDelete"
+                class="cancel-btn">
+                Cancel
+            </button>
+
+            <button
+                type="button"
+                id="confirmDeleteBtn"
+                class="delete-confirm-btn">
+                <i class="fa-solid fa-trash"></i>
+                Delete Permanently
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
 <!-- TOAST -->
 <div id="toast" class="toast">
     <i class="fa-solid fa-circle-check"></i>
