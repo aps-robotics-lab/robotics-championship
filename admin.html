@@ -34,7 +34,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
 <div class="app hidden" id="app">
 
-    <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
 
         <div class="sidebar-brand">
@@ -62,22 +61,10 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         </div>
 
         <nav class="sidebar-nav">
-
-            <a href="#dashboard" class="nav-link active">
-                <i class="fa-solid fa-chart-pie"></i>
-                <span>Dashboard</span>
-            </a>
-
-            <a href="#registrations" class="nav-link">
-                <i class="fa-solid fa-users"></i>
-                <span>Registrations</span>
-            </a>
-
-            <a href="#events" class="nav-link">
-                <i class="fa-solid fa-robot"></i>
-                <span>Events</span>
-            </a>
-
+            <a href="#dashboard" class="nav-link active"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></a>
+            <a href="#registrations" class="nav-link"><i class="fa-solid fa-users"></i><span>Registrations</span></a>
+            <a href="#events" class="nav-link"><i class="fa-solid fa-robot"></i><span>Events</span></a>
+            <a href="#websiteContent" class="nav-link"><i class="fa-solid fa-pen-to-square"></i><span>Website Editor</span></a>
         </nav>
 
         <div class="sidebar-bottom">
@@ -101,7 +88,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
     </aside>
 
-    <!-- MAIN -->
     <main class="main">
 
         <header class="topbar">
@@ -132,7 +118,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
         <div class="content">
 
-            <!-- DASHBOARD -->
             <section id="dashboard" class="page-section">
 
                 <div class="hero">
@@ -160,7 +145,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
                 </div>
 
-                <!-- STATS -->
                 <div class="stats-grid">
 
                     <div class="stat-card">
@@ -209,7 +193,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
                 </div>
 
-                <!-- EVENT CARDS -->
                 <div id="events" class="section-header">
                     <div>
                         <span>CHAMPIONSHIP ANALYTICS</span>
@@ -263,7 +246,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
             </section>
 
-            <!-- REGISTRATIONS -->
             <section id="registrations" class="registrations-section">
 
                 <div class="section-header">
@@ -282,7 +264,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
                 <div id="status" class="status"></div>
 
-                <!-- TOOLBAR -->
                 <div class="toolbar">
 
                     <div class="search-box">
@@ -314,10 +295,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
                 </div>
 
-                <!-- MOBILE CARDS -->
                 <div id="mobileRegistrations" class="mobile-registrations"></div>
 
-                <!-- TABLE -->
                 <div class="table-container">
 
                     <table>
@@ -343,13 +322,34 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
             </section>
 
+            <section id="websiteContent" class="page-section hidden">
+                <div class="section-header">
+                    <div><span>CONTENT MANAGEMENT</span><h2>Edit Messages</h2></div>
+                    <button id="saveContentBtn" class="export-btn"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+                </div>
+                <div id="contentStatus" class="status"></div>
+                
+                <div class="form-grid">
+                    <label>Principal's Message<textarea id="editPrincipalText" rows="4"></textarea></label>
+                    <label>Principal's Name<input id="editPrincipalName"></label>
+                    
+                    <label>Mentor's Message<textarea id="editMentorText" rows="4"></textarea></label>
+                    <label>Mentor's Name<input id="editMentorName"></label>
+
+                    <label>Coordinator's Message<textarea id="editCoordText" rows="4"></textarea></label>
+                    <label>Coordinator's Name<input id="editCoordName"></label>
+
+                    <label>Team's Message<textarea id="editTeamText" rows="4"></textarea></label>
+                    <label>Team's Name<input id="editTeamName"></label>
+                </div>
+            </section>
+
         </div>
 
     </main>
 
 </div>
 
-<!-- DETAIL MODAL -->
 <div id="detailOverlay" class="modal-overlay hidden">
 
     <div class="detail-modal">
@@ -377,7 +377,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
 </div>
 
-<!-- EDIT MODAL -->
 <div id="editOverlay" class="modal-overlay hidden">
 
     <div class="edit-modal">
@@ -481,7 +480,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
 </div>
 
-<!-- DELETE CONFIRM MODAL -->
 <div id="confirmOverlay" class="modal-overlay hidden">
 
     <div class="confirm-modal">
@@ -520,13 +518,11 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
 </div>
 
-<!-- TOAST -->
 <div id="toast" class="toast">
     <i class="fa-solid fa-circle-check"></i>
     <span id="toastText"></span>
 </div>
 
 <script type="module" src="admin.js"></script>
-<script type="module" src="agent.js"></script>
 </body>
 </html>
