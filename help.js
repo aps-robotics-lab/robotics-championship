@@ -60,6 +60,7 @@ form?.addEventListener("submit", async event => {
             subject: document.getElementById("subject").value,
             message: document.getElementById("message").value,
             status: "Open",
+            createdBy: auth.currentUser.uid,
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp()
         });

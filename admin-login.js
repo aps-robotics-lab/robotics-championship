@@ -4,14 +4,15 @@
    Firebase Project: aps-robotic-champs-2026
 ========================================================= */
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import { mainFirebaseConfig, ADMIN_UID } from "./firebase-config.js";
 
 import {
     getAuth,
     onAuthStateChanged,
     signInWithEmailAndPassword,
     sendPasswordResetEmail
-} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
 
 /* =========================================================
@@ -19,37 +20,11 @@ import {
    (must match admin.js)
 ========================================================= */
 
-const firebaseConfig = {
-    apiKey: "AIzaSyD83i25yCvb17M66YILnPISTrP3p4ZND6I",
-
-    authDomain:
-        "aps-robotic-champs-2026.firebaseapp.com",
-
-    databaseURL:
-        "https://aps-robotic-champs-2026-default-rtdb.asia-southeast1.firebasedatabase.app",
-
-    projectId:
-        "aps-robotic-champs-2026",
-
-    storageBucket:
-        "aps-robotic-champs-2026.firebasestorage.app",
-
-    messagingSenderId:
-        "583098137656",
-
-    appId:
-        "1:583098137656:web:b59467faab54a67271facd",
-
-    measurementId:
-        "G-1G58X0KSD0"
-};
-
-
 /* =========================================================
    INITIALIZE FIREBASE
 ========================================================= */
 
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(mainFirebaseConfig);
 
 const auth = getAuth(app);
 
@@ -360,13 +335,17 @@ onAuthStateChanged(
          */
 
         if (user) {
-
-            window.location.replace(
-                "admin.html"
-            );
-
+            if (ADMIN_UID !== "REPLACE_WITH_MAIN_PROJECT_ADMIN_UID" && user.uid === ADMIN_UID) {
+                window.location.replace("admin.html");
+                return;
+            }
+            if (ADMIN_UID !== "REPLACE_WITH_MAIN_PROJECT_ADMIN_UID") {
+                signOut(auth).catch(console.error);
+                showMessage("Access denied. This account is not the administrator.", "error");
+                return;
+            }
+            window.location.replace("admin.html");
             return;
-
         }
 
 

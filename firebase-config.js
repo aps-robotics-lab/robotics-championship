@@ -1,9 +1,18 @@
 /* =========================================================
    FIREBASE CENTRAL CONFIGURATION
    APS Robotics Championship 2026
+
+   TWO SEPARATE FIREBASE PROJECTS:
+
+   1) HELP + AGENT
+      Project: robotics-championship-ab248
+      Database: asia-southeast1
+
+   2) REGISTRATION + ADMIN + HOME CONTENT
+      Project: aps-robotics-championship
+      Database: default (us-central style URL)
 ========================================================= */
 
-// 1. HELP & AGENT PORTAL (robotics-championship-ab248)
 export const helpFirebaseConfig = {
     apiKey: "AIzaSyCVfkLAc5EKDRUoHf4LgVhBFwTNmq2GMI0",
     authDomain: "robotics-championship-ab248.firebaseapp.com",
@@ -15,7 +24,6 @@ export const helpFirebaseConfig = {
     measurementId: "G-NTBPB3MJ0E"
 };
 
-// 2. ADMIN, REGISTRATION & HOME (aps-robotics-championship)
 export const mainFirebaseConfig = {
     apiKey: "AIzaSyCucXDNlA86tU9ACdPm-oZGsAP_keBZ_uo",
     authDomain: "aps-robotics-championship.firebaseapp.com",
@@ -26,3 +34,12 @@ export const mainFirebaseConfig = {
     appId: "1:1063542904891:web:82ff9bb3fba0b87384a41e",
     measurementId: "G-MJSYYZS50Z"
 };
+
+/* IMPORTANT:
+   Replace this with the UID of the administrator account that
+   exists in Firebase Authentication of aps-robotics-championship.
+*/
+export const ADMIN_UID = "REPLACE_WITH_MAIN_PROJECT_ADMIN_UID";
+
+/* Only this Firebase Auth UID may access /tickets as an agent. */
+export const AGENT_UID = "HgWiHPRx9gcXZtDTl0pDCpZlokt2";

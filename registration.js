@@ -1,9 +1,11 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-import { getDatabase, ref, push, set, get, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 import { mainFirebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(mainFirebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
 
 // DOM Elements
 const form = document.getElementById("registrationForm");
@@ -81,13 +83,11 @@ form?.addEventListener("submit", async event => {
     submitBtn.innerHTML = "Processing...";
 
     try {
-        // Enforce Uniqueness Check
-        const regRef = ref(db, 'registrations');
-        const emailCheck = await get(query(regRef, orderByChild('EmailAddress'), equalTo(email)));
-        const phoneCheck = await get(query(regRef, orderByChild('MobileNumber'), equalTo(phone)));
-        
-        if (emailCheck.exists()) throw new Error("This email address is already registered.");
-        if (phoneCheck.exists()) throw new Error("This mobile number is already registered.");
+        // Use anonymous Firebase Authentication so public registration can
+        // write without exposing existing registrations to the browser.
+        if (!auth.currentUser) await signInAnonymously(auth);
+
+        const regRef = ref(db, "registrations");
 
         // Collect Data
         const teamSize = getTeamSize();
@@ -103,6 +103,7 @@ form?.addEventListener("submit", async event => {
             TeamName: getValue("teamName"),
             Events: getSelectedEvents(),
             Remarks: getValue("remarks"),
+            createdBy: auth.currentUser.uid,
             timestamp: Date.now()
         };
 

@@ -20,7 +20,7 @@ import {
     get
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
-import { mainFirebaseConfig } from "./firebase-config.js";
+import { mainFirebaseConfig, ADMIN_UID } from "./firebase-config.js";
 
 /* =========================================================
    INITIALIZE FIREBASE
@@ -36,9 +36,6 @@ const db = getDatabase(app);
 /* =========================================================
    ADMIN SECURITY
 ========================================================= */
-const ADMIN_UID =
-    "REPLACE_WITH_NEW_PROJECT_ADMIN_UID";
-
 const REGISTRATIONS_PATH =
     "registrations";
 
@@ -593,7 +590,7 @@ logoutBtn?.addEventListener("click", async () => {
 onAuthStateChanged(auth, user => {
     if (!user) { window.location.replace("admin-login.html"); return; }
     
-    if (ADMIN_UID && ADMIN_UID !== "REPLACE_WITH_NEW_PROJECT_ADMIN_UID") {
+    if (ADMIN_UID !== "REPLACE_WITH_MAIN_PROJECT_ADMIN_UID") {
         if (user.uid !== ADMIN_UID) {
             alert("Access denied. This account is not authorized as an administrator.");
             signOut(auth).finally(() => { window.location.replace("admin-login.html"); });

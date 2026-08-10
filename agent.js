@@ -13,20 +13,22 @@
 
 import {
     initializeApp
-} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 
 import {
     getAuth,
     onAuthStateChanged,
     signOut
-} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
 import {
     getDatabase,
     ref,
     onValue,
     update
-} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+
+import { helpFirebaseConfig, AGENT_UID } from "./firebase-config.js";
 
 
 /* =========================================================
@@ -38,29 +40,6 @@ import {
    DO NOT USE YOUR REGISTRATION FIREBASE HERE IF HELP
    HAS A DIFFERENT FIREBASE PROJECT.
 ========================================================= */
-
-const firebaseConfig = {
-
-    apiKey: "PUT_HELP_FIREBASE_API_KEY_HERE",
-
-    authDomain: "PUT_HELP_PROJECT.firebaseapp.com",
-
-    databaseURL:
-        "PUT_HELP_FIREBASE_DATABASE_URL_HERE",
-
-    projectId:
-        "PUT_HELP_PROJECT_ID_HERE",
-
-    storageBucket:
-        "PUT_HELP_PROJECT.appspot.com",
-
-    messagingSenderId:
-        "PUT_HELP_SENDER_ID_HERE",
-
-    appId:
-        "PUT_HELP_APP_ID_HERE"
-
-};
 
 
 /* =========================================================
@@ -75,7 +54,7 @@ let db;
 
 try {
 
-    app = initializeApp(firebaseConfig);
+    app = initializeApp(helpFirebaseConfig);
 
     auth = getAuth(app);
 
@@ -95,8 +74,7 @@ try {
    ONLY AUTHORIZED AGENT
 ========================================================= */
 
-const ALLOWED_AGENT_UID =
-    "HgWiHPRx9gcXZtDTl0pDCpZlokt2";
+const ALLOWED_AGENT_UID = AGENT_UID;
 
 
 /* =========================================================
