@@ -16,7 +16,8 @@ import {
     getDatabase,
     ref,
     onValue,
-    update
+    update,
+    remove
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
 
 
@@ -233,6 +234,27 @@ const editRemarks =
 
 const editMessage =
     document.getElementById("editMessage");
+
+
+/* =========================================================
+   DELETE CONFIRM MODAL
+========================================================= */
+
+const confirmOverlay =
+    document.getElementById("confirmOverlay");
+
+const confirmMessage =
+    document.getElementById("confirmMessage");
+
+const cancelDeleteBtn =
+    document.getElementById("cancelDelete");
+
+const confirmDeleteBtn =
+    document.getElementById("confirmDeleteBtn");
+
+
+let pendingDeleteKey =
+    null;
 
 
 /* =========================================================
@@ -1092,6 +1114,45 @@ function renderStats() {
 
 
 /* =========================================================
+   ROW ACTION HANDLER
+========================================================= */
+
+function handleRowAction(button) {
+
+    const key =
+        button.dataset.key;
+
+
+    if (
+        button.classList.contains(
+            "edit-btn"
+        )
+    ) {
+
+        openEdit(key);
+
+    }
+
+    else if (
+        button.classList.contains(
+            "delete-btn"
+        )
+    ) {
+
+        openConfirmDelete(key);
+
+    }
+
+    else {
+
+        openDetail(key);
+
+    }
+
+}
+
+
+/* =========================================================
    RENDER TABLE
 ========================================================= */
 
@@ -1304,22 +1365,36 @@ function renderTable() {
 
                             <td>
 
-                                <button
-                                    type="button"
-                                    class="view-btn"
-                                    data-key="${escapeHTML(key)}"
-                                >
-                                    View
-                                </button>
+                                <div class="action-buttons">
+
+                                    <button
+                                        type="button"
+                                        class="view-btn"
+                                        data-key="${escapeHTML(key)}"
+                                    >
+                                        View
+                                    </button>
 
 
-                                <button
-                                    type="button"
-                                    class="edit-btn"
-                                    data-key="${escapeHTML(key)}"
-                                >
-                                    Edit
-                                </button>
+                                    <button
+                                        type="button"
+                                        class="edit-btn"
+                                        data-key="${escapeHTML(key)}"
+                                    >
+                                        Edit
+                                    </button>
+
+
+                                    <button
+                                        type="button"
+                                        class="delete-btn"
+                                        data-key="${escapeHTML(key)}"
+                                        title="Delete registration"
+                                    >
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+
+                                </div>
 
                             </td>
 
@@ -1341,29 +1416,10 @@ function renderTable() {
 
                 button.addEventListener(
                     "click",
-                    () => {
-
-                        if (
-                            button.classList.contains(
-                                "edit-btn"
-                            )
-                        ) {
-
-                            openEdit(
-                                button.dataset.key
-                            );
-
-                        }
-
-                        else {
-
-                            openDetail(
-                                button.dataset.key
-                            );
-
-                        }
-
-                    }
+                    () =>
+                        handleRowAction(
+                            button
+                        )
                 );
 
             }
@@ -1502,6 +1558,15 @@ function renderMobile(entries) {
                                     Edit
                                 </button>
 
+
+                                <button
+                                    type="button"
+                                    class="delete-btn"
+                                    data-key="${escapeHTML(key)}"
+                                >
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+
                             </div>
 
                         </article>
@@ -1522,29 +1587,10 @@ function renderMobile(entries) {
 
                 button.addEventListener(
                     "click",
-                    () => {
-
-                        if (
-                            button.classList.contains(
-                                "edit-btn"
-                            )
-                        ) {
-
-                            openEdit(
-                                button.dataset.key
-                            );
-
-                        }
-
-                        else {
-
-                            openDetail(
-                                button.dataset.key
-                            );
-
-                        }
-
-                    }
+                    () =>
+                        handleRowAction(
+                            button
+                        )
                 );
 
             }
@@ -2278,6 +2324,175 @@ editForm?.addEventListener(
                 "Firebase denied the registration update.",
                 "error"
             );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   DELETE REGISTRATION
+========================================================= */
+
+function openConfirmDelete(key) {
+
+    const data =
+        registrations[key];
+
+
+    if (!data) {
+
+        showStatus(
+            "Registration no longer exists.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    pendingDeleteKey =
+        key;
+
+
+    if (confirmMessage) {
+
+        const id =
+            getRegistrationId(
+                data,
+                key
+            );
+
+        const name =
+            getName(data);
+
+
+        confirmMessage.textContent =
+
+            `This will permanently delete registration ${id} (${name}) from the database. This action cannot be undone.`;
+
+    }
+
+
+    confirmOverlay?.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+function closeConfirmModal() {
+
+    confirmOverlay?.classList.add(
+        "hidden"
+    );
+
+    pendingDeleteKey =
+        null;
+
+}
+
+
+cancelDeleteBtn?.addEventListener(
+    "click",
+    closeConfirmModal
+);
+
+
+confirmOverlay?.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target ===
+            confirmOverlay
+        ) {
+
+            closeConfirmModal();
+
+        }
+
+    }
+);
+
+
+confirmDeleteBtn?.addEventListener(
+    "click",
+    async () => {
+
+        const key =
+            pendingDeleteKey;
+
+
+        if (
+            !key ||
+            !registrations[key]
+        ) {
+
+            closeConfirmModal();
+
+            return;
+
+        }
+
+
+        const originalLabel =
+            confirmDeleteBtn.innerHTML;
+
+
+        try {
+
+            confirmDeleteBtn.disabled =
+                true;
+
+            confirmDeleteBtn.innerHTML =
+                `<i class="fa-solid fa-spinner fa-spin"></i> Deleting...`;
+
+
+            await remove(
+
+                ref(
+                    db,
+                    `${REGISTRATIONS_PATH}/${key}`
+                )
+
+            );
+
+
+            showToast(
+                "Registration deleted successfully."
+            );
+
+
+            closeConfirmModal();
+
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Registration delete error:",
+                error
+            );
+
+
+            showStatus(
+                "Firebase denied the registration delete. Check Database Rules.",
+                "error"
+            );
+
+        }
+
+        finally {
+
+            confirmDeleteBtn.disabled =
+                false;
+
+            confirmDeleteBtn.innerHTML =
+                originalLabel;
 
         }
 
