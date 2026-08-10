@@ -727,6 +727,11 @@ tbody tr:hover {
     font-size: 9px;
 }
 
+.type-badge.team {
+    color: #c6b3ff;
+    background: rgba(157,124,255,.12);
+}
+
 .event-tag {
     display: inline-block;
     margin: 2px;
@@ -737,9 +742,62 @@ tbody tr:hover {
     font-size: 8px;
 }
 
+.event-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    max-width: 220px;
+}
+
+.event-pill {
+    display: inline-block;
+    padding: 4px 7px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: #b7cce1;
+    background: rgba(255,255,255,.04);
+    font-size: 8px;
+    white-space: nowrap;
+}
+
+/* ACTION BUTTONS (View / Edit / Delete) */
+
 .action-buttons {
     display: flex;
+    align-items: center;
     gap: 6px;
+}
+
+.view-btn,
+.edit-btn,
+.delete-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 11px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    color: var(--cyan);
+    background: rgba(255,255,255,.03);
+    font-size: 9px;
+    transition: .2s;
+}
+
+.view-btn:hover,
+.edit-btn:hover {
+    background: rgba(0,217,255,.1);
+    border-color: rgba(0,217,255,.35);
+}
+
+.delete-btn {
+    color: #ff8198;
+    border-color: rgba(255,77,112,.2);
+}
+
+.delete-btn:hover {
+    background: rgba(255,77,112,.08);
+    border-color: rgba(255,77,112,.4);
 }
 
 .action-buttons button {
@@ -761,6 +819,68 @@ tbody tr:hover {
 
 .mobile-registrations {
     display: none;
+}
+
+/* MOBILE REGISTRATION CARDS */
+
+.registration-card {
+    padding: 17px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--panel);
+}
+
+.registration-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.registration-card-head small {
+    display: block;
+    color: var(--muted);
+    font-size: 8px;
+    letter-spacing: 1px;
+}
+
+.registration-card-head strong {
+    display: block;
+    margin-top: 5px;
+    color: var(--cyan);
+    font: 600 12px Orbitron, sans-serif;
+}
+
+.registration-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 14px;
+}
+
+.registration-card-body strong {
+    font-size: 13px;
+}
+
+.registration-card-body span {
+    color: var(--muted);
+    font-size: 9px;
+}
+
+.registration-card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.registration-card-actions .view-btn,
+.registration-card-actions .edit-btn {
+    flex: 1;
+}
+
+.registration-card-actions .delete-btn {
+    flex: 0 0 auto;
+    width: 38px;
 }
 
 /* MODAL */
@@ -861,6 +981,29 @@ tbody tr:hover {
     word-break: break-word;
 }
 
+.detail-block {
+    margin-top: 16px;
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    background: rgba(255,255,255,.025);
+}
+
+.detail-block span {
+    display: block;
+    color: var(--cyan);
+    font: 600 9px Orbitron, sans-serif;
+    letter-spacing: 1px;
+}
+
+.detail-block p {
+    margin-top: 8px;
+    color: #dce8f5;
+    font-size: 11px;
+    line-height: 1.7;
+    word-break: break-word;
+}
+
 .member-detail {
     margin-top: 10px;
     padding: 13px;
@@ -919,6 +1062,28 @@ tbody tr:hover {
     gap: 10px;
 }
 
+.edit-members label {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 13px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--muted);
+    font-size: 9px;
+}
+
+.edit-members input {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    padding: 11px;
+    color: white;
+    background: #081522;
+    font-size: 11px;
+}
+
 .edit-member {
     display: grid;
     grid-template-columns: 1fr 120px 120px;
@@ -972,6 +1137,68 @@ tbody tr:hover {
     border: 1px solid rgba(0,217,255,.25);
     color: #001018;
     background: var(--cyan);
+}
+
+/* DELETE CONFIRM MODAL */
+
+.confirm-modal {
+    width: min(420px, 100%);
+    padding: 32px;
+    border: 1px solid rgba(255,77,112,.25);
+    border-radius: 22px;
+    background: #06101e;
+    text-align: center;
+    box-shadow: 0 30px 100px rgba(0,0,0,.5);
+}
+
+.confirm-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 18px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: #ff7089;
+    background: rgba(255,77,112,.08);
+    font-size: 22px;
+}
+
+.confirm-modal h2 {
+    font: 700 18px Orbitron, sans-serif;
+}
+
+.confirm-modal p {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.confirm-modal .modal-actions {
+    justify-content: center;
+    margin-top: 24px;
+}
+
+.delete-confirm-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 18px;
+    border: 1px solid rgba(255,77,112,.3);
+    border-radius: 10px;
+    color: white;
+    background: linear-gradient(135deg, #ff4d70, #ff7089);
+    font-size: 10px;
+    transition: .2s;
+}
+
+.delete-confirm-btn:hover {
+    filter: brightness(1.08);
+}
+
+.delete-confirm-btn:disabled {
+    opacity: .6;
+    cursor: not-allowed;
 }
 
 /* TOAST */
