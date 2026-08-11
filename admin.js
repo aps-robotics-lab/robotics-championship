@@ -24,7 +24,7 @@
    - CSV export
    - Website content editor
    - Leadership photo/content editor
-   - Mobile sidebar
+   - Responsive mobile sidebar
 ========================================================= */
 
 
@@ -165,6 +165,7 @@ const soccerCount =
 
 const messageTarget =
     document.getElementById("messageTarget");
+
 
 if (messageTarget) {
 
@@ -350,7 +351,11 @@ function showToast(message) {
     showToast.timer =
         setTimeout(
             () => {
-                toast.classList.remove("show");
+
+                toast.classList.remove(
+                    "show"
+                );
+
             },
             2500
         );
@@ -365,11 +370,26 @@ function showToast(message) {
 function escapeHTML(value) {
 
     return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
 
 }
 
@@ -416,7 +436,9 @@ function firstValue(
             );
 
         if (value !== "") {
+
             return value;
+
         }
 
     }
@@ -624,7 +646,9 @@ function getMembers(data) {
                 member.MemberName;
 
             if (name) {
+
                 members.push(member);
+
             }
 
         }
@@ -640,6 +664,10 @@ function getMembers(data) {
 
     }
 
+
+    /* -----------------------------------------------------
+       members / teamMembers / memberList
+    ----------------------------------------------------- */
 
     [
         "members",
@@ -831,7 +859,10 @@ function getMembers(data) {
 
         memberNames
             .split(/\r?\n|,/)
-            .map(v => v.trim())
+            .map(
+                value =>
+                    value.trim()
+            )
             .filter(Boolean)
             .forEach(name => {
 
@@ -849,7 +880,7 @@ function getMembers(data) {
 
 
     /* -----------------------------------------------------
-       Remove duplicates
+       REMOVE DUPLICATES
     ----------------------------------------------------- */
 
     const unique = [];
@@ -1160,7 +1191,9 @@ function getEvents(data) {
 
 
     if (Array.isArray(raw)) {
+
         return raw;
+
     }
 
 
@@ -1180,7 +1213,10 @@ function getEvents(data) {
 
         return raw
             .split(/\r?\n|,/)
-            .map(v => v.trim())
+            .map(
+                value =>
+                    value.trim()
+            )
             .filter(Boolean);
 
     }
@@ -1221,7 +1257,9 @@ function hasEvent(
 function formatDate(value) {
 
     if (!value) {
+
         return "—";
+
     }
 
 
@@ -1237,7 +1275,9 @@ function formatDate(value) {
 
     }
     else if (
-        !Number.isNaN(Number(value)) &&
+        !Number.isNaN(
+            Number(value)
+        ) &&
         String(value).trim() !== ""
     ) {
 
@@ -1297,7 +1337,9 @@ function matchesSearch(
 
 
     if (!query) {
+
         return true;
+
     }
 
 
@@ -1521,7 +1563,10 @@ function renderStats() {
 
     const totalEventEntries =
         entries.reduce(
-            (total, [, data]) =>
+            (
+                total,
+                [, data]
+            ) =>
                 total +
                 getEvents(data).length,
             0
@@ -1529,50 +1574,66 @@ function renderStats() {
 
 
     if (totalRegistrations) {
+
         totalRegistrations.textContent =
             entries.length;
+
     }
 
 
     if (soloCount) {
+
         soloCount.textContent =
             solo;
+
     }
 
 
     if (teamCount) {
+
         teamCount.textContent =
             team;
+
     }
 
 
     if (eventEntries) {
+
         eventEntries.textContent =
             totalEventEntries;
+
     }
 
 
     if (raceCount) {
+
         raceCount.textContent =
             race;
+
     }
 
 
     if (warCount) {
+
         warCount.textContent =
             war;
+
     }
 
 
     if (tugCount) {
+
         tugCount.textContent =
             tug;
+
     }
 
 
     if (soccerCount) {
+
         soccerCount.textContent =
             soccer;
+
     }
 
 }
@@ -1592,7 +1653,9 @@ async function setRegistrationStatus(
 
 
     if (!data) {
+
         return;
+
     }
 
 
@@ -1854,7 +1917,9 @@ function memberHTML(
 function renderTable() {
 
     if (!registrationBody) {
+
         return;
+
     }
 
 
@@ -1908,7 +1973,10 @@ function renderTable() {
 
 
         if (mobileRegistrations) {
-            mobileRegistrations.innerHTML = "";
+
+            mobileRegistrations.innerHTML =
+                "";
+
         }
 
 
@@ -2159,13 +2227,15 @@ function renderTable() {
 
 
 /* =========================================================
-   MOBILE TABLE
+   MOBILE REGISTRATION CARDS
 ========================================================= */
 
 function renderMobile(entries) {
 
     if (!mobileRegistrations) {
+
         return;
+
     }
 
 
@@ -2428,7 +2498,10 @@ function openDetail(key) {
 
 
     if (detailId) {
-        detailId.textContent = id;
+
+        detailId.textContent =
+            id;
+
     }
 
 
@@ -2692,30 +2765,41 @@ function openEdit(key) {
 
 
     if (!data) {
+
         return;
+
     }
 
 
     if (editKey) {
-        editKey.value = key;
+
+        editKey.value =
+            key;
+
     }
 
 
     if (editStudentName) {
+
         editStudentName.value =
             getName(data);
+
     }
 
 
     if (editStudentClass) {
+
         editStudentClass.value =
             getClassName(data);
+
     }
 
 
     if (editStudentSection) {
+
         editStudentSection.value =
             getSection(data);
+
     }
 
 
@@ -2759,8 +2843,10 @@ function openEdit(key) {
 
 
     if (editRemarks) {
+
         editRemarks.value =
             getRemarks(data);
+
     }
 
 
@@ -2807,7 +2893,10 @@ function openEdit(key) {
 
 
     if (editMessage) {
-        editMessage.textContent = "";
+
+        editMessage.textContent =
+            "";
+
     }
 
 
@@ -2834,7 +2923,9 @@ editForm?.addEventListener(
 
 
         if (!key) {
+
             return;
+
         }
 
 
@@ -2843,7 +2934,9 @@ editForm?.addEventListener(
 
 
         if (!original) {
+
             return;
+
         }
 
 
@@ -2853,44 +2946,58 @@ editForm?.addEventListener(
 
 
             if (editStudentName) {
+
                 updates.studentName =
                     editStudentName.value.trim();
+
             }
 
 
             if (editStudentClass) {
+
                 updates.studentClass =
                     editStudentClass.value.trim();
+
             }
 
 
             if (editStudentSection) {
+
                 updates.studentSection =
                     editStudentSection.value.trim();
+
             }
 
 
             if (editMobileNumber) {
+
                 updates.mobileNumber =
                     editMobileNumber.value.trim();
+
             }
 
 
             if (editEmailAddress) {
+
                 updates.emailAddress =
                     editEmailAddress.value.trim();
+
             }
 
 
             if (editTeamName) {
+
                 updates.teamName =
                     editTeamName.value.trim();
+
             }
 
 
             if (editRemarks) {
+
                 updates.remarks =
                     editRemarks.value.trim();
+
             }
 
 
@@ -3017,7 +3124,9 @@ function openConfirmDelete(key) {
 
 
     if (!data) {
+
         return;
+
     }
 
 
@@ -3072,7 +3181,9 @@ confirmDeleteBtn?.addEventListener(
 
 
         if (!key) {
+
             return;
+
         }
 
 
@@ -3260,7 +3371,9 @@ function loadWebsiteContent() {
         .then(snapshot => {
 
             if (!snapshot.exists()) {
+
                 return;
+
             }
 
 
@@ -3312,8 +3425,10 @@ function loadWebsiteContent() {
 
 
                         if (element) {
+
                             element.value =
                                 value;
+
                         }
 
                     }
@@ -3369,8 +3484,10 @@ function loadWebsiteContent() {
 
 
                         if (element) {
+
                             element.value =
                                 value;
+
                         }
 
                     }
@@ -3794,7 +3911,10 @@ clearSearch?.addEventListener(
     () => {
 
         if (search) {
-            search.value = "";
+
+            search.value =
+                "";
+
         }
 
 
@@ -3948,7 +4068,9 @@ onAuthStateChanged(
         if (!user) {
 
             if (authCheckFinished) {
+
                 return;
+
             }
 
 
@@ -3967,7 +4089,9 @@ onAuthStateChanged(
         ------------------------------------------------- */
 
         if (authCheckFinished) {
+
             return;
+
         }
 
 
@@ -4024,7 +4148,7 @@ onAuthStateChanged(
 
 
             /* ---------------------------------------------
-               DATABASE AUTHORIZATION IS PRIMARY
+               AUTHORIZATION
             --------------------------------------------- */
 
             const authorized =
@@ -4121,7 +4245,6 @@ onAuthStateChanged(
 
             loadWebsiteContent();
 
-
         }
         catch (error) {
 
@@ -4175,11 +4298,9 @@ onAuthStateChanged(
 );
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    AUTH TIMEOUT
-
-   Prevents infinite AUTHENTICATING screen.
---------------------------------------------------------- */
+========================================================= */
 
 setTimeout(
     () => {
@@ -4285,111 +4406,18 @@ navLinks.forEach(
 
 
 /* =========================================================
-   ADMIN MOBILE MENU
-========================================================= */
+   ADMIN MOBILE SIDEBAR
+   ---------------------------------------------------------
+   Uses:
+       #menuToggle
+       #adminSidebar
+       #sidebarOverlay
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
-        const menuToggle =
-            document.getElementById(
-                "menuToggle"
-            );
-
-
-        const adminSidebar =
-            document.getElementById(
-                "adminSidebar"
-            );
-
-
-        const sidebarOverlay =
-            document.getElementById(
-                "sidebarOverlay"
-            );
-
-
-        if (
-            !menuToggle ||
-            !adminSidebar ||
-            !sidebarOverlay
-        ) {
-
-            console.warn(
-                "Admin menu elements not found."
-            );
-
-            return;
-
-        }
-
-
-        function openMenu() {
-
-            adminSidebar
-                .classList
-                .add("active");
-
-
-            sidebarOverlay
-                .classList
-                .add("active");
-
-
-            menuToggle
-                .classList
-                .add("active");
-
-
-            menuToggle.setAttribute(
-                "aria-expanded",
-                "true"
-            );
-
-
-            menuToggle.setAttribute(
-                "aria-label",
-                "Close navigation"
-            );
-
-        }
-
-
-        function closeMenu() {
-
-            adminSidebar
-                .classList
-                .remove("active");
-
-
-            sidebarOverlay
-                .classList
-                .remove("active");
-
-
-            menuToggle
-                .classList
-                .remove("active");
-
-
-            menuToggle.setAttribute(
-                "aria-expanded",
-                "false"
-            );
-
-
-            menuToggle.setAttribute(
-                "aria-label",
-                "Open navigation"
-            );
-
-        }
-
-
-        function toggleMenu() {
-/* =========================================================
-   ADMIN MOBILE MENU
+   IMPORTANT:
+   - Only ONE mobile-menu implementation exists here.
+   - Uses .mobile-open for the sidebar.
+   - Uses .active for overlay.
+   - Locks body scrolling while menu is open.
 ========================================================= */
 
 document.addEventListener(
@@ -4397,18 +4425,24 @@ document.addEventListener(
     () => {
 
         const menuBtn =
-            document.getElementById("menuToggle");
+            document.getElementById(
+                "menuToggle"
+            );
 
         const sidebar =
-            document.getElementById("adminSidebar");
+            document.getElementById(
+                "adminSidebar"
+            );
 
         const sidebarOverlay =
-            document.getElementById("sidebarOverlay");
+            document.getElementById(
+                "sidebarOverlay"
+            );
 
 
-        /* -----------------------------------------------------
-           CHECK ELEMENTS
-        ----------------------------------------------------- */
+        /* -------------------------------------------------
+           ELEMENT CHECK
+        ------------------------------------------------- */
 
         if (
             !menuBtn ||
@@ -4425,9 +4459,9 @@ document.addEventListener(
         }
 
 
-        /* -----------------------------------------------------
+        /* -------------------------------------------------
            OPEN SIDEBAR
-        ----------------------------------------------------- */
+        ------------------------------------------------- */
 
         function openSidebar() {
 
@@ -4435,9 +4469,11 @@ document.addEventListener(
                 "mobile-open"
             );
 
+
             sidebarOverlay.classList.add(
                 "active"
             );
+
 
             document.body.classList.add(
                 "menu-open"
@@ -4467,9 +4503,9 @@ document.addEventListener(
         }
 
 
-        /* -----------------------------------------------------
+        /* -------------------------------------------------
            CLOSE SIDEBAR
-        ----------------------------------------------------- */
+        ------------------------------------------------- */
 
         function closeSidebar() {
 
@@ -4477,9 +4513,11 @@ document.addEventListener(
                 "mobile-open"
             );
 
+
             sidebarOverlay.classList.remove(
                 "active"
             );
+
 
             document.body.classList.remove(
                 "menu-open"
@@ -4509,9 +4547,9 @@ document.addEventListener(
         }
 
 
-        /* -----------------------------------------------------
+        /* -------------------------------------------------
            TOGGLE SIDEBAR
-        ----------------------------------------------------- */
+        ------------------------------------------------- */
 
         function toggleSidebar() {
 
@@ -4533,9 +4571,9 @@ document.addEventListener(
         }
 
 
-        /* -----------------------------------------------------
+        /* -------------------------------------------------
            MENU BUTTON
-        ----------------------------------------------------- */
+        ------------------------------------------------- */
 
         menuBtn.addEventListener(
             "click",
@@ -4543,9 +4581,9 @@ document.addEventListener(
         );
 
 
-        /* -----------------------------------------------------
+        /* -------------------------------------------------
            OVERLAY
-        ----------------------------------------------------- */
+        ------------------------------------------------- */
 
         sidebarOverlay.addEventListener(
             "click",
@@ -4553,9 +4591,9 @@ document.addEventListener(
         );
 
 
-        /* -----------------------------------------------------
+        /* -------------------------------------------------
            SIDEBAR LINKS
-        ----------------------------------------------------- */
+        ------------------------------------------------- */
 
         sidebar
             .querySelectorAll(
@@ -4569,7 +4607,8 @@ document.addEventListener(
                         () => {
 
                             if (
-                                window.innerWidth <= 900
+                                window.innerWidth <=
+                                900
                             ) {
 
                                 closeSidebar();
@@ -4583,16 +4622,17 @@ document.addEventListener(
             );
 
 
-        /* -----------------------------------------------------
+        /* -------------------------------------------------
            ESCAPE KEY
-        ----------------------------------------------------- */
+        ------------------------------------------------- */
 
         document.addEventListener(
             "keydown",
             event => {
 
                 if (
-                    event.key === "Escape"
+                    event.key ===
+                    "Escape"
                 ) {
 
                     closeSidebar();
@@ -4603,9 +4643,9 @@ document.addEventListener(
         );
 
 
-        /* -----------------------------------------------------
-           WINDOW RESIZE
-        ----------------------------------------------------- */
+        /* -------------------------------------------------
+           RESIZE
+        ------------------------------------------------- */
 
         window.addEventListener(
             "resize",
@@ -4623,14 +4663,15 @@ document.addEventListener(
         );
 
 
-        /* -----------------------------------------------------
-           INITIAL STATE
-        ----------------------------------------------------- */
+        /* -------------------------------------------------
+           INITIAL ACCESSIBILITY STATE
+        ------------------------------------------------- */
 
         menuBtn.setAttribute(
             "aria-expanded",
             "false"
         );
+
 
         menuBtn.setAttribute(
             "aria-label",
@@ -4639,138 +4680,8 @@ document.addEventListener(
 
     }
 );
-/* =========================================================
-   SIDEBAR OVERLAY
-========================================================= */
-
-.sidebar-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 998;
-    background: rgba(0,0,0,.65);
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
-}
-
-.sidebar-overlay.active {
-    display: block;
-}
 
 
-/* =========================================================
-   DESKTOP
-========================================================= */
-
-.sidebar {
-    z-index: 1000;
-}
-
-
-/* =========================================================
-   TABLET / MOBILE
-========================================================= */
-
-@media (max-width: 900px) {
-
-    .menu-btn {
-        display: flex;
-    }
-
-    .topbar {
-        position: sticky;
-        top: 0;
-        z-index: 900;
-    }
-
-    .sidebar {
-
-        position: fixed;
-
-        top: 0;
-        left: 0;
-        bottom: 0;
-
-        width: min(310px, 86vw);
-
-        z-index: 1000;
-
-        transform: translateX(-105%);
-
-        transition:
-            transform .3s ease,
-            box-shadow .3s ease;
-
-        overflow-y: auto;
-
-        visibility: hidden;
-    }
-
-    .sidebar.mobile-open {
-
-        transform: translateX(0);
-
-        visibility: visible;
-
-        box-shadow:
-            15px 0 45px rgba(0,0,0,.55);
-    }
-
-    .main {
-        width: 100%;
-        margin-left: 0 !important;
-    }
-
-    .content {
-        width: 100%;
-    }
-
-}
-
-
-/* =========================================================
-   SMALL PHONES
-========================================================= */
-
-@media (max-width: 600px) {
-
-    .topbar {
-        padding:
-            12px
-            14px;
-    }
-
-    .top-title span {
-        font-size: 9px;
-    }
-
-    .top-title h1 {
-        font-size: 18px;
-    }
-
-    .top-actions {
-        gap: 6px;
-    }
-
-    .firebase-status {
-        display: none;
-    }
-
-    .menu-btn {
-        width: 40px;
-        height: 40px;
-    }
-
-}
-
-
-/* =========================================================
-   PREVENT BACKGROUND SCROLL WHEN MENU OPEN
-========================================================= */
-
-body.menu-open {
-    overflow: hidden;
-           }
 /* =========================================================
    END ADMIN.JS
 ========================================================= */
