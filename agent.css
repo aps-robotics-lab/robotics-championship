@@ -1563,3 +1563,6 @@ main {
     }
 
 }
+
+
+#claimTicketBtn:disabled{opacity:.7;cursor:not-allowed}.modal-actions{flex-wrap:wrap}

@@ -91,6 +91,9 @@ const typeFilter =
 const eventFilter =
     document.getElementById("eventFilter");
 
+const statusFilter =
+    document.getElementById("statusFilter");
+
 const registrationBody =
     document.getElementById("registrationBody");
 
@@ -324,6 +327,9 @@ function loadWebsiteContent() {
                 document.getElementById(
                     "editTeamName"
                 );
+            const principalPhoto = document.getElementById("editPrincipalPhoto");
+            const mentorPhoto = document.getElementById("editMentorPhoto");
+            const coordinatorPhoto = document.getElementById("editCoordinatorPhoto");
 
 
             if (principalText) {
@@ -386,6 +392,14 @@ function loadWebsiteContent() {
 }
 
 
+get(ref(db,"siteContent/leadership")).then(snapshot=>{
+    const d=snapshot.exists()?snapshot.val():{};
+    const set=(id,v)=>{const el=document.getElementById(id); if(el) el.value=v||"";};
+    set("editPrincipalPhoto",d.principalPhoto);
+    set("editMentorPhoto",d.mentorPhoto);
+    set("editCoordinatorPhoto",d.coordinatorPhoto);
+}).catch(console.error);
+
 saveContentBtn?.addEventListener(
     "click",
     async () => {
@@ -444,6 +458,15 @@ saveContentBtn?.addEventListener(
 
                 }
             );
+
+            await update(ref(db,"siteContent/leadership"), {
+                principalPhoto: document.getElementById("editPrincipalPhoto")?.value.trim() || "assets/principal.svg",
+                mentorPhoto: document.getElementById("editMentorPhoto")?.value.trim() || "assets/mentor.svg",
+                coordinatorPhoto: document.getElementById("editCoordinatorPhoto")?.value.trim() || "assets/coordinator.svg",
+                principalName: document.getElementById("editPrincipalName")?.value.trim() || "Sadhna Devi",
+                mentorName: document.getElementById("editMentorName")?.value.trim() || "Akansha Rani",
+                coordinatorName: document.getElementById("editCoordName")?.value.trim() || "Championship Coordination Team"
+            });
 
             if (contentStatus) {
 
@@ -812,6 +835,10 @@ function getTeamName(data) {
 
 }
 
+
+function getRegistrationStatus(data) {
+    return firstValue(data, ["status","registrationStatus"], "Pending Approval");
+}
 
 function getRemarks(data) {
 
@@ -1864,6 +1891,9 @@ function matchesFilters(data) {
         eventFilter?.value ||
         "all";
 
+    const selectedStatus =
+        statusFilter?.value ||
+        "all";
 
     if (
         selectedType !== "all" &&
@@ -1883,11 +1913,12 @@ function matchesFilters(data) {
             selectedEvent
         )
     ) {
-
         return false;
-
     }
 
+    if (selectedStatus !== "all" && getRegistrationStatus(data).toLowerCase() !== selectedStatus) {
+        return false;
+    }
 
     return true;
 
@@ -2064,14 +2095,14 @@ function handleRowAction(button) {
         openEdit(key);
 
     }
-    else if (
-        button.classList.contains(
-            "delete-btn"
-        )
-    ) {
-
+    else if (button.classList.contains("delete-btn")) {
         openConfirmDelete(key);
-
+    }
+    else if (button.classList.contains("approve-btn")) {
+        setRegistrationStatus(key, "Approved");
+    }
+    else if (button.classList.contains("reject-btn")) {
+        setRegistrationStatus(key, "Rejected");
     }
     else {
 
@@ -2081,6 +2112,30 @@ function handleRowAction(button) {
 
 }
 
+
+async function setRegistrationStatus(key, newStatus) {
+    const data = registrations[key];
+    if (!data) return;
+    const registrationId = getRegistrationId(data, key);
+    const note = newStatus === "Approved"
+        ? "Registration approved. Our team will contact you soon with the next steps."
+        : newStatus === "Rejected"
+            ? "Registration was not approved. Please contact the Help Center if you need assistance."
+            : "Our team will review your registration and contact you soon.";
+    try {
+        const now = Date.now();
+        await update(ref(db), {
+            [`registrations/${key}/status`]: newStatus,
+            [`registrations/${key}/statusNote`]: note,
+            [`registrations/${key}/statusUpdatedAt`]: now,
+            [`registrationStatusLookup/${registrationId}`]: { registrationId, status:newStatus, statusNote:note, updatedAt:now }
+        });
+        showToast(`Registration ${newStatus.toLowerCase()}.`);
+    } catch (error) {
+        console.error("Status update error:", error);
+        showStatus("Could not update registration status.", "error");
+    }
+}
 
 /* =========================================================
    MEMBER DISPLAY HTML
@@ -2308,6 +2363,8 @@ function renderTable() {
                     const teamSize =
                         getTeamSize(data);
 
+                    const registrationStatus = getRegistrationStatus(data);
+                    const statusClass = registrationStatus.toLowerCase().replace(/\s+/g,"-");
 
                     return `
 
@@ -2414,11 +2471,10 @@ function renderTable() {
 
 
                             <td>
-
-                                <div
-                                    class="action-buttons"
-                                >
-
+                                <div class="status-badge ${escapeHTML(statusClass)}">${escapeHTML(registrationStatus)}</div>
+                                <div class="action-buttons">
+                                    ${registrationStatus !== "Approved" ? `<button type="button" class="approve-btn" data-key="${escapeHTML(key)}">Approve</button>` : ""}
+                                    ${registrationStatus !== "Rejected" ? `<button type="button" class="reject-btn" data-key="${escapeHTML(key)}">Reject</button>` : ""}
                                     <button
                                         type="button"
                                         class="view-btn"
@@ -3267,11 +3323,16 @@ editForm?.addEventListener(
 
 
             await update(
-                ref(
-                    db,
-                    `${REGISTRATIONS_PATH}/${key}`
-                ),
-                updates
+                ref(db),
+                {
+                    [`${REGISTRATIONS_PATH}/${key}`]: { ...original, ...updates },
+                    [`registrationStatusLookup/${getRegistrationId(original,key)}`]: {
+                        registrationId: getRegistrationId(original,key),
+                        status: getRegistrationStatus(original),
+                        statusNote: original.statusNote || "Our team will review your registration and contact you soon.",
+                        updatedAt: Date.now()
+                    }
+                }
             );
 
 
@@ -3441,12 +3502,13 @@ confirmDeleteBtn?.addEventListener(
                 `;
 
 
-            await remove(
-                ref(
-                    db,
-                    `${REGISTRATIONS_PATH}/${key}`
-                )
-            );
+            const registration = registrations[key];
+            const registrationId = registration ? getRegistrationId(registration,key) : "";
+            const deleteUpdates = {
+                [`${REGISTRATIONS_PATH}/${key}`]: null
+            };
+            if (registrationId) deleteUpdates[`registrationStatusLookup/${registrationId}`] = null;
+            await update(ref(db), deleteUpdates);
 
 
             showToast(
@@ -3807,8 +3869,10 @@ typeFilter?.addEventListener(
 
 eventFilter?.addEventListener(
     "change",
-    renderTable
+    render
 );
+
+statusFilter?.addEventListener("change", render);
 
 
 clearSearch?.addEventListener(
@@ -3881,104 +3945,37 @@ logoutBtn?.addEventListener(
    AUTHENTICATION
 ========================================================= */
 
-onAuthStateChanged(
-    auth,
-    user => {
-
-        if (!user) {
-
-            window.location.replace(
-                "admin-login.html"
-            );
-
-            return;
-
-        }
-
-
-        /* -----------------------------------------
-           ADMIN UID SECURITY
-        ----------------------------------------- */
-
-        if (
-            ADMIN_UID !==
-            "REPLACE_WITH_MAIN_PROJECT_ADMIN_UID"
-        ) {
-
-            if (
-                user.uid !==
-                ADMIN_UID
-            ) {
-
-                alert(
-                    "Access denied. This account is not authorized as an administrator."
-                );
-
-
-                signOut(auth)
-                    .finally(
-                        () => {
-
-                            window.location.replace(
-                                "admin-login.html"
-                            );
-
-                        }
-                    );
-
-
-                return;
-
-            }
-
-        }
-
-
-        if (adminName) {
-
-            adminName.textContent =
-                user.displayName ||
-                user.email?.split("@")[0] ||
-                "Administrator";
-
-        }
-
-
-        if (adminEmail) {
-
-            adminEmail.textContent =
-                user.email ||
-                user.uid;
-
-        }
-
-
-        loadingScreen
-            ?.classList
-            .add("hidden");
-
-
-        appShell
-            ?.classList
-            .remove("hidden");
-
-
-        showStatus(
-            `Administrator authenticated: ${
-                user.email ||
-                user.uid
-            }`,
-            "success"
-        );
-
-
-        loadRegistrations();
-
-        loadWebsiteContent();
-
+onAuthStateChanged(auth, async user => {
+    if (!user) {
+        window.location.replace("admin-login.html");
+        return;
     }
-);
 
+    try {
+        const adminSnap = await get(ref(db, `admins/${user.uid}`));
+        const isDatabaseAdmin = adminSnap.exists() && adminSnap.val() === true;
+        const isConfiguredAdmin = ADMIN_UID !== "REPLACE_WITH_MAIN_PROJECT_ADMIN_UID" && user.uid === ADMIN_UID;
+
+        if (!isDatabaseAdmin && !isConfiguredAdmin) {
+            await signOut(auth);
+            alert("Access denied. This account is not authorized as an administrator.");
+            window.location.replace("admin-login.html");
+            return;
+        }
+
+        if (adminName) adminName.textContent = user.displayName || user.email?.split("@")[0] || "Administrator";
+        if (adminEmail) adminEmail.textContent = user.email || user.uid;
+        loadingScreen?.classList.add("hidden");
+        appShell?.classList.remove("hidden");
+        showStatus(`Administrator authenticated: ${user.email || user.uid}`, "success");
+        loadRegistrations();
+        loadWebsiteContent();
+    } catch (error) {
+        console.error("Admin authorization error:", error);
+        await signOut(auth).catch(()=>{});
+        window.location.replace("admin-login.html");
+    }
+});
 
 /* =========================================================
    ADMIN MOBILE MENU
@@ -4177,3 +4174,4 @@ document.addEventListener(
 
     }
 );
+\n\n/* Multi-agent authorization is handled by the Help Firebase project. */

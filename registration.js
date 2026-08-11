@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+import { getDatabase, ref, push, set, update } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 import { mainFirebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(mainFirebaseConfig);
@@ -70,8 +70,9 @@ form?.addEventListener("submit", async e => {
   try {
     if (!auth.currentUser) await signInAnonymously(auth);
     const teamSize = getTeamSize();
+    const registrationId = generateId();
     const data = {
-      registrationId: generateId(),
+      registrationId,
       TeamSize: teamSize,
       ParticipationType: teamSize === 1 ? "Solo" : `Team of ${teamSize}`,
       StudentName: getValue("studentName"),
@@ -82,7 +83,10 @@ form?.addEventListener("submit", async e => {
       TeamName: getValue("teamName"),
       Events: events,
       Remarks: getValue("remarks"),
+      status: "Pending Approval",
+      statusNote: "Our team will review your registration and contact you soon.",
       createdBy: auth.currentUser.uid,
+      createdAt: Date.now(),
       timestamp: Date.now()
     };
     for (let i=2;i<=teamSize;i++) {
@@ -90,7 +94,17 @@ form?.addEventListener("submit", async e => {
       data[`Member${i}Class`] = getValue(`member${i}Class`);
       data[`Member${i}Section`] = getValue(`member${i}Section`).toUpperCase();
     }
-    await set(push(ref(db,"registrations")), data);
+    const registrationRef = push(ref(db,"registrations"));
+    const lookup = {
+      registrationId,
+      status: "Pending Approval",
+      statusNote: "Our team will review your registration and contact you soon.",
+      updatedAt: Date.now()
+    };
+    await update(ref(db), {
+      [`registrations/${registrationRef.key}`]: data,
+      [`registrationStatusLookup/${registrationId}`]: lookup
+    });
     if (window.emailjs) emailjs.send("service_5m4uzhb","template_5qb8b2p",data).catch(()=>{});
     sessionStorage.setItem("apsRegistrationId", data.registrationId);
     sessionStorage.setItem("apsRegistrationName", data.StudentName);

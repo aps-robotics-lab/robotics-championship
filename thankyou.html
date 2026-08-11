@@ -1406,34 +1406,15 @@
         if (safeName) {
 
             welcomeElement.textContent =
-                `Thank you, ${safeName}. Your registration has been successfully submitted for APS Robotics Championship 2026.`;
+                `Thank you, ${safeName}. Your registration has been submitted and is currently Pending Approval. Our team will review it and contact you soon.`;
 
         }
 
     }
 
 
-    /* =====================================================
-       CLEAN SESSION DATA
-       
-       Delay clearing slightly so the page has time
-       to render correctly.
-    ===================================================== */
-
-    setTimeout(
-        () => {
-
-            sessionStorage.removeItem(
-                "apsRegistrationId"
-            );
-
-            sessionStorage.removeItem(
-                "apsRegistrationName"
-            );
-
-        },
-        1000
-    );
+    // Keep the registration ID in session storage while this tab is open.
+    // This lets the user refresh the confirmation page without losing it.
 
 </script>
 

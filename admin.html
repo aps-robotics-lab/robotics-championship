@@ -65,6 +65,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
             <a href="#registrations" class="nav-link"><i class="fa-solid fa-users"></i><span>Registrations</span></a>
             <a href="#events" class="nav-link"><i class="fa-solid fa-robot"></i><span>Events</span></a>
             <a href="#websiteContent" class="nav-link"><i class="fa-solid fa-pen-to-square"></i><span>Website Editor</span></a>
+            
         </nav>
 
         <div class="sidebar-bottom">
@@ -285,6 +286,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                         <option value="team">Teams</option>
                     </select>
 
+                    <select id="statusFilter">
+                        <option value="all">All Statuses</option>
+                        <option value="pending approval">Pending Approval</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+
                     <select id="eventFilter">
                         <option value="all">All Events</option>
                         <option value="Robo Race">Robo Race</option>
@@ -322,6 +330,11 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
             </section>
 
+            <section id="agentManagement" class="page-section hidden">
+                <div class="section-header"><div><span>ACCESS CONTROL</span><h2>Multi-Agent Security</h2></div></div>
+                <div class="message-editor"><p style="line-height:1.7;opacity:.8">Support agents are managed in the Help Firebase project's <code>agents</code> collection. Only active Firebase-authenticated agents can access support tickets. This keeps the registration database and Help Center authorization separated.</p></div>
+            </section>
+
             <section id="websiteContent" class="page-section hidden">
                 <div class="section-header">
                     <div><span>CONTENT MANAGEMENT</span><h2>Edit Messages</h2></div>
@@ -348,6 +361,12 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                     </div>
                     <div class="message-panel hidden" data-message-panel="team">
                         <label>APS Team's Message<textarea id="editTeamText" rows="5"></textarea></label><label>Team Name<input id="editTeamName"></label>
+                    </div>
+                    <div class="leadership-editor" style="margin-top:18px;padding-top:18px;border-top:1px solid rgba(255,255,255,.08)">
+                        <h3 style="margin-bottom:10px">Leadership Photos</h3>
+                        <label>Principal Photo URL<input id="editPrincipalPhoto" placeholder="https://..."></label>
+                        <label>Mentor Photo URL<input id="editMentorPhoto" placeholder="https://..."></label>
+                        <label>Coordinator Photo URL<input id="editCoordinatorPhoto" placeholder="https://..."></label>
                     </div>
                 </div>
             </section>

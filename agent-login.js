@@ -9,6 +9,7 @@ import { helpFirebaseConfig, AGENT_UID } from "./firebase-config.js";
 
 const app = initializeApp(helpFirebaseConfig);
 const auth = getAuth(app);
+const db = getDatabase(app);
 
 const form = document.getElementById("loginForm");
 const email = document.getElementById("email");
@@ -43,14 +44,15 @@ form?.addEventListener("submit", async event => {
 
     try {
         const credential = await signInWithEmailAndPassword(auth, emailValue, passwordValue);
-
-        if (credential.user.uid !== AGENT_UID) {
+        const profileSnap = await get(ref(db, `agents/${credential.user.uid}`));
+        const profile = profileSnap.exists() ? profileSnap.val() : null;
+        const legacyAllowed = credential.user.uid === AGENT_UID;
+        if ((!profile || profile.active !== true) && !legacyAllowed) {
             await signOut(auth);
-            setMessage("Access denied. This account is not the authorized agent.", "error");
+            setMessage("Access denied. This account is not an active support agent.", "error");
             return;
         }
-
-        setMessage("Access granted.", "success");
+        setMessage(`Welcome ${profile?.name || credential.user.email || "Support Agent"}.`, "success");
         window.location.replace("agent.html");
     } catch (error) {
         console.error("Agent sign-in error:", error);
@@ -58,8 +60,14 @@ form?.addEventListener("submit", async event => {
     }
 });
 
-onAuthStateChanged(auth, user => {
-    if (user?.uid === AGENT_UID) {
-        window.location.replace("agent.html");
+onAuthStateChanged(auth, async user => {
+    if (!user) return;
+    try {
+        const profileSnap = await get(ref(db, `agents/${user.uid}`));
+        const active = profileSnap.exists() && profileSnap.val()?.active === true;
+        if (active || user.uid === AGENT_UID) window.location.replace("agent.html");
+        else await signOut(auth);
+    } catch (error) {
+        console.error(error);
     }
 });

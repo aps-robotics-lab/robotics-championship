@@ -26,7 +26,8 @@ import {
     getDatabase,
     ref,
     onValue,
-    update
+    update,
+    get
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 import {
@@ -65,9 +66,8 @@ try {
    AUTHORIZED AGENT
 ========================================================= */
 
-const ALLOWED_AGENT_UID =
-    AGENT_UID ||
-    "HgWiHPRx9gcXZtDTl0pDCpZlokt2";
+const ALLOWED_AGENT_UID = AGENT_UID || "HgWiHPRx9gcXZtDTl0pDCpZlokt2";
+let currentAgentProfile = null;
 
 
 /* =========================================================
@@ -148,6 +148,8 @@ const modalName =
 const modalRegistrationId =
     document.getElementById("modalRegistrationId");
 
+const modalReferenceId = document.getElementById("modalReferenceId");
+
 const modalClass =
     document.getElementById("modalClass");
 
@@ -171,6 +173,9 @@ const modalStatus =
 
 const modalPriority =
     document.getElementById("modalPriority");
+
+const modalProgress = document.getElementById("modalProgress");
+const claimTicketBtn = document.getElementById("claimTicketBtn");
 
 const modalCreated =
     document.getElementById("modalCreated");
@@ -1167,12 +1172,12 @@ function openTicket(key) {
        🔥 FIXED REFERENCE ID
     ===================================================== */
 
+    if (modalReferenceId) {
+        modalReferenceId.textContent = ticket.referenceId || "Not available";
+    }
+
     if (modalRegistrationId) {
-
-        modalRegistrationId.textContent =
-            registrationReference ||
-            "Not provided";
-
+        modalRegistrationId.textContent = registrationReference || "Not provided";
     }
 
 
@@ -1247,12 +1252,22 @@ function openTicket(key) {
 
 
     if (modalPriority) {
-
-        modalPriority.textContent =
-            getPriority(
-                ticket
-            );
-
+        modalPriority.textContent = getPriority(ticket);
+    }
+    if (modalProgress) {
+        modalProgress.textContent = `${Math.max(0,Math.min(100,Number(ticket.progress||0)))}%`;
+    }
+    if (claimTicketBtn) {
+        if (!ticket.assignedAgentUid) {
+            claimTicketBtn.textContent = "Claim Ticket";
+            claimTicketBtn.disabled = false;
+        } else if (ticket.assignedAgentUid === auth.currentUser?.uid) {
+            claimTicketBtn.textContent = "✓ Assigned to me";
+            claimTicketBtn.disabled = true;
+        } else {
+            claimTicketBtn.textContent = "Assigned to another agent";
+            claimTicketBtn.disabled = true;
+        }
     }
 
 
@@ -1375,27 +1390,24 @@ async function updateTicket(
         }
 
 
-        await update(
-
-            ref(
-                db,
-                `${TICKETS_PATH}/${selectedTicketKey}`
-            ),
-
-            {
-
-                ...changes,
-
-                updatedAt:
-                    Date.now(),
-
-                updatedBy:
-                    auth.currentUser?.uid ||
-                    ALLOWED_AGENT_UID
-
-            }
-
-        );
+        const now = Date.now();
+        const next = {
+            ...ticket,
+            ...changes,
+            updatedAt: now,
+            updatedBy: auth.currentUser?.uid || ALLOWED_AGENT_UID
+        };
+        const lookup = {
+            referenceId: next.referenceId || getTicketId(next, selectedTicketKey),
+            status: next.status || "Waiting for Approval",
+            progress: Math.max(0, Math.min(100, Number(next.progress ?? (next.status === "Closed" ? 100 : next.status === "In Progress" ? 50 : 0)))),
+            statusNote: next.statusNote || "Our team will review your request and contact you soon.",
+            updatedAt: now
+        };
+        await update(ref(db), {
+            [`${TICKETS_PATH}/${selectedTicketKey}`]: next,
+            [`ticketStatusLookup/${lookup.referenceId}`]: lookup
+        });
 
 
         if (modalMessage) {
@@ -1494,8 +1506,9 @@ setOpenBtn?.addEventListener(
         await updateTicket(
 
             {
-                status:
-                    "Open"
+                status: "Open",
+                progress: 0,
+                statusNote: "Your request is in the support queue. Our team will contact you soon."
             },
 
             "✓ Ticket marked Open."
@@ -1517,8 +1530,9 @@ setProgressBtn?.addEventListener(
         await updateTicket(
 
             {
-                status:
-                    "In Progress"
+                status: "In Progress",
+                progress: 50,
+                statusNote: "A support agent is currently reviewing your request."
             },
 
             "✓ Ticket marked In Progress."
@@ -1541,8 +1555,9 @@ setClosedBtn?.addEventListener(
 
             {
 
-                status:
-                    "Closed",
+                status: "Closed",
+                progress: 100,
+                statusNote: "Your support request has been resolved. Please contact the Help Center again if you need further assistance.",
 
                 resolvedAt:
                     Date.now(),
@@ -1560,6 +1575,11 @@ setClosedBtn?.addEventListener(
     }
 );
 
+
+claimTicketBtn?.addEventListener("click", async()=>{
+    if(!selectedTicketKey || !auth.currentUser) return;
+    await updateTicket({assignedAgentUid:auth.currentUser.uid,assignedAgentName:currentAgentProfile?.name||auth.currentUser.email||"Support Agent"},"✓ Ticket assigned to you.");
+});
 
 /* =========================================================
    LOAD TICKETS
@@ -1769,83 +1789,29 @@ logoutBtn?.addEventListener(
    AUTHORIZATION
 ========================================================= */
 
-onAuthStateChanged(
-
-    auth,
-
-    user => {
-
-        if (!user) {
-
-            window.location.replace(
-                "agent-login.html"
-            );
-
-            return;
-
-        }
-
-
-        /* =================================================
-           ONLY AUTHORIZED AGENT
-        ================================================= */
-
-        if (
-            user.uid !==
-            ALLOWED_AGENT_UID
-        ) {
-
-            console.error(
-                "Unauthorized UID:",
-                user.uid
-            );
-
-
-            alert(
-                "Access denied. You are not an authorized support agent."
-            );
-
-
-            signOut(
-                auth
-            )
-            .finally(
-                () => {
-
-                    window.location.replace(
-                        "agent-login.html"
-                    );
-
-                }
-            );
-
-
-            return;
-
-        }
-
-
-        console.log(
-            "Authorized support agent:",
-            user.uid
-        );
-
-
-        showStatus(
-            `Agent authenticated: ${
-                user.email ||
-                "Authorized Agent"
-            }`,
-            "success"
-        );
-
-
-        loadTickets();
-
+onAuthStateChanged(auth, async user => {
+    if (!user) {
+        window.location.replace("agent-login.html");
+        return;
     }
-
-);
-
+    try {
+        const profileSnap = await get(ref(db, `agents/${user.uid}`));
+        const profile = profileSnap.exists() ? profileSnap.val() : null;
+        const legacyAllowed = user.uid === ALLOWED_AGENT_UID;
+        if (!profile?.active && !legacyAllowed) {
+            await signOut(auth);
+            window.location.replace("agent-login.html");
+            return;
+        }
+        currentAgentProfile = profile || {name:"Support Agent",role:"Support Agent",active:true};
+        showStatus(`Agent authenticated: ${currentAgentProfile.name || user.email || "Support Agent"}`, "success");
+        loadTickets();
+    } catch(error) {
+        console.error("Agent authorization error:", error);
+        await signOut(auth).catch(()=>{});
+        window.location.replace("agent-login.html");
+    }
+});
 
 /* =========================================================
    ESC KEY

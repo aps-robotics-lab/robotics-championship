@@ -402,6 +402,8 @@
 
             <!-- BUTTON -->
 
+            <div class="approval-note">Your request will start as <strong>Waiting for Approval</strong>. Our team will review it and contact you soon.</div>
+
             <button
                 type="submit"
                 id="submitBtn"
@@ -435,6 +437,24 @@
          INFO
     ================================================= -->
 
+    <section class="help-card tracker-card">
+        <div class="card-header">
+            <div><span>TRACK SUPPORT</span><h2>Check Your Help Progress</h2></div>
+            <div class="support-icon">↗</div>
+        </div>
+        <form id="helpTrackerForm" class="tracker-form">
+            <div class="field"><label for="trackerReference">Help Reference ID</label><input id="trackerReference" maxlength="9" placeholder="APS-XXXXX" autocomplete="off" required></div>
+            <button class="submit-btn" type="submit">Check Progress</button>
+        </form>
+        <div id="trackerStatus" class="tracker-status"></div>
+        <div id="trackerResult" class="tracker-result hidden">
+            <div class="tracker-top"><strong id="trackerStatusText">Waiting for Approval</strong><span id="trackerProgressText">0%</span></div>
+            <div class="tracker-bar"><span id="trackerProgress"></span></div>
+            <p id="trackerNote">Our team will review your request and contact you soon.</p>
+            <small>Last updated: <span id="trackerUpdated">-</span></small>
+        </div>
+    </section>
+
     <section class="help-info">
 
         <div>
@@ -444,8 +464,7 @@
             </strong>
 
             <p>
-                After submitting your request, you will
-                receive a unique ticket ID.
+                After submitting your request, you will receive a unique reference such as <strong>APS-A1B2C</strong>. Save it to check your progress anytime.
             </p>
 
         </div>

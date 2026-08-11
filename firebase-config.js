@@ -43,3 +43,6 @@ export const ADMIN_UID = "REPLACE_WITH_MAIN_PROJECT_ADMIN_UID";
 
 /* Only this Firebase Auth UID may access /tickets as an agent. */
 export const AGENT_UID = "HgWiHPRx9gcXZtDTl0pDCpZlokt2";
+
+/* Multi-agent support: Firebase /agents is the source of truth. */
+export const AGENT_UIDS = [AGENT_UID];
