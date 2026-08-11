@@ -43,9 +43,3 @@ export const ADMIN_UID = "REPLACE_WITH_MAIN_PROJECT_ADMIN_UID";
 
 /* Only this Firebase Auth UID may access /tickets as an agent. */
 export const AGENT_UID = "HgWiHPRx9gcXZtDTl0pDCpZlokt2";
-export const AGENT_UIDS = [
-    "HgWiHPRx9gcXZtDTl0pDCpZlokt2"
-];
-// Optional secure AI endpoint. Leave blank to use the built-in APS knowledge assistant.
-// If you deploy the included Firebase Function, set this to its HTTPS URL.
-export const AI_CHAT_ENDPOINT = "";

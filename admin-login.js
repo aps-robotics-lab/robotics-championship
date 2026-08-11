@@ -335,12 +335,16 @@ onAuthStateChanged(
          */
 
         if (user) {
-            if (ADMIN_UID && !ADMIN_UID.startsWith("REPLACE_") && user.uid === ADMIN_UID) {
+            if (ADMIN_UID !== "REPLACE_WITH_MAIN_PROJECT_ADMIN_UID" && user.uid === ADMIN_UID) {
                 window.location.replace("admin.html");
                 return;
             }
-            signOut(auth).catch(console.error);
-            showMessage("Access denied. This account is not the administrator.", "error");
+            if (ADMIN_UID !== "REPLACE_WITH_MAIN_PROJECT_ADMIN_UID") {
+                signOut(auth).catch(console.error);
+                showMessage("Access denied. This account is not the administrator.", "error");
+                return;
+            }
+            window.location.replace("admin.html");
             return;
         }
 
