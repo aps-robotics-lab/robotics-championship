@@ -187,3 +187,34 @@ adminSecretTrigger?.addEventListener("click", () => {
     }
 
 })();
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const adminTrigger =
+        document.getElementById("adminTrigger");
+
+    if (!adminTrigger) return;
+
+    let clicks = 0;
+    let clickTimer;
+
+    adminTrigger.addEventListener("click", () => {
+
+        clicks++;
+
+        clearTimeout(clickTimer);
+
+        clickTimer = setTimeout(() => {
+            clicks = 0;
+        }, 1500);
+
+        if (clicks === 5) {
+            clicks = 0;
+
+            window.location.href = "admin-login.html";
+        }
+
+    });
+
+});
+</script>
