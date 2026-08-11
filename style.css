@@ -73,6 +73,28 @@
 
     cursor: pointer;
 }
+.admin-secret-trigger {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    padding: 10px 14px;
+    text-align: center;
+    transition: opacity .2s ease, transform .2s ease;
+}
+
+.admin-secret-trigger:hover {
+    opacity: .85;
+    transform: translateY(-1px);
+}
+
+.admin-secret-trigger:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+    border-radius: 6px;
+}
 
 /* Still clickable even though invisible */
 .hidden-admin-link:hover,
