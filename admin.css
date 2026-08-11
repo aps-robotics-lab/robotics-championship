@@ -1412,3 +1412,160 @@ tbody tr:hover {
 
 
 .status-badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.3px;margin-bottom:8px;background:rgba(255,255,255,.07);color:#c9d7e6}.status-badge.pending-approval{background:rgba(255,193,7,.12);color:#ffd86a}.status-badge.approved{background:rgba(68,220,145,.12);color:#6ff0b2}.status-badge.rejected{background:rgba(255,90,110,.12);color:#ff8b9b}.approve-btn,.reject-btn,.agent-toggle{border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#fff;border-radius:8px;padding:6px 9px;cursor:pointer;font-size:11px}.approve-btn:hover{border-color:#5df0ad;color:#6ff0b2}.reject-btn:hover{border-color:#ff7f92;color:#ff9aaa}.agent-toggle{margin-left:7px}@media(max-width:800px){#agentForm{grid-template-columns:1fr!important}}
+/* =========================================================
+   ADMIN MOBILE MENU FIX
+========================================================= */
+
+.menu-btn {
+    display: none;
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 12px;
+    background: rgba(255,255,255,.05);
+    color: #fff;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: .25s ease;
+}
+
+.menu-btn:hover {
+    background: rgba(255,255,255,.10);
+}
+
+
+/* =========================================================
+   SIDEBAR OVERLAY
+========================================================= */
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 998;
+    background: rgba(0,0,0,.65);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
+
+/* =========================================================
+   DESKTOP
+========================================================= */
+
+.sidebar {
+    z-index: 1000;
+}
+
+
+/* =========================================================
+   TABLET / MOBILE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .menu-btn {
+        display: flex;
+    }
+
+    .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 900;
+    }
+
+    .sidebar {
+
+        position: fixed;
+
+        top: 0;
+        left: 0;
+        bottom: 0;
+
+        width: min(310px, 86vw);
+
+        z-index: 1000;
+
+        transform: translateX(-105%);
+
+        transition:
+            transform .3s ease,
+            box-shadow .3s ease;
+
+        overflow-y: auto;
+
+        visibility: hidden;
+    }
+
+    .sidebar.mobile-open {
+
+        transform: translateX(0);
+
+        visibility: visible;
+
+        box-shadow:
+            15px 0 45px rgba(0,0,0,.55);
+    }
+
+    .main {
+        width: 100%;
+        margin-left: 0 !important;
+    }
+
+    .content {
+        width: 100%;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .topbar {
+        padding:
+            12px
+            14px;
+    }
+
+    .top-title span {
+        font-size: 9px;
+    }
+
+    .top-title h1 {
+        font-size: 18px;
+    }
+
+    .top-actions {
+        gap: 6px;
+    }
+
+    .firebase-status {
+        display: none;
+    }
+
+    .menu-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+}
+
+
+/* =========================================================
+   PREVENT BACKGROUND SCROLL WHEN MENU OPEN
+========================================================= */
+
+body.menu-open {
+    overflow: hidden;
+}
