@@ -74,3 +74,116 @@ adminSecretTrigger?.addEventListener("click", () => {
     }
 
 });
+/* =========================================================
+   SECRET ADMIN ACCESS
+   5 CLICKS ON FOOTER -> ADMIN PAGE
+========================================================= */
+
+(function () {
+
+    let clickCount = 0;
+    let resetTimer = null;
+
+    function initializeSecretAdminAccess() {
+
+        const trigger =
+            document.getElementById(
+                "footerAdminTrigger"
+            );
+
+        if (!trigger) {
+
+            console.warn(
+                "Secret admin trigger not found."
+            );
+
+            return;
+
+        }
+
+        console.log(
+            "Secret admin access initialized."
+        );
+
+        trigger.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                clickCount++;
+
+                console.log(
+                    "Admin trigger click:",
+                    clickCount
+                );
+
+                clearTimeout(
+                    resetTimer
+                );
+
+                /*
+                 * User has 3 seconds to complete
+                 * all five clicks.
+                 */
+                resetTimer =
+                    setTimeout(
+                        function () {
+
+                            clickCount = 0;
+
+                            console.log(
+                                "Admin click counter reset."
+                            );
+
+                        },
+                        3000
+                    );
+
+                if (clickCount >= 5) {
+
+                    clickCount = 0;
+
+                    clearTimeout(
+                        resetTimer
+                    );
+
+                    console.log(
+                        "Opening admin panel..."
+                    );
+
+                    window.location.href =
+                        "admin.html";
+
+                }
+
+            },
+            false
+        );
+
+    }
+
+
+    /*
+     * Works whether this script is loaded
+     * before or after the HTML.
+     */
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            initializeSecretAdminAccess
+        );
+
+    }
+    else {
+
+        initializeSecretAdminAccess();
+
+    }
+
+})();
