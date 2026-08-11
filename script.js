@@ -39,3 +39,38 @@ document.addEventListener("DOMContentLoaded", () => {
     hashLinks.forEach(link => link.classList.toggle("active", link.getAttribute("href") === `#${current}`));
   }, { passive:true });
 });
+/* =========================================================
+   SECRET ADMIN ACCESS
+   5 FOOTER CLICKS -> ADMIN PAGE
+========================================================= */
+
+const adminSecretTrigger =
+    document.getElementById("adminSecretTrigger");
+
+let adminClickCount = 0;
+let adminClickTimer = null;
+
+adminSecretTrigger?.addEventListener("click", () => {
+
+    adminClickCount++;
+
+    clearTimeout(adminClickTimer);
+
+    /*
+       Reset the counter if the user
+       doesn't complete 5 clicks quickly.
+    */
+    adminClickTimer = setTimeout(() => {
+        adminClickCount = 0;
+    }, 3000);
+
+    if (adminClickCount >= 5) {
+
+        adminClickCount = 0;
+
+        clearTimeout(adminClickTimer);
+
+        window.location.href = "admin.html";
+    }
+
+});
