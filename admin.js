@@ -4388,38 +4388,176 @@ document.addEventListener(
 
 
         function toggleMenu() {
+/* =========================================================
+   ADMIN MOBILE MENU
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        const menuBtn =
+            document.getElementById("menuToggle");
+
+        const sidebar =
+            document.getElementById("adminSidebar");
+
+        const sidebarOverlay =
+            document.getElementById("sidebarOverlay");
+
+
+        /* -----------------------------------------------------
+           CHECK ELEMENTS
+        ----------------------------------------------------- */
+
+        if (
+            !menuBtn ||
+            !sidebar ||
+            !sidebarOverlay
+        ) {
+
+            console.warn(
+                "Admin mobile menu elements not found."
+            );
+
+            return;
+
+        }
+
+
+        /* -----------------------------------------------------
+           OPEN SIDEBAR
+        ----------------------------------------------------- */
+
+        function openSidebar() {
+
+            sidebar.classList.add(
+                "mobile-open"
+            );
+
+            sidebarOverlay.classList.add(
+                "active"
+            );
+
+            document.body.classList.add(
+                "menu-open"
+            );
+
+
+            menuBtn.classList.add(
+                "active"
+            );
+
+
+            menuBtn.innerHTML =
+                '<i class="fa-solid fa-xmark"></i>';
+
+
+            menuBtn.setAttribute(
+                "aria-label",
+                "Close menu"
+            );
+
+
+            menuBtn.setAttribute(
+                "aria-expanded",
+                "true"
+            );
+
+        }
+
+
+        /* -----------------------------------------------------
+           CLOSE SIDEBAR
+        ----------------------------------------------------- */
+
+        function closeSidebar() {
+
+            sidebar.classList.remove(
+                "mobile-open"
+            );
+
+            sidebarOverlay.classList.remove(
+                "active"
+            );
+
+            document.body.classList.remove(
+                "menu-open"
+            );
+
+
+            menuBtn.classList.remove(
+                "active"
+            );
+
+
+            menuBtn.innerHTML =
+                '<i class="fa-solid fa-bars"></i>';
+
+
+            menuBtn.setAttribute(
+                "aria-label",
+                "Open menu"
+            );
+
+
+            menuBtn.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+        }
+
+
+        /* -----------------------------------------------------
+           TOGGLE SIDEBAR
+        ----------------------------------------------------- */
+
+        function toggleSidebar() {
 
             if (
-                adminSidebar
-                    .classList
-                    .contains("active")
+                sidebar.classList.contains(
+                    "mobile-open"
+                )
             ) {
 
-                closeMenu();
+                closeSidebar();
 
             }
             else {
 
-                openMenu();
+                openSidebar();
 
             }
 
         }
 
 
-        menuToggle.addEventListener(
+        /* -----------------------------------------------------
+           MENU BUTTON
+        ----------------------------------------------------- */
+
+        menuBtn.addEventListener(
             "click",
-            toggleMenu
+            toggleSidebar
         );
 
+
+        /* -----------------------------------------------------
+           OVERLAY
+        ----------------------------------------------------- */
 
         sidebarOverlay.addEventListener(
             "click",
-            closeMenu
+            closeSidebar
         );
 
 
-        adminSidebar
+        /* -----------------------------------------------------
+           SIDEBAR LINKS
+        ----------------------------------------------------- */
+
+        sidebar
             .querySelectorAll(
                 ".sidebar-link"
             )
@@ -4431,11 +4569,10 @@ document.addEventListener(
                         () => {
 
                             if (
-                                window.innerWidth <=
-                                900
+                                window.innerWidth <= 900
                             ) {
 
-                                closeMenu();
+                                closeSidebar();
 
                             }
 
@@ -4446,22 +4583,29 @@ document.addEventListener(
             );
 
 
+        /* -----------------------------------------------------
+           ESCAPE KEY
+        ----------------------------------------------------- */
+
         document.addEventListener(
             "keydown",
             event => {
 
                 if (
-                    event.key ===
-                    "Escape"
+                    event.key === "Escape"
                 ) {
 
-                    closeMenu();
+                    closeSidebar();
 
                 }
 
             }
         );
 
+
+        /* -----------------------------------------------------
+           WINDOW RESIZE
+        ----------------------------------------------------- */
 
         window.addEventListener(
             "resize",
@@ -4471,41 +4615,30 @@ document.addEventListener(
                     window.innerWidth > 900
                 ) {
 
-                    closeMenu();
+                    closeSidebar();
 
                 }
 
             }
         );
 
+
+        /* -----------------------------------------------------
+           INITIAL STATE
+        ----------------------------------------------------- */
+
+        menuBtn.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+        menuBtn.setAttribute(
+            "aria-label",
+            "Open menu"
+        );
+
     }
 );
-
-/* =========================================================
-   ADMIN MOBILE MENU FIX
-========================================================= */
-
-.menu-btn {
-    display: none;
-    width: 44px;
-    height: 44px;
-    border: 1px solid rgba(255,255,255,.12);
-    border-radius: 12px;
-    background: rgba(255,255,255,.05);
-    color: #fff;
-    cursor: pointer;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-    transition: .25s ease;
-}
-
-.menu-btn:hover {
-    background: rgba(255,255,255,.10);
-}
-
-
 /* =========================================================
    SIDEBAR OVERLAY
 ========================================================= */
