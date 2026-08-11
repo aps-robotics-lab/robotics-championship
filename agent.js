@@ -1,20 +1,21 @@
 /* =========================================================
+   AGENT.JS
    APS ROBOTICS CHAMPIONSHIP 2026
    AGENT HELP CENTER
-   ---------------------------------------------------------
+
    DATABASE:
 
        /agents
        /tickets
        /ticketStatusLookup
 
-   AGENT STRUCTURE:
+   CURRENT AGENT STRUCTURE:
 
        agents/
            UID: true
 
    IMPORTANT:
-   This file uses the SAME Firebase project as help.js.
+   FIREBASE RULES ARE NOT CHANGED BY THIS FILE.
 ========================================================= */
 
 import {
@@ -41,31 +42,52 @@ import {
 
 
 /* =========================================================
-   FIREBASE INITIALIZATION
+   FIREBASE
 ========================================================= */
 
-const app = initializeApp(helpFirebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
+const app =
+    initializeApp(
+        helpFirebaseConfig
+    );
+
+const auth =
+    getAuth(
+        app
+    );
+
+const db =
+    getDatabase(
+        app
+    );
 
 
 /* =========================================================
-   DATABASE PATHS
+   PATHS
 ========================================================= */
 
-const AGENTS_PATH = "agents";
-const TICKETS_PATH = "tickets";
-const LOOKUP_PATH = "ticketStatusLookup";
+const AGENTS_PATH =
+    "agents";
+
+const TICKETS_PATH =
+    "tickets";
+
+const LOOKUP_PATH =
+    "ticketStatusLookup";
 
 
 /* =========================================================
-   STATE
+   DATA
 ========================================================= */
 
 let tickets = {};
+
 let selectedTicketKey = null;
+
 let firebaseUnsubscribe = null;
+
 let currentAgentProfile = null;
+
+let currentUser = null;
 
 
 /* =========================================================
@@ -73,22 +95,34 @@ let currentAgentProfile = null;
 ========================================================= */
 
 const ticketList =
-    document.getElementById("ticketList");
+    document.getElementById(
+        "ticketList"
+    );
 
 const searchInput =
-    document.getElementById("searchInput");
+    document.getElementById(
+        "searchInput"
+    );
 
 const statusFilter =
-    document.getElementById("statusFilter");
+    document.getElementById(
+        "statusFilter"
+    );
 
 const refreshBtn =
-    document.getElementById("refreshBtn");
+    document.getElementById(
+        "refreshBtn"
+    );
 
 const logoutBtn =
-    document.getElementById("logoutBtn");
+    document.getElementById(
+        "logoutBtn"
+    );
 
 const statusMessage =
-    document.getElementById("statusMessage");
+    document.getElementById(
+        "statusMessage"
+    );
 
 
 /* =========================================================
@@ -96,16 +130,24 @@ const statusMessage =
 ========================================================= */
 
 const totalTickets =
-    document.getElementById("totalTickets");
+    document.getElementById(
+        "totalTickets"
+    );
 
 const openTickets =
-    document.getElementById("openTickets");
+    document.getElementById(
+        "openTickets"
+    );
 
 const progressTickets =
-    document.getElementById("progressTickets");
+    document.getElementById(
+        "progressTickets"
+    );
 
 const closedTickets =
-    document.getElementById("closedTickets");
+    document.getElementById(
+        "closedTickets"
+    );
 
 
 /* =========================================================
@@ -113,67 +155,109 @@ const closedTickets =
 ========================================================= */
 
 const ticketOverlay =
-    document.getElementById("ticketOverlay");
+    document.getElementById(
+        "ticketOverlay"
+    );
 
 const closeModal =
-    document.getElementById("closeModal");
+    document.getElementById(
+        "closeModal"
+    );
 
 const modalSubject =
-    document.getElementById("modalSubject");
+    document.getElementById(
+        "modalSubject"
+    );
 
 const modalTicketId =
-    document.getElementById("modalTicketId");
+    document.getElementById(
+        "modalTicketId"
+    );
 
 const modalName =
-    document.getElementById("modalName");
+    document.getElementById(
+        "modalName"
+    );
 
 const modalRegistrationId =
-    document.getElementById("modalRegistrationId");
+    document.getElementById(
+        "modalRegistrationId"
+    );
 
 const modalReferenceId =
-    document.getElementById("modalReferenceId");
+    document.getElementById(
+        "modalReferenceId"
+    );
 
 const modalClass =
-    document.getElementById("modalClass");
+    document.getElementById(
+        "modalClass"
+    );
 
 const modalSection =
-    document.getElementById("modalSection");
+    document.getElementById(
+        "modalSection"
+    );
 
 const modalEmail =
-    document.getElementById("modalEmail");
+    document.getElementById(
+        "modalEmail"
+    );
 
 const modalCategory =
-    document.getElementById("modalCategory");
+    document.getElementById(
+        "modalCategory"
+    );
 
 const problemSubject =
-    document.getElementById("problemSubject");
+    document.getElementById(
+        "problemSubject"
+    );
 
 const problemMessage =
-    document.getElementById("problemMessage");
+    document.getElementById(
+        "problemMessage"
+    );
 
 const modalStatus =
-    document.getElementById("modalStatus");
+    document.getElementById(
+        "modalStatus"
+    );
 
 const modalPriority =
-    document.getElementById("modalPriority");
+    document.getElementById(
+        "modalPriority"
+    );
 
 const modalProgress =
-    document.getElementById("modalProgress");
+    document.getElementById(
+        "modalProgress"
+    );
 
 const claimTicketBtn =
-    document.getElementById("claimTicketBtn");
+    document.getElementById(
+        "claimTicketBtn"
+    );
 
 const modalCreated =
-    document.getElementById("modalCreated");
+    document.getElementById(
+        "modalCreated"
+    );
 
 const modalUpdated =
-    document.getElementById("modalUpdated");
+    document.getElementById(
+        "modalUpdated"
+    );
 
 const agentReply =
-    document.getElementById("agentReply");
+    document.getElementById(
+        "agentReply"
+    );
 
 const modalMessage =
-    document.getElementById("modalMessage");
+    document.getElementById(
+        "modalMessage"
+    );
 
 
 /* =========================================================
@@ -181,16 +265,24 @@ const modalMessage =
 ========================================================= */
 
 const setOpenBtn =
-    document.getElementById("setOpenBtn");
+    document.getElementById(
+        "setOpenBtn"
+    );
 
 const setProgressBtn =
-    document.getElementById("setProgressBtn");
+    document.getElementById(
+        "setProgressBtn"
+    );
 
 const saveReplyBtn =
-    document.getElementById("saveReplyBtn");
+    document.getElementById(
+        "saveReplyBtn"
+    );
 
 const setClosedBtn =
-    document.getElementById("setClosedBtn");
+    document.getElementById(
+        "setClosedBtn"
+    );
 
 
 /* =========================================================
@@ -199,7 +291,9 @@ const setClosedBtn =
 
 function escapeHTML(value) {
 
-    return String(value ?? "")
+    return String(
+        value ?? ""
+    )
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
@@ -210,10 +304,14 @@ function escapeHTML(value) {
 
 
 /* =========================================================
-   FIRST AVAILABLE VALUE
+   FIRST VALUE
 ========================================================= */
 
-function firstValue(object, fields, fallback = "") {
+function firstValue(
+    object,
+    fields,
+    fallback = ""
+) {
 
     if (!object) {
         return fallback;
@@ -221,14 +319,17 @@ function firstValue(object, fields, fallback = "") {
 
     for (const field of fields) {
 
-        const value = object[field];
+        const value =
+            object[field];
 
         if (
             value !== undefined &&
             value !== null &&
             String(value).trim() !== ""
         ) {
+
             return value;
+
         }
 
     }
@@ -239,7 +340,7 @@ function firstValue(object, fields, fallback = "") {
 
 
 /* =========================================================
-   TICKET DATA HELPERS
+   FIELD HELPERS
 ========================================================= */
 
 function getRegistrationReference(ticket) {
@@ -255,8 +356,6 @@ function getRegistrationReference(ticket) {
             "regID",
             "registrationRef",
             "registrationReference",
-            "registrationReferenceId",
-            "registrationReferenceID",
             "registrationNumber",
             "registrationNo",
             "registration",
@@ -269,7 +368,10 @@ function getRegistrationReference(ticket) {
 }
 
 
-function getTicketId(ticket, key) {
+function getTicketId(
+    ticket,
+    key
+) {
 
     return firstValue(
         ticket,
@@ -469,11 +571,17 @@ function timestampNumber(value) {
         value === null ||
         value === ""
     ) {
+
         return 0;
+
     }
 
-    if (typeof value === "number") {
+    if (
+        typeof value === "number"
+    ) {
+
         return value;
+
     }
 
     if (
@@ -481,18 +589,30 @@ function timestampNumber(value) {
         value !== null &&
         value.seconds !== undefined
     ) {
-        return Number(value.seconds) * 1000;
+
+        return Number(
+            value.seconds
+        ) * 1000;
+
     }
 
-    const numeric = Number(value);
+    const numeric =
+        Number(value);
 
-    if (Number.isFinite(numeric)) {
+    if (
+        Number.isFinite(numeric)
+    ) {
+
         return numeric;
+
     }
 
-    const date = new Date(value);
+    const date =
+        new Date(value);
 
-    return Number.isNaN(date.getTime())
+    return Number.isNaN(
+        date.getTime()
+    )
         ? 0
         : date.getTime();
 
@@ -500,18 +620,21 @@ function timestampNumber(value) {
 
 
 /* =========================================================
-   FORMAT DATE
+   DATE
 ========================================================= */
 
 function formatDate(value) {
 
-    const timestamp = timestampNumber(value);
+    const timestamp =
+        timestampNumber(value);
 
     if (!timestamp) {
         return "-";
     }
 
-    return new Date(timestamp).toLocaleString(
+    return new Date(
+        timestamp
+    ).toLocaleString(
         "en-IN",
         {
             day: "2-digit",
@@ -529,13 +652,17 @@ function formatDate(value) {
    STATUS MESSAGE
 ========================================================= */
 
-function showStatus(message, type = "") {
+function showStatus(
+    message,
+    type = ""
+) {
 
     if (!statusMessage) {
         return;
     }
 
-    statusMessage.textContent = message;
+    statusMessage.textContent =
+        message;
 
     statusMessage.className =
         `status-message ${type}`.trim();
@@ -544,25 +671,24 @@ function showStatus(message, type = "") {
 
 
 /* =========================================================
-   CHECK AGENT AUTHORIZATION
+   AGENT AUTHORIZATION
 =========================================================
 
-   Firebase:
+   YOUR RULES ALLOW:
 
-       /agents/UID = true
+       root.child('agents')
+           .child(auth.uid)
+           .val() === true
 
-   is enough.
+   Therefore this code reads ONLY:
 
-   Also supports:
+       /agents/{currentUser.uid}
 
-       /agents/UID = {
-           active: true,
-           name: "Agent"
-       }
+   This is fully compatible with your Rules.
 
 ========================================================= */
 
-async function isAuthorizedAgent(user) {
+async function authorizeAgent(user) {
 
     if (!user) {
         return false;
@@ -570,86 +696,122 @@ async function isAuthorizedAgent(user) {
 
     try {
 
+        console.log(
+            "Checking agent:",
+            user.uid
+        );
+
+
         const agentRef =
             ref(
                 db,
                 `${AGENTS_PATH}/${user.uid}`
             );
 
+
         const snapshot =
-            await get(agentRef);
+            await get(
+                agentRef
+            );
+
 
         console.log(
-            "Agent authorization:",
-            user.uid,
-            snapshot.exists(),
-            snapshot.val()
+            "Agent node exists:",
+            snapshot.exists()
         );
 
+
         if (!snapshot.exists()) {
+
             return false;
+
         }
 
-        const value = snapshot.val();
 
-        /* ---------------------------------------------
-           SIMPLE STRUCTURE:
+        const value =
+            snapshot.val();
 
-               UID: true
-        --------------------------------------------- */
 
-        if (value === true) {
+        console.log(
+            "Agent node value:",
+            value
+        );
+
+
+        /*
+         * YOUR CURRENT DATABASE FORMAT
+         *
+         * UID: true
+         */
+
+        if (
+            value === true
+        ) {
 
             currentAgentProfile = {
-                uid: user.uid,
-                active: true,
-                name: user.email || "Support Agent",
-                role: "Support Agent"
+
+                uid:
+                    user.uid,
+
+                active:
+                    true,
+
+                name:
+                    user.email ||
+                    "Support Agent",
+
+                role:
+                    "Support Agent"
+
             };
 
             return true;
+
         }
 
 
-        /* ---------------------------------------------
-           OBJECT STRUCTURE:
-
-               UID:
-                   active: true
-                   name: "Agent"
-        --------------------------------------------- */
+        /*
+         * OPTIONAL FUTURE FORMAT
+         */
 
         if (
             typeof value === "object" &&
-            value !== null
+            value !== null &&
+            value.active === true
         ) {
 
-            if (
-                value.active === true ||
-                value.authorized === true
-            ) {
+            currentAgentProfile = {
 
-                currentAgentProfile = {
-                    uid: user.uid,
-                    ...value
-                };
+                uid:
+                    user.uid,
 
-                return true;
-            }
+                ...value
+
+            };
+
+            return true;
 
         }
+
 
         return false;
 
     }
+
     catch (error) {
 
         console.error(
-            "Agent authorization error:",
+            "AGENT AUTHORIZATION ERROR:",
             error
         );
 
+        showStatus(
+            "Could not verify agent authorization.",
+            "error"
+        );
+
         return false;
+
     }
 
 }
@@ -659,12 +821,16 @@ async function isAuthorizedAgent(user) {
    SEARCH
 ========================================================= */
 
-function matchesSearch(key, ticket) {
+function matchesSearch(
+    key,
+    ticket
+) {
 
     const query =
         searchInput?.value
             ?.trim()
-            .toLowerCase() || "";
+            .toLowerCase() ||
+        "";
 
     if (!query) {
         return true;
@@ -674,11 +840,16 @@ function matchesSearch(key, ticket) {
 
         key,
 
-        getTicketId(ticket, key),
+        getTicketId(
+            ticket,
+            key
+        ),
 
-        getRegistrationReference(ticket),
+        ticket.referenceId,
 
-        ticket.referenceId || "",
+        getRegistrationReference(
+            ticket
+        ),
 
         getName(ticket),
 
@@ -698,7 +869,7 @@ function matchesSearch(key, ticket) {
 
         getPriority(ticket),
 
-        ticket.agentReply || ""
+        ticket.agentReply
 
     ]
         .filter(
@@ -709,7 +880,9 @@ function matchesSearch(key, ticket) {
         .join(" ")
         .toLowerCase();
 
-    return searchable.includes(query);
+    return searchable.includes(
+        query
+    );
 
 }
 
@@ -721,40 +894,55 @@ function matchesSearch(key, ticket) {
 function matchesFilter(ticket) {
 
     const selected =
-        statusFilter?.value || "All";
+        statusFilter?.value ||
+        "All";
 
-    if (selected === "All") {
+    if (
+        selected === "All"
+    ) {
+
         return true;
+
     }
 
-    return getTicketStatus(ticket) === selected;
+    return (
+        getTicketStatus(ticket) ===
+        selected
+    );
 
 }
 
 
 /* =========================================================
-   UPDATE STATISTICS
+   STATS
 ========================================================= */
 
 function updateStats() {
 
     const list =
-        Object.values(tickets);
+        Object.values(
+            tickets
+        );
 
-    const total = list.length;
+    const total =
+        list.length;
 
     const open =
-        list.filter(ticket => {
+        list.filter(
+            ticket => {
 
-            const status =
-                getTicketStatus(ticket);
+                const status =
+                    getTicketStatus(
+                        ticket
+                    );
 
-            return (
-                status === "Open" ||
-                status === "Waiting for Approval"
-            );
+                return (
+                    status === "Open" ||
+                    status === "Waiting for Approval"
+                );
 
-        }).length;
+            }
+        ).length;
 
     const progress =
         list.filter(
@@ -772,26 +960,30 @@ function updateStats() {
 
 
     if (totalTickets) {
-        totalTickets.textContent = total;
+        totalTickets.textContent =
+            total;
     }
 
     if (openTickets) {
-        openTickets.textContent = open;
+        openTickets.textContent =
+            open;
     }
 
     if (progressTickets) {
-        progressTickets.textContent = progress;
+        progressTickets.textContent =
+            progress;
     }
 
     if (closedTickets) {
-        closedTickets.textContent = closed;
+        closedTickets.textContent =
+            closed;
     }
 
 }
 
 
 /* =========================================================
-   RENDER TICKETS
+   RENDER
 ========================================================= */
 
 function renderTickets() {
@@ -802,168 +994,223 @@ function renderTickets() {
 
     updateStats();
 
+
     const entries =
-        Object.entries(tickets)
-            .filter(
-                ([key, ticket]) =>
-                    matchesSearch(key, ticket) &&
-                    matchesFilter(ticket)
-            )
-            .sort(
-                ([, a], [, b]) =>
-                    timestampNumber(
-                        getUpdatedAt(b)
-                    ) -
-                    timestampNumber(
-                        getUpdatedAt(a)
-                    )
-            );
+        Object.entries(
+            tickets
+        )
+        .filter(
+            ([key, ticket]) =>
+                matchesSearch(
+                    key,
+                    ticket
+                ) &&
+                matchesFilter(
+                    ticket
+                )
+        )
+        .sort(
+            ([, a], [, b]) =>
+                timestampNumber(
+                    getUpdatedAt(b)
+                ) -
+                timestampNumber(
+                    getUpdatedAt(a)
+                )
+        );
 
 
     if (!entries.length) {
 
         ticketList.innerHTML = `
+
             <div class="empty-state">
+
                 <div>🎫</div>
+
                 <h3>No tickets found</h3>
+
                 <p>
                     There are no support requests
                     matching your search.
                 </p>
+
             </div>
+
         `;
 
         return;
+
     }
 
 
     ticketList.innerHTML =
         entries
-            .map(([key, ticket]) => {
+            .map(
+                ([key, ticket]) => {
 
-                const status =
-                    getTicketStatus(ticket);
+                    const status =
+                        getTicketStatus(ticket);
 
-                const priority =
-                    getPriority(ticket);
+                    const priority =
+                        getPriority(ticket);
 
-                const ticketId =
-                    getTicketId(ticket, key);
+                    const ticketId =
+                        getTicketId(
+                            ticket,
+                            key
+                        );
 
-                const reference =
-                    ticket.referenceId ||
-                    getRegistrationReference(ticket);
+                    const reference =
+                        ticket.referenceId ||
+                        getRegistrationReference(
+                            ticket
+                        );
 
-                const statusClass =
-                    status
-                        .toLowerCase()
-                        .replace(/\s+/g, "-");
+                    const statusClass =
+                        status
+                            .toLowerCase()
+                            .replace(
+                                /\s+/g,
+                                "-"
+                            );
 
 
-                return `
-                    <button
-                        type="button"
-                        class="ticket-card"
-                        data-key="${escapeHTML(key)}"
-                    >
+                    return `
 
-                        <div class="ticket-card-top">
+                        <button
+                            type="button"
+                            class="ticket-card"
+                            data-key="${escapeHTML(key)}"
+                        >
 
-                            <span class="ticket-number">
-                                #${escapeHTML(ticketId)}
-                            </span>
+                            <div class="ticket-card-top">
 
-                            <span class="ticket-status ${escapeHTML(statusClass)}">
-                                ${escapeHTML(status)}
-                            </span>
+                                <span class="ticket-number">
 
-                        </div>
+                                    #${escapeHTML(
+                                        ticketId
+                                    )}
 
-                        <h3>
-                            ${escapeHTML(
-                                getSubject(ticket)
-                            )}
-                        </h3>
+                                </span>
 
-                        <p class="ticket-preview">
-                            ${escapeHTML(
-                                getMessage(ticket)
-                            )}
-                        </p>
+                                <span
+                                    class="ticket-status ${escapeHTML(
+                                        statusClass
+                                    )}"
+                                >
 
-                        <div class="ticket-card-info">
+                                    ${escapeHTML(
+                                        status
+                                    )}
 
-                            <span>
-                                👤
+                                </span>
+
+                            </div>
+
+
+                            <h3>
+
                                 ${escapeHTML(
-                                    getName(ticket)
+                                    getSubject(ticket)
                                 )}
-                            </span>
 
-                            <span>
-                                ✉
+                            </h3>
+
+
+                            <p class="ticket-preview">
+
                                 ${escapeHTML(
-                                    getEmail(ticket)
+                                    getMessage(ticket)
                                 )}
-                            </span>
 
-                            <span>
-                                🏷
-                                ${escapeHTML(
-                                    getCategory(ticket)
-                                )}
-                            </span>
+                            </p>
 
-                            <span>
-                                ⚡
-                                ${escapeHTML(priority)}
-                            </span>
 
-                        </div>
+                            <div class="ticket-card-info">
 
-                        <div class="ticket-card-bottom">
+                                <span>
+                                    👤
+                                    ${escapeHTML(
+                                        getName(ticket)
+                                    )}
+                                </span>
 
-                            <span>
-                                Reference:
-                                ${escapeHTML(
-                                    reference ||
-                                    "Not available"
-                                )}
-                            </span>
+                                <span>
+                                    ✉
+                                    ${escapeHTML(
+                                        getEmail(ticket)
+                                    )}
+                                </span>
 
-                            <span>
-                                ${escapeHTML(
-                                    formatDate(
-                                        getUpdatedAt(ticket)
-                                    )
-                                )}
-                            </span>
+                                <span>
+                                    🏷
+                                    ${escapeHTML(
+                                        getCategory(ticket)
+                                    )}
+                                </span>
 
-                        </div>
+                                <span>
+                                    ⚡
+                                    ${escapeHTML(
+                                        priority
+                                    )}
+                                </span>
 
-                    </button>
-                `;
+                            </div>
 
-            })
+
+                            <div class="ticket-card-bottom">
+
+                                <span>
+                                    Reference:
+                                    ${escapeHTML(
+                                        reference ||
+                                        "Not available"
+                                    )}
+                                </span>
+
+                                <span>
+                                    ${escapeHTML(
+                                        formatDate(
+                                            getUpdatedAt(
+                                                ticket
+                                            )
+                                        )
+                                    )}
+                                </span>
+
+                            </div>
+
+                        </button>
+
+                    `;
+
+                }
+            )
             .join("");
 
 
     ticketList
-        .querySelectorAll(".ticket-card")
-        .forEach(card => {
+        .querySelectorAll(
+            ".ticket-card"
+        )
+        .forEach(
+            card => {
 
-            card.addEventListener(
-                "click",
-                () => {
+                card.addEventListener(
+                    "click",
+                    () => {
 
-                    openTicket(
-                        card.dataset.key
-                    );
+                        openTicket(
+                            card.dataset.key
+                        );
 
-                }
-            );
+                    }
+                );
 
-        });
+            }
+        );
 
 }
 
@@ -974,7 +1221,8 @@ function renderTickets() {
 
 function openTicket(key) {
 
-    const ticket = tickets[key];
+    const ticket =
+        tickets[key];
 
     if (!ticket) {
 
@@ -984,76 +1232,108 @@ function openTicket(key) {
         );
 
         return;
+
     }
 
-    selectedTicketKey = key;
+
+    selectedTicketKey =
+        key;
 
 
     if (modalSubject) {
+
         modalSubject.textContent =
             getSubject(ticket);
+
     }
 
     if (modalTicketId) {
+
         modalTicketId.textContent =
-            getTicketId(ticket, key);
+            getTicketId(
+                ticket,
+                key
+            );
+
     }
 
     if (modalName) {
+
         modalName.textContent =
             getName(ticket);
-    }
 
-    if (modalRegistrationId) {
-        modalRegistrationId.textContent =
-            getRegistrationReference(ticket) ||
-            "Not provided";
     }
 
     if (modalReferenceId) {
+
         modalReferenceId.textContent =
             ticket.referenceId ||
             "Not available";
+
+    }
+
+    if (modalRegistrationId) {
+
+        modalRegistrationId.textContent =
+            getRegistrationReference(ticket) ||
+            "Not provided";
+
     }
 
     if (modalClass) {
+
         modalClass.textContent =
             getClassName(ticket);
+
     }
 
     if (modalSection) {
+
         modalSection.textContent =
             getSection(ticket);
+
     }
 
     if (modalEmail) {
+
         modalEmail.textContent =
             getEmail(ticket);
+
     }
 
     if (modalCategory) {
+
         modalCategory.textContent =
             getCategory(ticket);
+
     }
 
     if (problemSubject) {
+
         problemSubject.textContent =
             getSubject(ticket);
+
     }
 
     if (problemMessage) {
+
         problemMessage.textContent =
             getMessage(ticket);
+
     }
 
     if (modalStatus) {
+
         modalStatus.textContent =
             getTicketStatus(ticket);
+
     }
 
     if (modalPriority) {
+
         modalPriority.textContent =
             getPriority(ticket);
+
     }
 
 
@@ -1062,78 +1342,103 @@ function openTicket(key) {
             0,
             Math.min(
                 100,
-                Number(ticket.progress || 0)
+                Number(
+                    ticket.progress || 0
+                )
             )
         );
 
 
     if (modalProgress) {
+
         modalProgress.textContent =
             `${progress}%`;
-    }
-
-
-    if (claimTicketBtn) {
-
-        const assignedUid =
-            ticket.assignedAgentUid || "";
-
-        if (!assignedUid) {
-
-            claimTicketBtn.textContent =
-                "Claim Ticket";
-
-            claimTicketBtn.disabled = false;
-
-        }
-        else if (
-            assignedUid ===
-            auth.currentUser?.uid
-        ) {
-
-            claimTicketBtn.textContent =
-                "✓ Assigned to me";
-
-            claimTicketBtn.disabled = true;
-
-        }
-        else {
-
-            claimTicketBtn.textContent =
-                "Assigned to another agent";
-
-            claimTicketBtn.disabled = true;
-
-        }
 
     }
 
 
     if (modalCreated) {
+
         modalCreated.textContent =
             formatDate(
                 getCreatedAt(ticket)
             );
+
     }
 
     if (modalUpdated) {
+
         modalUpdated.textContent =
             formatDate(
                 getUpdatedAt(ticket)
             );
+
     }
+
 
     if (agentReply) {
+
         agentReply.value =
-            ticket.agentReply || "";
+            ticket.agentReply ||
+            "";
+
     }
+
 
     if (modalMessage) {
-        modalMessage.textContent = "";
+
+        modalMessage.textContent =
+            "";
+
     }
 
 
-    ticketOverlay?.classList.remove("hidden");
+    if (claimTicketBtn) {
+
+        const assigned =
+            ticket.assignedAgentUid ||
+            "";
+
+
+        if (!assigned) {
+
+            claimTicketBtn.textContent =
+                "Claim Ticket";
+
+            claimTicketBtn.disabled =
+                false;
+
+        }
+
+        else if (
+            assigned ===
+            currentUser?.uid
+        ) {
+
+            claimTicketBtn.textContent =
+                "✓ Assigned to me";
+
+            claimTicketBtn.disabled =
+                true;
+
+        }
+
+        else {
+
+            claimTicketBtn.textContent =
+                "Assigned to another agent";
+
+            claimTicketBtn.disabled =
+                true;
+
+        }
+
+    }
+
+
+    ticketOverlay?.classList.remove(
+        "hidden"
+    );
 
 }
 
@@ -1144,9 +1449,12 @@ function openTicket(key) {
 
 function closeTicketModal() {
 
-    ticketOverlay?.classList.add("hidden");
+    ticketOverlay?.classList.add(
+        "hidden"
+    );
 
-    selectedTicketKey = null;
+    selectedTicketKey =
+        null;
 
 }
 
@@ -1165,7 +1473,9 @@ ticketOverlay?.addEventListener(
             event.target ===
             ticketOverlay
         ) {
+
             closeTicketModal();
+
         }
 
     }
@@ -1181,27 +1491,23 @@ async function updateTicket(
     successMessage
 ) {
 
-    if (!selectedTicketKey) {
+    if (
+        !selectedTicketKey ||
+        !currentUser
+    ) {
+
         return;
+
     }
+
 
     const ticket =
-        tickets[selectedTicketKey];
+        tickets[
+            selectedTicketKey
+        ];
+
 
     if (!ticket) {
-        return;
-    }
-
-    const user =
-        auth.currentUser;
-
-    if (!user) {
-
-        showStatus(
-            "Your session has expired. Please login again.",
-            "error"
-        );
-
         return;
     }
 
@@ -1209,28 +1515,46 @@ async function updateTicket(
     try {
 
         if (modalMessage) {
+
             modalMessage.textContent =
                 "Saving...";
+
         }
 
 
-        const now = Date.now();
+        const now =
+            Date.now();
 
 
         const next = {
+
             ...ticket,
+
             ...changes,
-            updatedAt: now,
-            updatedBy: user.uid
+
+            updatedAt:
+                now,
+
+            updatedBy:
+                currentUser.uid
+
         };
 
 
         let progress =
-            Number(next.progress);
+            Number(
+                next.progress
+            );
 
-        if (!Number.isFinite(progress)) {
+
+        if (
+            !Number.isFinite(progress)
+        ) {
+
             progress = 0;
+
         }
+
 
         progress =
             Math.max(
@@ -1242,6 +1566,10 @@ async function updateTicket(
             );
 
 
+        next.progress =
+            progress;
+
+
         const status =
             next.status ||
             "Waiting for Approval";
@@ -1249,52 +1577,67 @@ async function updateTicket(
 
         const referenceId =
             next.referenceId ||
-            getTicketId(
-                next,
-                selectedTicketKey
-            );
+            "";
 
 
-        const statusNote =
-            next.statusNote ||
-            "Our team will review your request and contact you soon.";
+        /*
+         * Update ticket + public status lookup
+         */
 
+        const changesToSave = {
 
-        const lookup = {
-
-            referenceId,
-
-            status,
-
-            progress,
-
-            statusNote,
-
-            updatedAt: now
+            [`${TICKETS_PATH}/${selectedTicketKey}`]:
+                next
 
         };
 
 
+        /*
+         * Only update lookup when the ticket
+         * actually has a valid reference ID.
+         */
+
+        if (
+            /^APS-[A-Z0-9]{5}$/.test(
+                referenceId
+            )
+        ) {
+
+            changesToSave[
+                `${LOOKUP_PATH}/${referenceId}`
+            ] = {
+
+                referenceId,
+
+                status,
+
+                progress,
+
+                statusNote:
+                    next.statusNote ||
+                    "Our team will review your request and contact you soon.",
+
+                updatedAt:
+                    now
+
+            };
+
+        }
+
+
         await update(
             ref(db),
-            {
-
-                [`${TICKETS_PATH}/${selectedTicketKey}`]: {
-                    ...next,
-                    progress
-                },
-
-                [`${LOOKUP_PATH}/${referenceId}`]:
-                    lookup
-
-            }
+            changesToSave
         );
 
 
         if (modalMessage) {
+
             modalMessage.textContent =
                 successMessage;
+
         }
+
 
         showStatus(
             successMessage,
@@ -1302,6 +1645,7 @@ async function updateTicket(
         );
 
     }
+
     catch (error) {
 
         console.error(
@@ -1309,10 +1653,14 @@ async function updateTicket(
             error
         );
 
+
         if (modalMessage) {
+
             modalMessage.textContent =
                 "Unable to save changes.";
+
         }
+
 
         showStatus(
             "Unable to update ticket. Check Firebase Database Rules.",
@@ -1333,24 +1681,33 @@ saveReplyBtn?.addEventListener(
     async () => {
 
         const reply =
-            agentReply?.value?.trim() || "";
+            agentReply?.value
+                ?.trim() ||
+            "";
 
         if (!reply) {
 
             if (modalMessage) {
+
                 modalMessage.textContent =
                     "Please write a reply first.";
+
             }
 
             return;
+
         }
 
 
         await updateTicket(
+
             {
-                agentReply: reply
+                agentReply:
+                    reply
             },
+
             "✓ Agent reply saved."
+
         );
 
     }
@@ -1358,7 +1715,7 @@ saveReplyBtn?.addEventListener(
 
 
 /* =========================================================
-   SET OPEN
+   OPEN
 ========================================================= */
 
 setOpenBtn?.addEventListener(
@@ -1368,10 +1725,16 @@ setOpenBtn?.addEventListener(
         await updateTicket(
 
             {
-                status: "Open",
-                progress: 0,
+
+                status:
+                    "Open",
+
+                progress:
+                    0,
+
                 statusNote:
                     "Your request is in the support queue. Our team will contact you soon."
+
             },
 
             "✓ Ticket marked Open."
@@ -1383,7 +1746,7 @@ setOpenBtn?.addEventListener(
 
 
 /* =========================================================
-   SET IN PROGRESS
+   IN PROGRESS
 ========================================================= */
 
 setProgressBtn?.addEventListener(
@@ -1393,10 +1756,16 @@ setProgressBtn?.addEventListener(
         await updateTicket(
 
             {
-                status: "In Progress",
-                progress: 50,
+
+                status:
+                    "In Progress",
+
+                progress:
+                    50,
+
                 statusNote:
                     "A support agent is currently reviewing your request."
+
             },
 
             "✓ Ticket marked In Progress."
@@ -1408,7 +1777,7 @@ setProgressBtn?.addEventListener(
 
 
 /* =========================================================
-   SET CLOSED
+   CLOSED
 ========================================================= */
 
 setClosedBtn?.addEventListener(
@@ -1418,13 +1787,23 @@ setClosedBtn?.addEventListener(
         await updateTicket(
 
             {
-                status: "Closed",
-                progress: 100,
+
+                status:
+                    "Closed",
+
+                progress:
+                    100,
+
                 statusNote:
                     "Your support request has been resolved. Please contact the Help Center again if you need further assistance.",
-                resolvedAt: Date.now(),
+
+                resolvedAt:
+                    Date.now(),
+
                 resolvedBy:
-                    auth.currentUser?.uid || ""
+                    currentUser?.uid ||
+                    ""
+
             },
 
             "✓ Ticket marked as solved."
@@ -1436,64 +1815,72 @@ setClosedBtn?.addEventListener(
 
 
 /* =========================================================
-   CLAIM TICKET
+   CLAIM
 ========================================================= */
 
 claimTicketBtn?.addEventListener(
     "click",
     async () => {
 
-        const user =
-            auth.currentUser;
-
         if (
             !selectedTicketKey ||
-            !user
+            !currentUser
         ) {
+
             return;
+
         }
 
 
         const ticket =
-            tickets[selectedTicketKey];
+            tickets[
+                selectedTicketKey
+            ];
+
 
         if (!ticket) {
             return;
         }
 
 
-        const existingAgent =
-            ticket.assignedAgentUid || "";
+        const assigned =
+            ticket.assignedAgentUid ||
+            "";
 
 
         if (
-            existingAgent &&
-            existingAgent !== user.uid
+            assigned &&
+            assigned !== currentUser.uid
         ) {
 
             if (modalMessage) {
+
                 modalMessage.textContent =
                     "This ticket is already assigned to another agent.";
+
             }
 
             return;
+
         }
 
 
         const agentName =
             currentAgentProfile?.name ||
-            user.email ||
+            currentUser.email ||
             "Support Agent";
 
 
         await updateTicket(
 
             {
+
                 assignedAgentUid:
-                    user.uid,
+                    currentUser.uid,
 
                 assignedAgentName:
                     agentName
+
             },
 
             "✓ Ticket assigned to you."
@@ -1506,7 +1893,8 @@ claimTicketBtn?.addEventListener(
             claimTicketBtn.textContent =
                 "✓ Assigned to me";
 
-            claimTicketBtn.disabled = true;
+            claimTicketBtn.disabled =
+                true;
 
         }
 
@@ -1528,6 +1916,19 @@ function loadTickets() {
         );
 
         return;
+
+    }
+
+
+    if (!currentUser) {
+
+        showStatus(
+            "Agent authentication is not ready.",
+            "error"
+        );
+
+        return;
+
     }
 
 
@@ -1536,17 +1937,23 @@ function loadTickets() {
     );
 
 
-    if (firebaseUnsubscribe) {
+    if (
+        firebaseUnsubscribe
+    ) {
 
         firebaseUnsubscribe();
 
-        firebaseUnsubscribe = null;
+        firebaseUnsubscribe =
+            null;
 
     }
 
 
     const ticketsRef =
-        ref(db, TICKETS_PATH);
+        ref(
+            db,
+            TICKETS_PATH
+        );
 
 
     firebaseUnsubscribe =
@@ -1577,8 +1984,13 @@ function loadTickets() {
 
 
                 showStatus(
-                    `${Object.keys(tickets).length} support ticket(s) loaded.`,
+
+                    `${Object.keys(
+                        tickets
+                    ).length} support ticket(s) loaded.`,
+
                     "success"
+
                 );
 
             },
@@ -1591,14 +2003,19 @@ function loadTickets() {
                 );
 
 
-                tickets = {};
+                tickets =
+                    {};
+
 
                 renderTickets();
 
 
                 showStatus(
+
                     "Unable to load support tickets. Check Firebase Rules.",
+
                     "error"
+
                 );
 
             }
@@ -1609,7 +2026,7 @@ function loadTickets() {
 
 
 /* =========================================================
-   SEARCH / FILTER
+   SEARCH
 ========================================================= */
 
 searchInput?.addEventListener(
@@ -1617,6 +2034,10 @@ searchInput?.addEventListener(
     renderTickets
 );
 
+
+/* =========================================================
+   FILTER
+========================================================= */
 
 statusFilter?.addEventListener(
     "change",
@@ -1630,7 +2051,11 @@ statusFilter?.addEventListener(
 
 refreshBtn?.addEventListener(
     "click",
-    loadTickets
+    () => {
+
+        loadTickets();
+
+    }
 );
 
 
@@ -1644,16 +2069,21 @@ logoutBtn?.addEventListener(
 
         try {
 
-            if (firebaseUnsubscribe) {
+            if (
+                firebaseUnsubscribe
+            ) {
 
                 firebaseUnsubscribe();
 
-                firebaseUnsubscribe = null;
+                firebaseUnsubscribe =
+                    null;
 
             }
 
 
-            await signOut(auth);
+            await signOut(
+                auth
+            );
 
 
             window.location.replace(
@@ -1661,6 +2091,7 @@ logoutBtn?.addEventListener(
             );
 
         }
+
         catch (error) {
 
             console.error(
@@ -1679,20 +2110,25 @@ logoutBtn?.addEventListener(
 ========================================================= */
 
 onAuthStateChanged(
+
     auth,
+
     async user => {
 
         console.log(
-            "AGENT AUTH STATE:",
+            "AGENT DASHBOARD AUTH:",
             user
-                ? user.uid
-                : "NOT LOGGED IN"
+                ? {
+                    uid: user.uid,
+                    email: user.email
+                }
+                : "NO USER"
         );
 
 
-        /* ---------------------------------------------
-           NOT LOGGED IN
-        --------------------------------------------- */
+        /*
+         * Not authenticated
+         */
 
         if (!user) {
 
@@ -1701,24 +2137,31 @@ onAuthStateChanged(
             );
 
             return;
+
         }
 
 
-        /* ---------------------------------------------
-           CHECK AGENT
-        --------------------------------------------- */
+        currentUser =
+            user;
+
+
+        /*
+         * Verify agent
+         */
 
         const authorized =
-            await isAuthorizedAgent(user);
-
-
-        console.log(
-            "AGENT AUTHORIZED:",
-            authorized
-        );
+            await authorizeAgent(
+                user
+            );
 
 
         if (!authorized) {
+
+            console.error(
+                "UNAUTHORIZED AGENT:",
+                user.uid
+            );
+
 
             showStatus(
                 "Access denied. This account is not an authorized support agent.",
@@ -1726,8 +2169,12 @@ onAuthStateChanged(
             );
 
 
-            await signOut(auth)
-                .catch(() => {});
+            await signOut(
+                auth
+            )
+            .catch(
+                () => {}
+            );
 
 
             window.location.replace(
@@ -1735,23 +2182,41 @@ onAuthStateChanged(
             );
 
             return;
+
         }
 
 
-        /* ---------------------------------------------
-           AUTHORIZED
-        --------------------------------------------- */
+        /*
+         * AUTHORIZED
+         */
+
+        console.log(
+            "================================"
+        );
+
+        console.log(
+            "AUTHORIZED AGENT"
+        );
+
+        console.log(
+            "UID:",
+            user.uid
+        );
+
+        console.log(
+            "PROFILE:",
+            currentAgentProfile
+        );
+
+        console.log(
+            "================================"
+        );
+
 
         const agentName =
             currentAgentProfile?.name ||
             user.email ||
             "Support Agent";
-
-
-        console.log(
-            "AUTHORIZED AGENT:",
-            user.uid
-        );
 
 
         showStatus(
@@ -1760,13 +2225,14 @@ onAuthStateChanged(
         );
 
 
-        /* ---------------------------------------------
-           LOAD DASHBOARD
-        --------------------------------------------- */
+        /*
+         * Now and ONLY now load tickets.
+         */
 
         loadTickets();
 
     }
+
 );
 
 
@@ -1778,8 +2244,12 @@ document.addEventListener(
     "keydown",
     event => {
 
-        if (event.key === "Escape") {
+        if (
+            event.key === "Escape"
+        ) {
+
             closeTicketModal();
+
         }
 
     }
