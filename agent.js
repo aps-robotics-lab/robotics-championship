@@ -2,19 +2,32 @@
    APS ROBOTICS CHAMPIONSHIP 2026
    AGENT HELP CENTER
    ---------------------------------------------------------
-   Firebase Database:
-       /tickets
+   DATABASE:
 
-   AUTHORIZED AGENT:
+       /tickets
+       /ticketStatusLookup
+       /agents
+
+   AUTHORIZED AGENTS:
+
+       1PhsiGhletVZYiDKKKVKV2G9tu2
        HgWiHPRx9gcXZtDTl0pDCpZlokt2
+       jd7b5KYmivhYpCJzLyQ0005BFmCn2
+       spzBLVusBfcqCCSmk923QmhmcAN2
 
    IMPORTANT:
-   This file uses the SAME Firebase project as help.js.
+
+   /agents/{uid} = true
+
+   This file supports the exact database structure
+   shown in Firebase Realtime Database.
 ========================================================= */
+
 
 import {
     initializeApp
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+
 
 import {
     getAuth,
@@ -22,17 +35,17 @@ import {
     signOut
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
+
 import {
     getDatabase,
     ref,
     onValue,
-    update,
-    get
+    update
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
+
 import {
-    helpFirebaseConfig,
-    AGENT_UID
+    helpFirebaseConfig
 } from "./firebase-config.js";
 
 
@@ -63,18 +76,34 @@ try {
 
 
 /* =========================================================
-   AUTHORIZED AGENT
+   AUTHORIZED AGENTS
+   ---------------------------------------------------------
+   These match the Firebase screenshot.
 ========================================================= */
 
-const ALLOWED_AGENT_UID = AGENT_UID || "HgWiHPRx9gcXZtDTl0pDCpZlokt2";
-let currentAgentProfile = null;
+const AUTHORIZED_AGENT_UIDS = [
+
+    "1PhsiGhletVZYiDKKKVKV2G9tu2",
+
+    "HgWiHPRx9gcXZtDTl0pDCpZlokt2",
+
+    "jd7b5KYmivhYpCJzLyQ0005BFmCn2",
+
+    "spzBLVusBfcqCCSmk923QmhmcAN2"
+
+];
 
 
 /* =========================================================
    DATABASE
 ========================================================= */
 
-const TICKETS_PATH = "tickets";
+const TICKETS_PATH =
+    "tickets";
+
+
+const LOOKUP_PATH =
+    "ticketStatusLookup";
 
 
 /* =========================================================
@@ -82,8 +111,12 @@ const TICKETS_PATH = "tickets";
 ========================================================= */
 
 let tickets = {};
+
 let selectedTicketKey = null;
+
 let firebaseUnsubscribe = null;
+
+let currentAgentProfile = null;
 
 
 /* =========================================================
@@ -93,17 +126,22 @@ let firebaseUnsubscribe = null;
 const ticketList =
     document.getElementById("ticketList");
 
+
 const searchInput =
     document.getElementById("searchInput");
+
 
 const statusFilter =
     document.getElementById("statusFilter");
 
+
 const refreshBtn =
     document.getElementById("refreshBtn");
 
+
 const logoutBtn =
     document.getElementById("logoutBtn");
+
 
 const statusMessage =
     document.getElementById("statusMessage");
@@ -116,11 +154,14 @@ const statusMessage =
 const totalTickets =
     document.getElementById("totalTickets");
 
+
 const openTickets =
     document.getElementById("openTickets");
 
+
 const progressTickets =
     document.getElementById("progressTickets");
+
 
 const closedTickets =
     document.getElementById("closedTickets");
@@ -133,58 +174,82 @@ const closedTickets =
 const ticketOverlay =
     document.getElementById("ticketOverlay");
 
+
 const closeModal =
     document.getElementById("closeModal");
+
 
 const modalSubject =
     document.getElementById("modalSubject");
 
+
 const modalTicketId =
     document.getElementById("modalTicketId");
+
 
 const modalName =
     document.getElementById("modalName");
 
+
 const modalRegistrationId =
     document.getElementById("modalRegistrationId");
 
-const modalReferenceId = document.getElementById("modalReferenceId");
+
+const modalReferenceId =
+    document.getElementById("modalReferenceId");
+
 
 const modalClass =
     document.getElementById("modalClass");
 
+
 const modalSection =
     document.getElementById("modalSection");
+
 
 const modalEmail =
     document.getElementById("modalEmail");
 
+
 const modalCategory =
     document.getElementById("modalCategory");
+
 
 const problemSubject =
     document.getElementById("problemSubject");
 
+
 const problemMessage =
     document.getElementById("problemMessage");
+
 
 const modalStatus =
     document.getElementById("modalStatus");
 
+
 const modalPriority =
     document.getElementById("modalPriority");
 
-const modalProgress = document.getElementById("modalProgress");
-const claimTicketBtn = document.getElementById("claimTicketBtn");
+
+const modalProgress =
+    document.getElementById("modalProgress");
+
+
+const claimTicketBtn =
+    document.getElementById("claimTicketBtn");
+
 
 const modalCreated =
     document.getElementById("modalCreated");
 
+
 const modalUpdated =
     document.getElementById("modalUpdated");
 
+
 const agentReply =
     document.getElementById("agentReply");
+
 
 const modalMessage =
     document.getElementById("modalMessage");
@@ -197,11 +262,14 @@ const modalMessage =
 const setOpenBtn =
     document.getElementById("setOpenBtn");
 
+
 const setProgressBtn =
     document.getElementById("setProgressBtn");
 
+
 const saveReplyBtn =
     document.getElementById("saveReplyBtn");
+
 
 const setClosedBtn =
     document.getElementById("setClosedBtn");
@@ -214,17 +282,22 @@ const setClosedBtn =
 function escapeHTML(value) {
 
     return String(value ?? "")
+
         .replaceAll("&", "&amp;")
+
         .replaceAll("<", "&lt;")
+
         .replaceAll(">", "&gt;")
+
         .replaceAll('"', "&quot;")
+
         .replaceAll("'", "&#039;");
 
 }
 
 
 /* =========================================================
-   GENERIC VALUE HELPER
+   VALUE HELPER
 ========================================================= */
 
 function firstValue(
@@ -234,18 +307,26 @@ function firstValue(
 ) {
 
     if (!object) {
+
         return fallback;
+
     }
+
 
     for (const field of fields) {
 
         const value =
             object[field];
 
+
         if (
+
             value !== undefined &&
+
             value !== null &&
+
             String(value).trim() !== ""
+
         ) {
 
             return value;
@@ -254,69 +335,69 @@ function firstValue(
 
     }
 
+
     return fallback;
 
 }
 
 
 /* =========================================================
-   🔥 IMPORTANT:
-   GET REGISTRATION REFERENCE ID
-=========================================================
-
-   Different versions of help.js may save the ID using
-   different field names.
-
-   This function supports all of them.
+   REGISTRATION REFERENCE
 ========================================================= */
 
 function getRegistrationReference(ticket) {
 
     return firstValue(
+
         ticket,
+
         [
 
-            /* Current/common */
             "registrationId",
 
-            /* Capitalization variants */
             "registrationID",
+
             "RegistrationId",
+
             "RegistrationID",
 
-            /* Short variants */
             "regId",
+
             "regID",
+
             "registrationRef",
+
             "registrationReference",
 
-            /* Reference-ID variants */
-            "referenceId",
-            "referenceID",
             "referenceId",
 
-            /* Ticket form variants */
+            "referenceID",
+
             "registrationReferenceId",
+
             "registrationReferenceID",
 
-            /* Possible form field names */
             "registrationNumber",
+
             "registrationNo",
+
             "registration",
 
-            /* Legacy */
             "regNumber",
+
             "regNo"
 
         ],
+
         ""
+
     );
 
 }
 
 
 /* =========================================================
-   GET TICKET ID
+   TICKET ID
 ========================================================= */
 
 function getTicketId(
@@ -325,227 +406,336 @@ function getTicketId(
 ) {
 
     return firstValue(
+
         ticket,
+
         [
+
             "ticketId",
+
             "ticketID",
+
             "TicketId",
+
             "TicketID",
+
             "id"
+
         ],
+
         key
+
     );
 
 }
 
 
 /* =========================================================
-   GET NAME
+   NAME
 ========================================================= */
 
 function getName(ticket) {
 
     return firstValue(
+
         ticket,
+
         [
+
             "name",
+
             "studentName",
+
             "student",
+
             "leaderName",
+
             "participantName",
+
             "fullName"
+
         ],
+
         "-"
+
     );
 
 }
 
 
 /* =========================================================
-   GET CLASS
+   CLASS
 ========================================================= */
 
 function getClassName(ticket) {
 
     return firstValue(
+
         ticket,
+
         [
+
             "className",
+
             "studentClass",
+
             "class",
+
             "Class"
+
         ],
+
         "-"
+
     );
 
 }
 
 
 /* =========================================================
-   GET SECTION
+   SECTION
 ========================================================= */
 
 function getSection(ticket) {
 
     return firstValue(
+
         ticket,
+
         [
+
             "section",
+
             "studentSection",
+
             "Section"
+
         ],
+
         "-"
+
     );
 
 }
 
 
 /* =========================================================
-   GET EMAIL
+   EMAIL
 ========================================================= */
 
 function getEmail(ticket) {
 
     return firstValue(
+
         ticket,
+
         [
+
             "email",
+
             "emailAddress",
+
             "Email",
+
             "EmailAddress"
+
         ],
+
         "-"
+
     );
 
 }
 
 
 /* =========================================================
-   GET CATEGORY
+   CATEGORY
 ========================================================= */
 
 function getCategory(ticket) {
 
     return firstValue(
+
         ticket,
+
         [
+
             "category",
+
             "issueCategory",
+
             "type"
+
         ],
+
         "General"
+
     );
 
 }
 
 
 /* =========================================================
-   GET SUBJECT
+   SUBJECT
 ========================================================= */
 
 function getSubject(ticket) {
 
     return firstValue(
+
         ticket,
+
         [
+
             "subject",
+
             "title",
+
             "problemSubject"
+
         ],
+
         "Support Ticket"
+
     );
 
 }
 
 
 /* =========================================================
-   GET MESSAGE
+   MESSAGE
 ========================================================= */
 
 function getMessage(ticket) {
 
     return firstValue(
+
         ticket,
+
         [
+
             "message",
+
             "problemMessage",
+
             "description",
+
             "issue",
+
             "details"
+
         ],
+
         "No message provided."
+
     );
 
 }
 
 
 /* =========================================================
-   GET STATUS
+   STATUS
 ========================================================= */
 
 function getTicketStatus(ticket) {
 
     return firstValue(
+
         ticket,
+
         [
+
             "status",
+
             "ticketStatus"
+
         ],
-        "Open"
+
+        "Waiting for Approval"
+
     );
 
 }
 
 
 /* =========================================================
-   GET PRIORITY
+   PRIORITY
 ========================================================= */
 
 function getPriority(ticket) {
 
     return firstValue(
+
         ticket,
+
         [
+
             "priority",
+
             "ticketPriority"
+
         ],
+
         "Normal"
+
     );
 
 }
 
 
 /* =========================================================
-   GET TIMESTAMP
+   CREATED
 ========================================================= */
 
 function getCreatedAt(ticket) {
 
     return firstValue(
+
         ticket,
+
         [
+
             "createdAt",
+
             "created_at",
+
             "timestamp",
+
             "submittedAt",
+
             "date"
+
         ],
+
         ""
+
     );
 
 }
 
 
+/* =========================================================
+   UPDATED
+========================================================= */
+
 function getUpdatedAt(ticket) {
 
     return firstValue(
+
         ticket,
+
         [
+
             "updatedAt",
+
             "updated_at",
+
             "lastUpdated"
+
         ],
+
         getCreatedAt(ticket)
+
     );
 
 }
@@ -561,11 +751,15 @@ function showStatus(
 ) {
 
     if (!statusMessage) {
+
         return;
+
     }
+
 
     statusMessage.textContent =
         message;
+
 
     statusMessage.className =
         `status-message ${type}`;
@@ -574,38 +768,33 @@ function showStatus(
 
 
 /* =========================================================
-   DATE FORMAT
+   DATE
 ========================================================= */
 
 function formatDate(value) {
 
     if (
+
         value === null ||
+
         value === undefined ||
+
         value === ""
+
     ) {
 
         return "-";
 
     }
 
+
     let date;
+
 
     if (typeof value === "number") {
 
-        date = new Date(value);
-
-    }
-
-    else if (
-        typeof value === "object" &&
-        value.seconds
-    ) {
-
         date =
-            new Date(
-                value.seconds * 1000
-            );
+            new Date(value);
 
     }
 
@@ -615,6 +804,7 @@ function formatDate(value) {
             new Date(value);
 
     }
+
 
     if (
         Number.isNaN(
@@ -626,15 +816,25 @@ function formatDate(value) {
 
     }
 
+
     return date.toLocaleString(
+
         "en-IN",
+
         {
+
             day: "2-digit",
+
             month: "short",
+
             year: "numeric",
+
             hour: "2-digit",
+
             minute: "2-digit"
+
         }
+
     );
 
 }
@@ -654,14 +854,13 @@ function matchesSearch(
             ?.trim()
             .toLowerCase() || "";
 
+
     if (!query) {
+
         return true;
+
     }
 
-    const registrationReference =
-        getRegistrationReference(
-            ticket
-        );
 
     const searchable = [
 
@@ -672,7 +871,9 @@ function matchesSearch(
             key
         ),
 
-        registrationReference,
+        getRegistrationReference(
+            ticket
+        ),
 
         getName(ticket),
 
@@ -695,13 +896,17 @@ function matchesSearch(
         ticket.agentReply || ""
 
     ]
+
         .filter(
             value =>
                 value !== null &&
                 value !== undefined
         )
+
         .join(" ")
+
         .toLowerCase();
+
 
     return searchable.includes(
         query
@@ -720,13 +925,13 @@ function matchesFilter(ticket) {
         statusFilter?.value ||
         "All";
 
-    if (
-        selected === "All"
-    ) {
+
+    if (selected === "All") {
 
         return true;
 
     }
+
 
     return (
         getTicketStatus(ticket)
@@ -737,39 +942,48 @@ function matchesFilter(ticket) {
 
 
 /* =========================================================
-   UPDATE STATS
+   STATS
 ========================================================= */
 
 function updateStats() {
 
     const list =
-        Object.values(
-            tickets
-        );
+        Object.values(tickets);
+
 
     const total =
         list.length;
 
+
     const open =
         list.filter(
+
             ticket =>
                 getTicketStatus(ticket)
                 === "Open"
+
         ).length;
+
 
     const progress =
         list.filter(
+
             ticket =>
                 getTicketStatus(ticket)
                 === "In Progress"
+
         ).length;
+
 
     const closed =
         list.filter(
+
             ticket =>
                 getTicketStatus(ticket)
                 === "Closed"
+
         ).length;
+
 
     if (totalTickets) {
 
@@ -778,6 +992,7 @@ function updateStats() {
 
     }
 
+
     if (openTickets) {
 
         openTickets.textContent =
@@ -785,12 +1000,14 @@ function updateStats() {
 
     }
 
+
     if (progressTickets) {
 
         progressTickets.textContent =
             progress;
 
     }
+
 
     if (closedTickets) {
 
@@ -803,57 +1020,67 @@ function updateStats() {
 
 
 /* =========================================================
-   RENDER TICKETS
+   RENDER
 ========================================================= */
 
 function renderTickets() {
 
     if (!ticketList) {
+
         return;
+
     }
+
 
     updateStats();
 
+
     const entries =
-        Object.entries(
-            tickets
-        )
-        .filter(
-            ([key, ticket]) =>
 
-                matchesSearch(
-                    key,
-                    ticket
-                )
+        Object.entries(tickets)
 
-                &&
+            .filter(
 
-                matchesFilter(
-                    ticket
-                )
+                ([key, ticket]) =>
 
-        )
-        .sort(
-            ([, a], [, b]) => {
+                    matchesSearch(
+                        key,
+                        ticket
+                    )
 
-                const dateA =
-                    Number(
-                        getUpdatedAt(a) ||
-                        getCreatedAt(a) ||
-                        0
-                    );
+                    &&
 
-                const dateB =
-                    Number(
-                        getUpdatedAt(b) ||
-                        getCreatedAt(b) ||
-                        0
-                    );
+                    matchesFilter(
+                        ticket
+                    )
 
-                return dateB - dateA;
+            )
 
-            }
-        );
+            .sort(
+
+                ([, a], [, b]) => {
+
+                    const dateA =
+                        Number(
+                            getUpdatedAt(a) ||
+                            getCreatedAt(a) ||
+                            0
+                        );
+
+
+                    const dateB =
+                        Number(
+                            getUpdatedAt(b) ||
+                            getCreatedAt(b) ||
+                            0
+                        );
+
+
+                    return dateB - dateA;
+
+                }
+
+            );
 
 
     if (!entries.length) {
@@ -864,9 +1091,7 @@ function renderTickets() {
 
                 <div>🎫</div>
 
-                <h3>
-                    No tickets found
-                </h3>
+                <h3>No tickets found</h3>
 
                 <p>
                     There are no support requests
@@ -883,222 +1108,179 @@ function renderTickets() {
 
 
     ticketList.innerHTML =
-        entries
-            .map(
-                ([key, ticket]) => {
 
-                    const status =
-                        getTicketStatus(
-                            ticket
+        entries.map(
+
+            ([key, ticket]) => {
+
+                const status =
+                    getTicketStatus(ticket);
+
+
+                const priority =
+                    getPriority(ticket);
+
+
+                const ticketId =
+                    getTicketId(
+                        ticket,
+                        key
+                    );
+
+
+                const registrationReference =
+                    getRegistrationReference(
+                        ticket
+                    );
+
+
+                const statusClass =
+                    status
+                        .toLowerCase()
+                        .replace(
+                            /\s+/g,
+                            "-"
                         );
 
-                    const priority =
-                        getPriority(
-                            ticket
-                        );
 
-                    const ticketId =
-                        getTicketId(
-                            ticket,
-                            key
-                        );
+                return `
 
-                    const registrationReference =
-                        getRegistrationReference(
-                            ticket
-                        );
+                    <button
+                        type="button"
+                        class="ticket-card"
+                        data-key="${escapeHTML(key)}"
+                    >
 
-                    const statusClass =
-                        status
-                            .toLowerCase()
-                            .replace(
-                                /\s+/g,
-                                "-"
-                            );
+                        <div class="ticket-card-top">
 
+                            <span class="ticket-number">
 
-                    return `
+                                #${escapeHTML(ticketId)}
 
-                        <button
-                            type="button"
-                            class="ticket-card"
-                            data-key="${escapeHTML(
-                                key
-                            )}"
-                        >
+                            </span>
 
-                            <div
-                                class="ticket-card-top"
+                            <span
+                                class="ticket-status ${escapeHTML(statusClass)}"
                             >
 
-                                <span
-                                    class="ticket-number"
-                                >
+                                ${escapeHTML(status)}
 
-                                    #${escapeHTML(
-                                        ticketId
-                                    )}
+                            </span>
 
-                                </span>
+                        </div>
 
 
-                                <span
-                                    class="ticket-status ${escapeHTML(
-                                        statusClass
-                                    )}"
-                                >
+                        <h3>
 
-                                    ${escapeHTML(
-                                        status
-                                    )}
+                            ${escapeHTML(
+                                getSubject(ticket)
+                            )}
 
-                                </span>
-
-                            </div>
+                        </h3>
 
 
-                            <h3>
+                        <p class="ticket-preview">
 
+                            ${escapeHTML(
+                                getMessage(ticket)
+                            )}
+
+                        </p>
+
+
+                        <div class="ticket-card-info">
+
+                            <span>
+                                👤
                                 ${escapeHTML(
-                                    getSubject(
-                                        ticket
-                                    )
+                                    getName(ticket)
                                 )}
+                            </span>
 
-                            </h3>
-
-
-                            <p
-                                class="ticket-preview"
-                            >
-
+                            <span>
+                                ✉
                                 ${escapeHTML(
-                                    getMessage(
-                                        ticket
-                                    )
+                                    getEmail(ticket)
                                 )}
+                            </span>
 
-                            </p>
+                            <span>
+                                🏷
+                                ${escapeHTML(
+                                    getCategory(ticket)
+                                )}
+                            </span>
+
+                            <span>
+                                ⚡
+                                ${escapeHTML(
+                                    priority
+                                )}
+                            </span>
+
+                        </div>
 
 
-                            <div
-                                class="ticket-card-info"
-                            >
+                        <div class="ticket-card-bottom">
 
-                                <span>
+                            <span>
 
-                                    👤
+                                ${
+                                    registrationReference
+
+                                    ?
+
+                                    `Registration:
                                     ${escapeHTML(
-                                        getName(
-                                            ticket
-                                        )
-                                    )}
-
-                                </span>
-
-
-                                <span>
-
-                                    ✉
-                                    ${escapeHTML(
-                                        getEmail(
-                                            ticket
-                                        )
-                                    )}
-
-                                </span>
-
-
-                                <span>
-
-                                    🏷
-                                    ${escapeHTML(
-                                        getCategory(
-                                            ticket
-                                        )
-                                    )}
-
-                                </span>
-
-
-                                <span>
-
-                                    ⚡
-                                    ${escapeHTML(
-                                        priority
-                                    )}
-
-                                </span>
-
-                            </div>
-
-
-                            <div
-                                class="ticket-card-bottom"
-                            >
-
-                                <span>
-
-                                    ${
                                         registrationReference
-                                            ?
+                                    )}`
 
-                                            `Registration:
-                                             ${escapeHTML(
-                                                 registrationReference
-                                             )}`
+                                    :
 
-                                            :
+                                    "No Registration ID"
 
-                                            "No Registration ID"
-                                    }
+                                }
 
-                                </span>
+                            </span>
 
 
-                                <span>
+                            <span>
 
-                                    ${escapeHTML(
-                                        formatDate(
-                                            getUpdatedAt(
-                                                ticket
-                                            )
-                                        )
-                                    )}
+                                ${escapeHTML(
+                                    formatDate(
+                                        getUpdatedAt(ticket)
+                                    )
+                                )}
 
-                                </span>
+                            </span>
 
-                            </div>
+                        </div>
 
-                        </button>
+                    </button>
 
-                    `;
+                `;
 
-                }
-            )
-            .join("");
+            }
+
+        ).join("");
 
 
     ticketList
-        .querySelectorAll(
-            ".ticket-card"
-        )
-        .forEach(
-            card => {
+        .querySelectorAll(".ticket-card")
+        .forEach(card => {
 
-                card.addEventListener(
-                    "click",
-                    () => {
+            card.addEventListener(
+                "click",
+                () => {
 
-                        openTicket(
-                            card.dataset.key
-                        );
+                    openTicket(
+                        card.dataset.key
+                    );
 
-                    }
-                );
+                }
+            );
 
-            }
-        );
+        });
 
 }
 
@@ -1112,6 +1294,7 @@ function openTicket(key) {
     const ticket =
         tickets[key];
 
+
     if (!ticket) {
 
         showStatus(
@@ -1122,6 +1305,7 @@ function openTicket(key) {
         return;
 
     }
+
 
     selectedTicketKey =
         key;
@@ -1140,176 +1324,163 @@ function openTicket(key) {
         );
 
 
-    if (modalSubject) {
-
+    if (modalSubject)
         modalSubject.textContent =
-            getSubject(
-                ticket
-            );
-
-    }
+            getSubject(ticket);
 
 
-    if (modalTicketId) {
-
+    if (modalTicketId)
         modalTicketId.textContent =
             ticketId;
 
-    }
 
-
-    if (modalName) {
-
+    if (modalName)
         modalName.textContent =
-            getName(
-                ticket
+            getName(ticket);
+
+
+    if (modalReferenceId)
+        modalReferenceId.textContent =
+            ticket.referenceId ||
+            "Not available";
+
+
+    if (modalRegistrationId)
+        modalRegistrationId.textContent =
+            registrationReference ||
+            "Not provided";
+
+
+    if (modalClass)
+        modalClass.textContent =
+            getClassName(ticket);
+
+
+    if (modalSection)
+        modalSection.textContent =
+            getSection(ticket);
+
+
+    if (modalEmail)
+        modalEmail.textContent =
+            getEmail(ticket);
+
+
+    if (modalCategory)
+        modalCategory.textContent =
+            getCategory(ticket);
+
+
+    if (problemSubject)
+        problemSubject.textContent =
+            getSubject(ticket);
+
+
+    if (problemMessage)
+        problemMessage.textContent =
+            getMessage(ticket);
+
+
+    if (modalStatus)
+        modalStatus.textContent =
+            getTicketStatus(ticket);
+
+
+    if (modalPriority)
+        modalPriority.textContent =
+            getPriority(ticket);
+
+
+    if (modalProgress) {
+
+        const progress =
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    Number(
+                        ticket.progress || 0
+                    )
+                )
             );
+
+
+        modalProgress.textContent =
+            `${progress}%`;
 
     }
 
 
     /* =====================================================
-       🔥 FIXED REFERENCE ID
+       CLAIM
     ===================================================== */
 
-    if (modalReferenceId) {
-        modalReferenceId.textContent = ticket.referenceId || "Not available";
-    }
-
-    if (modalRegistrationId) {
-        modalRegistrationId.textContent = registrationReference || "Not provided";
-    }
-
-
-    if (modalClass) {
-
-        modalClass.textContent =
-            getClassName(
-                ticket
-            );
-
-    }
-
-
-    if (modalSection) {
-
-        modalSection.textContent =
-            getSection(
-                ticket
-            );
-
-    }
-
-
-    if (modalEmail) {
-
-        modalEmail.textContent =
-            getEmail(
-                ticket
-            );
-
-    }
-
-
-    if (modalCategory) {
-
-        modalCategory.textContent =
-            getCategory(
-                ticket
-            );
-
-    }
-
-
-    if (problemSubject) {
-
-        problemSubject.textContent =
-            getSubject(
-                ticket
-            );
-
-    }
-
-
-    if (problemMessage) {
-
-        problemMessage.textContent =
-            getMessage(
-                ticket
-            );
-
-    }
-
-
-    if (modalStatus) {
-
-        modalStatus.textContent =
-            getTicketStatus(
-                ticket
-            );
-
-    }
-
-
-    if (modalPriority) {
-        modalPriority.textContent = getPriority(ticket);
-    }
-    if (modalProgress) {
-        modalProgress.textContent = `${Math.max(0,Math.min(100,Number(ticket.progress||0)))}%`;
-    }
     if (claimTicketBtn) {
-        if (!ticket.assignedAgentUid) {
-            claimTicketBtn.textContent = "Claim Ticket";
-            claimTicketBtn.disabled = false;
-        } else if (ticket.assignedAgentUid === auth.currentUser?.uid) {
-            claimTicketBtn.textContent = "✓ Assigned to me";
-            claimTicketBtn.disabled = true;
-        } else {
-            claimTicketBtn.textContent = "Assigned to another agent";
-            claimTicketBtn.disabled = true;
+
+        const assigned =
+            ticket.assignedAgentUid || "";
+
+
+        if (!assigned) {
+
+            claimTicketBtn.textContent =
+                "Claim Ticket";
+
+            claimTicketBtn.disabled =
+                false;
+
         }
+
+        else if (
+
+            assigned ===
+            auth.currentUser?.uid
+
+        ) {
+
+            claimTicketBtn.textContent =
+                "✓ Assigned to me";
+
+            claimTicketBtn.disabled =
+                true;
+
+        }
+
+        else {
+
+            claimTicketBtn.textContent =
+                "Assigned to another agent";
+
+            claimTicketBtn.disabled =
+                true;
+
+        }
+
     }
 
 
-    if (modalCreated) {
-
+    if (modalCreated)
         modalCreated.textContent =
             formatDate(
-                getCreatedAt(
-                    ticket
-                )
+                getCreatedAt(ticket)
             );
 
-    }
 
-
-    if (modalUpdated) {
-
+    if (modalUpdated)
         modalUpdated.textContent =
             formatDate(
-                getUpdatedAt(
-                    ticket
-                )
+                getUpdatedAt(ticket)
             );
 
-    }
 
-
-    if (agentReply) {
-
+    if (agentReply)
         agentReply.value =
-            ticket.agentReply ||
-            "";
-
-    }
+            ticket.agentReply || "";
 
 
-    if (modalMessage) {
-
+    if (modalMessage)
         modalMessage.textContent =
             "";
-
-    }
 
 
     ticketOverlay
@@ -1320,7 +1491,7 @@ function openTicket(key) {
 
 
 /* =========================================================
-   CLOSE MODAL
+   CLOSE
 ========================================================= */
 
 function closeTicketModal() {
@@ -1328,6 +1499,7 @@ function closeTicketModal() {
     ticketOverlay
         ?.classList
         .add("hidden");
+
 
     selectedTicketKey =
         null;
@@ -1368,17 +1540,22 @@ async function updateTicket(
 ) {
 
     if (!selectedTicketKey) {
+
         return;
+
     }
+
 
     const ticket =
-        tickets[
-            selectedTicketKey
-        ];
+        tickets[selectedTicketKey];
+
 
     if (!ticket) {
+
         return;
+
     }
+
 
     try {
 
@@ -1390,24 +1567,103 @@ async function updateTicket(
         }
 
 
-        const now = Date.now();
+        const now =
+            Date.now();
+
+
         const next = {
+
             ...ticket,
+
             ...changes,
-            updatedAt: now,
-            updatedBy: auth.currentUser?.uid || ALLOWED_AGENT_UID
+
+            updatedAt:
+                now,
+
+            updatedBy:
+                auth.currentUser?.uid || ""
+
         };
+
+
+        const referenceId =
+            next.referenceId ||
+            getTicketId(
+                next,
+                selectedTicketKey
+            );
+
+
+        const status =
+            next.status ||
+            "Waiting for Approval";
+
+
+        const progress =
+            Math.max(
+
+                0,
+
+                Math.min(
+
+                    100,
+
+                    Number(
+
+                        next.progress ??
+
+                        (
+                            status === "Closed"
+                                ? 100
+                                : status === "In Progress"
+                                    ? 50
+                                    : 0
+                        )
+
+                    )
+
+                )
+
+            );
+
+
+        const statusNote =
+            next.statusNote ||
+
+            "Our team will review your request and contact you soon.";
+
+
         const lookup = {
-            referenceId: next.referenceId || getTicketId(next, selectedTicketKey),
-            status: next.status || "Waiting for Approval",
-            progress: Math.max(0, Math.min(100, Number(next.progress ?? (next.status === "Closed" ? 100 : next.status === "In Progress" ? 50 : 0)))),
-            statusNote: next.statusNote || "Our team will review your request and contact you soon.",
-            updatedAt: now
+
+            referenceId,
+
+            status,
+
+            progress,
+
+            statusNote,
+
+            updatedAt:
+                now
+
         };
-        await update(ref(db), {
-            [`${TICKETS_PATH}/${selectedTicketKey}`]: next,
-            [`ticketStatusLookup/${lookup.referenceId}`]: lookup
-        });
+
+
+        await update(
+
+            ref(db),
+
+            {
+
+                [`${TICKETS_PATH}/${selectedTicketKey}`]:
+                    next,
+
+                [`${LOOKUP_PATH}/${referenceId}`]:
+                    lookup
+
+            }
+
+        );
 
 
         if (modalMessage) {
@@ -1424,7 +1680,9 @@ async function updateTicket(
         );
 
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(
             "Ticket update error:",
@@ -1441,8 +1699,11 @@ async function updateTicket(
 
 
         showStatus(
+
             "Unable to update ticket. Check Firebase Database Rules.",
+
             "error"
+
         );
 
     }
@@ -1455,25 +1716,25 @@ async function updateTicket(
 ========================================================= */
 
 saveReplyBtn?.addEventListener(
+
     "click",
+
     async () => {
 
-        if (!selectedTicketKey) {
+        if (!selectedTicketKey)
             return;
-        }
+
 
         const reply =
             agentReply?.value
                 ?.trim() || "";
 
+
         if (!reply) {
 
-            if (modalMessage) {
-
+            if (modalMessage)
                 modalMessage.textContent =
                     "Please write a reply first.";
-
-            }
 
             return;
 
@@ -1483,8 +1744,7 @@ saveReplyBtn?.addEventListener(
         await updateTicket(
 
             {
-                agentReply:
-                    reply
+                agentReply: reply
             },
 
             "✓ Agent reply saved."
@@ -1492,6 +1752,7 @@ saveReplyBtn?.addEventListener(
         );
 
     }
+
 );
 
 
@@ -1500,15 +1761,24 @@ saveReplyBtn?.addEventListener(
 ========================================================= */
 
 setOpenBtn?.addEventListener(
+
     "click",
+
     async () => {
 
         await updateTicket(
 
             {
-                status: "Open",
-                progress: 0,
-                statusNote: "Your request is in the support queue. Our team will contact you soon."
+
+                status:
+                    "Open",
+
+                progress:
+                    0,
+
+                statusNote:
+                    "Your request is in the support queue. Our team will contact you soon."
+
             },
 
             "✓ Ticket marked Open."
@@ -1516,6 +1786,7 @@ setOpenBtn?.addEventListener(
         );
 
     }
+
 );
 
 
@@ -1524,15 +1795,24 @@ setOpenBtn?.addEventListener(
 ========================================================= */
 
 setProgressBtn?.addEventListener(
+
     "click",
+
     async () => {
 
         await updateTicket(
 
             {
-                status: "In Progress",
-                progress: 50,
-                statusNote: "A support agent is currently reviewing your request."
+
+                status:
+                    "In Progress",
+
+                progress:
+                    50,
+
+                statusNote:
+                    "A support agent is currently reviewing your request."
+
             },
 
             "✓ Ticket marked In Progress."
@@ -1540,6 +1820,7 @@ setProgressBtn?.addEventListener(
         );
 
     }
+
 );
 
 
@@ -1548,23 +1829,29 @@ setProgressBtn?.addEventListener(
 ========================================================= */
 
 setClosedBtn?.addEventListener(
+
     "click",
+
     async () => {
 
         await updateTicket(
 
             {
 
-                status: "Closed",
-                progress: 100,
-                statusNote: "Your support request has been resolved. Please contact the Help Center again if you need further assistance.",
+                status:
+                    "Closed",
+
+                progress:
+                    100,
+
+                statusNote:
+                    "Your support request has been resolved. Please contact the Help Center again if you need further assistance.",
 
                 resolvedAt:
                     Date.now(),
 
                 resolvedBy:
-                    auth.currentUser?.uid ||
-                    ALLOWED_AGENT_UID
+                    auth.currentUser?.uid || ""
 
             },
 
@@ -1573,13 +1860,67 @@ setClosedBtn?.addEventListener(
         );
 
     }
+
 );
 
 
-claimTicketBtn?.addEventListener("click", async()=>{
-    if(!selectedTicketKey || !auth.currentUser) return;
-    await updateTicket({assignedAgentUid:auth.currentUser.uid,assignedAgentName:currentAgentProfile?.name||auth.currentUser.email||"Support Agent"},"✓ Ticket assigned to you.");
-});
+/* =========================================================
+   CLAIM TICKET
+========================================================= */
+
+claimTicketBtn?.addEventListener(
+
+    "click",
+
+    async () => {
+
+        if (
+            !selectedTicketKey ||
+            !auth.currentUser
+        ) {
+
+            return;
+
+        }
+
+
+        const ticket =
+            tickets[selectedTicketKey];
+
+
+        if (
+            ticket?.assignedAgentUid
+        ) {
+
+            return;
+
+        }
+
+
+        await updateTicket(
+
+            {
+
+                assignedAgentUid:
+                    auth.currentUser.uid,
+
+                assignedAgentName:
+                    currentAgentProfile?.name ||
+
+                    auth.currentUser.email ||
+
+                    "Support Agent"
+
+            },
+
+            "✓ Ticket assigned to you."
+
+        );
+
+    }
+
+);
+
 
 /* =========================================================
    LOAD TICKETS
@@ -1635,46 +1976,10 @@ function loadTickets() {
                 tickets =
                     data &&
                     typeof data === "object"
+
                         ? data
+
                         : {};
-
-
-                console.log(
-                    "HELP CENTER TICKETS:",
-                    tickets
-                );
-
-
-                /*
-                 * DEBUG:
-                 * This lets you inspect the exact
-                 * Firebase structure in the browser.
-                 */
-
-                Object.entries(
-                    tickets
-                ).forEach(
-                    ([key, ticket]) => {
-
-                        console.log(
-                            "Ticket:",
-                            key,
-                            {
-                                ticket,
-                                ticketId:
-                                    getTicketId(
-                                        ticket,
-                                        key
-                                    ),
-                                registrationReference:
-                                    getRegistrationReference(
-                                        ticket
-                                    )
-                            }
-                        );
-
-                    }
-                );
 
 
                 renderTickets();
@@ -1682,9 +1987,7 @@ function loadTickets() {
 
                 showStatus(
 
-                    `${Object.keys(
-                        tickets
-                    ).length} support ticket(s) loaded.`,
+                    `${Object.keys(tickets).length} support ticket(s) loaded.`,
 
                     "success"
 
@@ -1702,12 +2005,13 @@ function loadTickets() {
 
                 tickets = {};
 
+
                 renderTickets();
 
 
                 showStatus(
 
-                    "Unable to load support tickets. Check the Help Firebase Database Rules.",
+                    "Unable to load support tickets. Check Firebase Database Rules.",
 
                     "error"
 
@@ -1746,11 +2050,7 @@ statusFilter?.addEventListener(
 
 refreshBtn?.addEventListener(
     "click",
-    () => {
-
-        loadTickets();
-
-    }
+    loadTickets
 );
 
 
@@ -1759,20 +2059,22 @@ refreshBtn?.addEventListener(
 ========================================================= */
 
 logoutBtn?.addEventListener(
+
     "click",
+
     async () => {
 
         try {
 
-            await signOut(
-                auth
-            );
+            await signOut(auth);
 
             window.location.replace(
                 "agent-login.html"
             );
 
-        } catch (error) {
+        }
+
+        catch (error) {
 
             console.error(
                 "Logout error:",
@@ -1782,43 +2084,117 @@ logoutBtn?.addEventListener(
         }
 
     }
+
 );
 
 
 /* =========================================================
    AUTHORIZATION
+   ---------------------------------------------------------
+   IMPORTANT FIX:
+
+   Firebase currently stores:
+
+       agents/{uid}: true
+
+   NOT:
+
+       agents/{uid}: {
+           active: true
+       }
 ========================================================= */
 
-onAuthStateChanged(auth, async user => {
-    if (!user) {
-        window.location.replace("agent-login.html");
-        return;
-    }
-    try {
-        const profileSnap = await get(ref(db, `agents/${user.uid}`));
-        const profile = profileSnap.exists() ? profileSnap.val() : null;
-        const legacyAllowed = user.uid === ALLOWED_AGENT_UID;
-        if (!profile?.active && !legacyAllowed) {
-            await signOut(auth);
-            window.location.replace("agent-login.html");
+onAuthStateChanged(
+
+    auth,
+
+    async user => {
+
+        if (!user) {
+
+            window.location.replace(
+                "agent-login.html"
+            );
+
             return;
+
         }
-        currentAgentProfile = profile || {name:"Support Agent",role:"Support Agent",active:true};
-        showStatus(`Agent authenticated: ${currentAgentProfile.name || user.email || "Support Agent"}`, "success");
+
+
+        const isAuthorized =
+            AUTHORIZED_AGENT_UIDS.includes(
+                user.uid
+            );
+
+
+        if (!isAuthorized) {
+
+            console.error(
+                "Unauthorized agent:",
+                user.uid
+            );
+
+
+            await signOut(auth)
+                .catch(() => {});
+
+
+            window.location.replace(
+                "agent-login.html"
+            );
+
+            return;
+
+        }
+
+
+        currentAgentProfile = {
+
+            name:
+                user.displayName ||
+
+                user.email ||
+
+                "Support Agent",
+
+            role:
+                "Support Agent",
+
+            active:
+                true,
+
+            uid:
+                user.uid
+
+        };
+
+
+        showStatus(
+
+            `Agent authenticated: ${
+                currentAgentProfile.name
+            }`,
+
+            "success"
+
+        );
+
+
         loadTickets();
-    } catch(error) {
-        console.error("Agent authorization error:", error);
-        await signOut(auth).catch(()=>{});
-        window.location.replace("agent-login.html");
+
     }
-});
+
+);
+
 
 /* =========================================================
    ESC KEY
 ========================================================= */
 
 document.addEventListener(
+
     "keydown",
+
     event => {
 
         if (
@@ -1830,4 +2206,5 @@ document.addEventListener(
         }
 
     }
+
 );
