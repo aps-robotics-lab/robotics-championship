@@ -1,18 +1,19 @@
 /* =========================================================
    AGENT-LOGIN.JS
    APS ROBOTICS CHAMPIONSHIP 2026
-   AGENT HELP CENTER
+   ---------------------------------------------------------
+   LOGIN PAGE FOR SUPPORT AGENTS
 
-   FIREBASE DATABASE STRUCTURE:
+   Firebase:
+       helpFirebaseConfig
 
-   /agents
-       UID: true
+   After successful authentication:
+       agent.html
 
-   /tickets
-   /ticketStatusLookup
+   Authorization is finally checked by agent.js
+   against:
 
-   IMPORTANT:
-   DO NOT CHANGE FIREBASE RULES FOR THIS FILE.
+       /agents/{uid}
 ========================================================= */
 
 import {
@@ -23,14 +24,9 @@ import {
     getAuth,
     onAuthStateChanged,
     signInWithEmailAndPassword,
-    signOut
+    signOut,
+    sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-
-import {
-    getDatabase,
-    ref,
-    get
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 import {
     helpFirebaseConfig
@@ -41,20 +37,11 @@ import {
    FIREBASE
 ========================================================= */
 
-const app =
-    initializeApp(
-        helpFirebaseConfig
-    );
+const app = initializeApp(
+    helpFirebaseConfig
+);
 
-const auth =
-    getAuth(
-        app
-    );
-
-const db =
-    getDatabase(
-        app
-    );
+const auth = getAuth(app);
 
 
 /* =========================================================
@@ -62,48 +49,35 @@ const db =
 ========================================================= */
 
 const loadingScreen =
-    document.getElementById(
-        "loadingScreen"
-    );
+    document.getElementById("loadingScreen");
 
 const loginMain =
-    document.getElementById(
-        "loginMain"
-    );
+    document.getElementById("loginMain");
 
 const loginForm =
-    document.getElementById(
-        "loginForm"
-    );
+    document.getElementById("loginForm");
 
 const loginEmail =
-    document.getElementById(
-        "loginEmail"
-    );
+    document.getElementById("loginEmail");
 
 const loginPassword =
-    document.getElementById(
-        "loginPassword"
-    );
+    document.getElementById("loginPassword");
 
 const loginMessage =
-    document.getElementById(
-        "loginMessage"
-    );
+    document.getElementById("loginMessage");
 
 const loginBtn =
-    document.getElementById(
-        "loginBtn"
-    );
+    document.getElementById("loginBtn");
 
 const togglePassword =
-    document.getElementById(
-        "togglePassword"
-    );
+    document.getElementById("togglePassword");
+
+const forgotPasswordBtn =
+    document.getElementById("forgotPasswordBtn");
 
 
 /* =========================================================
-   SHOW MESSAGE
+   MESSAGE
 ========================================================= */
 
 function showMessage(
@@ -112,6 +86,7 @@ function showMessage(
 ) {
 
     if (!loginMessage) {
+        console.log(message);
         return;
     }
 
@@ -125,60 +100,45 @@ function showMessage(
 
 
 /* =========================================================
-   SHOW LOGIN SCREEN
+   LOADING STATE
 ========================================================= */
 
-function showLoginScreen() {
+function setLoading(
+    loading
+) {
 
-    loadingScreen?.classList.add(
-        "hidden"
-    );
+    if (loginBtn) {
 
-    loginMain?.classList.remove(
-        "hidden"
-    );
+        loginBtn.disabled =
+            loading;
+
+        loginBtn.classList.toggle(
+            "is-loading",
+            loading
+        );
+
+    }
 
 }
 
 
 /* =========================================================
-   SHOW LOADING
-========================================================= */
-
-function showLoading() {
-
-    loadingScreen?.classList.remove(
-        "hidden"
-    );
-
-    loginMain?.classList.add(
-        "hidden"
-    );
-
-}
-
-
-/* =========================================================
-   FRIENDLY FIREBASE ERRORS
+   FIREBASE ERROR
 ========================================================= */
 
 function friendlyError(
     error
 ) {
 
-    switch (
-        error?.code
-    ) {
+    switch (error?.code) {
 
         case "auth/invalid-email":
 
             return "Please enter a valid email address.";
 
-
         case "auth/user-disabled":
 
             return "This account has been disabled.";
-
 
         case "auth/user-not-found":
 
@@ -188,157 +148,24 @@ function friendlyError(
 
             return "Incorrect email or password.";
 
-
         case "auth/too-many-requests":
 
             return "Too many login attempts. Please wait and try again.";
-
 
         case "auth/network-request-failed":
 
             return "Network error. Check your internet connection.";
 
+        case "auth/operation-not-allowed":
+
+            return "Email/password authentication is not enabled in Firebase.";
 
         default:
 
-            return (
-                error?.message ||
-                "Unable to sign in. Please try again."
-            );
+            return error?.message ||
+                "Unable to sign in. Please try again.";
 
     }
-
-}
-
-
-/* =========================================================
-   CHECK AGENT AUTHORIZATION
-=========================================================
-
-   YOUR CURRENT DATABASE:
-
-   agents/
-       HgWiHPRx9gcXZtDTl0pDCpZlokt2: true
-
-   This function supports:
-
-       UID: true
-
-   and also:
-
-       UID:
-           active: true
-           name: "Agent"
-
-========================================================= */
-
-async function checkAgent(
-    user
-) {
-
-    if (!user) {
-        return false;
-    }
-
-    try {
-
-        const agentRef =
-            ref(
-                db,
-                `agents/${user.uid}`
-            );
-
-        const snapshot =
-            await get(
-                agentRef
-            );
-
-
-        console.log(
-            "Agent authorization check:",
-            user.uid,
-            snapshot.exists(),
-            snapshot.exists()
-                ? snapshot.val()
-                : null
-        );
-
-
-        if (!snapshot.exists()) {
-
-            return false;
-
-        }
-
-
-        const value =
-            snapshot.val();
-
-
-        /* ---------------------------------------------
-           YOUR CURRENT STRUCTURE
-
-               UID: true
-        --------------------------------------------- */
-
-        if (
-            value === true
-        ) {
-
-            return true;
-
-        }
-
-
-        /* ---------------------------------------------
-           OPTIONAL STRUCTURE
-
-               UID:
-                   active: true
-        --------------------------------------------- */
-
-        if (
-            typeof value === "object" &&
-            value !== null &&
-            value.active === true
-        ) {
-
-            return true;
-
-        }
-
-
-        return false;
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Agent authorization check failed:",
-            error
-        );
-
-        return false;
-
-    }
-
-}
-
-
-/* =========================================================
-   REDIRECT TO DASHBOARD
-========================================================= */
-
-function redirectToDashboard() {
-
-    console.log(
-        "Redirecting authorized agent to agent.html..."
-    );
-
-    window.location.replace(
-        "agent.html"
-    );
 
 }
 
@@ -355,16 +182,13 @@ togglePassword?.addEventListener(
             return;
         }
 
-
         const hidden =
             loginPassword.type === "password";
-
 
         loginPassword.type =
             hidden
                 ? "text"
                 : "password";
-
 
         if (togglePassword) {
 
@@ -372,6 +196,72 @@ togglePassword?.addEventListener(
                 hidden
                     ? '<i class="fa-solid fa-eye-slash"></i>'
                     : '<i class="fa-solid fa-eye"></i>';
+
+            togglePassword.title =
+                hidden
+                    ? "Hide password"
+                    : "Show password";
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   FORGOT PASSWORD
+========================================================= */
+
+forgotPasswordBtn?.addEventListener(
+    "click",
+    async () => {
+
+        const email =
+            loginEmail?.value.trim() || "";
+
+        if (!email) {
+
+            showMessage(
+                "Enter your email address first.",
+                "error"
+            );
+
+            loginEmail?.focus();
+
+            return;
+
+        }
+
+        try {
+
+            showMessage(
+                "Sending password reset email...",
+                ""
+            );
+
+            await sendPasswordResetEmail(
+                auth,
+                email
+            );
+
+            showMessage(
+                "Password reset email sent. Check your inbox.",
+                "success"
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Password reset error:",
+                error
+            );
+
+            showMessage(
+                friendlyError(error),
+                "error"
+            );
 
         }
 
@@ -389,163 +279,55 @@ loginForm?.addEventListener(
 
         event.preventDefault();
 
-
         const email =
-            loginEmail?.value
-                ?.trim()
-                .toLowerCase() ||
-            "";
+            loginEmail?.value.trim() || "";
 
         const password =
-            loginPassword?.value ||
-            "";
+            loginPassword?.value || "";
 
-
-        if (!email) {
+        if (!email || !password) {
 
             showMessage(
-                "Enter your email address.",
+                "Enter both your email and password.",
                 "error"
             );
-
-            loginEmail?.focus();
 
             return;
 
         }
 
+        setLoading(true);
 
-        if (!password) {
-
-            showMessage(
-                "Enter your password.",
-                "error"
-            );
-
-            loginPassword?.focus();
-
-            return;
-
-        }
-
+        showMessage(
+            "Signing in...",
+            ""
+        );
 
         try {
 
-            showMessage(
-                "Signing in..."
-            );
-
-
-            if (loginBtn) {
-
-                loginBtn.disabled =
-                    true;
-
-                loginBtn.classList.add(
-                    "is-loading"
-                );
-
-            }
-
-
-            /*
-             * Firebase Authentication
-             */
-
-            const credential =
+            const result =
                 await signInWithEmailAndPassword(
                     auth,
                     email,
                     password
                 );
 
-
-            const user =
-                credential.user;
-
-
             console.log(
-                "Firebase login successful.",
-                {
-                    uid: user.uid,
-                    email: user.email
-                }
+                "Agent Firebase login successful:",
+                result.user.uid
             );
 
-
             /*
-             * Check /agents/{uid}
+             * IMPORTANT:
+             *
+             * We redirect directly here.
+             *
+             * This means we do NOT depend only on
+             * onAuthStateChanged to perform navigation.
              */
 
-            const authorized =
-                await checkAgent(
-                    user
-                );
-
-
-            if (!authorized) {
-
-                console.error(
-                    "User is authenticated but is NOT an agent:",
-                    user.uid
-                );
-
-
-                await signOut(
-                    auth
-                );
-
-
-                showMessage(
-                    "Access denied. This account is not an authorized support agent.",
-                    "error"
-                );
-
-
-                if (loginBtn) {
-
-                    loginBtn.disabled =
-                        false;
-
-                    loginBtn.classList.remove(
-                        "is-loading"
-                    );
-
-                }
-
-                return;
-
-            }
-
-
-            /*
-             * AUTHORIZED
-             */
-
-            showMessage(
-                "Login successful. Opening Agent Dashboard...",
-                "success"
-            );
-
-
-            console.log(
-                "AUTHORIZED AGENT:",
-                user.uid
-            );
-
-
-            /*
-             * Give Firebase a moment to persist
-             * the authentication state before redirect.
-             */
-
-            setTimeout(
-                () => {
-
-                    redirectToDashboard();
-
-                },
-                250
+            window.location.replace(
+                "agent.html"
             );
 
         }
@@ -557,25 +339,12 @@ loginForm?.addEventListener(
                 error
             );
 
+            setLoading(false);
 
             showMessage(
-                friendlyError(
-                    error
-                ),
+                friendlyError(error),
                 "error"
             );
-
-
-            if (loginBtn) {
-
-                loginBtn.disabled =
-                    false;
-
-                loginBtn.classList.remove(
-                    "is-loading"
-                );
-
-            }
 
         }
 
@@ -584,112 +353,49 @@ loginForm?.addEventListener(
 
 
 /* =========================================================
-   AUTH STATE
+   EXISTING AUTH SESSION
 ========================================================= */
 
 onAuthStateChanged(
     auth,
-    async user => {
+    user => {
 
         console.log(
             "Agent login auth state:",
             user
-                ? {
-                    uid: user.uid,
-                    email: user.email
-                }
-                : "SIGNED OUT"
+                ? user.uid
+                : "No authenticated user"
         );
 
+        if (user) {
 
-        /*
-         * No user
-         */
+            /*
+             * If the agent is already logged in,
+             * don't make them login again.
+             */
 
-        if (!user) {
-
-            showLoginScreen();
+            window.location.replace(
+                "agent.html"
+            );
 
             return;
 
         }
 
-
         /*
-         * User already authenticated.
-         * Check whether they are an authorized agent.
+         * No logged-in user.
+         * Show login screen.
          */
 
-        try {
+        loadingScreen?.classList.add(
+            "hidden"
+        );
 
-            const authorized =
-                await checkAgent(
-                    user
-                );
+        loginMain?.classList.remove(
+            "hidden"
+        );
 
-
-            if (authorized) {
-
-                console.log(
-                    "Existing authorized agent detected."
-                );
-
-
-                redirectToDashboard();
-
-                return;
-
-            }
-
-
-            /*
-             * Authenticated but not an agent.
-             */
-
-            console.log(
-                "Authenticated account is not an authorized agent."
-            );
-
-
-            await signOut(
-                auth
-            );
-
-
-            showLoginScreen();
-
-
-            showMessage(
-                "Access denied. This account is not an authorized support agent.",
-                "error"
-            );
-
-        }
-
-        catch (error) {
-
-            console.error(
-                "Auth state authorization error:",
-                error
-            );
-
-
-            await signOut(
-                auth
-            ).catch(
-                () => {}
-            );
-
-
-            showLoginScreen();
-
-
-            showMessage(
-                "Unable to verify agent access.",
-                "error"
-            );
-
-        }
+        setLoading(false);
 
     }
 );
