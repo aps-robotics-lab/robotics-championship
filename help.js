@@ -3,30 +3,24 @@
    HELP CENTER
    ---------------------------------------------------------
    Firebase:
-
        /tickets
        /ticketStatusLookup
 
-   Anonymous users can create tickets.
+   Uses:
+       helpFirebaseConfig
 
-   Agents can manage tickets.
-
-   Reference format:
-
-       APS-XXXXX
+   IMPORTANT:
+   This file works with the current Firebase structure.
 ========================================================= */
-
 
 import {
     initializeApp
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 
-
 import {
     getAuth,
     signInAnonymously
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-
 
 import {
     getDatabase,
@@ -34,7 +28,6 @@ import {
     update,
     get
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
-
 
 import {
     helpFirebaseConfig
@@ -50,10 +43,8 @@ const app =
         helpFirebaseConfig
     );
 
-
 const auth =
     getAuth(app);
-
 
 const db =
     getDatabase(app);
@@ -64,95 +55,55 @@ const db =
 ========================================================= */
 
 const form =
-    document.getElementById(
-        "helpForm"
-    );
-
+    document.getElementById("helpForm");
 
 const submitBtn =
-    document.getElementById(
-        "submitBtn"
-    );
-
+    document.getElementById("submitBtn");
 
 const formStatus =
-    document.getElementById(
-        "formStatus"
-    );
-
+    document.getElementById("formStatus");
 
 const submitText =
-    document.getElementById(
-        "submitText"
-    );
-
+    document.getElementById("submitText");
 
 const submitLoading =
-    document.getElementById(
-        "submitLoading"
-    );
+    document.getElementById("submitLoading");
 
 
 /* =========================================================
-   TRACKER
+   TRACKER ELEMENTS
 ========================================================= */
 
 const trackerForm =
-    document.getElementById(
-        "helpTrackerForm"
-    );
-
+    document.getElementById("helpTrackerForm");
 
 const trackerInput =
-    document.getElementById(
-        "trackerReference"
-    );
-
+    document.getElementById("trackerReference");
 
 const trackerStatus =
-    document.getElementById(
-        "trackerStatus"
-    );
-
+    document.getElementById("trackerStatus");
 
 const trackerResult =
-    document.getElementById(
-        "trackerResult"
-    );
-
+    document.getElementById("trackerResult");
 
 const trackerProgress =
-    document.getElementById(
-        "trackerProgress"
-    );
-
+    document.getElementById("trackerProgress");
 
 const trackerProgressText =
-    document.getElementById(
-        "trackerProgressText"
-    );
-
+    document.getElementById("trackerProgressText");
 
 const trackerStatusText =
-    document.getElementById(
-        "trackerStatusText"
-    );
-
+    document.getElementById("trackerStatusText");
 
 const trackerUpdated =
-    document.getElementById(
-        "trackerUpdated"
-    );
-
+    document.getElementById("trackerUpdated");
 
 const trackerNote =
-    document.getElementById(
-        "trackerNote"
-    );
+    document.getElementById("trackerNote");
 
 
 /* =========================================================
-   FORM STATUS
+   HELPERS
 ========================================================= */
 
 function showFormStatus(
@@ -161,15 +112,11 @@ function showFormStatus(
 ) {
 
     if (!formStatus) {
-
         return;
-
     }
-
 
     formStatus.textContent =
         text;
-
 
     formStatus.className =
         `form-status ${type}`.trim();
@@ -178,7 +125,7 @@ function showFormStatus(
 
 
 /* =========================================================
-   GENERATE REFERENCE ID
+   REFERENCE ID
 ========================================================= */
 
 function generateReferenceId() {
@@ -186,9 +133,7 @@ function generateReferenceId() {
     const chars =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-
     let result = "";
-
 
     for (
         let i = 0;
@@ -206,14 +151,13 @@ function generateReferenceId() {
 
     }
 
-
     return `APS-${result}`;
 
 }
 
 
 /* =========================================================
-   UNIQUE REFERENCE
+   CREATE UNIQUE REFERENCE
 ========================================================= */
 
 async function createUniqueReference() {
@@ -227,19 +171,18 @@ async function createUniqueReference() {
         const referenceId =
             generateReferenceId();
 
-
-        const snap =
-            await get(
-
-                ref(
-                    db,
-                    `ticketStatusLookup/${referenceId}`
-                )
-
+        const lookupRef =
+            ref(
+                db,
+                `ticketStatusLookup/${referenceId}`
             );
 
+        const snapshot =
+            await get(
+                lookupRef
+            );
 
-        if (!snap.exists()) {
+        if (!snapshot.exists()) {
 
             return referenceId;
 
@@ -247,9 +190,8 @@ async function createUniqueReference() {
 
     }
 
-
     throw new Error(
-        "Could not generate a unique help reference ID."
+        "Unable to generate a unique reference ID."
     );
 
 }
@@ -262,8 +204,8 @@ async function createUniqueReference() {
 function formatDate(value) {
 
     if (
-        value === null ||
         value === undefined ||
+        value === null ||
         value === ""
     ) {
 
@@ -271,14 +213,26 @@ function formatDate(value) {
 
     }
 
-
     let date;
 
-
-    if (typeof value === "number") {
+    if (
+        typeof value === "number"
+    ) {
 
         date =
             new Date(value);
+
+    }
+
+    else if (
+        typeof value === "object" &&
+        value.seconds
+    ) {
+
+        date =
+            new Date(
+                value.seconds * 1000
+            );
 
     }
 
@@ -288,7 +242,6 @@ function formatDate(value) {
             new Date(value);
 
     }
-
 
     if (
         Number.isNaN(
@@ -300,54 +253,59 @@ function formatDate(value) {
 
     }
 
-
     return date.toLocaleString(
-
         "en-IN",
-
         {
-
-            day:
-                "2-digit",
-
-            month:
-                "short",
-
-            year:
-                "numeric",
-
-            hour:
-                "2-digit",
-
-            minute:
-                "2-digit"
-
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
         }
-
     );
 
 }
 
 
 /* =========================================================
-   TRACK HELP REQUEST
+   GET FORM VALUE
+========================================================= */
+
+function valueOf(id) {
+
+    const element =
+        document.getElementById(id);
+
+    if (!element) {
+        return "";
+    }
+
+    return (
+        element.value ||
+        ""
+    ).trim();
+
+}
+
+
+/* =========================================================
+   TRACKER
 ========================================================= */
 
 trackerForm?.addEventListener(
-
     "submit",
-
     async event => {
 
         event.preventDefault();
 
 
         const referenceId =
-
-            trackerInput
-                ?.value
+            (
+                trackerInput?.value ||
+                ""
+            )
                 .trim()
-                .toUpperCase() || "";
+                .toUpperCase();
 
 
         /* ---------------------------------------------
@@ -355,22 +313,21 @@ trackerForm?.addEventListener(
         --------------------------------------------- */
 
         if (
-            !/^APS-[A-Z0-9]{5}$/
-                .test(referenceId)
+            !/^APS-[A-Z0-9]{5}$/.test(
+                referenceId
+            )
         ) {
 
             if (trackerStatus) {
 
                 trackerStatus.textContent =
-                    "Enter a valid reference such as APS-A1B2C.";
+                    "Enter a valid reference ID such as APS-A1B2C.";
 
             }
 
-
-            trackerResult
-                ?.classList
-                .add("hidden");
-
+            trackerResult?.classList.add(
+                "hidden"
+            );
 
             return;
 
@@ -385,24 +342,41 @@ trackerForm?.addEventListener(
         }
 
 
+        trackerResult?.classList.add(
+            "hidden"
+        );
+
+
         try {
 
-            const snap =
+            /*
+             * Anonymous authentication is required
+             * because Firebase Rules require auth.
+             */
 
-                await get(
+            if (!auth.currentUser) {
 
-                    ref(
+                await signInAnonymously(
+                    auth
+                );
 
-                        db,
+            }
 
-                        `ticketStatusLookup/${referenceId}`
 
-                    )
-
+            const lookupRef =
+                ref(
+                    db,
+                    `ticketStatusLookup/${referenceId}`
                 );
 
 
-            if (!snap.exists()) {
+            const snapshot =
+                await get(
+                    lookupRef
+                );
+
+
+            if (!snapshot.exists()) {
 
                 if (trackerStatus) {
 
@@ -411,43 +385,26 @@ trackerForm?.addEventListener(
 
                 }
 
-
-                trackerResult
-                    ?.classList
-                    .add("hidden");
-
-
                 return;
 
             }
 
 
             const data =
-                snap.val() || {};
+                snapshot.val() || {};
 
 
             const progress =
-
                 Math.max(
-
                     0,
-
                     Math.min(
-
                         100,
-
                         Number(
                             data.progress || 0
                         )
-
                     )
-
                 );
 
-
-            /* -----------------------------------------
-               STATUS
-            ----------------------------------------- */
 
             if (trackerStatusText) {
 
@@ -458,10 +415,6 @@ trackerForm?.addEventListener(
             }
 
 
-            /* -----------------------------------------
-               PROGRESS %
-            ----------------------------------------- */
-
             if (trackerProgressText) {
 
                 trackerProgressText.textContent =
@@ -470,10 +423,6 @@ trackerForm?.addEventListener(
             }
 
 
-            /* -----------------------------------------
-               PROGRESS BAR
-            ----------------------------------------- */
-
             if (trackerProgress) {
 
                 trackerProgress.style.width =
@@ -481,10 +430,6 @@ trackerForm?.addEventListener(
 
             }
 
-
-            /* -----------------------------------------
-               UPDATED
-            ----------------------------------------- */
 
             if (trackerUpdated) {
 
@@ -496,24 +441,18 @@ trackerForm?.addEventListener(
             }
 
 
-            /* -----------------------------------------
-               NOTE
-            ----------------------------------------- */
-
             if (trackerNote) {
 
                 trackerNote.textContent =
-
                     data.statusNote ||
-
                     "Our team will review your request and contact you soon.";
 
             }
 
 
-            trackerResult
-                ?.classList
-                .remove("hidden");
+            trackerResult?.classList.remove(
+                "hidden"
+            );
 
 
             if (trackerStatus) {
@@ -541,35 +480,34 @@ trackerForm?.addEventListener(
             }
 
 
-            trackerResult
-                ?.classList
-                .add("hidden");
+            trackerResult?.classList.add(
+                "hidden"
+            );
 
         }
 
     }
-
 );
 
 
 /* =========================================================
-   CREATE HELP TICKET
+   SUBMIT HELP REQUEST
 ========================================================= */
 
 form?.addEventListener(
-
     "submit",
-
     async event => {
 
         event.preventDefault();
 
 
         /* ---------------------------------------------
-           VALIDATION
+           HTML VALIDATION
         --------------------------------------------- */
 
-        if (!form.checkValidity()) {
+        if (
+            !form.checkValidity()
+        ) {
 
             form.reportValidity();
 
@@ -579,7 +517,7 @@ form?.addEventListener(
 
 
         /* ---------------------------------------------
-           BUTTON LOADING
+           DISABLE BUTTON
         --------------------------------------------- */
 
         if (submitBtn) {
@@ -590,14 +528,13 @@ form?.addEventListener(
         }
 
 
-        submitText
-            ?.classList
-            .add("hidden");
+        submitText?.classList.add(
+            "hidden"
+        );
 
-
-        submitLoading
-            ?.classList
-            .remove("hidden");
+        submitLoading?.classList.remove(
+            "hidden"
+        );
 
 
         showFormStatus(
@@ -608,7 +545,7 @@ form?.addEventListener(
         try {
 
             /* -----------------------------------------
-               ANONYMOUS AUTH
+               AUTHENTICATION
             ----------------------------------------- */
 
             if (!auth.currentUser) {
@@ -621,7 +558,7 @@ form?.addEventListener(
 
 
             /* -----------------------------------------
-               REFERENCE ID
+               UNIQUE REFERENCE
             ----------------------------------------- */
 
             const referenceId =
@@ -633,10 +570,10 @@ form?.addEventListener(
             ----------------------------------------- */
 
             const ticketKey =
-
-                typeof crypto !== "undefined" &&
-
-                typeof crypto.randomUUID === "function"
+                (
+                    typeof crypto !== "undefined" &&
+                    typeof crypto.randomUUID === "function"
+                )
 
                     ?
 
@@ -649,109 +586,62 @@ form?.addEventListener(
                         .slice(2)}`;
 
 
-            /* -----------------------------------------
-               TIME
-            ----------------------------------------- */
-
             const createdAt =
                 Date.now();
 
 
             /* -----------------------------------------
-               FORM VALUES
+               FORM DATA
             ----------------------------------------- */
 
             const registrationId =
-
-                document
-                    .getElementById(
-                        "registrationId"
-                    )
-                    ?.value
-                    .trim() || "";
-
+                valueOf(
+                    "registrationId"
+                );
 
             const name =
-
-                document
-                    .getElementById(
-                        "name"
-                    )
-                    ?.value
-                    .trim() || "";
-
+                valueOf(
+                    "name"
+                );
 
             const className =
-
-                document
-                    .getElementById(
-                        "className"
-                    )
-                    ?.value || "";
-
+                valueOf(
+                    "className"
+                );
 
             const section =
-
-                document
-                    .getElementById(
-                        "section"
-                    )
-                    ?.value
-                    .trim()
-                    .toUpperCase() || "";
-
+                valueOf(
+                    "section"
+                )
+                    .toUpperCase();
 
             const email =
-
-                document
-                    .getElementById(
-                        "email"
-                    )
-                    ?.value
-                    .trim()
-                    .toLowerCase() || "";
-
+                valueOf(
+                    "email"
+                )
+                    .toLowerCase();
 
             const category =
-
-                document
-                    .getElementById(
-                        "category"
-                    )
-                    ?.value ||
-
+                document.getElementById(
+                    "category"
+                )?.value ||
                 "General";
 
-
             const messageRecipient =
-
-                document
-                    .getElementById(
-                        "messageRecipient"
-                    )
-                    ?.value ||
-
+                document.getElementById(
+                    "messageRecipient"
+                )?.value ||
                 "General Help";
 
-
             const subject =
-
-                document
-                    .getElementById(
-                        "subject"
-                    )
-                    ?.value
-                    .trim() || "";
-
+                valueOf(
+                    "subject"
+                );
 
             const message =
-
-                document
-                    .getElementById(
-                        "message"
-                    )
-                    ?.value
-                    .trim() || "";
+                valueOf(
+                    "message"
+                );
 
 
             /* -----------------------------------------
@@ -824,7 +714,7 @@ form?.addEventListener(
 
 
             /* -----------------------------------------
-               TRACKING LOOKUP
+               STATUS LOOKUP
             ----------------------------------------- */
 
             const lookup = {
@@ -848,13 +738,11 @@ form?.addEventListener(
 
 
             /* -----------------------------------------
-               MULTI-PATH UPDATE
+               MULTI LOCATION WRITE
             ----------------------------------------- */
 
             await update(
-
                 ref(db),
-
                 {
 
                     [`tickets/${ticketKey}`]:
@@ -864,7 +752,6 @@ form?.addEventListener(
                         lookup
 
                 }
-
             );
 
 
@@ -877,7 +764,6 @@ form?.addEventListener(
                 referenceId
             );
 
-
             sessionStorage.setItem(
                 "apsHelpTicketId",
                 ticketKey
@@ -885,33 +771,27 @@ form?.addEventListener(
 
 
             /* -----------------------------------------
-               THANK YOU PAGE
+               REDIRECT
             ----------------------------------------- */
 
             window.location.href =
-
-                `help-thankyou.html?reference=${
-                    encodeURIComponent(
-                        referenceId
-                    )
-                }`;
+                `help-thankyou.html?reference=${encodeURIComponent(
+                    referenceId
+                )}`;
 
         }
 
         catch (error) {
 
             console.error(
-                "Help ticket error:",
+                "Help ticket submission error:",
                 error
             );
 
 
             showFormStatus(
-
                 "Error submitting your request. Please try again.",
-
                 "error"
-
             );
 
 
@@ -923,19 +803,17 @@ form?.addEventListener(
             }
 
 
-            submitText
-                ?.classList
-                .remove("hidden");
+            submitText?.classList.remove(
+                "hidden"
+            );
 
-
-            submitLoading
-                ?.classList
-                .add("hidden");
+            submitLoading?.classList.add(
+                "hidden"
+            );
 
         }
 
     }
-
 );
 
 
