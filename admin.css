@@ -1569,3 +1569,158 @@ tbody tr:hover {
 body.menu-open {
     overflow: hidden;
 }
+/* =========================================================
+   ADMIN MOBILE MENU
+========================================================= */
+
+.menu-btn {
+    display: none;
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 12px;
+    background: rgba(255,255,255,.05);
+    color: #fff;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: .25s ease;
+}
+
+.menu-btn:hover {
+    background: rgba(255,255,255,.10);
+}
+
+
+/* =========================================================
+   SIDEBAR OVERLAY
+========================================================= */
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 998;
+    background: rgba(0,0,0,.65);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+    z-index: 1000;
+}
+
+
+/* =========================================================
+   TABLET / MOBILE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .menu-btn {
+        display: flex;
+    }
+
+    .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 900;
+    }
+
+    .sidebar {
+
+        position: fixed;
+
+        top: 0;
+        left: 0;
+        bottom: 0;
+
+        width: min(310px, 86vw);
+
+        z-index: 1000;
+
+        transform: translateX(-105%);
+
+        transition:
+            transform .3s ease,
+            box-shadow .3s ease;
+
+        overflow-y: auto;
+
+        visibility: hidden;
+    }
+
+    .sidebar.mobile-open {
+
+        transform: translateX(0);
+
+        visibility: visible;
+
+        box-shadow:
+            15px 0 45px rgba(0,0,0,.55);
+    }
+
+    .main {
+        width: 100%;
+        margin-left: 0 !important;
+    }
+
+    .content {
+        width: 100%;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .topbar {
+        padding: 12px 14px;
+    }
+
+    .top-title span {
+        font-size: 9px;
+    }
+
+    .top-title h1 {
+        font-size: 18px;
+    }
+
+    .top-actions {
+        gap: 6px;
+    }
+
+    .firebase-status {
+        display: none;
+    }
+
+    .menu-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+}
+
+
+/* =========================================================
+   LOCK BACKGROUND SCROLL
+========================================================= */
+
+body.menu-open {
+    overflow: hidden;
+}
