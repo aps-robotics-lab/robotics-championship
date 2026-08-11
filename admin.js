@@ -2,31 +2,32 @@
    ADMIN.JS
    APS ROBOTICS CHAMPIONSHIP 2026
 
+   COMPLETE CORRECTED VERSION
+
    FEATURES:
-   - Secure Firebase Admin authentication
-   - Database /admins/{uid} authorization
-   - Optional ADMIN_UID fallback
-   - Authentication timeout protection
+   - Firebase Authentication
+   - /admins/{uid} authorization
+   - ADMIN_UID fallback
+   - Registration loading
+   - Correct database field compatibility
    - Correct Team/Solo detection
-   - Supports teamSize / TeamSize
-   - Supports members / teamMembers / memberList
-   - Supports Member2Name ... Member10Name
-   - Supports member2 object formats
-   - Shows team members with class + section
-   - Registration statistics
-   - Registration filtering
+   - TeamSize support
+   - Member 2-5 / extended member support
+   - Team member Class + Section display
+   - Dashboard statistics
    - Search
-   - View registration details
+   - Type/Event/Status filtering
+   - Registration details
    - Edit registration
    - Delete registration
-   - Approve / Reject registration
-   - Registration status lookup
+   - Approve registration
+   - Reject registration
+   - Status lookup
    - CSV export
    - Website content editor
-   - Leadership photo/content editor
-   - Responsive mobile sidebar
+   - Leadership content editor
+   - Mobile sidebar
 ========================================================= */
-
 
 import {
     initializeApp
@@ -56,28 +57,18 @@ import {
    FIREBASE
 ========================================================= */
 
-const app =
-    initializeApp(mainFirebaseConfig);
-
-const auth =
-    getAuth(app);
-
-const db =
-    getDatabase(app);
+const app = initializeApp(mainFirebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
 
 
 /* =========================================================
    DATABASE PATHS
 ========================================================= */
 
-const REGISTRATIONS_PATH =
-    "registrations";
-
-const ADMINS_PATH =
-    "admins";
-
-const STATUS_LOOKUP_PATH =
-    "registrationStatusLookup";
+const REGISTRATIONS_PATH = "registrations";
+const ADMINS_PATH = "admins";
+const STATUS_LOOKUP_PATH = "registrationStatusLookup";
 
 
 /* =========================================================
@@ -174,9 +165,7 @@ if (messageTarget) {
         () => {
 
             document
-                .querySelectorAll(
-                    "[data-message-panel]"
-                )
+                .querySelectorAll("[data-message-panel]")
                 .forEach(panel => {
 
                     panel.classList.toggle(
@@ -292,8 +281,8 @@ const toastText =
 ========================================================= */
 
 let registrations = {};
-
 let firebaseListener = null;
+let authCheckFinished = false;
 
 
 /* =========================================================
@@ -308,23 +297,17 @@ const contentStatus =
 
 
 /* =========================================================
-   STATUS MESSAGE
+   STATUS
 ========================================================= */
 
-function showStatus(
-    message,
-    type = ""
-) {
+function showStatus(message, type = "") {
 
     if (!status) {
         return;
     }
 
-    status.textContent =
-        message;
-
-    status.className =
-        "status " + type;
+    status.textContent = message;
+    status.className = "status " + type;
 
 }
 
@@ -339,26 +322,18 @@ function showToast(message) {
         return;
     }
 
-    toastText.textContent =
-        message;
+    toastText.textContent = message;
 
     toast.classList.add("show");
 
-    clearTimeout(
-        showToast.timer
+    clearTimeout(showToast.timer);
+
+    showToast.timer = setTimeout(
+        () => {
+            toast.classList.remove("show");
+        },
+        2500
     );
-
-    showToast.timer =
-        setTimeout(
-            () => {
-
-                toast.classList.remove(
-                    "show"
-                );
-
-            },
-            2500
-        );
 
 }
 
@@ -370,26 +345,11 @@ function showToast(message) {
 function escapeHTML(value) {
 
     return String(value ?? "")
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 
 }
 
@@ -398,11 +358,7 @@ function escapeHTML(value) {
    VALUE HELPERS
 ========================================================= */
 
-function valueOf(
-    data,
-    field,
-    fallback = ""
-) {
+function valueOf(data, field, fallback = "") {
 
     if (
         data &&
@@ -410,9 +366,7 @@ function valueOf(
         data[field] !== null &&
         data[field] !== ""
     ) {
-
         return data[field];
-
     }
 
     return fallback;
@@ -420,25 +374,15 @@ function valueOf(
 }
 
 
-function firstValue(
-    data,
-    fields,
-    fallback = ""
-) {
+function firstValue(data, fields, fallback = "") {
 
     for (const field of fields) {
 
         const value =
-            valueOf(
-                data,
-                field,
-                ""
-            );
+            valueOf(data, field, "");
 
         if (value !== "") {
-
             return value;
-
         }
 
     }
@@ -449,13 +393,10 @@ function firstValue(
 
 
 /* =========================================================
-   REGISTRATION HELPERS
+   REGISTRATION ID
 ========================================================= */
 
-function getRegistrationId(
-    data,
-    key
-) {
+function getRegistrationId(data, key) {
 
     return firstValue(
         data,
@@ -471,13 +412,19 @@ function getRegistrationId(
 }
 
 
+/* =========================================================
+   LEADER NAME
+   Current Rules use StudentName
+========================================================= */
+
 function getName(data) {
 
     return firstValue(
         data,
         [
-            "studentName",
             "StudentName",
+            "studentName",
+            "Student Name",
             "name",
             "leaderName",
             "teamLeaderName",
@@ -489,83 +436,107 @@ function getName(data) {
 }
 
 
+/* =========================================================
+   CLASS
+========================================================= */
+
 function getClassName(data) {
 
     return firstValue(
         data,
         [
+            "Class",
             "studentClass",
             "className",
-            "class",
-            "Class"
+            "class"
         ],
         "—"
     );
 
 }
 
+
+/* =========================================================
+   SECTION
+========================================================= */
 
 function getSection(data) {
 
     return firstValue(
         data,
         [
+            "Section",
             "studentSection",
-            "section",
-            "Section"
+            "section"
         ],
         "—"
     );
 
 }
 
+
+/* =========================================================
+   MOBILE
+========================================================= */
 
 function getMobile(data) {
 
     return firstValue(
         data,
         [
+            "MobileNumber",
             "mobileNumber",
             "mobile",
             "phone",
-            "phoneNumber",
-            "MobileNumber"
+            "phoneNumber"
         ],
         "—"
     );
 
 }
 
+
+/* =========================================================
+   EMAIL
+========================================================= */
 
 function getEmail(data) {
 
     return firstValue(
         data,
         [
+            "EmailAddress",
             "emailAddress",
-            "email",
-            "EmailAddress"
+            "email"
         ],
         "—"
     );
 
 }
 
+
+/* =========================================================
+   TEAM NAME
+========================================================= */
 
 function getTeamName(data) {
 
     return firstValue(
         data,
         [
+            "TeamName",
             "teamName",
-            "team",
-            "TeamName"
+            "team"
         ],
         "—"
     );
 
 }
 
+
+/* =========================================================
+   STATUS
+========================================================= */
 
 function getRegistrationStatus(data) {
 
@@ -580,6 +551,10 @@ function getRegistrationStatus(data) {
 
 }
 
+
+/* =========================================================
+   REMARKS
+========================================================= */
 
 function getRemarks(data) {
 
@@ -597,6 +572,10 @@ function getRemarks(data) {
 }
 
 
+/* =========================================================
+   TIMESTAMP
+========================================================= */
+
 function getTimestamp(data) {
 
     return firstValue(
@@ -605,10 +584,225 @@ function getTimestamp(data) {
             "timestamp",
             "createdAt",
             "created_at",
-            "registeredAt"
+            "registeredAt",
+            "registrationDate",
+            "date"
         ],
         ""
     );
+
+}
+
+
+/* =========================================================
+   EVENTS
+   Rules require Events to have children.
+========================================================= */
+
+function getEvents(data) {
+
+    const raw =
+        firstValue(
+            data,
+            [
+                "Events",
+                "events",
+                "selectedEvents",
+                "event"
+            ],
+            []
+        );
+
+
+    if (Array.isArray(raw)) {
+        return raw
+            .map(value => String(value).trim())
+            .filter(Boolean);
+    }
+
+
+    if (
+        raw &&
+        typeof raw === "object"
+    ) {
+
+        /*
+         * Handles:
+         *
+         * Events:
+         * {
+         *   "Robo Race": true,
+         *   "Robo War": true
+         * }
+         *
+         * and:
+         *
+         * Events:
+         * {
+         *   "0": "Robo Race",
+         *   "1": "Robo War"
+         * }
+         */
+
+        const values = [];
+
+        Object.entries(raw).forEach(
+            ([key, value]) => {
+
+                if (
+                    typeof value === "boolean"
+                ) {
+
+                    if (value) {
+                        values.push(key);
+                    }
+
+                    return;
+                }
+
+
+                if (
+                    value &&
+                    typeof value === "object"
+                ) {
+
+                    const eventName =
+                        firstValue(
+                            value,
+                            [
+                                "name",
+                                "event",
+                                "title"
+                            ],
+                            ""
+                        );
+
+                    if (eventName) {
+                        values.push(eventName);
+                    }
+
+                    return;
+                }
+
+
+                if (
+                    value !== null &&
+                    value !== undefined &&
+                    String(value).trim()
+                ) {
+
+                    values.push(
+                        String(value).trim()
+                    );
+
+                }
+
+            }
+        );
+
+        return values;
+    }
+
+
+    if (
+        typeof raw === "string"
+    ) {
+
+        return raw
+            .split(/\r?\n|,/)
+            .map(value => value.trim())
+            .filter(Boolean);
+
+    }
+
+
+    return [];
+
+}
+
+
+/* =========================================================
+   EVENT NORMALIZATION
+========================================================= */
+
+function normalizeEventName(value) {
+
+    const text =
+        String(value ?? "")
+            .trim()
+            .toLowerCase()
+            .replace(/[_-]+/g, " ")
+            .replace(/\s+/g, " ");
+
+
+    const aliases = {
+
+        "robo race":
+            "Robo Race",
+
+        "race":
+            "Robo Race",
+
+        "roborace":
+            "Robo Race",
+
+        "robo war":
+            "Robo War",
+
+        "war":
+            "Robo War",
+
+        "robowar":
+            "Robo War",
+
+        "robo tug of war":
+            "Robo Tug of War",
+
+        "robo tug":
+            "Robo Tug of War",
+
+        "tug of war":
+            "Robo Tug of War",
+
+        "tug":
+            "Robo Tug of War",
+
+        "robot tug of war":
+            "Robo Tug of War",
+
+        "robo soccer":
+            "Robo Soccer",
+
+        "soccer":
+            "Robo Soccer",
+
+        "robosoccer":
+            "Robo Soccer"
+
+    };
+
+
+    return aliases[text] || String(value).trim();
+
+}
+
+
+/* =========================================================
+   EVENT CHECK
+========================================================= */
+
+function hasEvent(data, eventName) {
+
+    const target =
+        normalizeEventName(eventName)
+            .toLowerCase();
+
+
+    return getEvents(data)
+        .some(event =>
+            normalizeEventName(event)
+                .toLowerCase() === target
+        );
 
 }
 
@@ -623,9 +817,7 @@ function getMembers(data) {
         !data ||
         typeof data !== "object"
     ) {
-
         return [];
-
     }
 
 
@@ -640,25 +832,61 @@ function getMembers(data) {
         ) {
 
             const name =
-                member.name ||
-                member.studentName ||
-                member.memberName ||
-                member.MemberName;
+                firstValue(
+                    member,
+                    [
+                        "name",
+                        "studentName",
+                        "memberName",
+                        "MemberName",
+                        "Name"
+                    ],
+                    ""
+                );
+
 
             if (name) {
-
-                members.push(member);
-
+                members.push({
+                    name,
+                    class:
+                        firstValue(
+                            member,
+                            [
+                                "class",
+                                "Class",
+                                "studentClass",
+                                "className"
+                            ],
+                            ""
+                        ),
+                    section:
+                        firstValue(
+                            member,
+                            [
+                                "section",
+                                "Section",
+                                "studentSection"
+                            ],
+                            ""
+                        )
+                });
             }
 
+            return;
         }
-        else if (
+
+
+        if (
             member !== undefined &&
             member !== null &&
             String(member).trim()
         ) {
 
-            members.push(member);
+            members.push({
+                name: String(member).trim(),
+                class: "",
+                section: ""
+            });
 
         }
 
@@ -675,8 +903,7 @@ function getMembers(data) {
         "memberList"
     ].forEach(field => {
 
-        const value =
-            data[field];
+        const value = data[field];
 
 
         if (Array.isArray(value)) {
@@ -698,7 +925,7 @@ function getMembers(data) {
 
 
     /* -----------------------------------------------------
-       Member2Name ... Member10Name
+       Member 2-10 flat fields
     ----------------------------------------------------- */
 
     for (
@@ -707,38 +934,17 @@ function getMembers(data) {
         i++
     ) {
 
-        const nameFields = [
-
-            `Member${i}Name`,
-            `member${i}Name`,
-            `member${i}name`
-
-        ];
-
-
-        let name = "";
-
-
-        for (
-            const field of nameFields
-        ) {
-
-            if (
-                data[field] !== undefined &&
-                data[field] !== null &&
-                String(data[field]).trim()
-            ) {
-
-                name =
-                    String(
-                        data[field]
-                    ).trim();
-
-                break;
-
-            }
-
-        }
+        const name =
+            firstValue(
+                data,
+                [
+                    `Member${i}Name`,
+                    `member${i}Name`,
+                    `member${i}name`,
+                    `Member${i}_Name`
+                ],
+                ""
+            );
 
 
         if (!name) {
@@ -747,28 +953,36 @@ function getMembers(data) {
 
 
         members.push({
-
             name,
-
             class:
-                data[`Member${i}Class`] ??
-                data[`member${i}Class`] ??
-                data[`member${i}class`] ??
-                "",
-
+                firstValue(
+                    data,
+                    [
+                        `Member${i}Class`,
+                        `member${i}Class`,
+                        `member${i}class`,
+                        `Member${i}_Class`
+                    ],
+                    ""
+                ),
             section:
-                data[`Member${i}Section`] ??
-                data[`member${i}Section`] ??
-                data[`member${i}section`] ??
-                ""
-
+                firstValue(
+                    data,
+                    [
+                        `Member${i}Section`,
+                        `member${i}Section`,
+                        `member${i}section`,
+                        `Member${i}_Section`
+                    ],
+                    ""
+                )
         });
 
     }
 
 
     /* -----------------------------------------------------
-       member2 object ... member10 object
+       member2 / Member2 object
     ----------------------------------------------------- */
 
     for (
@@ -778,21 +992,16 @@ function getMembers(data) {
     ) {
 
         const fields = [
-
             `member${i}`,
             `Member${i}`,
             `member_${i}`,
             `Member_${i}`
-
         ];
 
 
-        for (
-            const field of fields
-        ) {
+        for (const field of fields) {
 
-            const value =
-                data[field];
+            const value = data[field];
 
 
             if (
@@ -801,33 +1010,7 @@ function getMembers(data) {
                 !Array.isArray(value)
             ) {
 
-                const name =
-                    value.name ||
-                    value.studentName ||
-                    value.memberName ||
-                    value.MemberName;
-
-
-                if (name) {
-
-                    members.push({
-
-                        name,
-
-                        class:
-                            value.class ||
-                            value.studentClass ||
-                            value.className ||
-                            "",
-
-                        section:
-                            value.section ||
-                            value.studentSection ||
-                            ""
-
-                    });
-
-                }
+                addMember(value);
 
             }
 
@@ -837,7 +1020,7 @@ function getMembers(data) {
 
 
     /* -----------------------------------------------------
-       memberNames string
+       memberNames
     ----------------------------------------------------- */
 
     const memberNames =
@@ -859,19 +1042,14 @@ function getMembers(data) {
 
         memberNames
             .split(/\r?\n|,/)
-            .map(
-                value =>
-                    value.trim()
-            )
+            .map(value => value.trim())
             .filter(Boolean)
             .forEach(name => {
 
                 members.push({
-
                     name,
                     class: "",
                     section: ""
-
                 });
 
             });
@@ -884,28 +1062,21 @@ function getMembers(data) {
     ----------------------------------------------------- */
 
     const unique = [];
-
     const seen = new Set();
 
 
     members.forEach(member => {
 
         const name =
-            typeof member === "object"
-                ? (
-                    member.name ||
-                    member.studentName ||
-                    member.memberName ||
-                    member.MemberName ||
-                    ""
-                )
-                : String(member);
+            String(
+                member?.name ||
+                ""
+            )
+                .trim();
 
 
         const key =
-            String(name)
-                .trim()
-                .toLowerCase();
+            name.toLowerCase();
 
 
         if (
@@ -914,7 +1085,6 @@ function getMembers(data) {
         ) {
 
             seen.add(key);
-
             unique.push(member);
 
         }
@@ -937,66 +1107,50 @@ function getTeamSize(data) {
         !data ||
         typeof data !== "object"
     ) {
-
         return 1;
-
     }
 
 
     const fields = [
-
-        "teamSize",
         "TeamSize",
+        "teamSize",
         "team_size",
         "membersCount",
         "memberCount",
         "numberOfMembers",
         "numberOfTeamMembers",
         "teamMembersCount",
-        "participantCount",
-        "participants",
-        "TeamMembers"
-
+        "participantCount"
     ];
 
 
-    for (
-        const field of fields
-    ) {
+    for (const field of fields) {
+
+        const value = data[field];
+
 
         if (
-            data[field] === undefined ||
-            data[field] === null ||
-            String(data[field]).trim() === ""
+            value === undefined ||
+            value === null ||
+            String(value).trim() === ""
         ) {
-
             continue;
-
         }
 
 
-        const match =
-            String(data[field])
-                .match(/\d+/);
+        const number =
+            parseInt(
+                String(value).match(/\d+/)?.[0] || "",
+                10
+            );
 
 
-        if (match) {
+        if (
+            Number.isFinite(number) &&
+            number >= 1
+        ) {
 
-            const number =
-                parseInt(
-                    match[0],
-                    10
-                );
-
-
-            if (
-                Number.isFinite(number) &&
-                number > 0
-            ) {
-
-                return number;
-
-            }
+            return number;
 
         }
 
@@ -1008,41 +1162,13 @@ function getTeamSize(data) {
 
 
     if (members.length > 0) {
-
-        return members.length + 1;
-
-    }
-
-
-    for (
-        let i = 2;
-        i <= 10;
-        i++
-    ) {
-
-        const fields = [
-
-            `Member${i}Name`,
-            `member${i}Name`,
-            `member${i}`,
-            `Member${i}`
-
-        ];
-
-
-        if (
-            fields.some(
-                field =>
-                    data[field] !== undefined &&
-                    data[field] !== null &&
-                    String(data[field]).trim()
-            )
-        ) {
-
-            return i;
-
-        }
-
+        return Math.min(
+            Math.max(
+                members.length + 1,
+                1
+            ),
+            5
+        );
     }
 
 
@@ -1057,86 +1183,19 @@ function getTeamSize(data) {
 
 function normalizeType(data) {
 
-    if (
-        getTeamSize(data) > 1
-    ) {
+    const teamSize =
+        getTeamSize(data);
 
+
+    if (teamSize > 1) {
         return "team";
-
     }
 
 
     if (
         getMembers(data).length > 0
     ) {
-
         return "team";
-
-    }
-
-
-    for (
-        let i = 2;
-        i <= 10;
-        i++
-    ) {
-
-        const fields = [
-
-            `Member${i}Name`,
-            `member${i}Name`,
-            `member${i}`,
-            `Member${i}`
-
-        ];
-
-
-        if (
-            fields.some(
-                field =>
-                    data?.[field] !== undefined &&
-                    data?.[field] !== null &&
-                    String(data[field]).trim()
-            )
-        ) {
-
-            return "team";
-
-        }
-
-    }
-
-
-    const teamName =
-        String(
-            getTeamName(data)
-        )
-            .trim()
-            .toLowerCase();
-
-
-    const placeholders = [
-
-        "",
-        "—",
-        "solo",
-        "solo participant",
-        "individual",
-        "individual participant",
-        "n/a",
-        "na",
-        "none"
-
-    ];
-
-
-    if (
-        teamName &&
-        !placeholders.includes(teamName)
-    ) {
-
-        return "team";
-
     }
 
 
@@ -1160,9 +1219,36 @@ function normalizeType(data) {
     if (
         rawType.includes("team")
     ) {
-
         return "team";
+    }
 
+
+    const teamName =
+        String(
+            getTeamName(data)
+        )
+            .trim()
+            .toLowerCase();
+
+
+    const soloValues = [
+        "",
+        "—",
+        "solo",
+        "solo participant",
+        "individual",
+        "individual participant",
+        "n/a",
+        "na",
+        "none"
+    ];
+
+
+    if (
+        teamName &&
+        !soloValues.includes(teamName)
+    ) {
+        return "team";
     }
 
 
@@ -1172,126 +1258,35 @@ function normalizeType(data) {
 
 
 /* =========================================================
-   EVENTS
-========================================================= */
-
-function getEvents(data) {
-
-    const raw =
-        firstValue(
-            data,
-            [
-                "events",
-                "event",
-                "selectedEvents",
-                "Events"
-            ],
-            []
-        );
-
-
-    if (Array.isArray(raw)) {
-
-        return raw;
-
-    }
-
-
-    if (
-        raw &&
-        typeof raw === "object"
-    ) {
-
-        return Object.values(raw);
-
-    }
-
-
-    if (
-        typeof raw === "string"
-    ) {
-
-        return raw
-            .split(/\r?\n|,/)
-            .map(
-                value =>
-                    value.trim()
-            )
-            .filter(Boolean);
-
-    }
-
-
-    return [];
-
-}
-
-
-function hasEvent(
-    data,
-    eventName
-) {
-
-    const target =
-        eventName
-            .trim()
-            .toLowerCase();
-
-
-    return getEvents(data)
-        .some(
-            event =>
-                String(event)
-                    .trim()
-                    .toLowerCase() ===
-                target
-        );
-
-}
-
-
-/* =========================================================
-   DATE
+   DATE FORMAT
 ========================================================= */
 
 function formatDate(value) {
 
     if (!value) {
-
         return "—";
-
     }
 
 
     let date;
 
 
-    if (
-        typeof value === "number"
-    ) {
-
-        date =
-            new Date(value);
-
+    if (value instanceof Date) {
+        date = value;
     }
     else if (
-        !Number.isNaN(
-            Number(value)
-        ) &&
+        typeof value === "number"
+    ) {
+        date = new Date(value);
+    }
+    else if (
+        !Number.isNaN(Number(value)) &&
         String(value).trim() !== ""
     ) {
-
-        date =
-            new Date(
-                Number(value)
-            );
-
+        date = new Date(Number(value));
     }
     else {
-
-        date =
-            new Date(value);
-
+        date = new Date(value);
     }
 
 
@@ -1300,9 +1295,7 @@ function formatDate(value) {
             date.getTime()
         )
     ) {
-
         return String(value);
-
     }
 
 
@@ -1324,10 +1317,7 @@ function formatDate(value) {
    SEARCH
 ========================================================= */
 
-function matchesSearch(
-    data,
-    key
-) {
+function matchesSearch(data, key) {
 
     const query =
         search?.value
@@ -1337,54 +1327,22 @@ function matchesSearch(
 
 
     if (!query) {
-
         return true;
-
     }
 
 
     const members =
         getMembers(data)
-            .map(member => {
-
-                if (
-                    member &&
-                    typeof member === "object"
-                ) {
-
-                    return [
-
-                        member.name ||
-                        member.studentName ||
-                        member.memberName ||
-                        "",
-
-                        member.class ||
-                        member.studentClass ||
-                        "",
-
-                        member.section ||
-                        member.studentSection ||
-                        ""
-
-                    ].join(" ");
-
-                }
-
-                return String(member);
-
-            });
+            .flatMap(member => [
+                member.name,
+                member.class,
+                member.section
+            ]);
 
 
     const searchable = [
-
         key,
-
-        getRegistrationId(
-            data,
-            key
-        ),
-
+        getRegistrationId(data, key),
         getName(data),
         getClassName(data),
         getSection(data),
@@ -1392,19 +1350,17 @@ function matchesSearch(
         getEmail(data),
         getTeamName(data),
         getRemarks(data),
+        getRegistrationStatus(data),
         normalizeType(data),
         getTeamSize(data),
         ...getEvents(data),
         ...members
-
     ]
         .join(" ")
         .toLowerCase();
 
 
-    return searchable.includes(
-        query
-    );
+    return searchable.includes(query);
 
 }
 
@@ -1416,39 +1372,28 @@ function matchesSearch(
 function matchesFilters(data) {
 
     const selectedType =
-        typeFilter?.value ||
-        "all";
+        typeFilter?.value || "all";
 
     const selectedEvent =
-        eventFilter?.value ||
-        "all";
+        eventFilter?.value || "all";
 
     const selectedStatus =
-        statusFilter?.value ||
-        "all";
+        statusFilter?.value || "all";
 
 
     if (
         selectedType !== "all" &&
-        normalizeType(data) !==
-        selectedType
+        normalizeType(data) !== selectedType
     ) {
-
         return false;
-
     }
 
 
     if (
         selectedEvent !== "all" &&
-        !hasEvent(
-            data,
-            selectedEvent
-        )
+        !hasEvent(data, selectedEvent)
     ) {
-
         return false;
-
     }
 
 
@@ -1458,9 +1403,7 @@ function matchesFilters(data) {
             .toLowerCase() !==
         selectedStatus.toLowerCase()
     ) {
-
         return false;
-
     }
 
 
@@ -1477,18 +1420,31 @@ function filteredEntries() {
 
     return Object
         .entries(registrations)
-        .filter(
-            ([key, data]) =>
-                matchesSearch(
-                    data,
-                    key
-                )
+        .filter(([key, data]) =>
+            matchesSearch(data, key)
         )
-        .filter(
-            ([, data]) =>
-                matchesFilters(data)
+        .filter(([, data]) =>
+            matchesFilters(data)
         )
-        .reverse();
+        .sort((a, b) => {
+
+            const aTime =
+                getTimestamp(a[1]);
+
+            const bTime =
+                getTimestamp(b[1]);
+
+
+            const aDate =
+                new Date(aTime).getTime() || 0;
+
+            const bDate =
+                new Date(bTime).getTime() || 0;
+
+
+            return bDate - aDate;
+
+        });
 
 }
 
@@ -1500,44 +1456,34 @@ function filteredEntries() {
 function renderStats() {
 
     const entries =
-        Object.entries(
-            registrations
-        );
+        Object.entries(registrations);
 
 
     const solo =
         entries.filter(
             ([, data]) =>
-                normalizeType(data) ===
-                "solo"
+                normalizeType(data) === "solo"
         ).length;
 
 
     const team =
         entries.filter(
             ([, data]) =>
-                normalizeType(data) ===
-                "team"
+                normalizeType(data) === "team"
         ).length;
 
 
     const race =
         entries.filter(
             ([, data]) =>
-                hasEvent(
-                    data,
-                    "Robo Race"
-                )
+                hasEvent(data, "Robo Race")
         ).length;
 
 
     const war =
         entries.filter(
             ([, data]) =>
-                hasEvent(
-                    data,
-                    "Robo War"
-                )
+                hasEvent(data, "Robo War")
         ).length;
 
 
@@ -1563,10 +1509,7 @@ function renderStats() {
 
     const totalEventEntries =
         entries.reduce(
-            (
-                total,
-                [, data]
-            ) =>
+            (total, [, data]) =>
                 total +
                 getEvents(data).length,
             0
@@ -1574,66 +1517,44 @@ function renderStats() {
 
 
     if (totalRegistrations) {
-
         totalRegistrations.textContent =
             entries.length;
-
     }
 
 
     if (soloCount) {
-
-        soloCount.textContent =
-            solo;
-
+        soloCount.textContent = solo;
     }
 
 
     if (teamCount) {
-
-        teamCount.textContent =
-            team;
-
+        teamCount.textContent = team;
     }
 
 
     if (eventEntries) {
-
         eventEntries.textContent =
             totalEventEntries;
-
     }
 
 
     if (raceCount) {
-
-        raceCount.textContent =
-            race;
-
+        raceCount.textContent = race;
     }
 
 
     if (warCount) {
-
-        warCount.textContent =
-            war;
-
+        warCount.textContent = war;
     }
 
 
     if (tugCount) {
-
-        tugCount.textContent =
-            tug;
-
+        tugCount.textContent = tug;
     }
 
 
     if (soccerCount) {
-
-        soccerCount.textContent =
-            soccer;
-
+        soccerCount.textContent = soccer;
     }
 
 }
@@ -1653,17 +1574,12 @@ async function setRegistrationStatus(
 
 
     if (!data) {
-
         return;
-
     }
 
 
     const registrationId =
-        getRegistrationId(
-            data,
-            key
-        );
+        getRegistrationId(data, key);
 
 
     const note =
@@ -1676,33 +1592,79 @@ async function setRegistrationStatus(
 
     try {
 
-        const now =
-            Date.now();
+        const now = Date.now();
 
 
-        await update(
-            ref(db),
-            {
+        const updates = {
 
-                [`${REGISTRATIONS_PATH}/${key}/status`]:
-                    newStatus,
+            [`${REGISTRATIONS_PATH}/${key}/status`]:
+                newStatus,
 
-                [`${REGISTRATIONS_PATH}/${key}/statusNote`]:
-                    note,
+            [`${REGISTRATIONS_PATH}/${key}/statusNote`]:
+                note,
 
-                [`${REGISTRATIONS_PATH}/${key}/statusUpdatedAt`]:
-                    now,
+            [`${REGISTRATIONS_PATH}/${key}/statusUpdatedAt`]:
+                now
 
-                [`${STATUS_LOOKUP_PATH}/${registrationId}`]:
-                    {
-                        registrationId,
-                        status: newStatus,
-                        statusNote: note,
-                        updatedAt: now
-                    }
+        };
 
-            }
-        );
+
+        /*
+         * Keep lookup synchronized.
+         *
+         * IMPORTANT:
+         * The current supplied registration Rules do not
+         * define registrationStatusLookup.
+         *
+         * Therefore this secondary write can be denied by
+         * Firebase Rules without preventing the actual
+         * registration status update.
+         */
+
+        updates[
+            `${STATUS_LOOKUP_PATH}/${registrationId}`
+        ] = {
+            registrationId,
+            status: newStatus,
+            statusNote: note,
+            updatedAt: now
+        };
+
+
+        try {
+
+            await update(
+                ref(db),
+                updates
+            );
+
+        }
+        catch (error) {
+
+            /*
+             * If only the lookup path is denied,
+             * retry the actual registration update.
+             */
+
+            console.warn(
+                "Status lookup update failed. Retrying registration status only.",
+                error
+            );
+
+
+            await update(
+                ref(
+                    db,
+                    `${REGISTRATIONS_PATH}/${key}`
+                ),
+                {
+                    status: newStatus,
+                    statusNote: note,
+                    statusUpdatedAt: now
+                }
+            );
+
+        }
 
 
         showToast(
@@ -1719,7 +1681,7 @@ async function setRegistrationStatus(
 
 
         showStatus(
-            "Could not update registration status.",
+            "Could not update registration status. Check Firebase Rules.",
             "error"
         );
 
@@ -1738,28 +1700,27 @@ function handleRowAction(button) {
         button.dataset.key;
 
 
+    if (!key) {
+        return;
+    }
+
+
     if (
-        button.classList.contains(
-            "edit-btn"
-        )
+        button.classList.contains("edit-btn")
     ) {
 
         openEdit(key);
 
     }
     else if (
-        button.classList.contains(
-            "delete-btn"
-        )
+        button.classList.contains("delete-btn")
     ) {
 
         openConfirmDelete(key);
 
     }
     else if (
-        button.classList.contains(
-            "approve-btn"
-        )
+        button.classList.contains("approve-btn")
     ) {
 
         setRegistrationStatus(
@@ -1769,9 +1730,7 @@ function handleRowAction(button) {
 
     }
     else if (
-        button.classList.contains(
-            "reject-btn"
-        )
+        button.classList.contains("reject-btn")
     ) {
 
         setRegistrationStatus(
@@ -1793,48 +1752,16 @@ function handleRowAction(button) {
    MEMBER HTML
 ========================================================= */
 
-function memberHTML(
-    member,
-    index
-) {
+function memberHTML(member, index) {
 
-    let name = "";
-    let className = "";
-    let section = "";
+    const name =
+        member?.name || "Member";
 
+    const className =
+        member?.class || "";
 
-    if (
-        member &&
-        typeof member === "object"
-    ) {
-
-        name =
-            member.name ||
-            member.studentName ||
-            member.memberName ||
-            member.MemberName ||
-            "Member";
-
-
-        className =
-            member.class ||
-            member.studentClass ||
-            member.className ||
-            "";
-
-
-        section =
-            member.section ||
-            member.studentSection ||
-            "";
-
-    }
-    else {
-
-        name =
-            String(member);
-
-    }
+    const section =
+        member?.section || "";
 
 
     return `
@@ -1917,9 +1844,7 @@ function memberHTML(
 function renderTable() {
 
     if (!registrationBody) {
-
         return;
-
     }
 
 
@@ -1973,10 +1898,7 @@ function renderTable() {
 
 
         if (mobileRegistrations) {
-
-            mobileRegistrations.innerHTML =
-                "";
-
+            mobileRegistrations.innerHTML = "";
         }
 
 
@@ -1991,10 +1913,7 @@ function renderTable() {
                 ([key, data]) => {
 
                     const id =
-                        getRegistrationId(
-                            data,
-                            key
-                        );
+                        getRegistrationId(data, key);
 
                     const name =
                         getName(data);
@@ -2023,10 +1942,7 @@ function renderTable() {
                     const statusClass =
                         registrationStatus
                             .toLowerCase()
-                            .replace(
-                                /\s+/g,
-                                "-"
-                            );
+                            .replace(/\s+/g, "-");
 
 
                     return `
@@ -2112,7 +2028,9 @@ function renderTable() {
                                                             <span
                                                                 class="event-pill"
                                                             >
-                                                                ${escapeHTML(event)}
+                                                                ${escapeHTML(
+                                                                    event
+                                                                )}
                                                             </span>
                                                         `
                                                 )
@@ -2214,8 +2132,7 @@ function renderTable() {
 
             button.addEventListener(
                 "click",
-                () =>
-                    handleRowAction(button)
+                () => handleRowAction(button)
             );
 
         });
@@ -2233,9 +2150,7 @@ function renderTable() {
 function renderMobile(entries) {
 
     if (!mobileRegistrations) {
-
         return;
-
     }
 
 
@@ -2245,10 +2160,7 @@ function renderMobile(entries) {
                 ([key, data]) => {
 
                     const id =
-                        getRegistrationId(
-                            data,
-                            key
-                        );
+                        getRegistrationId(data, key);
 
                     const name =
                         getName(data);
@@ -2310,6 +2222,18 @@ function renderMobile(entries) {
                                 <strong>
                                     ${escapeHTML(name)}
                                 </strong>
+
+                                <span>
+                                    Class:
+                                    ${escapeHTML(
+                                        getClassName(data)
+                                    )}
+                                    •
+                                    Section:
+                                    ${escapeHTML(
+                                        getSection(data)
+                                    )}
+                                </span>
 
                                 <span>
                                     Team:
@@ -2431,8 +2355,7 @@ function renderMobile(entries) {
 
             button.addEventListener(
                 "click",
-                () =>
-                    handleRowAction(button)
+                () => handleRowAction(button)
             );
 
         });
@@ -2447,7 +2370,6 @@ function renderMobile(entries) {
 function render() {
 
     renderStats();
-
     renderTable();
 
 }
@@ -2476,10 +2398,7 @@ function openDetail(key) {
 
 
     const id =
-        getRegistrationId(
-            data,
-            key
-        );
+        getRegistrationId(data, key);
 
     const members =
         getMembers(data);
@@ -2498,10 +2417,7 @@ function openDetail(key) {
 
 
     if (detailId) {
-
-        detailId.textContent =
-            id;
-
+        detailId.textContent = id;
     }
 
 
@@ -2615,6 +2531,19 @@ function openDetail(key) {
                     </strong>
                 </div>
 
+                <div class="detail-item">
+                    <span>CREATED BY</span>
+                    <strong>
+                        ${escapeHTML(
+                            firstValue(
+                                data,
+                                ["createdBy"],
+                                "—"
+                            )
+                        )}
+                    </strong>
+                </div>
+
             </div>
 
             <div class="detail-block">
@@ -2683,9 +2612,7 @@ function openDetail(key) {
                     ${escapeHTML(
                         firstValue(
                             data,
-                            [
-                                "statusNote"
-                            ],
+                            ["statusNote"],
                             "Our team will review your registration and contact you soon."
                         )
                     )}
@@ -2699,8 +2626,7 @@ function openDetail(key) {
 
                 <p>
                     ${escapeHTML(
-                        getRemarks(data) ||
-                        "—"
+                        getRemarks(data) || "—"
                     )}
                 </p>
 
@@ -2742,12 +2668,9 @@ detailOverlay?.addEventListener(
     event => {
 
         if (
-            event.target ===
-            detailOverlay
+            event.target === detailOverlay
         ) {
-
             closeDetailModal();
-
         }
 
     }
@@ -2765,41 +2688,36 @@ function openEdit(key) {
 
 
     if (!data) {
-
         return;
-
     }
 
 
     if (editKey) {
-
-        editKey.value =
-            key;
-
+        editKey.value = key;
     }
 
 
     if (editStudentName) {
-
         editStudentName.value =
-            getName(data);
-
+            getName(data) === "—"
+                ? ""
+                : getName(data);
     }
 
 
     if (editStudentClass) {
-
         editStudentClass.value =
-            getClassName(data);
-
+            getClassName(data) === "—"
+                ? ""
+                : getClassName(data);
     }
 
 
     if (editStudentSection) {
-
         editStudentSection.value =
-            getSection(data);
-
+            getSection(data) === "—"
+                ? ""
+                : getSection(data);
     }
 
 
@@ -2843,10 +2761,8 @@ function openEdit(key) {
 
 
     if (editRemarks) {
-
         editRemarks.value =
             getRemarks(data);
-
     }
 
 
@@ -2860,31 +2776,11 @@ function openEdit(key) {
             members
                 .map(member => {
 
-                    if (
-                        member &&
-                        typeof member === "object"
-                    ) {
-
-                        return [
-
-                            member.name ||
-                            member.studentName ||
-                            member.memberName ||
-                            "",
-
-                            member.class ||
-                            member.studentClass ||
-                            "",
-
-                            member.section ||
-                            member.studentSection ||
-                            ""
-
-                        ].join(" | ");
-
-                    }
-
-                    return String(member);
+                    return [
+                        member.name || "",
+                        member.class || "",
+                        member.section || ""
+                    ].join(" | ");
 
                 })
                 .join("\n");
@@ -2893,10 +2789,7 @@ function openEdit(key) {
 
 
     if (editMessage) {
-
-        editMessage.textContent =
-            "";
-
+        editMessage.textContent = "";
     }
 
 
@@ -2923,9 +2816,7 @@ editForm?.addEventListener(
 
 
         if (!key) {
-
             return;
-
         }
 
 
@@ -2934,9 +2825,7 @@ editForm?.addEventListener(
 
 
         if (!original) {
-
             return;
-
         }
 
 
@@ -2945,9 +2834,16 @@ editForm?.addEventListener(
             const updates = {};
 
 
+            /*
+             * IMPORTANT:
+             *
+             * These are the actual field names used by
+             * your current Firebase registration Rules.
+             */
+
             if (editStudentName) {
 
-                updates.studentName =
+                updates.StudentName =
                     editStudentName.value.trim();
 
             }
@@ -2955,7 +2851,7 @@ editForm?.addEventListener(
 
             if (editStudentClass) {
 
-                updates.studentClass =
+                updates.Class =
                     editStudentClass.value.trim();
 
             }
@@ -2963,7 +2859,7 @@ editForm?.addEventListener(
 
             if (editStudentSection) {
 
-                updates.studentSection =
+                updates.Section =
                     editStudentSection.value.trim();
 
             }
@@ -2971,7 +2867,7 @@ editForm?.addEventListener(
 
             if (editMobileNumber) {
 
-                updates.mobileNumber =
+                updates.MobileNumber =
                     editMobileNumber.value.trim();
 
             }
@@ -2979,15 +2875,20 @@ editForm?.addEventListener(
 
             if (editEmailAddress) {
 
-                updates.emailAddress =
+                updates.EmailAddress =
                     editEmailAddress.value.trim();
 
             }
 
 
+            /*
+             * TeamName is optional in your Rules.
+             * Keep it if the admin UI has the field.
+             */
+
             if (editTeamName) {
 
-                updates.teamName =
+                updates.TeamName =
                     editTeamName.value.trim();
 
             }
@@ -3001,38 +2902,54 @@ editForm?.addEventListener(
             }
 
 
+            /*
+             * Preserve required registration fields.
+             */
+
+            updates.registrationId =
+                getRegistrationId(
+                    original,
+                    key
+                );
+
+            updates.Events =
+                original.Events ??
+                original.events ??
+                [];
+
+            updates.TeamSize =
+                getTeamSize(original);
+
+            updates.status =
+                getRegistrationStatus(original);
+
+            updates.createdBy =
+                original.createdBy || "";
+
+
+            /*
+             * Keep original data and replace only
+             * the editable fields.
+             */
+
+            const updatedRegistration = {
+                ...original,
+                ...updates
+            };
+
+
+            /*
+             * If the database currently stores the
+             * canonical fields, update the complete
+             * registration object.
+             */
+
             await update(
-                ref(db),
-                {
-
-                    [`${REGISTRATIONS_PATH}/${key}`]:
-                        {
-                            ...original,
-                            ...updates
-                        },
-
-                    [`${STATUS_LOOKUP_PATH}/${getRegistrationId(original, key)}`]:
-                        {
-                            registrationId:
-                                getRegistrationId(
-                                    original,
-                                    key
-                                ),
-
-                            status:
-                                getRegistrationStatus(
-                                    original
-                                ),
-
-                            statusNote:
-                                original.statusNote ||
-                                "Our team will review your registration and contact you soon.",
-
-                            updatedAt:
-                                Date.now()
-                        }
-
-                }
+                ref(
+                    db,
+                    `${REGISTRATIONS_PATH}/${key}`
+                ),
+                updatedRegistration
             );
 
 
@@ -3055,13 +2972,13 @@ editForm?.addEventListener(
             if (editMessage) {
 
                 editMessage.textContent =
-                    "Could not update registration.";
+                    "Could not update registration. Check Firebase Rules and the required fields.";
 
             }
 
 
             showStatus(
-                "Firebase denied the update.",
+                "Firebase denied the registration update.",
                 "error"
             );
 
@@ -3101,12 +3018,9 @@ editOverlay?.addEventListener(
     event => {
 
         if (
-            event.target ===
-            editOverlay
+            event.target === editOverlay
         ) {
-
             closeEditModal();
-
         }
 
     }
@@ -3124,24 +3038,18 @@ function openConfirmDelete(key) {
 
 
     if (!data) {
-
         return;
-
     }
 
 
-    pendingDeleteKey =
-        key;
+    pendingDeleteKey = key;
 
 
     if (confirmMessage) {
 
         confirmMessage.textContent =
             `This will permanently delete registration ${
-                getRegistrationId(
-                    data,
-                    key
-                )
+                getRegistrationId(data, key)
             } (${getName(data)}) from the database.`;
 
     }
@@ -3154,14 +3062,17 @@ function openConfirmDelete(key) {
 }
 
 
+/* =========================================================
+   CLOSE DELETE
+========================================================= */
+
 function closeConfirmModal() {
 
     confirmOverlay
         ?.classList
         .add("hidden");
 
-    pendingDeleteKey =
-        null;
+    pendingDeleteKey = null;
 
 }
 
@@ -3172,6 +3083,10 @@ cancelDeleteBtn?.addEventListener(
 );
 
 
+/* =========================================================
+   CONFIRM DELETE
+========================================================= */
+
 confirmDeleteBtn?.addEventListener(
     "click",
     async () => {
@@ -3181,9 +3096,7 @@ confirmDeleteBtn?.addEventListener(
 
 
         if (!key) {
-
             return;
-
         }
 
 
@@ -3193,17 +3106,29 @@ confirmDeleteBtn?.addEventListener(
 
         try {
 
-            confirmDeleteBtn.disabled =
-                true;
+            confirmDeleteBtn.disabled = true;
 
-            confirmDeleteBtn.innerHTML =
-                `
-                    <i
-                        class="fa-solid fa-spinner fa-spin"
-                    ></i>
-                    Deleting...
-                `;
+            confirmDeleteBtn.innerHTML = `
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                Deleting...
+            `;
 
+
+            const deleteUpdates = {
+
+                [`${REGISTRATIONS_PATH}/${key}`]:
+                    null
+
+            };
+
+
+            /*
+             * registrationStatusLookup is not included
+             * in the supplied registration Rules.
+             *
+             * Try to remove it, but retry registration
+             * deletion alone if Rules deny that path.
+             */
 
             const registration =
                 registrations[key];
@@ -3218,14 +3143,6 @@ confirmDeleteBtn?.addEventListener(
                     : "";
 
 
-            const deleteUpdates = {
-
-                [`${REGISTRATIONS_PATH}/${key}`]:
-                    null
-
-            };
-
-
             if (registrationId) {
 
                 deleteUpdates[
@@ -3235,10 +3152,31 @@ confirmDeleteBtn?.addEventListener(
             }
 
 
-            await update(
-                ref(db),
-                deleteUpdates
-            );
+            try {
+
+                await update(
+                    ref(db),
+                    deleteUpdates
+                );
+
+            }
+            catch (error) {
+
+                console.warn(
+                    "Lookup deletion failed. Retrying registration deletion only.",
+                    error
+                );
+
+
+                await update(
+                    ref(
+                        db,
+                        `${REGISTRATIONS_PATH}/${key}`
+                    ),
+                    null
+                );
+
+            }
 
 
             showToast(
@@ -3265,8 +3203,7 @@ confirmDeleteBtn?.addEventListener(
         }
         finally {
 
-            confirmDeleteBtn.disabled =
-                false;
+            confirmDeleteBtn.disabled = false;
 
             confirmDeleteBtn.innerHTML =
                 originalLabel;
@@ -3291,9 +3228,7 @@ function loadRegistrations() {
     if (firebaseListener) {
 
         firebaseListener();
-
-        firebaseListener =
-            null;
+        firebaseListener = null;
 
     }
 
@@ -3346,7 +3281,7 @@ function loadRegistrations() {
 
 
                 showStatus(
-                    "Firebase could not load registrations.",
+                    "Firebase could not load registrations. Check admin authorization and Firebase Rules.",
                     "error"
                 );
 
@@ -3371,9 +3306,7 @@ function loadWebsiteContent() {
         .then(snapshot => {
 
             if (!snapshot.exists()) {
-
                 return;
-
             }
 
 
@@ -3419,16 +3352,11 @@ function loadWebsiteContent() {
                     ([id, value]) => {
 
                         const element =
-                            document.getElementById(
-                                id
-                            );
+                            document.getElementById(id);
 
 
                         if (element) {
-
-                            element.value =
-                                value;
-
+                            element.value = value;
                         }
 
                     }
@@ -3478,16 +3406,11 @@ function loadWebsiteContent() {
                     ([id, value]) => {
 
                         const element =
-                            document.getElementById(
-                                id
-                            );
+                            document.getElementById(id);
 
 
                         if (element) {
-
-                            element.value =
-                                value;
-
+                            element.value = value;
                         }
 
                     }
@@ -3515,10 +3438,8 @@ saveContentBtn?.addEventListener(
     async () => {
 
         if (contentStatus) {
-
             contentStatus.textContent =
                 "Saving...";
-
         }
 
 
@@ -3740,35 +3661,13 @@ function exportCSV() {
                 getTeamSize(data),
 
                 getMembers(data)
-                    .map(member => {
-
-                        if (
-                            member &&
-                            typeof member === "object"
-                        ) {
-
-                            return [
-
-                                member.name ||
-                                member.studentName ||
-                                member.memberName ||
-                                "",
-
-                                member.class ||
-                                member.studentClass ||
-                                "",
-
-                                member.section ||
-                                member.studentSection ||
-                                ""
-
-                            ].join(" | ");
-
-                        }
-
-                        return String(member);
-
-                    })
+                    .map(member =>
+                        [
+                            member.name || "",
+                            member.class || "",
+                            member.section || ""
+                        ].join(" | ")
+                    )
                     .join("; "),
 
                 getEvents(data)
@@ -3805,8 +3704,7 @@ function exportCSV() {
     const blob =
         new Blob(
             [
-                "\uFEFF" +
-                csv
+                "\uFEFF" + csv
             ],
             {
                 type:
@@ -3816,19 +3714,14 @@ function exportCSV() {
 
 
     const url =
-        URL.createObjectURL(
-            blob
-        );
+        URL.createObjectURL(blob);
 
 
     const link =
-        document.createElement(
-            "a"
-        );
+        document.createElement("a");
 
 
-    link.href =
-        url;
+    link.href = url;
 
 
     link.download =
@@ -3850,9 +3743,7 @@ function exportCSV() {
     link.remove();
 
 
-    URL.revokeObjectURL(
-        url
-    );
+    URL.revokeObjectURL(url);
 
 
     showToast(
@@ -3873,15 +3764,13 @@ search?.addEventListener(
     "input",
     () => {
 
-        clearTimeout(
-            searchTimeout
-        );
+        clearTimeout(searchTimeout);
 
 
         searchTimeout =
             setTimeout(
                 renderTable,
-                300
+                250
             );
 
     }
@@ -3911,10 +3800,7 @@ clearSearch?.addEventListener(
     () => {
 
         if (search) {
-
-            search.value =
-                "";
-
+            search.value = "";
         }
 
 
@@ -3976,15 +3862,8 @@ logoutBtn?.addEventListener(
 
 
 /* =========================================================
-   ADMIN AUTHENTICATION
+   AUTH ERROR
 ========================================================= */
-
-let authCheckFinished = false;
-
-
-/* ---------------------------------------------------------
-   AUTH ERROR DISPLAY
---------------------------------------------------------- */
 
 function showAuthError(message) {
 
@@ -4014,18 +3893,14 @@ function showAuthError(message) {
 
 
         if (title) {
-
             title.textContent =
                 "Authentication Error";
-
         }
 
 
         if (text) {
-
             text.textContent =
                 message;
-
         }
 
     }
@@ -4039,9 +3914,9 @@ function showAuthError(message) {
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    AUTH STATE
---------------------------------------------------------- */
+========================================================= */
 
 onAuthStateChanged(
     auth,
@@ -4068,9 +3943,7 @@ onAuthStateChanged(
         if (!user) {
 
             if (authCheckFinished) {
-
                 return;
-
             }
 
 
@@ -4089,9 +3962,7 @@ onAuthStateChanged(
         ------------------------------------------------- */
 
         if (authCheckFinished) {
-
             return;
-
         }
 
 
@@ -4129,13 +4000,19 @@ onAuthStateChanged(
             );
 
 
+            /*
+             * Your Rules use:
+             *
+             * /admins/{uid} = true
+             */
+
             const databaseAdmin =
                 adminSnapshot.exists() &&
                 adminSnapshot.val() === true;
 
 
             /* ---------------------------------------------
-               OPTIONAL CONFIGURED ADMIN UID
+               OPTIONAL ADMIN UID
             --------------------------------------------- */
 
             const configuredAdmin =
@@ -4143,8 +4020,7 @@ onAuthStateChanged(
                 ADMIN_UID.trim() !== "" &&
                 ADMIN_UID !==
                     "REPLACE_WITH_MAIN_PROJECT_ADMIN_UID" &&
-                user.uid ===
-                    ADMIN_UID;
+                user.uid === ADMIN_UID;
 
 
             /* ---------------------------------------------
@@ -4199,8 +4075,7 @@ onAuthStateChanged(
                SUCCESS
             --------------------------------------------- */
 
-            authCheckFinished =
-                true;
+            authCheckFinished = true;
 
 
             if (adminName) {
@@ -4264,9 +4139,9 @@ onAuthStateChanged(
             ) {
 
                 message =
-                    "Firebase denied access to the administrator record. Check /admins/" +
+                    "Firebase denied access to /admins/" +
                     user.uid +
-                    " and your Firebase Rules.";
+                    ". Make sure this UID is authorized in /admins and Firebase Rules allow the read.";
 
             }
             else if (
@@ -4288,9 +4163,7 @@ onAuthStateChanged(
             }
 
 
-            showAuthError(
-                message
-            );
+            showAuthError(message);
 
         }
 
@@ -4314,7 +4187,7 @@ setTimeout(
         ) {
 
             showAuthError(
-                "Authentication is taking too long. Check your Firebase configuration, Authentication settings, Firebase Rules, and internet connection."
+                "Authentication is taking too long. Check Firebase Authentication, Firebase configuration, Rules, and your internet connection."
             );
 
         }
@@ -4329,14 +4202,10 @@ setTimeout(
 ========================================================= */
 
 const navLinks =
-    document.querySelectorAll(
-        ".nav-link"
-    );
+    document.querySelectorAll(".nav-link");
 
 const sections =
-    document.querySelectorAll(
-        ".page-section"
-    );
+    document.querySelectorAll(".page-section");
 
 
 navLinks.forEach(
@@ -4371,15 +4240,12 @@ navLinks.forEach(
                 );
 
 
-                link.classList.add(
-                    "active"
-                );
+                link.classList.add("active");
 
 
                 const href =
-                    link.getAttribute(
-                        "href"
-                    ) || "";
+                    link.getAttribute("href") ||
+                    "";
 
 
                 const targetId =
@@ -4407,17 +4273,6 @@ navLinks.forEach(
 
 /* =========================================================
    ADMIN MOBILE SIDEBAR
-   ---------------------------------------------------------
-   Uses:
-       #menuToggle
-       #adminSidebar
-       #sidebarOverlay
-
-   IMPORTANT:
-   - Only ONE mobile-menu implementation exists here.
-   - Uses .mobile-open for the sidebar.
-   - Uses .active for overlay.
-   - Locks body scrolling while menu is open.
 ========================================================= */
 
 document.addEventListener(
@@ -4440,10 +4295,6 @@ document.addEventListener(
             );
 
 
-        /* -------------------------------------------------
-           ELEMENT CHECK
-        ------------------------------------------------- */
-
         if (
             !menuBtn ||
             !sidebar ||
@@ -4459,41 +4310,31 @@ document.addEventListener(
         }
 
 
-        /* -------------------------------------------------
-           OPEN SIDEBAR
-        ------------------------------------------------- */
-
         function openSidebar() {
 
             sidebar.classList.add(
                 "mobile-open"
             );
 
-
             sidebarOverlay.classList.add(
                 "active"
             );
-
 
             document.body.classList.add(
                 "menu-open"
             );
 
-
             menuBtn.classList.add(
                 "active"
             );
 
-
             menuBtn.innerHTML =
                 '<i class="fa-solid fa-xmark"></i>';
-
 
             menuBtn.setAttribute(
                 "aria-label",
                 "Close menu"
             );
-
 
             menuBtn.setAttribute(
                 "aria-expanded",
@@ -4503,41 +4344,31 @@ document.addEventListener(
         }
 
 
-        /* -------------------------------------------------
-           CLOSE SIDEBAR
-        ------------------------------------------------- */
-
         function closeSidebar() {
 
             sidebar.classList.remove(
                 "mobile-open"
             );
 
-
             sidebarOverlay.classList.remove(
                 "active"
             );
-
 
             document.body.classList.remove(
                 "menu-open"
             );
 
-
             menuBtn.classList.remove(
                 "active"
             );
 
-
             menuBtn.innerHTML =
                 '<i class="fa-solid fa-bars"></i>';
-
 
             menuBtn.setAttribute(
                 "aria-label",
                 "Open menu"
             );
-
 
             menuBtn.setAttribute(
                 "aria-expanded",
@@ -4546,10 +4377,6 @@ document.addEventListener(
 
         }
 
-
-        /* -------------------------------------------------
-           TOGGLE SIDEBAR
-        ------------------------------------------------- */
 
         function toggleSidebar() {
 
@@ -4571,19 +4398,11 @@ document.addEventListener(
         }
 
 
-        /* -------------------------------------------------
-           MENU BUTTON
-        ------------------------------------------------- */
-
         menuBtn.addEventListener(
             "click",
             toggleSidebar
         );
 
-
-        /* -------------------------------------------------
-           OVERLAY
-        ------------------------------------------------- */
 
         sidebarOverlay.addEventListener(
             "click",
@@ -4591,14 +4410,8 @@ document.addEventListener(
         );
 
 
-        /* -------------------------------------------------
-           SIDEBAR LINKS
-        ------------------------------------------------- */
-
         sidebar
-            .querySelectorAll(
-                ".sidebar-link"
-            )
+            .querySelectorAll(".sidebar-link")
             .forEach(
                 link => {
 
@@ -4622,17 +4435,12 @@ document.addEventListener(
             );
 
 
-        /* -------------------------------------------------
-           ESCAPE KEY
-        ------------------------------------------------- */
-
         document.addEventListener(
             "keydown",
             event => {
 
                 if (
-                    event.key ===
-                    "Escape"
+                    event.key === "Escape"
                 ) {
 
                     closeSidebar();
@@ -4642,10 +4450,6 @@ document.addEventListener(
             }
         );
 
-
-        /* -------------------------------------------------
-           RESIZE
-        ------------------------------------------------- */
 
         window.addEventListener(
             "resize",
@@ -4662,10 +4466,6 @@ document.addEventListener(
             }
         );
 
-
-        /* -------------------------------------------------
-           INITIAL ACCESSIBILITY STATE
-        ------------------------------------------------- */
 
         menuBtn.setAttribute(
             "aria-expanded",
