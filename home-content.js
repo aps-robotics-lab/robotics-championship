@@ -29,3 +29,18 @@ onValue(ref(db,"siteContent/messages"), snapshot => {
   setText("#msgTeamText",msgs.teamText || "We are excited to welcome every participant to APS Robotics Championship 2026. Build responsibly, compete respectfully and enjoy the experience.");
   setText("#msgTeamName",msgs.teamName || "APS Robotics Championship Team");
 });
+
+onValue(ref(db,"siteContent/leadership"), snapshot => {
+  if (!snapshot.exists()) return;
+  const team = snapshot.val() || {};
+  const apply = (key, photo, name, role) => {
+    const item = team[key] || {};
+    const p = document.getElementById(photo);
+    if (p && item.photoUrl) { p.src = item.photoUrl; p.style.display = ""; p.parentElement.classList.remove("photo-placeholder"); }
+    setText("#"+name, item.name);
+    setText("#"+role, item.role);
+  };
+  apply("principal","principalPhoto","principalName","principalRole");
+  apply("mentor","mentorPhoto","mentorName","mentorRole");
+  apply("coordinator","coordinatorPhoto","coordinatorName","coordinatorRole");
+});

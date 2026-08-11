@@ -1563,3 +1563,5 @@ main {
     }
 
 }
+
+.security-badge{display:inline-flex;padding:6px 10px;border-radius:999px;background:rgba(86,229,166,.08);border:1px solid rgba(86,229,166,.16);color:#56e5a6;font:700 9px Orbitron,sans-serif;letter-spacing:1px}

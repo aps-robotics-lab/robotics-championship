@@ -322,7 +322,18 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
             </section>
 
-            <section id="websiteContent" class="page-section hidden">
+            <section class="dashboard-section" id="leadershipEditor">
+  <div class="section-header"><div><span>WEBSITE CONTENT</span><h2>Leadership Photos &amp; Names</h2><p>Use hosted image URLs. For local photos, place files in <code>assets/</code> and use <code>assets/principal.jpg</code>, etc.</p></div></div>
+  <div class="content-editor-grid">
+    <div class="editor-card"><h3>Principal</h3><input id="principalNameInput" placeholder="Name"><input id="principalRoleInput" placeholder="Role"><input id="principalPhotoInput" placeholder="Photo URL"></div>
+    <div class="editor-card"><h3>Mentor</h3><input id="mentorNameInput" placeholder="Name"><input id="mentorRoleInput" placeholder="Role"><input id="mentorPhotoInput" placeholder="Photo URL"></div>
+    <div class="editor-card"><h3>Coordinator</h3><input id="coordinatorNameInput" placeholder="Name"><input id="coordinatorRoleInput" placeholder="Role"><input id="coordinatorPhotoInput" placeholder="Photo URL"></div>
+  </div>
+  <button id="saveLeadershipBtn" class="primary-btn" type="button">Save Leadership</button>
+  <div id="leadershipStatus" class="status"></div>
+</section>
+
+<section id="websiteContent" class="page-section hidden">
                 <div class="section-header">
                     <div><span>CONTENT MANAGEMENT</span><h2>Edit Messages</h2></div>
                     <button id="saveContentBtn" class="export-btn"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>

@@ -34,7 +34,7 @@
         rel="stylesheet"
         href="help.css">
 
-</head>
+<style>.help-tracker{max-width:1000px;margin:28px auto;padding:26px;border:1px solid rgba(64,223,255,.16);border-radius:24px;background:rgba(7,19,34,.68)}.tracker-heading span{font:700 10px Orbitron,sans-serif;letter-spacing:1.5px;color:#58e2ff}.tracker-heading h2{margin:7px 0}.tracker-heading p{color:#9eb5c6;font-size:13px}.tracker-form{display:grid;grid-template-columns:1fr 1fr auto;gap:12px}.tracker-form input{min-width:0;padding:13px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:#07111f;color:#fff}.tracker-form button{border:0;border-radius:12px;padding:13px 18px;cursor:pointer;background:#19d8ff;color:#02101a;font-weight:700}.tracker-status{margin-top:12px;color:#9eb5c6;font-size:13px}.track-card{margin-top:14px;padding:16px;border-radius:16px;background:rgba(0,0,0,.18)}.track-card strong{font-family:Orbitron,sans-serif}.progress{height:8px;background:#12283a;border-radius:999px;overflow:hidden;margin:12px 0}.progress span{display:block;height:100%;background:linear-gradient(90deg,#19d8ff,#56e5a6);border-radius:999px}.track-card p{color:#b7cad8;font-size:13px}@media(max-width:700px){.tracker-form{grid-template-columns:1fr}.help-tracker{margin:20px 12px}}</style></head>
 
 
 <body>
@@ -435,7 +435,18 @@
          INFO
     ================================================= -->
 
-    <section class="help-info">
+    <section class="help-tracker" id="track">
+  <div class="tracker-heading"><span>TRACK YOUR REQUEST</span><h2>Check Help Progress</h2><p>Use the APS-XXXXX reference ID and the same email address used when you submitted the request.</p></div>
+  <form id="helpTrackerForm" class="tracker-form">
+    <input id="trackReference" required maxlength="9" placeholder="APS-XXXXX" autocomplete="off">
+    <input id="trackEmail" required type="email" placeholder="Your email address" autocomplete="email">
+    <button type="submit">Check Progress</button>
+  </form>
+  <div id="trackerStatus" class="tracker-status"></div>
+  <div id="trackerResult"></div>
+</section>
+
+<section class="help-info">
 
         <div>
 
@@ -445,7 +456,7 @@
 
             <p>
                 After submitting your request, you will
-                receive a unique ticket ID.
+                receive a unique APS-XXXXX reference ID.
             </p>
 
         </div>

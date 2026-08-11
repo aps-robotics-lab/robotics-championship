@@ -26,12 +26,14 @@ import {
     getDatabase,
     ref,
     onValue,
-    update
+    update,
+    get
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 import {
     helpFirebaseConfig,
-    AGENT_UID
+    AGENT_UID,
+    AGENT_UIDS
 } from "./firebase-config.js";
 
 
@@ -65,9 +67,18 @@ try {
    AUTHORIZED AGENT
 ========================================================= */
 
-const ALLOWED_AGENT_UID =
-    AGENT_UID ||
-    "HgWiHPRx9gcXZtDTl0pDCpZlokt2";
+const ALLOWED_AGENT_UID = AGENT_UID || "HgWiHPRx9gcXZtDTl0pDCpZlokt2";
+const CONFIGURED_AGENT_UIDS = new Set((AGENT_UIDS || [ALLOWED_AGENT_UID]).filter(Boolean));
+async function isAuthorizedAgent(uid) {
+    if (CONFIGURED_AGENT_UIDS.has(uid)) return true;
+    try {
+        const snap = await get(ref(db, `agents/${uid}`));
+        return snap.exists() && snap.val()?.active === true;
+    } catch (e) {
+        console.error("Agent directory lookup failed:", e);
+        return false;
+    }
+}
 
 
 /* =========================================================
@@ -1347,6 +1358,22 @@ ticketOverlay?.addEventListener(
    UPDATE TICKET
 ========================================================= */
 
+async function publishPublicStatus(ticket, changes) {
+    const referenceId = ticket?.referenceId;
+    const email = ticket?.email;
+    if (!referenceId || !email) return;
+    const data = {...ticket, ...changes};
+    const encoded = new TextEncoder().encode(String(email).trim().toLowerCase() + "|" + referenceId);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", encoded);
+    const hash = [...new Uint8Array(hashBuffer)].map(b => b.toString(16).padStart(2,"0")).join("");
+    await update(ref(db, `ticketStatusLookup/${referenceId}/${hash}`), {
+        status: data.status || "In Progress",
+        progress: Number(data.progress ?? (data.status === "Closed" ? 100 : 50)),
+        message: data.publicMessage || data.agentReply || "Our team is reviewing your request.",
+        updatedAt: Date.now()
+    });
+}
+
 async function updateTicket(
     changes,
     successMessage
@@ -1396,6 +1423,8 @@ async function updateTicket(
             }
 
         );
+
+        await publishPublicStatus(ticket, changes);
 
 
         if (modalMessage) {
@@ -1494,8 +1523,9 @@ setOpenBtn?.addEventListener(
         await updateTicket(
 
             {
-                status:
-                    "Open"
+                status: "Open",
+                progress: 25,
+                publicMessage: "Your request is approved and queued for a support agent."
             },
 
             "✓ Ticket marked Open."
@@ -1517,8 +1547,9 @@ setProgressBtn?.addEventListener(
         await updateTicket(
 
             {
-                status:
-                    "In Progress"
+                status: "In Progress",
+                progress: 60,
+                publicMessage: "A support agent is actively working on your request."
             },
 
             "✓ Ticket marked In Progress."
@@ -1541,8 +1572,9 @@ setClosedBtn?.addEventListener(
 
             {
 
-                status:
-                    "Closed",
+                status: "Closed",
+                progress: 100,
+                publicMessage: "Your request has been resolved by our support team.",
 
                 resolvedAt:
                     Date.now(),
@@ -1790,10 +1822,7 @@ onAuthStateChanged(
            ONLY AUTHORIZED AGENT
         ================================================= */
 
-        if (
-            user.uid !==
-            ALLOWED_AGENT_UID
-        ) {
+        if (!(await isAuthorizedAgent(user.uid))) {
 
             console.error(
                 "Unauthorized UID:",

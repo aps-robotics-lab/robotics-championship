@@ -27,7 +27,8 @@ import {
     onValue,
     update,
     remove,
-    get
+    get,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 import {
@@ -3884,98 +3885,27 @@ logoutBtn?.addEventListener(
 onAuthStateChanged(
     auth,
     user => {
-
         if (!user) {
-
-            window.location.replace(
-                "admin-login.html"
-            );
-
+            window.location.replace("admin-login.html");
             return;
-
         }
 
-
-        /* -----------------------------------------
-           ADMIN UID SECURITY
-        ----------------------------------------- */
-
-        if (
-            ADMIN_UID !==
-            "REPLACE_WITH_MAIN_PROJECT_ADMIN_UID"
-        ) {
-
-            if (
-                user.uid !==
-                ADMIN_UID
-            ) {
-
-                alert(
-                    "Access denied. This account is not authorized as an administrator."
-                );
-
-
-                signOut(auth)
-                    .finally(
-                        () => {
-
-                            window.location.replace(
-                                "admin-login.html"
-                            );
-
-                        }
-                    );
-
-
-                return;
-
-            }
-
+        if (!ADMIN_UID || ADMIN_UID.startsWith("REPLACE_") || user.uid !== ADMIN_UID) {
+            alert("Access denied. This account is not authorized as an administrator.");
+            signOut(auth).finally(() => window.location.replace("admin-login.html"));
+            return;
         }
 
+        if (adminName) adminName.textContent = user.displayName || user.email?.split("@")[0] || "Administrator";
+        if (adminEmail) adminEmail.textContent = user.email || user.uid;
 
-        if (adminName) {
+        loadingScreen?.classList.add("hidden");
+        appShell?.classList.remove("hidden");
 
-            adminName.textContent =
-                user.displayName ||
-                user.email?.split("@")[0] ||
-                "Administrator";
-
-        }
-
-
-        if (adminEmail) {
-
-            adminEmail.textContent =
-                user.email ||
-                user.uid;
-
-        }
-
-
-        loadingScreen
-            ?.classList
-            .add("hidden");
-
-
-        appShell
-            ?.classList
-            .remove("hidden");
-
-
-        showStatus(
-            `Administrator authenticated: ${
-                user.email ||
-                user.uid
-            }`,
-            "success"
-        );
-
-
+        showStatus(`Administrator authenticated: ${user.email || user.uid}`, "success");
         loadRegistrations();
-
         loadWebsiteContent();
-
+        loadLeadershipEditor();
     }
 );
 
@@ -4177,3 +4107,45 @@ document.addEventListener(
 
     }
 );
+
+/* =========================================================
+   LEADERSHIP EDITOR
+========================================================= */
+const leadershipFields = [
+  ["principal","principalNameInput","principalRoleInput","principalPhotoInput"],
+  ["mentor","mentorNameInput","mentorRoleInput","mentorPhotoInput"],
+  ["coordinator","coordinatorNameInput","coordinatorRoleInput","coordinatorPhotoInput"]
+];
+const leadershipStatus = document.getElementById("leadershipStatus");
+const saveLeadershipBtn = document.getElementById("saveLeadershipBtn");
+
+async function loadLeadershipEditor() {
+  try {
+    const snap = await get(ref(db, "siteContent/leadership"));
+    const data = snap.exists() ? snap.val() : {};
+    leadershipFields.forEach(([key,n,r,p]) => {
+      const item=data[key]||{};
+      const a=document.getElementById(n), b=document.getElementById(r), c=document.getElementById(p);
+      if(a) a.value=item.name||""; if(b) b.value=item.role||""; if(c) c.value=item.photoUrl||"";
+    });
+  } catch(e) { if(leadershipStatus) leadershipStatus.textContent="Unable to load leadership content."; }
+}
+saveLeadershipBtn?.addEventListener("click", async()=>{
+  if(!auth.currentUser) return;
+  try {
+    saveLeadershipBtn.disabled=true;
+    const payload={};
+    leadershipFields.forEach(([key,n,r,p])=>{
+      payload[key]={
+        name:document.getElementById(n)?.value.trim()||"",
+        role:document.getElementById(r)?.value.trim()||"",
+        photoUrl:document.getElementById(p)?.value.trim()||""
+      };
+    });
+    payload.updatedAt=Date.now(); payload.updatedBy=auth.currentUser.uid;
+    await update(ref(db,"siteContent/leadership"),payload);
+    if(leadershipStatus) leadershipStatus.textContent="Leadership content saved.";
+  } catch(e) {
+    console.error(e); if(leadershipStatus) leadershipStatus.textContent="Could not save leadership content.";
+  } finally { saveLeadershipBtn.disabled=false; }
+});
