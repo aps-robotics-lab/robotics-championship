@@ -1,42 +1,12 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const preloader = document.getElementById("preloader");
-  const header = document.getElementById("siteHeader");
-  const menuToggle = document.getElementById("menuBtn");
-  const mainNav = document.getElementById("mainNav");
-  const navLinks = document.querySelectorAll("#mainNav a");
-
-  const hidePreloader = () => {
-    if (!preloader) return;
-    preloader.classList.add("done");
-    setTimeout(() => preloader.remove(), 350);
-  };
-  window.addEventListener("load", hidePreloader, { once:true });
-  setTimeout(hidePreloader, 2500); // never leave the page blocked if a remote asset hangs
-
-  const closeMenu = () => {
-    mainNav?.classList.remove("open");
-    menuToggle?.classList.remove("open");
-    menuToggle?.setAttribute("aria-expanded", "false");
-  };
-
-  menuToggle?.addEventListener("click", () => {
-    const open = !mainNav?.classList.contains("open");
-    mainNav?.classList.toggle("open", open);
-    menuToggle.classList.toggle("open", open);
-    menuToggle.setAttribute("aria-expanded", String(open));
-  });
-
-  navLinks.forEach(link => link.addEventListener("click", closeMenu));
-
-  window.addEventListener("scroll", () => {
-    header?.classList.toggle("scrolled", window.scrollY > 30);
-    const hashLinks = [...navLinks].filter(a => (a.getAttribute("href") || "").startsWith("#"));
-    const sections = [...document.querySelectorAll("main section[id]")];
-    let current = "home";
-    for (const section of sections) {
-      if (window.scrollY >= section.offsetTop - 160) current = section.id;
-    }
-    hashLinks.forEach(link => link.classList.toggle("active", link.getAttribute("href") === `#${current}`));
-  }, { passive:true });
+document.addEventListener("DOMContentLoaded",()=>{
+ const preloader=document.getElementById("preloader"),header=document.getElementById("siteHeader"),menu=document.getElementById("menuBtn"),nav=document.getElementById("mainNav");
+ const hide=()=>{if(!preloader)return;preloader.classList.add("done");setTimeout(()=>preloader.remove(),350)};
+ window.addEventListener("load",hide,{once:true});setTimeout(hide,2200);
+ const close=()=>{nav?.classList.remove("open");menu?.classList.remove("open");menu?.setAttribute("aria-expanded","false")};
+ menu?.addEventListener("click",()=>{const open=!nav?.classList.contains("open");nav?.classList.toggle("open",open);menu.classList.toggle("open",open);menu.setAttribute("aria-expanded",String(open))});
+ document.querySelectorAll("#mainNav a").forEach(a=>a.addEventListener("click",close));
+ window.addEventListener("scroll",()=>{header?.classList.toggle("scrolled",scrollY>30)}, {passive:true});
+ const footer=document.getElementById("secretFooterTrigger"),secret=document.getElementById("secretAccess"),closeSecret=document.getElementById("closeSecret");let taps=0,last=0;
+ const tap=()=>{const now=Date.now();if(now-last>2200)taps=0;last=now;taps++;if(taps>=5){secret?.classList.add("show");secret?.setAttribute("aria-hidden","false");taps=0}};
+ footer?.addEventListener("click",tap);footer?.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();tap()}});closeSecret?.addEventListener("click",()=>{secret.classList.remove("show");secret.setAttribute("aria-hidden","true")});
 });
-

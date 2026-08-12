@@ -771,13 +771,15 @@ function normalizeEventName(value) {
             "Robo Tug of War",
 
         "robo soccer":
-            "Robo Soccer",
+            "Robo Saucer",
+        "robo saucer":
+            "Robo Saucer",
 
         "soccer":
-            "Robo Soccer",
+            "Robo Saucer",
 
         "robosoccer":
-            "Robo Soccer"
+            "Robo Saucer"
 
     };
 
@@ -1502,7 +1504,7 @@ function renderStats() {
             ([, data]) =>
                 hasEvent(
                     data,
-                    "Robo Soccer"
+                    "Robo Saucer"
                 )
         ).length;
 

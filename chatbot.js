@@ -8,7 +8,7 @@ const panel=document.getElementById("apsChatPanel"), messages=document.getElemen
 const add=(text,who="bot")=>{const d=document.createElement("div");d.className=`aps-msg ${who}`;d.textContent=text;messages.appendChild(d);messages.scrollTop=messages.scrollHeight};
 const faq=[
   [/registration|register|approval/i,"Registration is open. Submit the form, then your status will be Pending Approval. Our team will review it and contact you soon."],
-  [/event|race|war|soccer|tug/i,"The championship has Robo Race, Robo War, Robo Tug of War and Robo Soccer. You can select multiple events during registration."],
+  [/event|race|war|saucer|tug/i,"The championship has Robo Race, Robo War, Robo Tug of War and Robo Saucer. You can select multiple events during registration."],
   [/team|member|solo/i,"You can register solo or as a team of up to 5 participants. Team members need their name, class and section."],
   [/help|ticket|support|progress/i,"Use Help to submit a support request. You will receive an APS-XXXXX reference ID and can track progress with your reference ID plus email."],
   [/rule|regulation/i,"Please open the Rules page from the main menu for the latest competition rules."],
