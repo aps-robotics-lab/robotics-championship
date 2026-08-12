@@ -1,6 +1,6 @@
 /* =========================================================
    FIREBASE CENTRAL CONFIGURATION
-   APS Yantra Utsav 2026
+   APS ShauryaTech 2026
 
    TWO SEPARATE FIREBASE PROJECTS:
 

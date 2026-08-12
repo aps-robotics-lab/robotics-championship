@@ -1,6 +1,6 @@
 /* =========================================================
    AGENT-LOGIN.JS
-   APS YANTRA UTSAV 2026
+   APS SHAURYATECH 2026
    ---------------------------------------------------------
    Firebase:
        helpFirebaseConfig

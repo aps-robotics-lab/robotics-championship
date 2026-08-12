@@ -1,6 +1,6 @@
 /* =========================================================
    ADMIN.JS
-   APS YANTRA UTSAV 2026
+   APS SHAURYATECH 2026
 
    COMPLETE CORRECTED VERSION
 
@@ -3344,7 +3344,7 @@ function loadWebsiteContent() {
 
                 editTeamName:
                     data.teamName ||
-                    "APS Yantra Utsav Team"
+                    "APS ShauryaTech Team"
 
             };
 
@@ -3496,7 +3496,7 @@ saveContentBtn?.addEventListener(
                         document.getElementById(
                             "editTeamName"
                         )?.value ||
-                        "APS Yantra Utsav Team"
+                        "APS ShauryaTech Team"
 
                 }
             );
