@@ -21,9 +21,9 @@ onValue(ref(db,"siteContent/home"), snapshot => {
 onValue(ref(db,"siteContent/messages"), snapshot => {
   const msgs=snapshot.exists()?snapshot.val():{};
   setText("#msgPrincipalText",msgs.principalText || "Welcome to a championship where curiosity becomes engineering. I encourage every student to participate with discipline, creativity and confidence.");
-  setText("#msgPrincipalName","Sadhna Devi");
+  setText("#msgPrincipalName","Mrs. Sadhana Devi");
   setText("#msgMentorText",msgs.mentorText || "Design boldly, test patiently and learn from every failure. Your robot is not only a machine; it is a record of your teamwork and problem-solving.");
-  setText("#msgMentorName","Akansha Rani");
+  setText("#msgMentorName","Ms. Akansha Rani");
   setText("#msgCoordText",msgs.coordText || "Please follow the schedule, arena instructions and judge decisions. We look forward to a safe, fair and exciting championship for every team.");
   setText("#msgCoordName",(msgs.coordName && msgs.coordName !== "Ayush Kumar Singh") ? msgs.coordName : "Championship Coordination Team");
   setText("#msgTeamText",msgs.teamText || "We are excited to welcome every participant to APS ShauryaTech 2026. Build responsibly, compete respectfully and enjoy the experience.");
