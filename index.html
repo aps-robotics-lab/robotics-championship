@@ -2,79 +2,115 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#050505">
-<meta name="description" content="APS Yantra Utsav 2026 — a future-tech robotics festival by APS Tinkering Lab, Lucknow.">
-<title>APS Yantra Utsav 2026 | यंत्र उत्सव</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#050914">
+<meta name="description" content="APS Yantra Utsav 2026 — a technical robotics competition by APS Tinkering Lab, Lucknow.">
+<title>APS Yantra Utsav 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="loader" id="preloader"><div class="loader-mark">AU<span>26</span></div><p>INITIALISING YANTRA SYSTEM</p></div>
-<div class="noise"></div><div class="cursor-glow" id="cursorGlow"></div>
-<header class="header" id="siteHeader">
-  <a class="brand" href="#home"><img src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png" alt="Army Welfare Education Society"><span><b>APS YANTRA UTSAV</b><small>यंत्र उत्सव · 2026</small></span></a>
-  <button class="menu-btn" id="menuBtn" aria-label="Menu"><i></i><i></i><i></i></button>
-  <nav id="mainNav"><a href="#home">Home</a><a href="#about">About</a><a href="#arenas">Arenas</a><a href="#leadership">Leadership</a><a href="#administration">Team</a><a href="#contact">Contact</a><a class="register" href="registration.html">Register ↗</a></nav>
+<div id="preloader" class="preloader"><div class="loader-core"><span></span><span></span><span></span></div><div class="loader-title">APS YANTRA UTSAV</div><div class="loader-sub">यंत्र उत्सव • 2026 // INITIALIZING</div></div>
+
+<header class="site-header" id="siteHeader">
+  <a class="brand" href="#home"><img src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png" alt="APS Logo"><span><b>APS ROBOTICS</b><small>CHAMPIONSHIP 2026</small></span></a>
+  <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  <nav id="mainNav" aria-label="Main navigation">
+    <a class="active" href="#home">Home</a><a href="#about">About</a><a href="#events">Arenas</a><a href="#leadership">Leadership</a><a href="#team">Administration</a><a href="#operations">Operations</a><a href="#contact">Contact</a><a class="nav-register" href="registration.html">Register</a>
+  </nav>
 </header>
+
 <main>
-<section class="hero" id="home">
-  <div class="hero-bg"><div class="hero-grid"></div><div class="orb orb1"></div><div class="orb orb2"></div><div class="beam"></div></div>
-  <div class="hero-inner">
-    <div class="eyebrow"><span class="pulse"></span> APS TINKERING LAB · LUCKNOW · 2026</div>
-    <h1>ENGINEER<br><em>THE</em> <strong>UNEXPECTED.</strong></h1>
-    <p class="hero-copy">A technical robotics festival where young builders turn ideas into machines, machines into competition, and competition into experience.</p>
-    <div class="hero-buttons"><a class="btn solid" href="registration.html">REGISTER NOW <span>↗</span></a><a class="btn line" href="#arenas">EXPLORE ARENAS <span>↓</span></a></div>
-    <div class="hero-stats"><div><b>04</b><span>ARENAS</span></div><div><b>01</b><span>FESTIVAL</span></div><div><b>∞</b><span>IDEAS</span></div></div>
+<section id="home" class="hero tech-hero">
+  <div class="lux-particles" aria-hidden="true"></div><div class="hero-grid"></div><div class="hero-orbit orbit-a"></div><div class="hero-orbit orbit-b"></div><div class="hero-scan"></div>
+  <div class="hero-content">
+    <div class="phase-label">APS TINKERING LAB // LUCKNOW // 2026</div>
+    <div class="hero-kicker">A FUTURE-TECH ROBOTICS FESTIVAL</div>
+    <h1 id="adminHomeTitle">BUILD.<br><span>BATTLE.</span><br>INNOVATE.</h1>
+    <p id="adminHomeDescription">Design machines. Engineer solutions. Enter the arena. APS Yantra Utsav 2026 brings young innovators together for a high-energy robotics experience built around speed, control, power and strategy.</p>
+    <div class="hero-actions"><a class="btn primary" href="registration.html" id="adminHomeButton">REGISTER YOUR TEAM <span>↗</span></a><a class="btn ghost" href="#events">EXPLORE THE ARENAS <span>↓</span></a></div>
+    <div class="hero-meta"><span>01 // SCHOOL LEVEL</span><span>04 // ROBOTICS ARENAS</span><span>01 // CHAMPIONSHIP</span></div>
   </div>
-  <div class="hero-side"><span>SCROLL TO EXPLORE</span><i></i></div>
-  <div class="hero-title-mark">YANTRA<br><span>UTSAV</span></div>
+  <div class="hero-visual" aria-hidden="true"><div class="visual-label">SYSTEM / ROBOTICS</div><div class="visual-core"><span>R</span></div><div class="visual-line line-1"></div><div class="visual-line line-2"></div><div class="visual-line line-3"></div></div>
 </section>
 
-<section class="ticker"><div>ROBOTICS</div><div>ENGINEERING</div><div>INNOVATION</div><div>STRATEGY</div><div>TEAMWORK</div><div>ROBOTICS</div><div>ENGINEERING</div><div>INNOVATION</div></section>
+<section class="phase-strip"><div><small>PHASE_01</small><strong>ORIGIN</strong><span>Born inside the APS Tinkering Lab</span></div><div><small>PHASE_02</small><strong>ARENAS</strong><span>Four machines. Four challenges.</span></div><div><small>PHASE_03</small><strong>LEADERSHIP</strong><span>Principal & Mentor guidance</span></div><div><small>PHASE_04</small><strong>ADMINISTRATION</strong><span>Core leadership & operations</span></div></section>
 
-<section class="intro section" id="about">
-  <div class="section-code">01 / ORIGIN</div>
-  <div class="intro-grid"><div><p class="display">Where curiosity<br>becomes <span>engineering.</span></p></div><div class="intro-copy"><p>APS Yantra Utsav 2026 is a school-level technical festival built around hands-on robotics, problem solving and competitive engineering.</p><p>Think. Prototype. Test. Rebuild. Then enter the arena.</p><div class="micro-list"><span>01 / BUILD</span><span>02 / TEST</span><span>03 / COMPETE</span></div></div></div>
+<section id="about" class="section editorial-section">
+  <div class="section-head"><span>PHASE_01 // ORIGIN</span><h2>Where ideas become <b>machines.</b></h2><p id="adminAboutDescription">APS Yantra Utsav 2026 is a hands-on robotics competition designed to encourage creativity, engineering, teamwork and problem solving.</p></div>
+  <div class="origin-grid"><div class="origin-number">01</div><div><h3>APS Tinkering Lab</h3><p>Our championship is designed around the spirit of experimentation: prototype, test, improve and compete. Every arena rewards a different engineering mindset.</p><div class="origin-points"><span>ENGINEERING</span><span>CONTROL</span><span>STRATEGY</span><span>TEAMWORK</span></div></div></div>
 </section>
 
-<section class="arenas section" id="arenas">
-  <div class="section-top"><div><div class="section-code">02 / ARENAS OF EXCELLENCE</div><h2>FOUR WAYS<br>TO <span>COMPETE.</span></h2></div><p>Each arena is a different engineering problem. Open its dedicated rulebook, understand the mission and build accordingly.</p></div>
+<section id="events" class="section arenas-section">
+  <div class="section-head"><span>PHASE_02 // ARENAS OF EXCELLENCE</span><h2>Choose your <b>battlefield.</b></h2><p>Explore each arena, read its dedicated rules and prepare your machine before registration.</p></div>
   <div class="arena-grid">
-    <a class="arena a1" href="robo-race-rules.html"><span class="num">01</span><span class="tag">SPEED · PRECISION</span><h3>ROBO<br>RACE</h3><p>Acceleration, control and precision through a demanding course.</p><b>VIEW RULEBOOK ↗</b></a>
-    <a class="arena a2" href="robo-saucer-rules.html"><span class="num">02</span><span class="tag">CONTROL · TEAMWORK</span><h3>ROBO<br>SAUCER</h3><p>Move, control and score through tactical robotic gameplay.</p><b>VIEW RULEBOOK ↗</b></a>
-    <a class="arena a3" href="robot-tug-of-war-rules.html"><span class="num">03</span><span class="tag">POWER · TRACTION</span><h3>ROBOT<br>TUG OF WAR</h3><p>Torque, grip and mechanical strength decide the winner.</p><b>VIEW RULEBOOK ↗</b></a>
-    <a class="arena a4" href="robo-war-rules.html"><span class="num">04</span><span class="tag">STRATEGY · COMBAT</span><h3>ROBO<br>WAR</h3><p>Design, drive and outmaneuver your opponent in the arena.</p><b>VIEW RULEBOOK ↗</b></a>
+    <a class="arena-card arena-race" href="robo-race-rules.html"><span class="arena-index">01</span><span class="arena-type">SPEED / PRECISION</span><h3>Robo Race</h3><p>Push acceleration, control and line discipline through a demanding robotic track.</p><span class="arena-link">ENTER ARENA ↗</span></a>
+    <a class="arena-card arena-saucer" href="robo-saucer-rules.html"><span class="arena-index">02</span><span class="arena-type">CONTROL / TEAMWORK</span><h3>Robo Saucer</h3><p>Master robotic movement and scoring through controlled, tactical gameplay.</p><span class="arena-link">ENTER ARENA ↗</span></a>
+    <a class="arena-card arena-tug" href="robot-tug-of-war-rules.html"><span class="arena-index">03</span><span class="arena-type">POWER / TRACTION</span><h3>Robot Tug of War</h3><p>Torque, grip and mechanical strength decide who controls the line.</p><span class="arena-link">ENTER ARENA ↗</span></a>
+    <a class="arena-card arena-war" href="robo-war-rules.html"><span class="arena-index">04</span><span class="arena-type">STRATEGY / COMBAT</span><h3>Robo War</h3><p>Engineer a robust machine and outmaneuver your opponent inside the arena.</p><span class="arena-link">ENTER ARENA ↗</span></a>
   </div>
 </section>
 
-<section class="manifesto"><div class="manifesto-line"></div><p>NOT JUST A ROBOT.<br><strong>A <span>THESIS</span> IN MOTION.</strong></p><small>Every machine carries the decisions, failures and ideas of its team.</small></section>
 
-<section class="leadership section" id="leadership">
-  <div class="section-code">03 / LEADERSHIP</div><div class="section-top"><div><h2>THE PEOPLE<br>BEHIND THE <span>VISION.</span></h2></div><p>Principal and Mentor remain a dedicated leadership layer — separate from the operational administration of the festival.</p></div>
-  <div class="leaders"><article><span>01 / PRINCIPAL</span><h3>Sadhna Devi</h3><p>Army Public School Lal Bahadur Shastri Marg, Lucknow</p><i>DISCIPLINE · VISION · EXCELLENCE</i></article><article><span>02 / MENTOR</span><h3>Akansha Rani</h3><p>APS Tinkering Lab</p><i>GUIDANCE · INNOVATION · MENTORSHIP</i></article></div>
-</section>
-
-<section class="administration section" id="administration">
-  <div class="section-code">04 / CORE LEADERSHIP & ADMINISTRATION</div><div class="section-top"><div><h2>MISSION<br><span>CONTROL.</span></h2></div><p>The festival operates like a technical system: leadership, operations, marketing and engineering each have a clear role.</p></div>
-  <div class="command-grid">
-    <article class="command large"><small>CORE_01 · EVENT COMMAND</small><h3>Event Manager</h3><strong>Meet Lohmel</strong><p>Championship schedule, arena flow and overall execution.</p></article>
-    <article class="command large"><small>CORE_02 · ADMINISTRATION</small><h3>Secretary</h3><strong>Aishwary Joshi</strong><p>Records, documentation, communication and administration.</p></article>
-    <article class="command"><small>OPS_01</small><h3>Logistics Manager</h3><strong>Name</strong></article><article class="command"><small>OPS_02</small><h3>Venue Manager</h3><strong>Name</strong></article>
-    <article class="command"><small>MKT_01</small><h3>Marketing Head</h3><strong>Shashank Yadav</strong></article><article class="command"><small>WEB_01</small><h3>Web Developer</h3><strong>Ayush kumar Singh</strong></article><article class="command"><small>TECH_01</small><h3>Technical Head</h3><strong>Mohit Singh Kushwaha</strong></article>
+<section id="leadership" class="section leadership-section">
+  <div class="section-head"><span>PHASE_03 // LEADERSHIP MESSAGES</span><h2>Guidance from <b>the leadership.</b></h2><p>Principal and Mentor are presented independently from the championship's operational administration.</p></div>
+  <div class="leadership-feature-grid">
+    <article class="leadership-feature principal-feature"><div class="feature-index">01</div><div class="feature-tag">PRINCIPAL // SCHOOL LEADERSHIP</div><h3 id="principalName">Sadhna Devi</h3><p>Army Public School Lal Bahadur Shastri Marg, Lucknow</p><div class="feature-line"></div><span>VISION / DISCIPLINE / EXCELLENCE</span></article>
+    <article class="leadership-feature mentor-feature"><div class="feature-index">02</div><div class="feature-tag">MENTOR // TINKERING LAB</div><h3 id="mentorName">Akansha Rani</h3><p>APS Tinkering Lab</p><div class="feature-line"></div><span>GUIDANCE / INNOVATION / MENTORSHIP</span></article>
   </div>
-  <div class="arena-command"><div class="arena-command-title"><span>ARENA COMMAND</span><b>EVENT COORDINATION NETWORK</b></div><div class="coord-grid"><div><span>01</span>Robo Race Coordinator <b>To Be Announced</b></div><div><span>02</span>Robo Saucer Coordinator <b>To Be Announced</b></div><div><span>03</span>Robot Tug of War Coordinator <b>To Be Announced</b></div><div><span>04</span>Robo War Coordinator <b>To Be Announced</b></div></div></div>
 </section>
 
-<section class="journey section"><div class="section-code">05 / THE JOURNEY</div><div class="journey-grid"><div class="journey-head"><h2>FROM<br>IDEA TO <span>ARENA.</span></h2></div><div class="steps"><div><b>01</b><h3>REGISTER</h3><p>Create your team and select your arenas.</p></div><div><b>02</b><h3>BUILD</h3><p>Engineer a machine within the event limits.</p></div><div><b>03</b><h3>INSPECT</h3><p>Clear technical and safety inspection.</p></div><div><b>04</b><h3>COMPETE</h3><p>Enter the arena. Solve the problem.</p></div></div></div></section>
+<section id="team" class="section team-section command-section">
+<div class="section-head"><span>PHASE_04 // CORE LEADERSHIP & ADMINISTRATION</span><h2>The people behind <b>the mission.</b></h2><p>A structured command architecture keeps every arena, participant and operation synchronized.</p></div>
+<div class="command-group"><div class="command-group-head"><span>01</span><div><small>CORE LEADERSHIP & ADMINISTRATION</small><h3>Championship Command</h3></div></div><div class="core-grid core-grid-two">
+<article class="core-card named-card"><span>CORE_01</span><small>EVENT COMMAND</small><h3>Event Manager</h3><strong>Meet Lohmel</strong><p>Leads the championship schedule, arena flow, coordination and overall execution.</p></article>
+<article class="core-card named-card"><span>CORE_02</span><small>ADMINISTRATION</small><h3>Secretary</h3><strong>Aishwary Joshi</strong><p>Maintains official records, communication, documentation and administrative coordination.</p></article>
+</div></div>
+<div class="command-group"><div class="command-group-head"><span>02</span><div><small>LOGISTICS & OPERATIONS</small><h3>Ground Operations</h3></div></div><div class="core-grid core-grid-two">
+<article class="core-card named-card"><span>OPS_01</span><small>LOGISTICS</small><h3>Logistics Manager</h3><strong>Name</strong><p>Coordinates equipment movement, materials, schedules and operational readiness.</p></article>
+<article class="core-card named-card"><span>OPS_02</span><small>VENUE</small><h3>Venue Manager</h3><strong>Name</strong><p>Owns venue readiness, access, layouts, participant movement and facilities.</p></article>
+</div></div>
+<div class="command-group"><div class="command-group-head"><span>03</span><div><small>MARKETING & TECHNOLOGY</small><h3>Brand + Digital Systems</h3></div></div><div class="core-grid core-grid-three">
+<article class="core-card named-card"><span>MKT_01</span><small>MARKETING</small><h3>Marketing Head</h3><strong>Shashank Yadav</strong><p>Leads promotion, communication, media and championship outreach.</p></article>
+<article class="core-card named-card"><span>WEB_01</span><small>DIGITAL SYSTEMS</small><h3>Web Developer</h3><strong>Ayush kumar Singh</strong><p>Builds and maintains the championship website, registration interface and digital workflows.</p></article>
+<article class="core-card named-card"><span>TECH_01</span><small>ENGINEERING</small><h3>Technical Head</h3><strong>Mohit Singh Kushwaha</strong><p>Leads technical inspection, robot specifications, equipment and engineering support.</p></article>
+</div></div>
+<div class="command-group"><div class="command-group-head"><span>04</span><div><small>ARENA COMMAND</small><h3>Event Coordination Network</h3></div></div><div class="core-grid core-grid-four">
+<article class="core-card"><span>ARENA_01</span><small>SPEED / PRECISION</small><h3>Robo Race Coordinator</h3><strong>To Be Announced</strong><p>Owns race briefing, inspection, track readiness and round execution.</p></article>
+<article class="core-card"><span>ARENA_02</span><small>CONTROL / TEAMWORK</small><h3>Robo Saucer Coordinator</h3><strong>To Be Announced</strong><p>Owns match flow, scoring coordination, arena readiness and communication.</p></article>
+<article class="core-card"><span>ARENA_03</span><small>POWER / TRACTION</small><h3>Robot Tug of War Coordinator</h3><strong>To Be Announced</strong><p>Owns pairings, starting protocol, arena readiness and competition procedure.</p></article>
+<article class="core-card"><span>ARENA_04</span><small>STRATEGY / COMBAT</small><h3>Robo War Coordinator</h3><strong>To Be Announced</strong><p>Owns safety inspection, match flow, judging and arena discipline.</p></article>
+</div></div>
+<div class="command-group"><div class="command-group-head"><span>05</span><div><small>PARTICIPANT SERVICES</small><h3>Support Network</h3></div></div><div class="core-grid core-grid-two">
+<article class="core-card"><span>SUP_01</span><small>HELPING DEPARTMENT</small><h3>Helping Department</h3><strong>Participant Support</strong><p>Handles questions, support tickets and participant assistance throughout the event.</p></article>
+<article class="core-card"><span>REG_01</span><small>REGISTRATION DEPARTMENT</small><h3>Registration Department</h3><strong>Official Intake</strong><p>Reviews registrations, manages approval workflow and maintains participant records.</p></article>
+</div></div>
+</section>
 
-<section class="faq section"><div class="section-code">06 / SYSTEM PROTOCOLS</div><div class="section-top"><div><h2>KNOW THE<br><span>PROTOCOL.</span></h2></div><p>Quick answers before you enter the system.</p></div><div class="faq-list"><details open><summary>Who can participate?<span>+</span></summary><p>Students eligible under the championship registration criteria can participate as solo participants or teams according to the registration rules.</p></details><details><summary>Can one team enter multiple arenas?<span>+</span></summary><p>Yes. Select every event for which your team and robot are prepared during registration.</p></details><details><summary>Where are the event rules?<span>+</span></summary><p>Each arena has its own dedicated rulebook. Use the arena cards above to open the relevant page.</p></details><details><summary>How do I register?<span>+</span></summary><p>Use the Register Now button to open the official registration form.</p></details></div></section>
+<section id="operations" class="section operations-section"><div class="section-head"><span>PHASE_05 // LOGISTICS & OPERATIONS</span><h2>Precision behind <b>the spectacle.</b></h2><p>From arena setup to participant movement, the operational network keeps Yantra Utsav running with discipline and technical precision.</p></div><div class="operations-grid luxury-ops-grid">
+<article><span>OPS_01</span><h3>Logistics Command</h3><p>Equipment, materials, transport and operational readiness.</p><ul><li>Logistics Manager — Name</li><li>Venue Manager — Name</li><li>Ground Operations Desk</li></ul></article>
+<article><span>OPS_02</span><h3>Arena Network</h3><p>Four dedicated coordination channels keep every event synchronized.</p><ul><li>Robo Race</li><li>Robo Saucer</li><li>Robot Tug of War</li><li>Robo War</li></ul></article>
+<article><span>OPS_03</span><h3>Digital Command</h3><p>The web layer connects registration, information and participant support.</p><ul><li>Web Developer — Ayush kumar Singh</li><li>Technical Head — Mohit Singh Kushwaha</li><li>Registration Department</li></ul></article>
+<article><span>OPS_04</span><h3>Human Support</h3><p>Every participant has a clear route for questions, help and official communication.</p><ul><li>Helping Department</li><li>Secretary — Aishwary Joshi</li><li>Event Manager — Meet Lohmel</li></ul></article>
+</div></section>
 
-<section class="final-cta" id="contact"><div class="cta-grid"></div><div class="section-code">07 / ENTER THE SYSTEM</div><h2>YOUR ROBOT.<br>YOUR <span>ARENA.</span></h2><p>Registration is the first step. Build with intent and bring your machine to APS Yantra Utsav 2026.</p><a class="btn solid" href="registration.html">REGISTER YOUR TEAM ↗</a></section>
+<section class="section journey-section"><div class="section-head"><span>PHASE_06 // THE JOURNEY</span><h2>From registration to <b>arena.</b></h2></div><div class="journey"><div><b>01</b><span>REGISTER</span><p>Build your team and select your arena.</p></div><div><b>02</b><span>BUILD</span><p>Engineer and test your machine.</p></div><div><b>03</b><span>INSPECT</span><p>Pass technical and safety inspection.</p></div><div><b>04</b><span>COMPETE</span><p>Enter the arena and make your mark.</p></div></div></section>
+
+<div id="messages">
+<section class="section message-section"><div class="section-head"><span>MESSAGE_01 // LEADERSHIP</span><h2>A message from <b>the Principal.</b></h2></div><div class="mentor-message"><div class="message-mark">“</div><div><p class="quote" id="msgPrincipalText">Loading message...</p><div class="mentor-sign"><strong id="msgPrincipalName">Sadhna Devi</strong><span>Principal • Army Public School Lal Bahadur Shastri Marg, Lucknow</span></div></div></div></section>
+<section class="section message-section"><div class="section-head"><span>MESSAGE_02 // GUIDANCE</span><h2>A message from <b>our Mentor.</b></h2></div><div class="mentor-message"><div class="message-mark">“</div><div><p class="quote" id="msgMentorText">Loading message...</p><div class="mentor-sign"><strong id="msgMentorName">Akansha Rani</strong><span>Mentor • APS Tinkering Lab</span></div></div></div></section>
+<section class="section message-section"><div class="section-head"><span>MESSAGE_03 // COORDINATION</span><h2>A message from <b>the Coordinator.</b></h2></div><div class="mentor-message"><div class="message-mark">“</div><div><p class="quote" id="msgCoordText">Loading message...</p><div class="mentor-sign"><strong id="msgCoordName">Championship Coordination Team</strong><span>Championship Coordination</span></div></div></div></section>
+</div>
+
+<section id="contact" class="section contact-section"><div class="section-head"><span>PHASE_07 // CONTACT</span><h2>Connect with <b>the championship.</b></h2><p>Questions, registration support and event information are available through the official departments.</p></div><div class="contact-grid"><div class="contact-card"><small>SCHOOL</small><h3>Army Public School Lal Bahadur Shastri Marg</h3><p>Lucknow, Uttar Pradesh, India</p></div><div class="contact-card"><small>MENTOR • AKANSHA RANI</small><h3><a href="mailto:raniakansha551@gmail.com">raniakansha551@gmail.com</a></h3><p>APS Tinkering Lab</p></div><div class="contact-card"><small>HELPING DEPARTMENT</small><h3><a href="help.html">Open Help Center</a></h3><p>Submit a support request and receive a ticket ID.</p></div></div></section>
+
+<section class="final-cta"><div class="cta-grid"></div><span>THE JOURNEY CONCLUDES HERE</span><h2>Ready to <b>build the future?</b></h2><p>Register your team and choose the arena where your robot will compete.</p><a class="btn primary large" href="registration.html">REGISTER FOR APS YANTRA UTSAV 2026 ↗</a></section>
 </main>
-<footer id="secretFooterTrigger" tabindex="0"><div><img src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png" alt=""><span><b>APS YANTRA UTSAV 2026</b><small>APS Tinkering Lab · Lucknow</small></span></div><p>© 2026 APS Yantra Utsav</p></footer>
-<div class="secret" id="secretAccess" aria-hidden="true"><div class="secret-box"><button id="closeSecret">×</button><span>RESTRICTED ACCESS</span><h2>DEPARTMENT<br>PORTAL</h2><a href="agent-login.html">HELPING DEPARTMENT ↗</a><a href="admin-login.html">REGISTRATION DEPARTMENT ↗</a></div></div>
+
+<footer class="footer" id="secretFooterTrigger" tabindex="0" aria-label="APS Robotics footer"><img src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png" alt="APS Logo"><div><b>APS YANTRA UTSAV 2026</b><span>APS Tinkering Lab • Lucknow</span></div><div class="footer-status"><i></i> SYSTEM ONLINE</div></footer>
+<div id="secretAccess" class="secret-access" aria-hidden="true"><span>PRIVATE ACCESS // 5-CLICK</span><a href="agent-login.html">Helping Department</a><a href="admin-login.html">Registration Department</a><button id="closeSecret">×</button></div>
 <script src="script.js"></script><script type="module" src="home-content.js"></script>
-</body></html>
+</body>
+</html>

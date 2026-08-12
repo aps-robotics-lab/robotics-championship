@@ -1,166 +1,37 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const loader = document.getElementById("preloader");
-    const header = document.getElementById("siteHeader");
-    const menu = document.getElementById("menuBtn");
-    const nav = document.getElementById("mainNav");
-    const glow = document.getElementById("cursorGlow");
-    const secretFooter = document.getElementById("secretFooterTrigger");
-    const secret = document.getElementById("secretAccess");
-    const closeSecret = document.getElementById("closeSecret");
-
-    /* ---------------------------------------------
-       PRELOADER — never trap the page
-    --------------------------------------------- */
-    let loaderClosed = false;
-    const finishLoader = () => {
-        if (loaderClosed) return;
-        loaderClosed = true;
-        loader?.classList.add("done");
-    };
-    window.addEventListener("load", finishLoader, { once: true });
-    setTimeout(finishLoader, 1200);
-
-    /* ---------------------------------------------
-       MOBILE NAVIGATION
-    --------------------------------------------- */
-    menu?.addEventListener("click", () => {
-        const open = nav?.classList.toggle("open") ?? false;
-        menu.setAttribute("aria-expanded", String(open));
-    });
-
-    document.querySelectorAll("#mainNav a").forEach(link => {
-        link.addEventListener("click", () => {
-            nav?.classList.remove("open");
-            menu?.setAttribute("aria-expanded", "false");
-        });
-    });
-
-    /* ---------------------------------------------
-       HEADER STATE + SCROLL PROGRESS
-    --------------------------------------------- */
-    let ticking = false;
-    const updateScrollUI = () => {
-        const y = window.scrollY || window.pageYOffset;
-        header?.classList.toggle("scrolled", y > 30);
-
-        if (!ticking) {
-            ticking = true;
-            requestAnimationFrame(() => {
-                const doc = document.documentElement;
-                const max = doc.scrollHeight - window.innerHeight;
-                const progress = max > 0 ? (y / max) * 100 : 0;
-                document.documentElement.style.setProperty("--scroll-progress", `${progress}%`);
-                ticking = false;
-            });
-        }
-    };
-    updateScrollUI();
-    window.addEventListener("scroll", updateScrollUI, { passive: true });
-
-    /* ---------------------------------------------
-       DESKTOP CURSOR GLOW — RAF SMOOTHING
-    --------------------------------------------- */
-    if (glow && window.matchMedia("(pointer:fine)").matches) {
-        let targetX = window.innerWidth / 2;
-        let targetY = window.innerHeight / 2;
-        let currentX = targetX;
-        let currentY = targetY;
-
-        window.addEventListener("pointermove", event => {
-            targetX = event.clientX;
-            targetY = event.clientY;
-        }, { passive: true });
-
-        const animateGlow = () => {
-            currentX += (targetX - currentX) * 0.12;
-            currentY += (targetY - currentY) * 0.12;
-            glow.style.left = `${currentX}px`;
-            glow.style.top = `${currentY}px`;
-            requestAnimationFrame(animateGlow);
-        };
-        animateGlow();
-    }
-
-    /* ---------------------------------------------
-       SCROLL REVEALS
-       Small stagger, no long invisible sections.
-    --------------------------------------------- */
-    const revealItems = document.querySelectorAll(
-        ".section-code,.display,.intro-copy,.arena,.leaders article,.command,.arena-command,.steps>div,.faq-list details,.final-cta"
-    );
-
-    if ("IntersectionObserver" in window) {
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (!entry.isIntersecting) return;
-                entry.target.classList.add("revealed");
-                observer.unobserve(entry.target);
-            });
-        }, {
-            threshold: 0.04,
-            rootMargin: "0px 0px -6% 0px"
-        });
-
-        revealItems.forEach((element, index) => {
-            element.style.transitionDelay = `${Math.min(index % 4, 3) * 55}ms`;
-            observer.observe(element);
-        });
-    } else {
-        revealItems.forEach(element => element.classList.add("revealed"));
-    }
-
-    /* ---------------------------------------------
-       SMOOTH INTERNAL LINKS
-    --------------------------------------------- */
-    document.querySelectorAll('a[href^="#"]').forEach(link => {
-        link.addEventListener("click", event => {
-            const selector = link.getAttribute("href");
-            if (!selector || selector === "#") return;
-
-            const target = document.querySelector(selector);
-            if (!target) return;
-
-            event.preventDefault();
-            target.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
-    });
-
-    /* ---------------------------------------------
-       5-CLICK HIDDEN DEPARTMENT ACCESS
-    --------------------------------------------- */
-    let taps = 0;
-    let lastTap = 0;
-
-    const triggerSecret = () => {
-        const now = Date.now();
-        if (now - lastTap > 2200) taps = 0;
-        lastTap = now;
-        taps += 1;
-
-        if (taps >= 5) {
-            secret?.classList.add("show");
-            secret?.setAttribute("aria-hidden", "false");
-            taps = 0;
-        }
-    };
-
-    secretFooter?.addEventListener("click", triggerSecret);
-    secretFooter?.addEventListener("keydown", event => {
-        if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            triggerSecret();
-        }
-    });
-
-    closeSecret?.addEventListener("click", () => {
-        secret?.classList.remove("show");
-        secret?.setAttribute("aria-hidden", "true");
-    });
-
-    secret?.addEventListener("click", event => {
-        if (event.target === secret) {
-            secret.classList.remove("show");
-            secret.setAttribute("aria-hidden", "true");
-        }
-    });
+document.addEventListener("DOMContentLoaded",()=>{
+ const preloader=document.getElementById("preloader"),header=document.getElementById("siteHeader"),menu=document.getElementById("menuBtn"),nav=document.getElementById("mainNav");
+ const hide=()=>{if(!preloader)return;preloader.classList.add("done");setTimeout(()=>preloader.remove(),350)};
+ window.addEventListener("load",hide,{once:true});setTimeout(hide,2200);
+ const close=()=>{nav?.classList.remove("open");menu?.classList.remove("open");menu?.setAttribute("aria-expanded","false")};
+ menu?.addEventListener("click",()=>{const open=!nav?.classList.contains("open");nav?.classList.toggle("open",open);menu.classList.toggle("open",open);menu.setAttribute("aria-expanded",String(open))});
+ document.querySelectorAll("#mainNav a").forEach(a=>a.addEventListener("click",close));
+ window.addEventListener("scroll",()=>{header?.classList.toggle("scrolled",scrollY>30)}, {passive:true});
+ const footer=document.getElementById("secretFooterTrigger"),secret=document.getElementById("secretAccess"),closeSecret=document.getElementById("closeSecret");let taps=0,last=0;
+ const tap=()=>{const now=Date.now();if(now-last>2200)taps=0;last=now;taps++;if(taps>=5){secret?.classList.add("show");secret?.setAttribute("aria-hidden","false");taps=0}};
+ footer?.addEventListener("click",tap);footer?.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();tap()}});closeSecret?.addEventListener("click",()=>{secret.classList.remove("show");secret.setAttribute("aria-hidden","true")});
 });
+
+/* YANTRA UTSAV // FUTURE-TECH MOTION ENGINE */
+document.addEventListener('DOMContentLoaded',()=>{const layer=document.querySelector('.lux-particles');if(layer){const n=innerWidth<600?16:30;for(let i=0;i<n;i++){const d=document.createElement('i');d.style.left=Math.random()*100+'%';d.style.top=Math.random()*100+'%';d.style.animationDelay=Math.random()*7+'s';d.style.animationDuration=5+Math.random()*8+'s';layer.appendChild(d)}}const items=document.querySelectorAll('.section-head,.origin-grid,.arena-card,.leadership-feature,.core-card,.operations-grid article,.journey>div,.contact-card,.final-cta');if('IntersectionObserver' in window){const io=new IntersectionObserver((entries,obs)=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('lux-visible');obs.unobserve(e.target)}}),{threshold:.08});items.forEach((el,i)=>{el.style.setProperty('--reveal-delay',Math.min(i%6,5)*70+'ms');io.observe(el)})}else items.forEach(el=>el.classList.add('lux-visible'));const hero=document.querySelector('.tech-hero');
+if(hero&&matchMedia('(pointer:fine)').matches){
+ let raf=0,px=0,py=0;
+ hero.addEventListener('pointermove',e=>{
+  const r=hero.getBoundingClientRect();
+  px=((e.clientX-r.left)/r.width-.5)*18;
+  py=((e.clientY-r.top)/r.height-.5)*12;
+  if(raf)return;
+  raf=requestAnimationFrame(()=>{
+   hero.style.setProperty('--mx',px+'px');
+   hero.style.setProperty('--my',py+'px');
+   raf=0;
+  });
+ },{passive:true});
+ hero.addEventListener('pointerleave',()=>{
+  if(raf)cancelAnimationFrame(raf);
+  raf=requestAnimationFrame(()=>{
+   hero.style.setProperty('--mx','0px');
+   hero.style.setProperty('--my','0px');
+   raf=0;
+  });
+ },{passive:true});
+}});
