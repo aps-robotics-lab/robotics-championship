@@ -1,6 +1,6 @@
 /* =========================================================
    ADMIN-LOGIN.JS
-   APS ROBOTICS CHAMPIONSHIP 2026
+   APS YANTRA UTSAV 2026
 
    Firebase Project:
        aps-robotic-champs-2026

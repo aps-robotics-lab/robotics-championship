@@ -1,6 +1,6 @@
 /* =========================================================
    ADMIN.JS
-   APS ROBOTICS CHAMPIONSHIP 2026
+   APS YANTRA UTSAV 2026
 
    COMPLETE CORRECTED VERSION
 
@@ -3344,7 +3344,7 @@ function loadWebsiteContent() {
 
                 editTeamName:
                     data.teamName ||
-                    "APS Robotics Championship Team"
+                    "APS Yantra Utsav Team"
 
             };
 
@@ -3496,7 +3496,7 @@ saveContentBtn?.addEventListener(
                         document.getElementById(
                             "editTeamName"
                         )?.value ||
-                        "APS Robotics Championship Team"
+                        "APS Yantra Utsav Team"
 
                 }
             );

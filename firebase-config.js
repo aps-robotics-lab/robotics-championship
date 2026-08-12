@@ -1,6 +1,6 @@
 /* =========================================================
    FIREBASE CENTRAL CONFIGURATION
-   APS Robotics Championship 2026
+   APS Yantra Utsav 2026
 
    TWO SEPARATE FIREBASE PROJECTS:
 

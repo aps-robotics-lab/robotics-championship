@@ -1,6 +1,6 @@
 /* =========================================================
    AGENT-LOGIN.JS
-   APS ROBOTICS CHAMPIONSHIP 2026
+   APS YANTRA UTSAV 2026
    ---------------------------------------------------------
    Firebase:
        helpFirebaseConfig

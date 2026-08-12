@@ -26,8 +26,8 @@ onValue(ref(db,"siteContent/messages"), snapshot => {
   setText("#msgMentorName","Akansha Rani");
   setText("#msgCoordText",msgs.coordText || "Please follow the schedule, arena instructions and judge decisions. We look forward to a safe, fair and exciting championship for every team.");
   setText("#msgCoordName",(msgs.coordName && msgs.coordName !== "Ayush Kumar Singh") ? msgs.coordName : "Championship Coordination Team");
-  setText("#msgTeamText",msgs.teamText || "We are excited to welcome every participant to APS Robotics Championship 2026. Build responsibly, compete respectfully and enjoy the experience.");
-  setText("#msgTeamName",msgs.teamName || "APS Robotics Championship Team");
+  setText("#msgTeamText",msgs.teamText || "We are excited to welcome every participant to APS Yantra Utsav 2026. Build responsibly, compete respectfully and enjoy the experience.");
+  setText("#msgTeamName",msgs.teamName || "APS Yantra Utsav Team");
 });
 
 
