@@ -157,3 +157,102 @@ nav a{
         will-change:auto;
     }
 }
+
+
+/* =========================================================
+   SHAURYATECH // ANIMATION STABILITY PATCH
+   Existing visual design is preserved.
+========================================================= */
+
+/* Use opacity + transform for reveals; blur is intentionally removed
+   because animating filters can stutter on mobile GPUs. */
+.section-head,
+.origin-grid,
+.arena-card,
+.leadership-feature,
+.core-card,
+.operations-grid article,
+.journey > div,
+.contact-card,
+.final-cta{
+    opacity:0;
+    transform:translate3d(0,24px,0);
+    filter:none;
+    will-change:opacity,transform;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+}
+
+.lux-visible{
+    opacity:1 !important;
+    transform:translate3d(0,0,0) !important;
+    filter:none !important;
+    transition:
+      opacity .62s cubic-bezier(.16,1,.3,1) var(--reveal-delay),
+      transform .72s cubic-bezier(.16,1,.3,1) var(--reveal-delay) !important;
+}
+
+/* Keep hover movement smooth and independent from reveal state. */
+.arena-card,
+.team-card,
+.core-card,
+.leadership-feature,
+.operations-grid article,
+.contact-card,
+.btn,
+.menu-btn,
+nav a{
+    transition-timing-function:cubic-bezier(.16,1,.3,1);
+}
+
+/* Only promote the layers that actually animate. */
+.hero-visual,
+.hero-grid,
+.hero-scan,
+.hero-visual::before,
+.hero-visual::after,
+.lux-particles,
+.lux-particles i,
+.loader-core{
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+}
+
+.hero-visual,
+.hero-grid{
+    will-change:transform;
+}
+
+/* Do not let paint containment clip the glow/orbit effects. */
+.hero-visual,
+.hero-grid,
+.lux-particles{
+    contain:none;
+}
+
+@media (max-width:800px){
+    .section-head,
+    .origin-grid,
+    .arena-card,
+    .leadership-feature,
+    .core-card,
+    .operations-grid article,
+    .journey > div,
+    .contact-card,
+    .final-cta{
+        will-change:auto;
+    }
+
+    .lux-particles i{
+        box-shadow:0 0 7px #00eaff;
+    }
+}
+
+@media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto !important}
+    *,*::before,*::after{
+        animation-duration:.001ms !important;
+        animation-iteration-count:1 !important;
+        transition-duration:.001ms !important;
+    }
+}
