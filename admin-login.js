@@ -45,6 +45,12 @@ import {
     signOut
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
+import {
+    getDatabase,
+    ref,
+    get
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+
 
 /* =========================================================
    INITIALIZE FIREBASE
@@ -135,52 +141,26 @@ const forgotPasswordBtn =
    CONSTANTS
 ========================================================= */
 
-const PLACEHOLDER_ADMIN_UID =
-    "REPLACE_WITH_MAIN_PROJECT_ADMIN_UID";
+const PLACEHOLDER_ADMIN_UID = "REPLACE_WITH_MAIN_PROJECT_ADMIN_UID";
+const db = getDatabase(app);
 
 
 /* =========================================================
    ADMIN UID CHECK
 ========================================================= */
 
-function isAdminUIDConfigured() {
-
-    return (
-        typeof ADMIN_UID === "string" &&
-        ADMIN_UID.trim() !== "" &&
-        ADMIN_UID !== PLACEHOLDER_ADMIN_UID
-    );
-
-}
-
-
-/* =========================================================
-   CHECK ADMIN USER
-========================================================= */
-
-function isAuthorizedAdmin(user) {
-
-    if (!user) {
+async function isAuthorizedAdmin(user) {
+    if (!user) return false;
+    const configured = typeof ADMIN_UID === "string" && ADMIN_UID.trim() !== "" && ADMIN_UID !== PLACEHOLDER_ADMIN_UID;
+    if (configured && user.uid === ADMIN_UID) return true;
+    try {
+        const snapshot = await get(ref(db, `admins/${user.uid}`));
+        return snapshot.exists() && snapshot.val() === true;
+    } catch (error) {
+        console.error("Registration Department database authorization check failed:", error);
         return false;
     }
-
-    if (!isAdminUIDConfigured()) {
-
-        console.error(
-            "ADMIN_UID is not configured in firebase-config.js"
-        );
-
-        return false;
-
-    }
-
-    return (
-        user.uid ===
-        ADMIN_UID
-    );
-
 }
-
 
 /* =========================================================
    MESSAGE HELPER
@@ -607,23 +587,6 @@ loginForm?.addEventListener(
            CHECK CONFIGURATION
         ------------------------------------------------- */
 
-        if (!isAdminUIDConfigured()) {
-
-            console.error(
-                "ADMIN_UID is missing or still uses the placeholder value."
-            );
-
-
-            showMessage(
-                "Administrator access is not configured. Check firebase-config.js.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
         /* -------------------------------------------------
            START LOADING
         ------------------------------------------------- */
@@ -716,11 +679,7 @@ if (auth) {
             showLoadingScreen();
 
 
-            if (
-                !isAuthorizedAdmin(
-                    user
-                )
-            ) {
+            if (!(await isAuthorizedAdmin(user))) {
 
                 console.warn(
                     "Unauthorized admin login attempt:",
@@ -748,7 +707,7 @@ if (auth) {
 
 
                 showMessage(
-                    "Access denied. This account is not authorized as the administrator.",
+                    "Access denied. This account is not authorized for the Registration Department.",
                     "error"
                 );
 
@@ -768,7 +727,7 @@ if (auth) {
             --------------------------------------------- */
 
             console.log(
-                "Administrator authenticated:",
+                "Registration Department authenticated:",
                 user.uid
             );
 

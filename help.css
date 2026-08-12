@@ -458,3 +458,8 @@ footer {
 .tracker-card{margin-top:24px}.tracker-form{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:end}.tracker-form .submit-btn{height:52px}.tracker-status{min-height:22px;margin-top:12px;color:#8fa4be;font-size:13px}.tracker-result{margin-top:16px;padding:18px;border:1px solid rgba(50,231,255,.16);border-radius:16px;background:rgba(255,255,255,.03)}.tracker-result.hidden{display:none}.tracker-top{display:flex;justify-content:space-between;gap:15px}.tracker-top strong{color:#fff}.tracker-top span{color:#55e8ff;font-weight:700}.tracker-bar{height:9px;margin:12px 0;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden}.tracker-bar span{display:block;width:0;height:100%;background:linear-gradient(90deg,#24d9ff,#65ffb2);border-radius:inherit;transition:width .35s ease}.tracker-result p{margin:10px 0;color:#b8c7d8;line-height:1.6}.tracker-result small{color:#71839a}@media(max-width:650px){.tracker-form{grid-template-columns:1fr}}
 
 .approval-note{margin:8px 0 16px;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,193,7,.22);background:rgba(255,193,7,.05);color:#d8c27d;font-size:12px;line-height:1.5}.approval-note strong{color:#ffe08a}
+
+/* Luxury future-tech visual layer */
+body{background:#02050d!important;background-image:radial-gradient(circle at 50% 0,rgba(0,234,255,.07),transparent 30%),linear-gradient(rgba(0,234,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(0,234,255,.018) 1px,transparent 1px)!important;background-size:auto,46px 46px,46px 46px!important;}
+button,.btn{transition:.25s ease!important;}
+button:hover,.btn:hover{transform:translateY(-2px);box-shadow:0 12px 35px rgba(0,234,255,.12)!important}

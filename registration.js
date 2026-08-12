@@ -68,7 +68,19 @@ form?.addEventListener("submit", async e => {
   submitBtn.disabled = true;
   submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
   try {
-    if (!auth.currentUser) await signInAnonymously(auth);
+    /* Anonymous auth is preferred because the Firebase rules can require an
+       authenticated writer. If Anonymous Authentication is disabled, continue
+       anyway so projects with public registration writes still work. */
+    if (!auth.currentUser) {
+      try {
+        await signInAnonymously(auth);
+      } catch (authError) {
+        console.warn("Anonymous registration auth unavailable:", authError);
+        if (authError?.code !== "auth/operation-not-allowed" && authError?.code !== "auth/admin-restricted-operation") {
+          throw authError;
+        }
+      }
+    }
     const teamSize = getTeamSize();
     const registrationId = generateId();
     const data = {
@@ -95,23 +107,40 @@ form?.addEventListener("submit", async e => {
       data[`Member${i}Section`] = getValue(`member${i}Section`).toUpperCase();
     }
     const registrationRef = push(ref(db,"registrations"));
-    const lookup = {
-      registrationId,
-      status: "Pending Approval",
-      statusNote: "Our team will review your registration and contact you soon.",
-      updatedAt: Date.now()
-    };
-    await update(ref(db), {
-      [`registrations/${registrationRef.key}`]: data,
-      [`registrationStatusLookup/${registrationId}`]: lookup
-    });
+
+    /* Write the registration first. This is intentionally a single-path write
+       because many Firebase Realtime Database rule sets permit /registrations
+       but do not permit the secondary status-lookup path. */
+    await set(registrationRef, data);
+
+    /* Secondary lookup is useful for support tracking, but must never make a
+       successful registration look like a failure. */
+    try {
+      await set(ref(db, `registrationStatusLookup/${registrationId}`), {
+        registrationId,
+        status: "Pending Approval",
+        statusNote: "Our team will review your registration and contact you soon.",
+        updatedAt: Date.now()
+      });
+    } catch (lookupError) {
+      console.warn("Status lookup write skipped:", lookupError);
+    }
     if (window.emailjs) emailjs.send("service_5m4uzhb","template_5qb8b2p",data).catch(()=>{});
     sessionStorage.setItem("apsRegistrationId", data.registrationId);
     sessionStorage.setItem("apsRegistrationName", data.StudentName);
     successRegistrationId.textContent = data.registrationId;
     successOverlay.classList.remove("hidden");
   } catch (err) {
-    showMessage("Registration could not be submitted. Please check your internet connection and try again.");
+    console.error("REGISTRATION SUBMISSION FAILED:", err);
+    let message = "Registration could not be submitted.";
+    if (err?.code === "PERMISSION_DENIED" || err?.code === "database/permission-denied") {
+      message = "Firebase denied this registration. Enable Anonymous Authentication or allow authenticated/public writes to /registrations in Realtime Database Rules.";
+    } else if (err?.code === "auth/network-request-failed" || err?.code === "NETWORK_ERROR") {
+      message = "Network error. Please check your internet connection.";
+    } else if (err?.message) {
+      message = `${message} ${err.message}`;
+    }
+    showMessage(message);
     submitBtn.disabled = false;
     submitBtn.innerHTML = 'Submit Registration <i class="fa-solid fa-arrow-right"></i>';
   }

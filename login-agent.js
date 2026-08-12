@@ -42,7 +42,7 @@ form?.addEventListener("submit", async e => {
         window.location.replace("agent.html");
     } catch (err) {
         console.error(err);
-        setMessage("Invalid agent credentials or Firebase Authentication is unavailable.", "error");
+        setMessage("Invalid Helping Department credentials or Firebase Authentication is unavailable.", "error");
     }
 });
 

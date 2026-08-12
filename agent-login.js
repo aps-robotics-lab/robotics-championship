@@ -16,7 +16,7 @@
 
        UID:
            active: true
-           name: "Support Agent"
+           name: "Helping Department"
 
    IMPORTANT:
    This file does NOT modify Firebase Rules.
@@ -425,7 +425,7 @@ loginForm?.addEventListener(
 
 
                 showMessage(
-                    "Login successful, but this account is not authorized as a support agent.",
+                    "Login successful, but this account is not authorized as a Helping Department.",
                     "error"
                 );
 
@@ -469,7 +469,7 @@ loginForm?.addEventListener(
         catch (error) {
 
             console.error(
-                "Agent login error:",
+                "Helping Department login error:",
                 error
             );
 

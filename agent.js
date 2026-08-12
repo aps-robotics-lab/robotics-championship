@@ -18,7 +18,7 @@
        agents/
            UID:
                active: true
-               name: "Support Agent"
+               name: "Helping Department"
 
    IMPORTANT:
    Firebase Rules are NOT changed by this file.
@@ -762,10 +762,10 @@ async function authorizeAgent(
 
                 name:
                     user.email ||
-                    "Support Agent",
+                    "Helping Department",
 
                 role:
-                    "Support Agent"
+                    "Helping Department"
 
             };
 
@@ -1847,7 +1847,7 @@ setProgressBtn?.addEventListener(
                     50,
 
                 statusNote:
-                    "A support agent is currently reviewing your request."
+                    "A Helping Department is currently reviewing your request."
 
             },
             "✓ Ticket marked In Progress."
@@ -1948,7 +1948,7 @@ claimTicketBtn?.addEventListener(
         const name =
             currentAgentProfile?.name ||
             user.email ||
-            "Support Agent";
+            "Helping Department";
 
 
         await updateTicket(
@@ -2189,7 +2189,7 @@ onAuthStateChanged(
         if (!authorized) {
 
             console.error(
-                "Unauthorized agent UID:",
+                "Unauthorized Helping Department UID:",
                 user.uid
             );
 
@@ -2228,11 +2228,11 @@ onAuthStateChanged(
         const agentName =
             currentAgentProfile?.name ||
             user.email ||
-            "Support Agent";
+            "Helping Department";
 
 
         showStatus(
-            `Agent authenticated: ${agentName}`,
+            `Helping Department authenticated: ${agentName}`,
             "success"
         );
 
