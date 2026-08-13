@@ -449,6 +449,11 @@ trackerForm?.addEventListener(
 
             }
 
+            if (trackerReply && trackerReplyText) {
+                const reply = String(data.agentReply || "").trim();
+                trackerReplyText.textContent = reply;
+                trackerReply.classList.toggle("hidden", !reply);
+            }
 
             trackerResult?.classList.remove(
                 "hidden"
@@ -627,12 +632,6 @@ form?.addEventListener(
                 )?.value ||
                 "General";
 
-            const messageRecipient =
-                document.getElementById(
-                    "messageRecipient"
-                )?.value ||
-                "General Help";
-
             const subject =
                 valueOf(
                     "subject"
@@ -673,9 +672,6 @@ form?.addEventListener(
 
                 category:
                     category,
-
-                messageRecipient:
-                    messageRecipient,
 
                 subject:
                     subject,
