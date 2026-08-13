@@ -1,5 +1,5 @@
 /* =====================================================
-   APS TINKERING LAB SHAURYATECH 2026
+   APS ROBOTICS CHAMPIONSHIP 2026
    RULES PAGE ANIMATIONS
 ===================================================== */
 

@@ -40,8 +40,7 @@ import {
     ref,
     get,
     onValue,
-    update,
-    remove
+    update
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
 import {
@@ -279,9 +278,6 @@ const setClosedBtn =
     document.getElementById(
         "setClosedBtn"
     );
-
-const deleteTicketBtn =
-    document.getElementById("deleteTicketBtn");
 
 
 /* =========================================================
@@ -1669,10 +1665,6 @@ async function updateTicket(
                 next.statusNote ||
                 "Our team will review your request and contact you soon.",
 
-            agentReply:
-                next.agentReply ||
-                "",
-
             updatedAt:
                 now
 
@@ -1764,50 +1756,6 @@ async function updateTicket(
     }
 
 }
-
-
-/* =========================================================
-   DELETE TICKET
-========================================================= */
-
-async function deleteSelectedTicket() {
-    if (!selectedTicketKey) return;
-
-    const ticket = tickets[selectedTicketKey];
-    if (!ticket) return;
-
-    const referenceId = ticket.referenceId;
-    const ok = window.confirm(
-        `Delete ticket ${referenceId || selectedTicketKey}? This cannot be undone.`
-    );
-    if (!ok) return;
-
-    const user = auth.currentUser;
-    if (!user) {
-        showStatus("Your login session has expired.", "error");
-        return;
-    }
-
-    try {
-        if (modalMessage) modalMessage.textContent = "Deleting...";
-
-        const updates = {};
-        updates[`${TICKETS_PATH}/${selectedTicketKey}`] = null;
-        if (referenceId) updates[`${LOOKUP_PATH}/${referenceId}`] = null;
-        await update(ref(db), updates);
-
-        delete tickets[selectedTicketKey];
-        closeTicketModal();
-        renderTickets();
-        showStatus("✓ Ticket deleted successfully.", "success");
-    } catch (error) {
-        console.error("Ticket delete failed:", error);
-        if (modalMessage) modalMessage.textContent = error?.message || "Unable to delete ticket.";
-        showStatus("Unable to delete ticket. Check Firebase Rules.", "error");
-    }
-}
-
-deleteTicketBtn?.addEventListener("click", deleteSelectedTicket);
 
 
 /* =========================================================

@@ -3344,7 +3344,7 @@ function loadWebsiteContent() {
 
                 editTeamName:
                     data.teamName ||
-                    "APS Tinkering Lab Team"
+                    "APS ShauryaTech Team"
 
             };
 
@@ -3496,7 +3496,7 @@ saveContentBtn?.addEventListener(
                         document.getElementById(
                             "editTeamName"
                         )?.value ||
-                        "APS Tinkering Lab Team"
+                        "APS ShauryaTech Team"
 
                 }
             );
@@ -4283,12 +4283,12 @@ document.addEventListener(
 
         const menuBtn =
             document.getElementById(
-                "menuBtn"
+                "menuToggle"
             );
 
         const sidebar =
             document.getElementById(
-                "sidebar"
+                "adminSidebar"
             );
 
         const sidebarOverlay =
