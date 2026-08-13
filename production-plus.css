@@ -1,0 +1,54 @@
+/* APS ShauryaTech 2026 — advanced polish layer
+   Adds visual/interaction refinement only. No existing content is changed. */
+:root{
+  --st-cyan:#00c2ff;
+  --st-gold:#d4af37;
+  --st-bg:#050914;
+  --st-ease:cubic-bezier(.16,1,.3,1);
+}
+html{scroll-behavior:smooth}
+body{background-image:radial-gradient(circle at 50% -10%,rgba(0,194,255,.055),transparent 32%),linear-gradient(rgba(255,255,255,.012) 1px,transparent 1px);background-size:auto,100% 4px}
+body::before{content:"";position:fixed;inset:0;z-index:9997;pointer-events:none;opacity:.025;background-image:radial-gradient(rgba(255,255,255,.8) .6px,transparent .7px);background-size:5px 5px}
+#stProgress{position:fixed;left:0;top:0;width:100%;height:2px;z-index:10001;transform-origin:left;transform:scaleX(0);background:linear-gradient(90deg,var(--st-cyan),var(--st-gold));box-shadow:0 0 14px rgba(0,194,255,.7);pointer-events:none}
+#stCursor{position:fixed;width:24px;height:24px;border:1px solid rgba(0,194,255,.45);border-radius:50%;pointer-events:none;z-index:10000;transform:translate(-50%,-50%);opacity:0;transition:width .25s var(--st-ease),height .25s var(--st-ease),opacity .25s ease,border-color .25s ease;mix-blend-mode:screen}
+#stCursor::after{content:"";position:absolute;left:50%;top:50%;width:4px;height:4px;border-radius:50%;background:var(--st-cyan);transform:translate(-50%,-50%);box-shadow:0 0 12px var(--st-cyan)}
+body.st-pointer #stCursor{opacity:1}
+body.st-hover #stCursor{width:44px;height:44px;border-color:rgba(212,175,55,.75)}
+.hero-grid{opacity:.5}
+.tech-hero .hero-grid{transform:translate3d(calc(var(--mx,0px)*-.35),calc(var(--my,0px)*-.35),0);transition:transform .18s ease-out}
+.tech-hero .hero-visual{transform:translate3d(calc(var(--mx,0px)*.22),calc(var(--my,0px)*.22),0);transition:transform .25s ease-out}
+.tech-hero .hero-content{transform:translate3d(calc(var(--mx,0px)*.08),calc(var(--my,0px)*.08),0);transition:transform .25s ease-out}
+.hero-scan{opacity:.65;animation:stScan 7s linear infinite}
+@keyframes stScan{0%,100%{transform:translateY(-100%);opacity:0}15%{opacity:.35}50%{opacity:.7}85%{opacity:.35}100%{transform:translateY(100%);opacity:0}}
+.phase-strip>div{transition:transform .45s var(--st-ease),background .45s ease,border-color .45s ease;position:relative;overflow:hidden}
+.phase-strip>div::after{content:"";position:absolute;left:0;bottom:0;width:0;height:2px;background:linear-gradient(90deg,var(--st-cyan),var(--st-gold));transition:width .5s var(--st-ease)}
+.phase-strip>div:hover{transform:translateY(-4px);background:rgba(255,255,255,.045);border-color:rgba(0,194,255,.2)}
+.phase-strip>div:hover::after{width:100%}
+.arena-card{background-image:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.008))}
+.arena-card .arena-index,.core-card>span,.feature-index{transition:transform .45s var(--st-ease),text-shadow .45s ease}
+.arena-card:hover .arena-index,.core-card:hover>span,.leadership-feature:hover .feature-index{transform:translateX(5px);text-shadow:0 0 18px rgba(0,194,255,.35)}
+.arena-card .arena-link{transition:letter-spacing .4s var(--st-ease),color .3s ease}
+.arena-card:hover .arena-link{letter-spacing:.12em;color:#fff}
+.section-head{position:relative}
+.section-head::before{content:"";position:absolute;left:0;top:-18px;width:38px;height:1px;background:linear-gradient(90deg,var(--st-cyan),transparent);opacity:.8}
+.final-cta,.contact-card{box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 20px 70px rgba(0,0,0,.18)}
+.site-header{transition:transform .45s var(--st-ease),background .45s ease,box-shadow .45s ease}
+.site-header.st-hide{transform:translateY(-105%)}
+.menu-btn{transition:transform .3s var(--st-ease),background .3s ease,border-color .3s ease}
+.menu-btn:hover{transform:scale(1.04)}
+.menu-btn:active{transform:scale(.96)}
+.btn,.arena-card,.core-card,.leadership-feature,.operations-grid article,.contact-card{will-change:transform}
+.lux-visible{animation:stReveal .8s var(--st-ease) both;animation-delay:var(--reveal-delay,0ms)}
+@keyframes stReveal{from{opacity:0;transform:translateY(24px) scale(.985);filter:blur(4px)}to{opacity:1;transform:none;filter:none}}
+@media(max-width:800px){
+  body::before{opacity:.018}
+  #stCursor{display:none!important}
+  .phase-strip>div:hover{transform:none}
+  .section-head::before{top:-12px}
+  .tech-hero .hero-grid,.tech-hero .hero-visual,.tech-hero .hero-content{transform:none!important}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  #stProgress{transition:none}
+}
