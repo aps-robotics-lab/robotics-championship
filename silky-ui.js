@@ -83,17 +83,17 @@
       sections.forEach(s => spy.observe(s));
     }
 
-    /* Smooth anchor navigation that respects the compact header. */
+    /* Smooth anchor navigation: let the browser own the scroll animation.
+       This avoids competing scrollTo calls and keeps trackpads/touch scrolling fluid. */
     document.querySelectorAll('a[href^="#"]').forEach(a => {
-      a.addEventListener("click", e => {
+      a.addEventListener("click", () => {
         const id = a.getAttribute("href");
         if (!id || id === "#") return;
         const target = document.querySelector(id);
         if (!target) return;
-        e.preventDefault();
-        const top = target.getBoundingClientRect().top + scrollY - 76;
-        scrollTo({top, behavior: reduce ? "auto" : "smooth"});
-      });
+        // scroll-margin-top in CSS handles the fixed header offset.
+        target.style.setProperty("scroll-margin-top", "92px");
+      }, {passive:true});
     });
 
     /* Tiny magnetic lift for primary actions. */
