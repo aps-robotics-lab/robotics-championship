@@ -62,3 +62,150 @@ a:hover{color:var(--ref-cyan)}
 /* Keep motion elegant rather than flashy. */
 .reveal,.event-member{will-change:transform,opacity}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}.reveal,.event-member{animation:none!important;transition:none!important}}
+
+/* =========================================================
+   ROBOKRITI FINAL VISUAL CALIBRATION
+   Inspired by the supplied APS Robotics reference screenshot.
+   Visual-only layer: no content, routes or functionality changed.
+========================================================= */
+:root{
+  --rk-bg:#020607;
+  --rk-bg-2:#050b10;
+  --rk-panel:#071322;
+  --rk-panel-2:#091727;
+  --rk-cyan:#00d9ff;
+  --rk-cyan-soft:#11b9d7;
+  --rk-lime:#dfff00;
+  --rk-white:#edf7fb;
+  --rk-muted:#8d9ba9;
+  --rk-border:rgba(0,217,255,.18);
+}
+
+html{background:var(--rk-bg)!important}
+body{
+  background:
+    radial-gradient(circle at 50% -10%,rgba(0,217,255,.055),transparent 30%),
+    var(--rk-bg)!important;
+  color:var(--rk-white)!important;
+}
+body:before{
+  opacity:.11!important;
+  background-image:
+    linear-gradient(rgba(0,217,255,.028) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,217,255,.028) 1px,transparent 1px)!important;
+  background-size:48px 48px!important;
+}
+
+.site-header,.event-header{
+  background:rgba(2,6,7,.88)!important;
+  border-bottom-color:rgba(0,217,255,.13)!important;
+  box-shadow:0 14px 55px rgba(0,0,0,.42),inset 0 -1px 0 rgba(0,217,255,.035)!important;
+}
+.brand b,.brand strong{color:var(--rk-white)!important}
+.brand small{color:var(--rk-cyan)!important}
+nav a{color:#91a0ad!important}
+nav a:hover,nav a.active{color:var(--rk-white)!important;background:rgba(0,217,255,.075)!important}
+
+.hero,.event-hero{
+  background:
+    radial-gradient(circle at 76% 27%,rgba(0,217,255,.115),transparent 27%),
+    radial-gradient(circle at 18% 82%,rgba(223,255,0,.025),transparent 24%),
+    linear-gradient(145deg,#020607,#050b10 58%,#020607)!important;
+}
+.hero-grid,.event-hero:before{
+  background-image:
+    linear-gradient(rgba(0,217,255,.038) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,217,255,.038) 1px,transparent 1px)!important;
+}
+.hero h1 span,.hero h1 b,.section-head h2 b,.final-cta h2 b,.event-hero h1 b,.event-core-head h2 b{
+  color:var(--rk-lime)!important;
+  text-shadow:0 0 28px rgba(223,255,0,.10)!important;
+}
+.phase-label,.phase-label,.hero-kicker,.section-head>span,.event-no,.event-meta span,
+.arena-index,.arena-link,.team-card small,.operations-grid article>span,.feature-index,
+.feature-line,.command-group-head>span,.event-core-head>span,.side-card>span{
+  color:var(--rk-cyan)!important;
+}
+.hero p,.section-head p,.arena-card p,.team-card p,.operations-grid p,.operations-grid li,
+.journey p,.contact-card p,.final-cta p,.event-hero p,.rule-card li,.side-card p,
+.core-card p,.leadership-feature p{color:var(--rk-muted)!important}
+
+.hero .btn.primary,.btn.primary,.nav-register,.side-card a:first-of-type{
+  background:var(--rk-cyan)!important;
+  border-color:var(--rk-cyan)!important;
+  color:#001015!important;
+  box-shadow:0 0 28px rgba(0,217,255,.16)!important;
+}
+.hero .btn.primary:hover,.btn.primary:hover,.nav-register:hover,.side-card a:first-of-type:hover{
+  background:#35e1ff!important;
+  box-shadow:0 0 42px rgba(0,217,255,.25)!important;
+}
+.btn.ghost,.btn.ghost:hover{
+  color:var(--rk-white)!important;
+  background:rgba(255,255,255,.025)!important;
+  border-color:rgba(255,255,255,.11)!important;
+}
+
+.phase-strip,.arenas-section,.team-section,.operations-section,.journey-section{
+  background:var(--rk-bg)!important;
+}
+.phase-strip>div{border-color:rgba(0,217,255,.08)!important}
+.phase-strip strong,.arena-card h3,.team-card h3,.operations-grid h3,
+.origin-grid h3,.leadership-feature h3,.core-card h3,.journey h3{color:var(--rk-white)!important}
+.phase-strip small{color:var(--rk-cyan)!important}
+
+.arena-card,.team-card,.core-card,.leadership-feature,.operations-grid article,
+.contact-card,.mentor-message,.rule-card,.side-card,.final-cta,.event-member{
+  background:
+    linear-gradient(145deg,rgba(7,19,34,.96),rgba(4,11,19,.97))!important;
+  border-color:rgba(0,217,255,.12)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 24px 70px rgba(0,0,0,.34)!important;
+}
+.arena-card:hover,.team-card:hover,.core-card:hover,.leadership-feature:hover,
+.operations-grid article:hover,.contact-card:hover{
+  border-color:rgba(0,217,255,.34)!important;
+  box-shadow:0 28px 85px rgba(0,0,0,.44),0 0 32px rgba(0,217,255,.055)!important;
+}
+.arena-card:before,.team-card.leader,.leadership-feature:before,.core-card:before,.final-cta{
+  background-image:linear-gradient(135deg,rgba(0,217,255,.075),transparent 48%)!important;
+}
+.mentor-feature:before{background:linear-gradient(135deg,rgba(223,255,0,.045),transparent 48%)!important}
+
+.origin-grid{border-top-color:rgba(0,217,255,.16)!important;border-bottom-color:rgba(0,217,255,.09)!important}
+.origin-number{color:rgba(0,217,255,.10)!important}
+.origin-points span{color:var(--rk-cyan)!important;border-color:rgba(0,217,255,.16)!important}
+.message-mark,.journey b{color:var(--rk-cyan)!important}
+.feature-line{background:linear-gradient(90deg,var(--rk-cyan),transparent)!important;box-shadow:0 0 15px rgba(0,217,255,.45)!important}
+
+.notice{background:rgba(0,217,255,.045)!important;border-left-color:var(--rk-cyan)!important}
+.rule-card li::marker{color:var(--rk-cyan)!important}
+.member-avatar{color:var(--rk-cyan)!important;border-color:rgba(0,217,255,.22)!important;background:rgba(0,217,255,.045)!important}
+.event-member:before{background:linear-gradient(90deg,var(--rk-cyan),transparent)!important}
+
+.hero-visual{border-color:rgba(0,217,255,.17)!important;box-shadow:0 0 100px rgba(0,217,255,.055),inset 0 0 60px rgba(0,217,255,.02)!important}
+.hero-visual:before{border-color:rgba(0,217,255,.18)!important}
+.hero-visual:after{border-color:rgba(223,255,0,.13)!important}
+.visual-core{border-color:var(--rk-cyan)!important;box-shadow:0 0 80px rgba(0,217,255,.10),inset 0 0 35px rgba(0,217,255,.045)!important}
+.visual-core span{color:var(--rk-cyan)!important;text-shadow:0 0 30px rgba(0,217,255,.35)!important}
+.visual-line{background:var(--rk-cyan)!important;box-shadow:0 0 10px var(--rk-cyan)!important}
+.lux-particles i{background:var(--rk-cyan)!important;box-shadow:0 0 12px var(--rk-cyan)!important}
+
+.loader-core{border-color:var(--rk-cyan)!important}
+.loader-core span{background:var(--rk-cyan)!important}
+.loader-sub{color:var(--rk-cyan)!important}
+
+.footer{border-color:rgba(0,217,255,.10)!important;background:#020607!important}
+.footer-status i{background:var(--rk-cyan)!important;box-shadow:0 0 10px var(--rk-cyan)!important}
+
+::selection{background:rgba(223,255,0,.24)!important;color:#fff!important}
+::-webkit-scrollbar-track{background:#020607!important}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--rk-cyan),#087fa8)!important}
+
+/* Small-screen refinement: preserve the screenshot's dense, premium feel. */
+@media(max-width:700px){
+  .site-header,.event-header{backdrop-filter:blur(16px)!important}
+  .hero{background:
+    radial-gradient(circle at 78% 18%,rgba(0,217,255,.09),transparent 32%),
+    #020607!important;
+  }
+}
