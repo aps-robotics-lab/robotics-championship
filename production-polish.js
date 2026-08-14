@@ -1,4 +1,4 @@
-/* APS ShauryaTech 2026 — lightweight UX polish. No content changes. */
+/* APS Tinkering Lab Robokriti 2026 — lightweight UX polish. No content changes. */
 (() => {
   const init = () => {
     const header = document.querySelector('.site-header');

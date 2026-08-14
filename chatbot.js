@@ -3,7 +3,7 @@ import { AI_CHAT_ENDPOINT } from "./firebase-config.js";
 const root=document.getElementById("apsChatbot");
 if(root){
 root.innerHTML=`<button class="aps-chat-launch" id="apsChatLaunch" aria-label="Open APS AI Assistant">🤖</button>
-<div class="aps-chat-panel" id="apsChatPanel" hidden><div class="aps-chat-head"><div><b>APS AI Assistant</b><small>Robotics Championship 2026</small></div><button id="apsChatClose">×</button></div><div class="aps-chat-messages" id="apsChatMessages"></div><form id="apsChatForm"><input id="apsChatInput" maxlength="500" autocomplete="off" placeholder="Ask about registration, events or help…"><button>➤</button></form></div>`;
+<div class="aps-chat-panel" id="apsChatPanel" hidden><div class="aps-chat-head"><div><b>APS AI Assistant</b><small>RoboKriti 2026</small></div><button id="apsChatClose">×</button></div><div class="aps-chat-messages" id="apsChatMessages"></div><form id="apsChatForm"><input id="apsChatInput" maxlength="500" autocomplete="off" placeholder="Ask about registration, events or help…"><button>➤</button></form></div>`;
 const panel=document.getElementById("apsChatPanel"), messages=document.getElementById("apsChatMessages"), form=document.getElementById("apsChatForm"), input=document.getElementById("apsChatInput");
 const add=(text,who="bot")=>{const d=document.createElement("div");d.className=`aps-msg ${who}`;d.textContent=text;messages.appendChild(d);messages.scrollTop=messages.scrollHeight};
 const faq=[
@@ -20,7 +20,7 @@ async function ask(q){
  }
  return faq.find(([re])=>re.test(q))?.[1] || "I can help with registration, team size, events, rules and support tracking. Try asking one of those.";
 }
-document.getElementById("apsChatLaunch").onclick=()=>{panel.hidden=false;if(!messages.children.length)add("Hi! I’m the APS AI Assistant. How can I help with the Robotics Championship?")};
+document.getElementById("apsChatLaunch").onclick=()=>{panel.hidden=false;if(!messages.children.length)add("Hi! I’m the APS AI Assistant. How can I help with the RoboKriti?")};
 document.getElementById("apsChatClose").onclick=()=>panel.hidden=true;
 form.onsubmit=async e=>{e.preventDefault();const q=input.value.trim();if(!q)return;add(q,"user");input.value="";add("Thinking…");const last=messages.lastElementChild;last.textContent=await ask(q);last.className="aps-msg bot"};
 }

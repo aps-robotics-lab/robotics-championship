@@ -1,6 +1,6 @@
 /* =========================================================
    ADMIN.JS
-   APS SHAURYATECH 2026
+   APS TINKERING LAB ROBOKRITI 2026
 
    COMPLETE CORRECTED VERSION
 
@@ -3344,7 +3344,7 @@ function loadWebsiteContent() {
 
                 editTeamName:
                     data.teamName ||
-                    "APS ShauryaTech Team"
+                    "APS Tinkering Lab Robokriti Team"
 
             };
 
@@ -3496,7 +3496,7 @@ saveContentBtn?.addEventListener(
                         document.getElementById(
                             "editTeamName"
                         )?.value ||
-                        "APS ShauryaTech Team"
+                        "APS Tinkering Lab Robokriti Team"
 
                 }
             );

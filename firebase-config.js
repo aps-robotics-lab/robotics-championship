@@ -1,6 +1,6 @@
 /* =========================================================
    FIREBASE CENTRAL CONFIGURATION
-   APS ShauryaTech 2026
+   APS Tinkering Lab Robokriti 2026
 
    TWO SEPARATE FIREBASE PROJECTS:
 

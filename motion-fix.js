@@ -1,4 +1,4 @@
-/* SHAURYATECH // MOTION ENGINE FIX
+/* ROBOKRITI // MOTION ENGINE FIX
    Keeps the existing UI/content intact.
    Fixes scroll-reveal, mobile performance, and pointer animation. */
 (function () {

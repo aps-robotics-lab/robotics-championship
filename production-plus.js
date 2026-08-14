@@ -1,4 +1,4 @@
-/* APS ShauryaTech 2026 — advanced interaction layer. Content-safe. */
+/* APS Tinkering Lab Robokriti 2026 — advanced interaction layer. Content-safe. */
 (function(){
   'use strict';
   const init=()=>{

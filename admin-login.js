@@ -1,6 +1,6 @@
 /* =========================================================
    ADMIN-LOGIN.JS
-   APS SHAURYATECH 2026
+   APS TINKERING LAB ROBOKRITI 2026
 
    Firebase Project:
        aps-robotic-champs-2026
