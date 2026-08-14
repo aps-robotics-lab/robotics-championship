@@ -1,0 +1,35 @@
+
+/* =========================================================
+   ROBOKRITI 2026 — ULTRA UI LAYER
+   Same existing cyan/gold theme. Visual-only enhancement.
+   ========================================================= */
+:root{--rk-cyan:#19e6ff;--rk-gold:#d4af37;--rk-bg:#050914;--rk-panel:rgba(8,15,30,.72);--rk-line:rgba(25,230,255,.14);--rk-ease:cubic-bezier(.22,1,.36,1)}
+html{scroll-behavior:smooth;scroll-padding-top:92px;overscroll-behavior-y:none}
+body{background-color:var(--rk-bg);text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+/* cinematic ambient layers */
+body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(circle at 15% 20%,rgba(25,230,255,.035),transparent 28%),radial-gradient(circle at 85% 65%,rgba(212,175,55,.025),transparent 25%)}
+.site-header{box-shadow:0 10px 40px rgba(0,0,0,.14);transition:transform .65s var(--rk-ease),background .45s ease,border-color .45s ease,box-shadow .45s ease}
+.site-header.scrolled{background:rgba(3,7,18,.86);border-bottom-color:rgba(25,230,255,.13);box-shadow:0 14px 50px rgba(0,0,0,.28)}
+.brand img{filter:drop-shadow(0 0 12px rgba(25,230,255,.12));transition:transform .5s var(--rk-ease),filter .5s ease}.brand:hover img{transform:rotate(-3deg) scale(1.05);filter:drop-shadow(0 0 18px rgba(25,230,255,.3))}
+nav a{position:relative;overflow:hidden}nav a:after{content:"";position:absolute;left:12px;right:12px;bottom:5px;height:1px;background:var(--rk-cyan);transform:scaleX(0);transform-origin:left;transition:transform .45s var(--rk-ease);opacity:.8}nav a:hover:after,nav a.active:after{transform:scaleX(1)}nav .nav-register{box-shadow:0 0 0 rgba(25,230,255,0);transition:transform .35s var(--rk-ease),box-shadow .35s ease}nav .nav-register:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(25,230,255,.2)}
+.hero{isolation:isolate}.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,9,20,0) 0%,rgba(5,9,20,.02) 45%,rgba(5,9,20,.2) 100%);pointer-events:none;z-index:1}.hero-content,.hero-visual{will-change:transform}
+.hero-content{animation:rkHeroIn 1.05s var(--rk-ease) both}.hero-visual{animation:rkVisualIn 1.2s .12s var(--rk-ease) both}
+.hero h1{filter:drop-shadow(0 0 30px rgba(25,230,255,.03))}.hero h1 span{text-shadow:0 0 30px rgba(25,230,255,.16)}
+.btn{position:relative;overflow:hidden;isolation:isolate}.btn:before{content:"";position:absolute;inset:-2px;background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.18) 48%,transparent 70%);transform:translateX(-120%);transition:transform .8s var(--rk-ease);z-index:-1}.btn:hover:before{transform:translateX(120%)}
+.section{position:relative}.section:before{content:"";position:absolute;left:8%;right:8%;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--rk-line),transparent);opacity:.55}
+.section-head h2{max-width:900px}.section-head h2 b{color:var(--rk-cyan);text-shadow:0 0 25px rgba(25,230,255,.1)}
+.phase-strip{position:relative;z-index:4;box-shadow:0 -15px 60px rgba(0,0,0,.12),0 15px 60px rgba(0,0,0,.12)}
+.phase-strip>div{position:relative;overflow:hidden}.phase-strip>div:before{content:"";position:absolute;left:0;top:0;width:1px;height:100%;background:linear-gradient(transparent,var(--rk-cyan),transparent);transform:scaleY(0);transition:transform .6s var(--rk-ease)}.phase-strip>div:hover:before{transform:scaleY(1)}
+.arena-card,.core-card,.leadership-feature,.operations-grid article,.contact-card,.mentor-message,.journey>div{transition:transform .55s var(--rk-ease),border-color .45s ease,background .45s ease,box-shadow .55s ease}.arena-card:hover,.core-card:hover,.leadership-feature:hover,.operations-grid article:hover,.contact-card:hover,.journey>div:hover{box-shadow:0 22px 70px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.05)}
+.arena-card:after,.core-card:after,.leadership-feature:after,.contact-card:after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(125deg,rgba(25,230,255,.08),transparent 35%,transparent 65%,rgba(212,175,55,.04));opacity:0;transition:opacity .5s ease}.arena-card:hover:after,.core-card:hover:after,.leadership-feature:hover:after,.contact-card:hover:after{opacity:1}
+.journey{counter-reset:rkstep}.journey>div{position:relative;overflow:hidden}.journey>div:before{content:"";position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,var(--rk-cyan),transparent);transform:scaleX(0);transform-origin:left;transition:transform .6s var(--rk-ease)}.journey>div:hover:before{transform:scaleX(1)}
+.final-cta{position:relative;overflow:hidden}.final-cta:before{content:"";position:absolute;width:420px;height:420px;border:1px solid rgba(25,230,255,.08);border-radius:50%;right:-170px;top:50%;transform:translateY(-50%);animation:rkOrbit 16s linear infinite}.final-cta:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(25,230,255,.025),transparent);animation:rkSweep 7s ease-in-out infinite}
+/* silky anchor navigation */
+@media (prefers-reduced-motion:no-preference){a[href^="#"]{scroll-behavior:smooth}}
+@keyframes rkHeroIn{from{opacity:0;transform:translate3d(0,28px,0);filter:blur(8px)}to{opacity:1;transform:none;filter:none}}
+@keyframes rkVisualIn{from{opacity:0;transform:translate3d(40px,0,0) scale(.94)}to{opacity:1;transform:none}}
+@keyframes rkOrbit{to{transform:translateY(-50%) rotate(360deg)}}
+@keyframes rkSweep{0%,100%{transform:translateX(-100%)}50%{transform:translateX(100%)}}
+@media(max-width:900px){html{scroll-padding-top:78px}.hero{min-height:auto}.hero-content{animation-duration:.8s}.hero-visual{opacity:.22;right:-140px;transform:scale(.78);pointer-events:none}.section:before{left:5%;right:5%}}
+@media(max-width:600px){.hero{padding-top:130px}.hero h1{letter-spacing:-2px}.hero-actions{flex-direction:column;align-items:stretch}.btn{width:100%}.phase-strip{grid-template-columns:1fr 1fr}.phase-strip>div{min-height:130px}.final-cta:before{right:-270px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hero-content,.hero-visual{animation:none!important}.final-cta:before,.final-cta:after{animation:none!important}.btn:before{display:none}}
