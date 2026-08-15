@@ -4277,213 +4277,115 @@ navLinks.forEach(
    ADMIN MOBILE SIDEBAR
 ========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
+document.addEventListener("DOMContentLoaded", () => {
 
-        const menuBtn =
-            document.getElementById(
-                "menuToggle"
-            );
+    const menuBtn = document.getElementById("menuBtn");
+    const sidebar = document.getElementById("sidebar");
 
-        const sidebar =
-            document.getElementById(
-                "adminSidebar"
-            );
+    if (!menuBtn || !sidebar) {
+        console.warn("Admin mobile menu elements not found.");
+        return;
+    }
 
-        const sidebarOverlay =
-            document.getElementById(
-                "sidebarOverlay"
-            );
+    function openSidebar() {
+        sidebar.classList.add("mobile-open");
 
+        document.body.classList.add("menu-open");
 
-        if (
-            !menuBtn ||
-            !sidebar ||
-            !sidebarOverlay
-        ) {
+        menuBtn.classList.add("active");
 
-            console.warn(
-                "Admin mobile menu elements not found."
-            );
+        menuBtn.innerHTML =
+            '<i class="fa-solid fa-xmark"></i>';
 
-            return;
-
-        }
-
-
-        function openSidebar() {
-
-            sidebar.classList.add(
-                "mobile-open"
-            );
-
-            sidebarOverlay.classList.add(
-                "active"
-            );
-
-            document.body.classList.add(
-                "menu-open"
-            );
-
-            menuBtn.classList.add(
-                "active"
-            );
-
-            menuBtn.innerHTML =
-                '<i class="fa-solid fa-xmark"></i>';
-
-            menuBtn.setAttribute(
-                "aria-label",
-                "Close menu"
-            );
-
-            menuBtn.setAttribute(
-                "aria-expanded",
-                "true"
-            );
-
-        }
-
-
-        function closeSidebar() {
-
-            sidebar.classList.remove(
-                "mobile-open"
-            );
-
-            sidebarOverlay.classList.remove(
-                "active"
-            );
-
-            document.body.classList.remove(
-                "menu-open"
-            );
-
-            menuBtn.classList.remove(
-                "active"
-            );
-
-            menuBtn.innerHTML =
-                '<i class="fa-solid fa-bars"></i>';
-
-            menuBtn.setAttribute(
-                "aria-label",
-                "Open menu"
-            );
-
-            menuBtn.setAttribute(
-                "aria-expanded",
-                "false"
-            );
-
-        }
-
-
-        function toggleSidebar() {
-
-            if (
-                sidebar.classList.contains(
-                    "mobile-open"
-                )
-            ) {
-
-                closeSidebar();
-
-            }
-            else {
-
-                openSidebar();
-
-            }
-
-        }
-
-
-        menuBtn.addEventListener(
-            "click",
-            toggleSidebar
+        menuBtn.setAttribute(
+            "aria-label",
+            "Close menu"
         );
-
-
-        sidebarOverlay.addEventListener(
-            "click",
-            closeSidebar
-        );
-
-
-        sidebar
-            .querySelectorAll(".sidebar-link")
-            .forEach(
-                link => {
-
-                    link.addEventListener(
-                        "click",
-                        () => {
-
-                            if (
-                                window.innerWidth <=
-                                900
-                            ) {
-
-                                closeSidebar();
-
-                            }
-
-                        }
-                    );
-
-                }
-            );
-
-
-        document.addEventListener(
-            "keydown",
-            event => {
-
-                if (
-                    event.key === "Escape"
-                ) {
-
-                    closeSidebar();
-
-                }
-
-            }
-        );
-
-
-        window.addEventListener(
-            "resize",
-            () => {
-
-                if (
-                    window.innerWidth > 900
-                ) {
-
-                    closeSidebar();
-
-                }
-
-            }
-        );
-
 
         menuBtn.setAttribute(
             "aria-expanded",
-            "false"
+            "true"
         );
+    }
 
+    function closeSidebar() {
+        sidebar.classList.remove("mobile-open");
+
+        document.body.classList.remove("menu-open");
+
+        menuBtn.classList.remove("active");
+
+        menuBtn.innerHTML =
+            '<i class="fa-solid fa-bars"></i>';
 
         menuBtn.setAttribute(
             "aria-label",
             "Open menu"
         );
 
+        menuBtn.setAttribute(
+            "aria-expanded",
+            "false"
+        );
     }
-);
 
+    function toggleSidebar() {
+        if (
+            sidebar.classList.contains("mobile-open")
+        ) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    }
 
+    menuBtn.addEventListener(
+        "click",
+        toggleSidebar
+    );
+
+    /* Close menu when a sidebar link is clicked */
+    sidebar
+        .querySelectorAll("a")
+        .forEach(link => {
+            link.addEventListener("click", () => {
+                if (window.innerWidth <= 900) {
+                    closeSidebar();
+                }
+            });
+        });
+
+    /* Close with Escape */
+    document.addEventListener(
+        "keydown",
+        event => {
+            if (event.key === "Escape") {
+                closeSidebar();
+            }
+        }
+    );
+
+    /* Close when returning to desktop */
+    window.addEventListener(
+        "resize",
+        () => {
+            if (window.innerWidth > 900) {
+                closeSidebar();
+            }
+        }
+    );
+
+    menuBtn.setAttribute(
+        "aria-expanded",
+        "false"
+    );
+
+    menuBtn.setAttribute(
+        "aria-label",
+        "Open menu"
+    );
+
+});
 /* =========================================================
    END ADMIN.JS
 ========================================================= */
