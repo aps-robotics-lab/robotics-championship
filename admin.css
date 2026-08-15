@@ -1715,7 +1715,9 @@ body.menu-open {
     }
 
 }
-
+.sidebar.active {
+    transform: translateX(0);
+}
 
 /* =========================================================
    LOCK BACKGROUND SCROLL
