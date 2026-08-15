@@ -41,14 +41,32 @@ async function isHelpingAgent(user) {
   } catch { return false; }
 }
 
+function hasFiveClickPass() {
+  try {
+    const raw = sessionStorage.getItem("robokriti_mail_access");
+    if (!raw) return false;
+    const pass = JSON.parse(raw);
+    const validRole = pass?.role === "registration" || pass?.role === "helping";
+    const validTime = Number.isFinite(pass?.issuedAt) && (Date.now() - pass.issuedAt) <= 10 * 60 * 1000;
+    return validRole && validTime;
+  } catch {
+    return false;
+  }
+}
+
 async function verifyAccess() {
+  // The intended access method is the hidden 5-click entry from either
+  // authorized department dashboard. Firebase checks are retained as a
+  // secondary path for existing authenticated department sessions.
+  if (hasFiveClickPass()) return true;
+
   const users = [];
   await Promise.all([
     new Promise(resolve => onAuthStateChanged(mainAuth, async user => { if (user && await isMainAdmin(user)) users.push("registration"); resolve(); })),
     new Promise(resolve => onAuthStateChanged(helpAuth, async user => { if (user && await isHelpingAgent(user)) users.push("helping"); resolve(); }))
   ]);
   if (!users.length) {
-    document.body.innerHTML = `<main style="min-height:100vh;display:grid;place-items:center;padding:24px;background:#03070d;color:#fff;font-family:Poppins,sans-serif;text-align:center"><div><h1 style="font-family:Orbitron,sans-serif">ACCESS DENIED</h1><p style="color:#9aaaba">Open this console from an authorized Registration or Helping Department session.</p><a href="index.html" style="color:#00c8ff">Return to RoboKriti</a></div></main>`;
+    document.body.innerHTML = `<main style="min-height:100vh;display:grid;place-items:center;padding:24px;background:#03070d;color:#fff;font-family:Poppins,sans-serif;text-align:center"><div><h1 style="font-family:Orbitron,sans-serif">ACCESS DENIED</h1><p style="color:#9aaaba">Use the 5-click access from the Registration or Helping Department dashboard.</p><a href="index.html" style="color:#00c8ff">Return to RoboKriti</a></div></main>`;
     return false;
   }
   return true;
@@ -57,7 +75,11 @@ async function verifyAccess() {
 async function init() {
   if (!window.emailjs) { setStatus("Email service could not load. Check your connection.", "err"); return; }
   window.emailjs.init({ publicKey: PUBLIC_KEY, limitRate: { id: "robokriti-manual-mail", throttle: 10000 } });
-  await verifyAccess();
+  const allowed = await verifyAccess();
+  if (!allowed) return;
+
+  // Consume the short-lived 5-click pass after successful entry.
+  sessionStorage.removeItem("robokriti_mail_access");
 }
 
 form.addEventListener("submit", async event => {

@@ -14,6 +14,16 @@
     if (clicks >= 5) {
       clicks = 0;
       clearTimeout(resetTimer);
+
+      // Create a short-lived access pass for the hidden mail console.
+      // This is intentionally separate from Firebase auth because the
+      // Registration and Helping dashboards use different Firebase projects.
+      const role = window.location.pathname.includes('agent') ? 'helping' : 'registration';
+      sessionStorage.setItem('robokriti_mail_access', JSON.stringify({
+        role,
+        issuedAt: Date.now()
+      }));
+
       window.location.href = 'mail-sender.html';
     }
   });
