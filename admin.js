@@ -771,15 +771,15 @@ function normalizeEventName(value) {
             "Robo Tug of War",
 
         "robo soccer":
-            "Robo Soccer",
-        "robo soccer":
-            "Robo Soccer",
+            "Robo Saucer",
+        "robo saucer":
+            "Robo Saucer",
 
         "soccer":
-            "Robo Soccer",
+            "Robo Saucer",
 
         "robosoccer":
-            "Robo Soccer"
+            "Robo Saucer"
 
     };
 
@@ -1504,7 +1504,7 @@ function renderStats() {
             ([, data]) =>
                 hasEvent(
                     data,
-                    "Robo Soccer"
+                    "Robo Saucer"
                 )
         ).length;
 
@@ -3342,7 +3342,7 @@ function loadWebsiteContent() {
                 editTeamText:
                     data.teamText || "",
 
-                editWebsiteTeamName:
+                editTeamName:
                     data.teamName ||
                     "APS Tinkering Lab Robokriti Team"
 
@@ -3494,7 +3494,7 @@ saveContentBtn?.addEventListener(
 
                     teamName:
                         document.getElementById(
-                            "editWebsiteTeamName"
+                            "editTeamName"
                         )?.value ||
                         "APS Tinkering Lab Robokriti Team"
 
