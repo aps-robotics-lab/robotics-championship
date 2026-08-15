@@ -97,7 +97,7 @@ form?.addEventListener("submit", async e => {
       Remarks: getValue("remarks"),
       status: "Pending Approval",
       statusNote: "Our team will review your registration and contact you soon.",
-      createdBy: auth.currentUser.uid,
+      createdBy: auth.currentUser?.uid || "public-registration",
       createdAt: Date.now(),
       timestamp: Date.now()
     };
@@ -125,7 +125,6 @@ form?.addEventListener("submit", async e => {
     } catch (lookupError) {
       console.warn("Status lookup write skipped:", lookupError);
     }
-    if (window.emailjs) emailjs.send("service_5m4uzhb","template_5qb8b2p",data).catch(()=>{});
     sessionStorage.setItem("apsRegistrationId", data.registrationId);
     sessionStorage.setItem("apsRegistrationName", data.StudentName);
     successRegistrationId.textContent = data.registrationId;

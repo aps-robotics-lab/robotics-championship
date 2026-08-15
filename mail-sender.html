@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#03070d">
+<title>Confirmation Mail Console | RoboKriti 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mail-sender.css">
+</head>
+<body>
+<div class="container">
+  <header class="top">
+    <div class="brand"><div class="brand-mark">RK</div><div><div class="eyebrow">APS TINKERING LAB // ROBOKRITI 2026</div><h1>CONFIRMATION <span>MAIL</span></h1><p class="subtitle">Manual participant confirmation console</p></div></div>
+    <a class="back" href="javascript:history.back()">← Return to department dashboard</a>
+  </header>
+
+  <main class="card">
+    <div class="security"><strong>MANUAL SEND</strong><span>Sender address is fixed by the EmailJS template. It is not editable on this page.</span></div>
+    <form id="mailForm" novalidate>
+      <div class="grid">
+        <div class="field"><label for="to_email">Participant Email *</label><input id="to_email" name="to_email" type="email" autocomplete="email" required></div>
+        <div class="field"><label for="student_name">Participant Name *</label><input id="student_name" name="student_name" type="text" required></div>
+        <div class="field"><label for="registration_id">Registration ID *</label><input id="registration_id" name="registration_id" type="text" required></div>
+        <div class="field"><label for="team_name">Team Name</label><input id="team_name" name="team_name" type="text"></div>
+        <div class="field"><label for="team_size">Team Size</label><input id="team_size" name="team_size" type="text"></div>
+        <div class="field"><label for="participation_type">Participation Type</label><input id="participation_type" name="participation_type" type="text"></div>
+        <div class="field full"><label for="events">Selected Events</label><textarea id="events" name="events" placeholder="Robo Race, Robo Soccer..."></textarea></div>
+        <div class="field"><label for="mobile_number">Mobile Number</label><input id="mobile_number" name="mobile_number" type="tel"></div>
+        <div class="field"><label for="status">Registration Status</label><input id="registration_status" name="status" type="text" value="Registration Confirmed"></div>
+        <div class="field full"><label for="remarks">Remarks</label><textarea id="remarks" name="remarks" placeholder="Optional message for the participant"></textarea></div>
+      </div>
+      <div class="actions"><button class="send" id="sendBtn" type="submit">SEND CONFIRMATION</button><button class="clear" id="clearBtn" type="button">CLEAR</button><div class="status" id="mailStatus" role="status" aria-live="polite"></div></div>
+    </form>
+  </main>
+  <footer class="foot">Authorized department console • Manual confirmation only</footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script type="module" src="mail-sender.js"></script>
+</body>
+</html>

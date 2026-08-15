@@ -1,0 +1,42 @@
+/* APS Tinkering Lab RoboKriti 2026 — final visual/interaction calibration */
+:root{
+  --rk-bg:#020607;
+  --rk-bg-2:#050b10;
+  --rk-panel:#071322;
+  --rk-panel-2:#091727;
+  --rk-cyan:#00d9ff;
+  --rk-cyan-2:#008cff;
+  --rk-lime:#dfff00;
+  --rk-white:#edf7fb;
+  --rk-muted:#8d9ba9;
+  --rk-border:rgba(0,217,255,.18);
+  --rk-ease:cubic-bezier(.22,1,.36,1);
+}
+html{scroll-behavior:smooth;scroll-padding-top:86px;background:var(--rk-bg)!important}
+body{background:var(--rk-bg)!important;color:var(--rk-white)!important;overflow-x:hidden}
+body::before{opacity:.09!important;background-image:linear-gradient(rgba(0,217,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,217,255,.025) 1px,transparent 1px)!important;background-size:48px 48px!important}
+::selection{background:rgba(0,217,255,.25);color:#fff}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:#030607}::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--rk-cyan),var(--rk-cyan-2));border-radius:99px}
+.site-header,.event-header{background:rgba(2,6,7,.88)!important;border-color:rgba(0,217,255,.13)!important;box-shadow:0 14px 55px rgba(0,0,0,.42)!important;backdrop-filter:blur(18px) saturate(125%)}
+.site-header{transition:height .45s var(--rk-ease),transform .45s var(--rk-ease),background .35s ease,box-shadow .35s ease}
+.site-header.rk-compact{height:66px;background:rgba(2,6,7,.94)!important}
+.site-header.rk-hidden{transform:translateY(-105%)}
+.brand b,.brand strong{color:var(--rk-white)!important}.brand small,.back{color:var(--rk-cyan)!important}
+nav a{color:#91a0ad!important}nav a:hover,nav a.active{color:#fff!important;background:rgba(0,217,255,.075)!important}
+.hero,.event-hero{background:radial-gradient(circle at 76% 27%,rgba(0,217,255,.115),transparent 27%),radial-gradient(circle at 18% 82%,rgba(223,255,0,.025),transparent 24%),linear-gradient(145deg,#020607,#050b10 58%,#020607)!important}
+.hero-grid,.event-hero:before,.cta-grid{background-image:linear-gradient(rgba(0,217,255,.038) 1px,transparent 1px),linear-gradient(90deg,rgba(0,217,255,.038) 1px,transparent 1px)!important}
+.hero h1 span,.hero h1 b,.section-head h2 b,.final-cta h2 b,.event-hero h1 b,.event-core-head h2 b{color:var(--rk-lime)!important;text-shadow:0 0 28px rgba(223,255,0,.08)!important}
+.phase-label,.hero-kicker,.section-head>span,.event-no,.event-meta span,.arena-index,.arena-link,.team-card small,.operations-grid article>span,.feature-index,.feature-line,.command-group-head>span,.event-core-head>span,.side-card>span{color:var(--rk-cyan)!important}
+.hero p,.section-head p,.arena-card p,.team-card p,.operations-grid p,.operations-grid li,.journey p,.contact-card p,.final-cta p,.event-hero p,.rule-card li,.side-card p,.core-card p,.leadership-feature p{color:var(--rk-muted)!important}
+.arena-card,.team-card,.core-card,.leadership-feature,.operations-grid article,.contact-card,.mentor-message,.rule-card,.side-card,.final-cta,.event-member{background:linear-gradient(145deg,rgba(7,19,34,.96),rgba(4,11,19,.97))!important;border-color:rgba(0,217,255,.12)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 24px 70px rgba(0,0,0,.34)!important}
+.arena-card:hover,.team-card:hover,.core-card:hover,.leadership-feature:hover,.operations-grid article:hover,.contact-card:hover{border-color:rgba(0,217,255,.34)!important;box-shadow:0 28px 85px rgba(0,0,0,.44),0 0 32px rgba(0,217,255,.055)!important}
+.btn.primary,.nav-register,.side-card a:first-of-type{background:var(--rk-cyan)!important;border-color:var(--rk-cyan)!important;color:#001015!important;box-shadow:0 0 28px rgba(0,217,255,.16)!important}.btn.primary:hover,.nav-register:hover,.side-card a:first-of-type:hover{background:#35e1ff!important}
+.btn.ghost{color:var(--rk-white)!important;background:rgba(255,255,255,.025)!important;border-color:rgba(255,255,255,.11)!important}
+.phase-strip,.arenas-section,.team-section,.operations-section,.journey-section,.contact-section{background:var(--rk-bg)!important}
+.phase-strip small,.phase-strip strong,.arena-card h3,.team-card h3,.operations-grid h3,.origin-grid h3,.leadership-feature h3,.core-card h3,.journey h3{color:var(--rk-white)!important}.phase-strip small{color:var(--rk-cyan)!important}
+.origin-points span{color:var(--rk-cyan)!important;border-color:rgba(0,217,255,.16)!important}.message-mark,.journey b{color:var(--rk-cyan)!important}.notice{background:rgba(0,217,255,.045)!important;border-left-color:var(--rk-cyan)!important}.rule-card li::marker{color:var(--rk-cyan)!important}.member-avatar{color:var(--rk-cyan)!important;border-color:rgba(0,217,255,.22)!important;background:rgba(0,217,255,.045)!important}
+.footer-status i{background:var(--rk-cyan)!important;box-shadow:0 0 10px var(--rk-cyan)!important}.footer a{color:var(--rk-cyan)!important}
+.rk-progress{position:fixed;z-index:4000;top:0;left:0;width:0;height:2px;background:linear-gradient(90deg,var(--rk-cyan),var(--rk-lime));box-shadow:0 0 14px rgba(0,217,255,.55);pointer-events:none;transform-origin:left}
+.rk-reveal{opacity:0;transform:translate3d(0,26px,0);filter:blur(2px)}.rk-reveal.rk-visible{opacity:1;transform:none;filter:none;transition:opacity .7s var(--rk-ease),transform .8s var(--rk-ease),filter .7s ease;transition-delay:var(--rk-delay,0ms)}
+@media(max-width:800px){.site-header.rk-compact{height:70px}.rk-reveal{transform:translate3d(0,18px,0)}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}.site-header{transition:none}.rk-reveal,.rk-reveal.rk-visible{opacity:1;transform:none;filter:none;transition:none}.hero-grid,.hero-scan{animation:none!important}.rk-progress{display:none}}

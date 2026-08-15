@@ -8,12 +8,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <link rel="stylesheet" href="registration.css">
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script>(function(){emailjs.init({publicKey:"GnxniZ70ndujyjDpe"});})();</script>
-<link rel="stylesheet" href="production-polish.css">
-<link rel="stylesheet" href="ultra-ui.css">
-    <link rel="stylesheet" href="robokriti-perfection.css">
+
+
+    
 <link rel="stylesheet" href="reference-theme.css">
+<link rel="stylesheet" href="final-fixes.css">
 </head>
 <body>
 <div class="page-background"><div class="grid-overlay"></div><div class="glow glow-one"></div><div class="glow glow-two"></div></div>
@@ -22,7 +21,7 @@
 <div class="header-brand"><img src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png" alt="APS Logo"><div><span>ARMY PUBLIC SCHOOL LAL BAHADUR SHASTRI MARG</span><strong>ROBOKRITI 2026</strong></div></div>
 </header>
 <main class="registration-main"><div class="registration-container">
-<section class="registration-hero"><span class="hero-badge"><i class="fa-solid fa-robot"></i> REGISTRATION OPEN</span><h1>APS Tinkering Lab <span>RoboKriti 2026</span></h1><p>Choose your team size, enter participant details, select your events and submit one complete registration.</p></section>
+<section class="registration-hero"><span class="hero-badge"><i class="fa-solid fa-robot"></i> REGISTRATION OPEN</span><h1>APS Tinkering Lab <span>Robokriti 2026</span></h1><p>Choose your team size, enter participant details, select your events and submit one complete registration.</p></section>
 
 <form id="registrationForm" class="registration-form" novalidate>
 <section class="form-section" id="teamSection">
@@ -66,7 +65,7 @@
   <label class="event-option"><input type="checkbox" name="Events" value="Robo Race"><span class="event-option-card"><span class="event-icon"><i class="fa-solid fa-flag-checkered"></i></span><span class="event-text"><strong>Robo Race</strong><small>Speed &amp; precision</small></span></span></label>
   <label class="event-option"><input type="checkbox" name="Events" value="Robo War"><span class="event-option-card"><span class="event-icon"><i class="fa-solid fa-shield-halved"></i></span><span class="event-text"><strong>Robo War</strong><small>Strategy &amp; controlled combat</small></span></span></label>
   <label class="event-option"><input type="checkbox" name="Events" value="Robo Tug of War"><span class="event-option-card"><span class="event-icon"><i class="fa-solid fa-handshake"></i></span><span class="event-text"><strong>Robo Tug of War</strong><small>Traction &amp; strength</small></span></span></label>
-  <label class="event-option"><input type="checkbox" name="Events" value="Robo Saucer"><span class="event-option-card"><span class="event-icon"><i class="fa-solid fa-futbol"></i></span><span class="event-text"><strong>Robo Saucer</strong><small>Control &amp; teamwork</small></span></span></label>
+  <label class="event-option"><input type="checkbox" name="Events" value="Robo Soccer"><span class="event-option-card"><span class="event-icon"><i class="fa-solid fa-futbol"></i></span><span class="event-text"><strong>Robo Soccer</strong><small>Control &amp; teamwork</small></span></span></label>
  </div>
  <div id="eventError" class="field-error"></div>
  <div class="field" style="margin-top:20px"><label for="remarks">Remarks <span class="optional">Optional</span></label><textarea id="remarks" rows="4" maxlength="500" placeholder="Any relevant information for the organising team"></textarea></div>
@@ -79,7 +78,8 @@
 
 <div id="successOverlay" class="success-overlay hidden"><div class="success-box"><div class="success-icon"><i class="fa-solid fa-check"></i></div><h2>Registration Successful</h2><p>Your registration has been received and is <strong>Pending Approval</strong>.</p><div class="approval-note"><i class="fa-solid fa-clock"></i><span>Our team will review your registration and contact you soon.</span></div><div class="registration-id-box"><span>REGISTRATION ID</span><strong id="successRegistrationId"></strong></div><p class="small-note">Save this ID. You may use it later when contacting the Help Center.</p><button id="continueBtn" class="btn primary">Continue <i class="fa-solid fa-arrow-right"></i></button></div></div>
 <script type="module" src="registration.js"></script>
-<script src="production-polish.js" defer></script>
-    <script src="robokriti-perfection.js" defer></script>
+
+    
+<script src="final-fixes.js" defer></script>
 </body>
 </html>
