@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="robots"
+        content="noindex, nofollow"
+    >
+
+    <title>RoboKriti 2026 | Mail Control Center</title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00c2ff;
+            --bg: #02070b;
+            --card: rgba(5, 15, 25, 0.94);
+            --border: rgba(0, 194, 255, 0.20);
+            --text: #f5f9ff;
+            --muted: #8293a7;
+            --danger: #ff7189;
+        }
+
+        html {
+            min-height: 100%;
+        }
+
+        body {
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+
+            font-family: "Space Grotesk", sans-serif;
+            color: var(--text);
+
+            background:
+                radial-gradient(
+                    circle at 50% 15%,
+                    rgba(0, 194, 255, 0.10),
+                    transparent 35%
+                ),
+                radial-gradient(
+                    circle at 15% 85%,
+                    rgba(0, 194, 255, 0.04),
+                    transparent 30%
+                ),
+                var(--bg);
+        }
+
+        .login-card {
+            width: min(430px, 100%);
+
+            padding: 38px 30px;
+
+            border: 1px solid var(--border);
+            border-radius: 24px;
+
+            background: var(--card);
+
+            box-shadow:
+                0 25px 80px rgba(0, 0, 0, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+            animation: cardIn 0.6s ease forwards;
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .tag {
+            display: inline-block;
+
+            margin-bottom: 18px;
+            padding: 8px 13px;
+
+            border: 1px solid rgba(0, 194, 255, 0.25);
+            border-radius: 999px;
+
+            color: var(--primary);
+
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+
+            font-size: 30px;
+            line-height: 1.15;
+        }
+
+        .subtitle {
+            margin-bottom: 28px;
+
+            color: var(--muted);
+
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+
+            margin-bottom: 8px;
+
+            color: #9aaabd;
+
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+
+            padding: 14px 15px;
+
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            border-radius: 12px;
+
+            outline: none;
+
+            background: #07121d;
+            color: white;
+
+            font: inherit;
+
+            transition:
+                border-color 0.25s ease,
+                box-shadow 0.25s ease,
+                background 0.25s ease;
+        }
+
+        input::placeholder {
+            color: #526477;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+
+            background: #081723;
+
+            box-shadow:
+                0 0 0 3px rgba(0, 194, 255, 0.08);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 48px;
+        }
+
+        .show-password {
+            position: absolute;
+
+            top: 50%;
+            right: 14px;
+
+            width: auto;
+            margin: 0;
+            padding: 0;
+
+            border: 0;
+            background: transparent;
+
+            color: #718397;
+
+            font-size: 13px;
+
+            cursor: pointer;
+
+            transform: translateY(-50%);
+        }
+
+        .show-password:hover {
+            color: var(--primary);
+        }
+
+        .login-btn {
+            width: 100%;
+
+            margin-top: 8px;
+            padding: 15px;
+
+            border: 0;
+            border-radius: 12px;
+
+            cursor: pointer;
+
+            background: var(--primary);
+            color: #001018;
+
+            font: 700 15px "Space Grotesk", sans-serif;
+
+            transition:
+                transform 0.2s ease,
+                filter 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .login-btn:hover {
+            filter: brightness(1.08);
+
+            box-shadow:
+                0 10px 30px rgba(0, 194, 255, 0.15);
+
+            transform: translateY(-1px);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .error {
+            display: none;
+
+            margin-top: 15px;
+            padding: 11px;
+
+            border: 1px solid rgba(255, 113, 137, 0.15);
+            border-radius: 10px;
+
+            background: rgba(255, 70, 100, 0.08);
+
+            color: var(--danger);
+
+            font-size: 13px;
+            line-height: 1.5;
+
+            text-align: center;
+        }
+
+        .back {
+            display: block;
+
+            margin-top: 22px;
+
+            color: var(--primary);
+
+            font-size: 13px;
+            text-align: center;
+
+            text-decoration: none;
+
+            transition: opacity 0.2s ease;
+        }
+
+        .back:hover {
+            opacity: 0.75;
+        }
+
+        .security-note {
+            margin-top: 20px;
+
+            color: #526477;
+
+            font-size: 11px;
+            line-height: 1.5;
+
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 30px 22px;
+                border-radius: 20px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .login-card {
+                animation: none;
+            }
+
+            * {
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="login-card">
+
+        <span class="tag">
+            AUTHORIZED ACCESS
+        </span>
+
+        <h1>
+            Mail Control Center
+        </h1>
+
+        <p class="subtitle">
+            RoboKriti 2026 communication console.
+            Authorized Registration and Helping Department
+            personnel only.
+        </p>
+
+        <form id="loginForm" autocomplete="on">
+
+            <div class="field">
+
+                <label for="username">
+                    Username
+                </label>
+
+                <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    autocomplete="username"
+                    placeholder="Enter username"
+                    required
+                >
+
+            </div>
+
+            <div class="field">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <div class="password-wrapper">
+
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        autocomplete="current-password"
+                        placeholder="Enter password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="show-password"
+                        id="showPassword"
+                        aria-label="Show password"
+                    >
+                        SHOW
+                    </button>
+
+                </div>
+
+            </div>
+
+            <button
+                type="submit"
+                class="login-btn"
+                id="loginBtn"
+            >
+                ACCESS MAIL CONSOLE
+            </button>
+
+            <div
+                id="error"
+                class="error"
+                role="alert"
+            >
+                Invalid username or password.
+            </div>
+
+        </form>
+
+        <a
+            class="back"
+            href="index.html"
+        >
+            ← Return to RoboKriti
+        </a>
+
+        <p class="security-note">
+            Authorized personnel only • RoboKriti 2026
+        </p>
+
+    </main>
+
+    <script>
+        /* =====================================================
+           ROBOKRITI MAIL LOGIN
+        ===================================================== */
+
+        const USERNAME = "robokriti";
+        const PASSWORD = "RoboKriti@2026";
+
+        const form =
+            document.getElementById("loginForm");
+
+        const usernameInput =
+            document.getElementById("username");
+
+        const passwordInput =
+            document.getElementById("password");
+
+        const error =
+            document.getElementById("error");
+
+        const loginBtn =
+            document.getElementById("loginBtn");
+
+        const showPassword =
+            document.getElementById("showPassword");
+
+
+        /* =====================================================
+           SHOW / HIDE PASSWORD
+        ===================================================== */
+
+        showPassword.addEventListener(
+            "click",
+            () => {
+
+                const isPassword =
+                    passwordInput.type === "password";
+
+                passwordInput.type =
+                    isPassword
+                        ? "text"
+                        : "password";
+
+                showPassword.textContent =
+                    isPassword
+                        ? "HIDE"
+                        : "SHOW";
+
+                showPassword.setAttribute(
+                    "aria-label",
+                    isPassword
+                        ? "Hide password"
+                        : "Show password"
+                );
+            }
+        );
+
+
+        /* =====================================================
+           LOGIN
+        ===================================================== */
+
+        form.addEventListener(
+            "submit",
+            (event) => {
+
+                event.preventDefault();
+
+                const username =
+                    usernameInput.value.trim();
+
+                const password =
+                    passwordInput.value;
+
+
+                if (
+                    username === USERNAME &&
+                    password === PASSWORD
+                ) {
+
+                    error.style.display = "none";
+
+                    /*
+                     * Short-lived session.
+                     * The user must log in again
+                     * after the browser session ends.
+                     */
+
+                    sessionStorage.setItem(
+                        "robokriti_mail_authenticated",
+                        "true"
+                    );
+
+                    sessionStorage.setItem(
+                        "robokriti_mail_login_time",
+                        Date.now().toString()
+                    );
+
+                    loginBtn.textContent =
+                        "ACCESS GRANTED...";
+
+                    loginBtn.disabled = true;
+
+                    setTimeout(() => {
+
+                        window.location.href =
+                            "mail-sender.html";
+
+                    }, 300);
+
+                } else {
+
+                    error.style.display = "block";
+
+                    passwordInput.value = "";
+
+                    passwordInput.focus();
+
+                }
+            }
+        );
+    </script>
+
+</body>
+                  </html>
