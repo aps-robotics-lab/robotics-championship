@@ -1,103 +1,457 @@
-import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
-import { helpFirebaseConfig, mainFirebaseConfig, ADMIN_UID, AGENT_UID, AGENT_UIDS } from "./firebase-config.js";
+/* =========================================================
+   ROBOKRITI 2026
+   COMMUNICATION CENTER
+========================================================= */
 
-const SERVICE_ID = "service_i9s33xx";
-const TEMPLATE_ID = "template_ivt641m";
-const PUBLIC_KEY = "GnxniZ70ndujyjDpe";
+const EMAILJS_SERVICE = "service_i9s33xx";
 
-const mainApp = getApps().find(a => a.name === "mail-main") || initializeApp(mainFirebaseConfig, "mail-main");
-const helpApp = getApps().find(a => a.name === "mail-help") || initializeApp(helpFirebaseConfig, "mail-help");
-const mainAuth = getAuth(mainApp);
-const helpAuth = getAuth(helpApp);
-const mainDb = getDatabase(mainApp);
-const helpDb = getDatabase(helpApp);
+const REGISTRATION_TEMPLATE =
+    "template_ivt641m";
 
-const form = document.getElementById("mailForm");
-const sendBtn = document.getElementById("sendBtn");
-const clearBtn = document.getElementById("clearBtn");
-const status = document.getElementById("mailStatus");
-const statusField = document.getElementById("registration_status");
+const HELP_TEMPLATE =
+    "template_0we1e06";
 
-function setStatus(message, type = "") { status.textContent = message; status.className = `status ${type}`; }
 
-async function isMainAdmin(user) {
-  if (!user) return false;
-  const configured = ADMIN_UID && ADMIN_UID !== "REPLACE_WITH_MAIN_PROJECT_ADMIN_UID" && user.uid === ADMIN_UID;
-  if (configured) return true;
-  try { const snap = await get(ref(mainDb, `admins/${user.uid}`)); return snap.exists() && snap.val() === true; }
-  catch { return false; }
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const mailTypeInputs =
+    document.querySelectorAll(
+        'input[name="mailType"]'
+    );
+
+const registrationSection =
+    document.getElementById(
+        "registrationSection"
+    );
+
+const helpSection =
+    document.getElementById(
+        "helpSection"
+    );
+
+const sendBtn =
+    document.getElementById(
+        "sendBtn"
+    );
+
+const clearBtn =
+    document.getElementById(
+        "clearBtn"
+    );
+
+const mailStatus =
+    document.getElementById(
+        "mailStatus"
+    );
+
+
+/* =========================================================
+   GET CURRENT MAIL TYPE
+========================================================= */
+
+function getMailType() {
+
+    const selected =
+        document.querySelector(
+            'input[name="mailType"]:checked'
+        );
+
+    return selected
+        ? selected.value
+        : "registration";
 }
 
-async function isHelpingAgent(user) {
-  if (!user) return false;
-  if (Array.isArray(AGENT_UIDS) && AGENT_UIDS.includes(user.uid)) return true;
-  if (AGENT_UID && user.uid === AGENT_UID) return true;
-  try {
-    const snap = await get(ref(helpDb, `agents/${user.uid}`));
-    const value = snap.val();
-    return snap.exists() && (value === true || (value && value.active === true));
-  } catch { return false; }
+
+/* =========================================================
+   SWITCH BETWEEN TEMPLATES
+========================================================= */
+
+function updateMailType() {
+
+    const type =
+        getMailType();
+
+    if (type === "help") {
+
+        registrationSection.classList.add(
+            "hidden-section"
+        );
+
+        registrationSection.classList.remove(
+            "active"
+        );
+
+        helpSection.classList.add(
+            "active"
+        );
+
+    } else {
+
+        helpSection.classList.remove(
+            "active"
+        );
+
+        registrationSection.classList.remove(
+            "hidden-section"
+        );
+
+        registrationSection.classList.add(
+            "active"
+        );
+    }
+
+    clearStatus();
 }
 
-function hasFiveClickPass() {
-  try {
-    const raw = sessionStorage.getItem("robokriti_mail_access");
-    if (!raw) return false;
-    const pass = JSON.parse(raw);
-    const validRole = pass?.role === "registration" || pass?.role === "helping";
-    const validTime = Number.isFinite(pass?.issuedAt) && (Date.now() - pass.issuedAt) <= 10 * 60 * 1000;
-    return validRole && validTime;
-  } catch {
-    return false;
-  }
+
+mailTypeInputs.forEach(
+    input => {
+
+        input.addEventListener(
+            "change",
+            updateMailType
+        );
+
+    }
+);
+
+
+/* =========================================================
+   VALUE HELPER
+========================================================= */
+
+function value(id) {
+
+    const element =
+        document.getElementById(id);
+
+    return element
+        ? element.value.trim()
+        : "";
 }
 
-async function verifyAccess() {
-  // The intended access method is the hidden 5-click entry from either
-  // authorized department dashboard. Firebase checks are retained as a
-  // secondary path for existing authenticated department sessions.
-  if (hasFiveClickPass()) return true;
 
-  const users = [];
-  await Promise.all([
-    new Promise(resolve => onAuthStateChanged(mainAuth, async user => { if (user && await isMainAdmin(user)) users.push("registration"); resolve(); })),
-    new Promise(resolve => onAuthStateChanged(helpAuth, async user => { if (user && await isHelpingAgent(user)) users.push("helping"); resolve(); }))
-  ]);
-  if (!users.length) {
-    document.body.innerHTML = `<main style="min-height:100vh;display:grid;place-items:center;padding:24px;background:#03070d;color:#fff;font-family:Poppins,sans-serif;text-align:center"><div><h1 style="font-family:Orbitron,sans-serif">ACCESS DENIED</h1><p style="color:#9aaaba">Use the 5-click access from the Registration or Helping Department dashboard.</p><a href="index.html" style="color:#00c8ff">Return to RoboKriti</a></div></main>`;
-    return false;
-  }
-  return true;
+/* =========================================================
+   STATUS
+========================================================= */
+
+function showStatus(
+    message,
+    type
+) {
+
+    mailStatus.textContent =
+        message;
+
+    mailStatus.className =
+        "mail-status show " + type;
 }
 
-async function init() {
-  if (!window.emailjs) { setStatus("Email service could not load. Check your connection.", "err"); return; }
-  window.emailjs.init({ publicKey: PUBLIC_KEY, limitRate: { id: "robokriti-manual-mail", throttle: 10000 } });
-  const allowed = await verifyAccess();
-  if (!allowed) return;
 
-  // Consume the short-lived 5-click pass after successful entry.
-  sessionStorage.removeItem("robokriti_mail_access");
+function clearStatus() {
+
+    mailStatus.textContent = "";
+
+    mailStatus.className =
+        "mail-status";
 }
 
-form.addEventListener("submit", async event => {
-  event.preventDefault();
-  if (!form.reportValidity()) return;
-  sendBtn.disabled = true;
-  setStatus("Sending confirmation…");
-  const data = Object.fromEntries(new FormData(form).entries());
-  try {
-    await window.emailjs.send(SERVICE_ID, TEMPLATE_ID, data);
-    setStatus(`Confirmation sent to ${data.to_email}`, "ok");
-    form.reset();
-    statusField.value = "Registration Confirmed";
-  } catch (error) {
-    console.error(error);
-    setStatus("Could not send the confirmation. Please check the EmailJS template/service and try again.", "err");
-  } finally { sendBtn.disabled = false; }
-});
 
-clearBtn.addEventListener("click", () => { form.reset(); statusField.value = "Registration Confirmed"; setStatus(""); });
-init();
+/* =========================================================
+   REGISTRATION TEMPLATE PARAMETERS
+========================================================= */
+
+function getRegistrationParams() {
+
+    return {
+
+        to_email:
+            value("registrationEmail"),
+
+        student_name:
+            value("registrationName"),
+
+        registration_id:
+            value("registrationId"),
+
+        team_name:
+            value("teamName"),
+
+        team_size:
+            value("teamSize"),
+
+        participation_type:
+            value("participationType"),
+
+        events:
+            value("events"),
+
+        mobile_number:
+            value("mobileNumber"),
+
+        status:
+            value("registrationStatus"),
+
+        remarks:
+            value("registrationRemarks")
+    };
+}
+
+
+/* =========================================================
+   HELP TEMPLATE PARAMETERS
+========================================================= */
+
+function getHelpParams() {
+
+    return {
+
+        email:
+            value("helpEmail"),
+
+        student_name:
+            value("helpStudentName"),
+
+        registration_id:
+            value("helpRegistrationId"),
+
+        help_reference:
+            value("helpReference"),
+
+        category:
+            value("helpCategory"),
+
+        subject:
+            value("helpSubject"),
+
+        original_message:
+            value("originalMessage"),
+
+        reply_message:
+            value("replyMessage"),
+
+        status:
+            value("helpStatus")
+    };
+}
+
+
+/* =========================================================
+   VALIDATION
+========================================================= */
+
+function validateRegistration() {
+
+    if (!value("registrationEmail")) {
+
+        return "Participant email is required.";
+
+    }
+
+    if (!value("registrationName")) {
+
+        return "Participant name is required.";
+
+    }
+
+    if (!value("registrationId")) {
+
+        return "Registration ID is required.";
+
+    }
+
+    return null;
+}
+
+
+function validateHelp() {
+
+    if (!value("helpEmail")) {
+
+        return "Participant email is required.";
+
+    }
+
+    if (!value("helpStudentName")) {
+
+        return "Student name is required.";
+
+    }
+
+    if (!value("helpReference")) {
+
+        return "Help Reference ID is required.";
+
+    }
+
+    if (!value("replyMessage")) {
+
+        return "Please enter your response.";
+
+    }
+
+    return null;
+}
+
+
+/* =========================================================
+   SEND EMAIL
+========================================================= */
+
+async function sendMail() {
+
+    clearStatus();
+
+    const type =
+        getMailType();
+
+    let templateID;
+
+    let params;
+
+    let validationError;
+
+
+    if (type === "help") {
+
+        templateID =
+            HELP_TEMPLATE;
+
+        params =
+            getHelpParams();
+
+        validationError =
+            validateHelp();
+
+    } else {
+
+        templateID =
+            REGISTRATION_TEMPLATE;
+
+        params =
+            getRegistrationParams();
+
+        validationError =
+            validateRegistration();
+    }
+
+
+    if (validationError) {
+
+        showStatus(
+            validationError,
+            "error"
+        );
+
+        return;
+    }
+
+
+    sendBtn.disabled = true;
+
+    sendBtn.innerHTML =
+        '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+
+
+    try {
+
+        await emailjs.send(
+            EMAILJS_SERVICE,
+            templateID,
+            params
+        );
+
+
+        showStatus(
+            type === "help"
+                ? "Help reply sent successfully."
+                : "Registration confirmation sent successfully.",
+            "success"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "EmailJS error:",
+            error
+        );
+
+        showStatus(
+            "Unable to send the email. Please check your EmailJS template variables and configuration.",
+            "error"
+        );
+
+    } finally {
+
+        sendBtn.disabled = false;
+
+        sendBtn.innerHTML =
+            'Send Email <i class="fa-solid fa-paper-plane"></i>';
+
+    }
+}
+
+
+/* =========================================================
+   CLEAR
+========================================================= */
+
+function clearForm() {
+
+    document
+        .querySelectorAll(
+            "input:not([type='radio']), textarea"
+        )
+        .forEach(
+            element => {
+
+                if (
+                    element.id ===
+                    "registrationStatus"
+                ) {
+
+                    element.value =
+                        "Registration Confirmed";
+
+                } else if (
+                    element.id ===
+                    "helpStatus"
+                ) {
+
+                    element.value =
+                        "Resolved";
+
+                } else {
+
+                    element.value = "";
+                }
+            }
+        );
+
+    clearStatus();
+}
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+sendBtn.addEventListener(
+    "click",
+    sendMail
+);
+
+clearBtn.addEventListener(
+    "click",
+    clearForm
+);
+
+
+/* =========================================================
+   INITIAL STATE
+========================================================= */
+
+updateMailType();
