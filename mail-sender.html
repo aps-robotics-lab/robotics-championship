@@ -1,43 +1,628 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#03070d">
-<title>Confirmation Mail Console | RoboKriti 2026</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="mail-sender.css">
-</head>
-<body>
-<div class="container">
-  <header class="top">
-    <div class="brand"><div class="brand-mark">RK</div><div><div class="eyebrow">APS TINKERING LAB // ROBOKRITI 2026</div><h1>CONFIRMATION <span>MAIL</span></h1><p class="subtitle">Manual participant confirmation console</p></div></div>
-    <a class="back" href="javascript:history.back()">← Return to department dashboard</a>
-  </header>
 
-  <main class="card">
-    <div class="security"><strong>MANUAL SEND</strong><span>Sender address is fixed by the EmailJS template. It is not editable on this page.</span></div>
-    <form id="mailForm" novalidate>
-      <div class="grid">
-        <div class="field"><label for="to_email">Participant Email *</label><input id="to_email" name="to_email" type="email" autocomplete="email" required></div>
-        <div class="field"><label for="student_name">Participant Name *</label><input id="student_name" name="student_name" type="text" required></div>
-        <div class="field"><label for="registration_id">Registration ID *</label><input id="registration_id" name="registration_id" type="text" required></div>
-        <div class="field"><label for="team_name">Team Name</label><input id="team_name" name="team_name" type="text"></div>
-        <div class="field"><label for="team_size">Team Size</label><input id="team_size" name="team_size" type="text"></div>
-        <div class="field"><label for="participation_type">Participation Type</label><input id="participation_type" name="participation_type" type="text"></div>
-        <div class="field full"><label for="events">Selected Events</label><textarea id="events" name="events" placeholder="Robo Race, Robo Soccer..."></textarea></div>
-        <div class="field"><label for="mobile_number">Mobile Number</label><input id="mobile_number" name="mobile_number" type="tel"></div>
-        <div class="field"><label for="status">Registration Status</label><input id="registration_status" name="status" type="text" value="Registration Confirmed"></div>
-        <div class="field full"><label for="remarks">Remarks</label><textarea id="remarks" name="remarks" placeholder="Optional message for the participant"></textarea></div>
-      </div>
-      <div class="actions"><button class="send" id="sendBtn" type="submit">SEND CONFIRMATION</button><button class="clear" id="clearBtn" type="button">CLEAR</button><div class="status" id="mailStatus" role="status" aria-live="polite"></div></div>
-    </form>
-  </main>
-  <footer class="foot">Authorized department console • Manual confirmation only</footer>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#020607">
+    <meta name="description"
+          content="RoboKriti 2026 Communication Center">
+
+    <title>Communication Center | RoboKriti 2026</title>
+
+    <!-- Same fonts as registration.html -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="mail-sender.css">
+
+    <!-- Keep your existing polish files if they are in your site -->
+    <link rel="stylesheet" href="production-polish.css">
+    <link rel="stylesheet" href="ultra-ui.css">
+    <link rel="stylesheet" href="robokriti-perfection.css">
+    <link rel="stylesheet" href="reference-theme.css">
+    <link rel="stylesheet" href="smooth-motion.css">
+
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <script>
+        emailjs.init({
+            publicKey: "GnxniZ70ndujyjDpe"
+        });
+    </script>
+</head>
+
+<body>
+
+<div class="page-background">
+    <div class="grid-overlay"></div>
+    <div class="glow glow-one"></div>
+    <div class="glow glow-two"></div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script type="module" src="mail-sender.js"></script>
+
+
+<header class="mail-header">
+
+    <a href="javascript:history.back()" class="back-home">
+        <i class="fa-solid fa-arrow-left"></i>
+        Back
+    </a>
+
+    <div class="header-brand">
+
+        <img
+            src="https://i.ibb.co/60g82LzR/Army-Welfare-Education-Society-logo-1.png"
+            alt="APS Logo">
+
+        <div>
+            <span>
+                ARMY PUBLIC SCHOOL LAL BAHADUR SHASTRI MARG
+            </span>
+
+            <strong>
+                ROBOKRITI 2026
+            </strong>
+        </div>
+
+    </div>
+
+</header>
+
+
+<main class="mail-main">
+
+<div class="mail-container">
+
+
+    <!-- HERO -->
+
+    <section class="mail-hero">
+
+        <span class="hero-badge">
+            <i class="fa-solid fa-paper-plane"></i>
+            COMMUNICATION CENTER
+        </span>
+
+        <h1>
+            SEND <span>EMAIL</span>
+        </h1>
+
+        <p>
+            Authorized department console for participant
+            confirmations and Help Center responses.
+        </p>
+
+    </section>
+
+
+
+    <!-- MAIL TYPE -->
+
+    <section class="form-section">
+
+        <div class="section-heading">
+
+            <div class="section-number">
+                01
+            </div>
+
+            <div>
+                <span>COMMUNICATION TYPE</span>
+
+                <h2>
+                    What are you sending?
+                </h2>
+
+                <p>
+                    Select the predefined message template.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="mail-type-grid">
+
+            <label class="mail-type-card">
+
+                <input
+                    type="radio"
+                    name="mailType"
+                    value="registration"
+                    checked>
+
+                <span class="mail-type-content">
+
+                    <span class="mail-type-icon">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </span>
+
+                    <strong>
+                        Registration Confirmation
+                    </strong>
+
+                    <small>
+                        Confirm a participant registration
+                    </small>
+
+                </span>
+
+            </label>
+
+
+            <label class="mail-type-card">
+
+                <input
+                    type="radio"
+                    name="mailType"
+                    value="help">
+
+                <span class="mail-type-content">
+
+                    <span class="mail-type-icon">
+                        <i class="fa-solid fa-headset"></i>
+                    </span>
+
+                    <strong>
+                        Help Reply
+                    </strong>
+
+                    <small>
+                        Reply to a Help Center request
+                    </small>
+
+                </span>
+
+            </label>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- REGISTRATION FORM -->
+
+    <section
+        id="registrationSection"
+        class="form-section">
+
+        <div class="section-heading">
+
+            <div class="section-number">
+                02
+            </div>
+
+            <div>
+                <span>REGISTRATION</span>
+
+                <h2>
+                    Participant Information
+                </h2>
+
+                <p>
+                    Enter the participant information for the
+                    confirmation template.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="field-grid">
+
+            <div class="field full-field">
+
+                <label for="registrationEmail">
+                    Participant Email <span>*</span>
+                </label>
+
+                <input
+                    id="registrationEmail"
+                    type="email"
+                    autocomplete="email"
+                    required
+                    placeholder="participant@example.com">
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="registrationName">
+                    Participant Name <span>*</span>
+                </label>
+
+                <input
+                    id="registrationName"
+                    type="text"
+                    required>
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="registrationId">
+                    Registration ID <span>*</span>
+                </label>
+
+                <input
+                    id="registrationId"
+                    type="text"
+                    required>
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="teamName">
+                    Team Name
+                </label>
+
+                <input
+                    id="teamName"
+                    type="text">
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="teamSize">
+                    Team Size
+                </label>
+
+                <input
+                    id="teamSize"
+                    type="text">
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="participationType">
+                    Participation Type
+                </label>
+
+                <input
+                    id="participationType"
+                    type="text"
+                    placeholder="Solo / Team">
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="mobileNumber">
+                    Mobile Number
+                </label>
+
+                <input
+                    id="mobileNumber"
+                    type="tel">
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="registrationStatus">
+                    Registration Status
+                </label>
+
+                <input
+                    id="registrationStatus"
+                    type="text"
+                    value="Registration Confirmed">
+
+            </div>
+
+
+            <div class="field full-field">
+
+                <label for="events">
+                    Selected Events
+                </label>
+
+                <textarea
+                    id="events"
+                    rows="3"
+                    placeholder="Robo Race, Robo War..."></textarea>
+
+            </div>
+
+
+            <div class="field full-field">
+
+                <label for="registrationRemarks">
+                    Remarks
+                </label>
+
+                <textarea
+                    id="registrationRemarks"
+                    rows="4"
+                    placeholder="Optional message"></textarea>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- HELP FORM -->
+
+    <section
+        id="helpSection"
+        class="form-section hidden-section">
+
+        <div class="section-heading">
+
+            <div class="section-number">
+                02
+            </div>
+
+            <div>
+                <span>HELP CENTER</span>
+
+                <h2>
+                    Support Response
+                </h2>
+
+                <p>
+                    Enter the Help Center request details and
+                    your response.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="field-grid">
+
+            <div class="field full-field">
+
+                <label for="helpEmail">
+                    Participant Email <span>*</span>
+                </label>
+
+                <input
+                    id="helpEmail"
+                    type="email"
+                    autocomplete="email"
+                    placeholder="participant@example.com">
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="helpStudentName">
+                    Student Name <span>*</span>
+                </label>
+
+                <input
+                    id="helpStudentName"
+                    type="text">
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="helpReference">
+                    Help Reference ID <span>*</span>
+                </label>
+
+                <input
+                    id="helpReference"
+                    type="text"
+                    placeholder="APS-A1B2C">
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="helpRegistrationId">
+                    Registration ID
+                </label>
+
+                <input
+                    id="helpRegistrationId"
+                    type="text">
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="helpCategory">
+                    Category
+                </label>
+
+                <input
+                    id="helpCategory"
+                    type="text">
+
+            </div>
+
+
+            <div class="field full-field">
+
+                <label for="helpSubject">
+                    Subject
+                </label>
+
+                <input
+                    id="helpSubject"
+                    type="text">
+
+            </div>
+
+
+            <div class="field full-field">
+
+                <label for="originalMessage">
+                    Original Message
+                </label>
+
+                <textarea
+                    id="originalMessage"
+                    rows="5"
+                    placeholder="Participant's original Help request"></textarea>
+
+            </div>
+
+
+            <div class="field full-field">
+
+                <label for="replyMessage">
+                    Your Response <span>*</span>
+                </label>
+
+                <textarea
+                    id="replyMessage"
+                    rows="7"
+                    placeholder="Write your response to the participant..."></textarea>
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="helpStatus">
+                    Current Status
+                </label>
+
+                <input
+                    id="helpStatus"
+                    type="text"
+                    value="Resolved">
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- SEND -->
+
+    <section class="form-section">
+
+        <div class="section-heading">
+
+            <div class="section-number">
+                03
+            </div>
+
+            <div>
+                <span>FINAL ACTION</span>
+
+                <h2>
+                    Send Message
+                </h2>
+
+                <p>
+                    Verify the details before sending.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div
+            id="mailStatus"
+            class="mail-status"
+            role="status"
+            aria-live="polite">
+        </div>
+
+
+        <div class="actions">
+
+            <button
+                id="sendBtn"
+                class="btn primary"
+                type="button">
+
+                Send Email
+
+                <i class="fa-solid fa-paper-plane"></i>
+
+            </button>
+
+
+            <button
+                id="clearBtn"
+                class="btn secondary"
+                type="button">
+
+                Clear
+
+                <i class="fa-solid fa-rotate-left"></i>
+
+            </button>
+
+        </div>
+
+    </section>
+
+</div>
+
+</main>
+
+
+<footer class="mail-footer">
+
+    <span>
+        APS Tinkering Lab
+    </span>
+
+    <span>
+        •
+    </span>
+
+    <span>
+        RoboKriti 2026
+    </span>
+
+</footer>
+
+
+<script
+    type="module"
+    src="mail-sender.js">
+</script>
+
+<script
+    src="production-polish.js"
+    defer>
+</script>
+
+<script
+    src="robokriti-perfection.js"
+    defer>
+</script>
+
 </body>
 </html>
