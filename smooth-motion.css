@@ -1,0 +1,120 @@
+
+/* =========================================================
+   ROBOKRITI 2026 — SMOOTH MOTION ENHANCEMENT
+   Visual-only enhancement. No content or functionality changes.
+========================================================= */
+
+@keyframes rkFadeUp {
+  from { opacity: 0; transform: translate3d(0, 22px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes rkFadeDown {
+  from { opacity: 0; transform: translate3d(0, -14px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes rkScaleIn {
+  from { opacity: 0; transform: scale(.97) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes rkGlowPulse {
+  0%,100% { opacity: .55; transform: scale(1); }
+  50% { opacity: .9; transform: scale(1.035); }
+}
+@keyframes rkShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Registration */
+.registration-header { animation: rkFadeDown .7s cubic-bezier(.2,.7,.2,1) both; }
+.registration-hero { animation: rkFadeUp .75s .08s cubic-bezier(.2,.7,.2,1) both; }
+.registration-form { animation: rkScaleIn .75s .16s cubic-bezier(.2,.7,.2,1) both; }
+.registration-form .form-section {
+  animation: rkFadeUp .65s both;
+  transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+.registration-form .form-section:nth-child(1) { animation-delay: .18s; }
+.registration-form .form-section:nth-child(2) { animation-delay: .25s; }
+.registration-form .form-section:nth-child(3) { animation-delay: .32s; }
+.registration-form .form-section:nth-child(4) { animation-delay: .39s; }
+.registration-form .form-section:nth-child(5) { animation-delay: .46s; }
+.registration-form .form-section:nth-child(6) { animation-delay: .53s; }
+.registration-form .form-section:hover {
+  transform: translateY(-2px);
+}
+.team-size-card, .event-option-card, .member-card, .field, .approval-note {
+  transition: transform .28s ease, border-color .28s ease, box-shadow .28s ease;
+}
+.team-size-card:hover, .event-option-card:hover, .member-card:hover {
+  transform: translateY(-4px);
+}
+.submit-registration {
+  transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
+}
+.submit-registration:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+}
+
+/* Help */
+.help-nav { animation: rkFadeDown .65s cubic-bezier(.2,.7,.2,1) both; }
+.help-hero { animation: rkFadeUp .75s .08s cubic-bezier(.2,.7,.2,1) both; }
+.help-card { animation: rkScaleIn .75s .18s cubic-bezier(.2,.7,.2,1) both; }
+.help-card.tracker-card { animation-delay: .26s; }
+.help-info { animation: rkFadeUp .7s .34s cubic-bezier(.2,.7,.2,1) both; }
+.help-card, .tracker-card, .field, .submit-btn {
+  transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+.help-card:hover, .tracker-card:hover { transform: translateY(-3px); }
+.submit-btn:hover { transform: translateY(-2px); }
+
+/* General rules page */
+.rules-grid article {
+  animation: rkFadeUp .65s both;
+  transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+.rules-grid article:nth-child(1) { animation-delay: .12s; }
+.rules-grid article:nth-child(2) { animation-delay: .19s; }
+.rules-grid article:nth-child(3) { animation-delay: .26s; }
+.rules-grid article:nth-child(4) { animation-delay: .33s; }
+.rules-grid article:nth-child(5) { animation-delay: .40s; }
+.rules-grid article:nth-child(6) { animation-delay: .47s; }
+.rules-grid article:hover {
+  transform: translateY(-4px);
+}
+.rules-note { animation: rkFadeUp .65s .54s both; }
+
+/* Individual event rules pages */
+.event-header { animation: rkFadeDown .65s cubic-bezier(.2,.7,.2,1) both; }
+.event-hero { animation: rkScaleIn .8s .06s cubic-bezier(.2,.7,.2,1) both; }
+.event-hero::before { animation: rkGlowPulse 7s ease-in-out infinite; }
+.event-meta span {
+  transition: transform .25s ease, border-color .25s ease, background .25s ease;
+}
+.event-meta span:hover { transform: translateY(-3px); }
+.rule-card, .side-card {
+  animation: rkFadeUp .65s both;
+  transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+.rule-card:nth-child(1) { animation-delay: .12s; }
+.rule-card:nth-child(2) { animation-delay: .19s; }
+.rule-card:nth-child(3) { animation-delay: .26s; }
+.rule-card:nth-child(4) { animation-delay: .33s; }
+.rule-card:nth-child(5) { animation-delay: .40s; }
+.rule-card:nth-child(6) { animation-delay: .47s; }
+.rule-card:hover, .side-card:hover { transform: translateY(-3px); }
+
+/* Smooth interactive links without altering layout */
+.back, .brand, .back-home, .help-nav nav a {
+  transition: color .25s ease, transform .25s ease, opacity .25s ease;
+}
+
+/* Respect accessibility preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
