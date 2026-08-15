@@ -4480,21 +4480,10 @@ document.addEventListener(
             "Open menu"
         );
 
-   const menuBtn = document.getElementById('menuBtn');
-const sidebar = document.querySelector('.sidebar');
+    }
+);
 
-if (menuBtn && sidebar) {
-    menuBtn.addEventListener('click', () => {
-        sidebar.classList.toggle('active');
 
-        const isOpen = sidebar.classList.contains('active');
-        menuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        menuBtn.setAttribute(
-            'aria-label',
-            isOpen ? 'Close menu' : 'Open menu'
-        );
-    });
-}
 /* =========================================================
    END ADMIN.JS
 ========================================================= */
