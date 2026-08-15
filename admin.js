@@ -4482,7 +4482,14 @@ document.addEventListener(
 
     }
 );
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+const sidebar = document.querySelector('.sidebar');
 
+if (mobileMenuBtn && sidebar) {
+    mobileMenuBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+    });
+}
 
 /* =========================================================
    END ADMIN.JS
