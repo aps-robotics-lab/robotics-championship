@@ -1,0 +1,9 @@
+{
+  "name": "APS Tinkering Lab Robokriti 2026",
+  "short_name": "RoboKriti 2026",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#020607",
+  "theme_color": "#020607",
+  "description": "APS Tinkering Lab Robokriti 2026 robotics championship."
+}

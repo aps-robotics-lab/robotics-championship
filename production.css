@@ -1,0 +1,1093 @@
+/* RoboKriti 2026 — consolidated production visual system. */
+
+
+/* ===== source: silky-ui.css ===== */
+
+
+/* =========================================================
+   ROBOKRITI // SILKY UI SYSTEM
+   Premium festival-style interaction layer.
+========================================================= */
+:root{
+  --silk-cyan:#18e7ff;
+  --silk-violet:#8f7bff;
+  --silk-ink:#02050d;
+  --silk-line:rgba(255,255,255,.085);
+  --silk-ease:cubic-bezier(.16,1,.3,1);
+}
+html{scroll-padding-top:88px}
+body{background:
+  radial-gradient(900px 500px at 80% -10%,rgba(24,231,255,.08),transparent 60%),
+  radial-gradient(800px 500px at 10% 30%,rgba(143,123,255,.06),transparent 60%),
+  #02050d;
+}
+body:before{opacity:.22;background-size:48px 48px;mask-image:linear-gradient(#000,transparent 88%)}
+
+/* Refined glass header */
+.site-header{
+  height:82px;
+  padding-inline:clamp(22px,5vw,76px);
+  background:rgba(2,5,13,.48);
+  border-bottom:1px solid rgba(255,255,255,.055);
+  transition:height .55s var(--silk-ease),background .55s var(--silk-ease),
+             box-shadow .55s var(--silk-ease),backdrop-filter .55s var(--silk-ease);
+}
+.site-header.scrolled{
+  height:70px;
+  background:rgba(2,5,13,.78);
+  box-shadow:0 18px 70px rgba(0,0,0,.42),inset 0 -1px rgba(24,231,255,.09);
+}
+.brand{transition:transform .45s var(--silk-ease)}
+.brand:hover{transform:translateY(-1px)}
+.brand img{transition:transform .6s var(--silk-ease),filter .6s var(--silk-ease)}
+.brand:hover img{transform:rotate(-4deg) scale(1.04);filter:drop-shadow(0 0 20px rgba(24,231,255,.28))}
+
+/* Animated nav underline */
+#mainNav a{position:relative;overflow:hidden;transition:color .35s var(--silk-ease),background .35s var(--silk-ease),transform .35s var(--silk-ease)}
+#mainNav a:after{
+  content:"";position:absolute;left:12px;right:12px;bottom:4px;height:1px;
+  transform:scaleX(0);transform-origin:center;background:var(--silk-cyan);
+  box-shadow:0 0 12px var(--silk-cyan);transition:transform .45s var(--silk-ease);
+}
+#mainNav a:hover:after,#mainNav a.active:after{transform:scaleX(1)}
+#mainNav .nav-register{
+  border:1px solid rgba(24,231,255,.25);
+  box-shadow:0 0 0 rgba(24,231,255,0);
+  transition:transform .4s var(--silk-ease),box-shadow .4s var(--silk-ease),background .4s var(--silk-ease);
+}
+#mainNav .nav-register:after{display:none}
+#mainNav .nav-register:hover{transform:translateY(-2px);box-shadow:0 10px 35px rgba(24,231,255,.2)}
+
+/* Hero: cinematic depth */
+.hero{
+  min-height:100svh;
+  padding-left:clamp(24px,8vw,120px);
+  padding-right:clamp(24px,8vw,120px);
+  isolation:isolate;
+}
+.hero-content{max-width:900px;transform:translateZ(0)}
+.hero h1{
+  font-size:clamp(58px,9.2vw,126px);
+  line-height:.86;
+  letter-spacing:-.055em;
+  text-wrap:balance;
+}
+.hero h1 span{
+  background:linear-gradient(100deg,#fff 5%,var(--silk-cyan) 55%,#7bb9ff 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 28px rgba(24,231,255,.13));
+}
+.hero p{font-size:clamp(14px,1.25vw,17px);max-width:700px}
+.phase-label{display:inline-flex;align-items:center;gap:10px}
+.phase-label:before{content:"";width:30px;height:1px;background:var(--silk-cyan);box-shadow:0 0 10px var(--silk-cyan)}
+.hero-actions{gap:14px}
+.btn{
+  position:relative;overflow:hidden;border-radius:999px;
+  padding:14px 21px;
+  transition:transform .5s var(--silk-ease),box-shadow .5s var(--silk-ease),border-color .5s var(--silk-ease);
+}
+.btn:before{
+  content:"";position:absolute;inset:0;transform:translateX(-110%);
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.22),transparent);
+  transition:transform .7s var(--silk-ease);
+}
+.btn:hover:before{transform:translateX(110%)}
+.btn>*{position:relative}
+.btn:hover{transform:translateY(-3px) scale(1.01)}
+.btn.primary{box-shadow:0 10px 35px rgba(24,231,255,.12)}
+.btn.primary:hover{box-shadow:0 16px 50px rgba(24,231,255,.25)}
+.btn.ghost{border-color:rgba(255,255,255,.11)}
+
+/* Floating HUD/orbit */
+.hero-visual{
+  width:min(40vw,520px);height:min(40vw,520px);
+  right:clamp(2%,8vw,120px);
+  border-color:rgba(24,231,255,.13);
+  transition:transform .9s var(--silk-ease),opacity .6s ease;
+}
+.visual-core{
+  width:min(16vw,190px);height:min(16vw,190px);
+  border-radius:34%;
+  transition:transform .8s var(--silk-ease),box-shadow .8s var(--silk-ease);
+}
+.hero-visual:hover .visual-core{transform:scale(1.035) rotate(2deg);box-shadow:0 0 100px rgba(24,231,255,.18),inset 0 0 45px rgba(24,231,255,.08)}
+.hero-grid{opacity:.72}
+
+/* Ambient cursor spotlight, driven by JS */
+.silk-cursor{
+  position:fixed;z-index:2;width:420px;height:420px;border-radius:50%;
+  pointer-events:none;opacity:0;
+  background:radial-gradient(circle,rgba(24,231,255,.075),rgba(24,231,255,0) 68%);
+  transform:translate3d(-50%,-50%,0);
+  transition:opacity .35s ease;
+  mix-blend-mode:screen;
+}
+.silk-cursor.visible{opacity:1}
+
+/* Festival phase strip */
+.phase-strip{position:relative;z-index:3;background:rgba(3,7,17,.76);backdrop-filter:blur(12px)}
+.phase-strip>div{position:relative;overflow:hidden;transition:background .5s var(--silk-ease),transform .5s var(--silk-ease)}
+.phase-strip>div:before{
+  content:"";position:absolute;inset:0;opacity:0;
+  background:radial-gradient(circle at 50% 0,rgba(24,231,255,.10),transparent 55%);
+  transition:opacity .5s var(--silk-ease);
+}
+.phase-strip>div:hover{background:rgba(255,255,255,.018);transform:translateY(-2px)}
+.phase-strip>div:hover:before{opacity:1}
+
+/* Section rhythm */
+.section{padding-top:clamp(88px,10vw,150px);padding-bottom:clamp(88px,10vw,150px)}
+.section-head h2{font-size:clamp(34px,5.3vw,68px);letter-spacing:-.045em}
+.section-head p{font-size:13px;line-height:1.9}
+
+/* Magnetic/spotlight cards */
+.arena-card,.leadership-feature,.core-card,.operations-grid article,.contact-card,.mentor-message{
+  --px:50%;--py:50%;
+  position:relative;
+  isolation:isolate;
+  transition:transform .65s var(--silk-ease),border-color .5s ease,box-shadow .65s var(--silk-ease);
+}
+.arena-card:before,.leadership-feature:before,.core-card:before,.operations-grid article:before,.contact-card:before{
+  background:radial-gradient(280px circle at var(--px) var(--py),rgba(24,231,255,.105),transparent 58%),linear-gradient(135deg,rgba(24,231,255,.045),transparent 48%);
+  opacity:1;transition:opacity .4s ease;
+}
+.arena-card:hover,.leadership-feature:hover,.core-card:hover,.operations-grid article:hover,.contact-card:hover{
+  transform:translateY(-8px);
+  border-color:rgba(24,231,255,.28);
+}
+.arena-card:after{
+  transition:transform .8s var(--silk-ease),border-color .5s ease;
+}
+.arena-card:hover:after{transform:scale(1.18);border-color:rgba(24,231,255,.25)}
+.arena-card h3,.leadership-feature h3,.core-card h3,.operations-grid h3,.contact-card h3{transition:transform .5s var(--silk-ease),color .5s ease}
+.arena-card:hover h3,.leadership-feature:hover h3,.core-card:hover h3,.operations-grid article:hover h3{transform:translateX(3px)}
+
+/* Scroll reveal: less blur, more glide */
+.silk-reveal{opacity:0;transform:translate3d(0,34px,0) scale(.985)}
+.silk-reveal.silk-in{opacity:1;transform:none;transition:opacity .9s var(--silk-ease),transform 1s var(--silk-ease)}
+
+/* Footer / CTA */
+.final-cta{border-radius:28px}
+.final-cta .btn{margin-top:2px}
+.footer{transition:background .4s ease}
+.footer:hover{background:rgba(255,255,255,.018)}
+
+/* Mobile */
+@media(max-width:1000px){
+  .hero-visual{width:430px;height:430px;right:-110px}
+}
+@media(max-width:800px){
+  .site-header{height:70px}
+  .site-header.scrolled{height:64px}
+  .hero{min-height:100svh;padding-top:125px}
+  .hero h1{font-size:clamp(46px,13vw,76px)}
+  .hero-content{max-width:720px}
+  .hero-visual{display:none}
+  .silk-cursor{display:none}
+}
+@media(max-width:520px){
+  .hero{padding-top:116px}
+  .hero h1{font-size:clamp(43px,14.5vw,65px)}
+  .hero-meta{gap:12px}
+  .section{padding-top:76px;padding-bottom:76px}
+  .final-cta{border-radius:20px;padding:58px 22px}
+}
+@media(prefers-reduced-motion:reduce){
+  .silk-cursor{display:none}
+  .silk-reveal{opacity:1;transform:none}
+}
+
+
+/* ===== source: production-polish.css ===== */
+
+/* APS Tinkering Lab Robokriti 2026 — production polish layer
+   Visual/UX improvements only. Existing text/content is untouched. */
+:root{--st-ease:cubic-bezier(.16,1,.3,1);--st-glow:rgba(0,194,255,.22);--st-gold:rgba(212,175,55,.18)}
+html{scroll-padding-top:88px}
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:rgba(0,194,255,.28);color:#fff}
+
+/* Premium navigation */
+.site-header{isolation:isolate;transition:background .45s var(--st-ease),border-color .45s var(--st-ease),box-shadow .45s var(--st-ease),transform .45s var(--st-ease)}
+.site-header.scrolled{backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);box-shadow:0 12px 40px rgba(0,0,0,.22)}
+.site-header::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,rgba(0,194,255,.55),rgba(212,175,55,.35),transparent);opacity:.45;pointer-events:none}
+nav a{position:relative}
+nav a::after{content:"";position:absolute;left:50%;bottom:-7px;width:0;height:2px;transform:translateX(-50%);background:linear-gradient(90deg,#00c2ff,#d4af37);box-shadow:0 0 10px rgba(0,194,255,.6);transition:width .35s var(--st-ease)}
+nav a:hover::after,nav a.active::after{width:70%}
+
+/* Buttons */
+.btn{position:relative;overflow:hidden;isolation:isolate;transform:translateZ(0);box-shadow:0 8px 28px rgba(0,0,0,.16)}
+.btn::before{content:"";position:absolute;inset:0;transform:translateX(-115%);background:linear-gradient(100deg,transparent,rgba(255,255,255,.18),transparent);transition:transform .7s var(--st-ease);z-index:-1}
+.btn:hover::before{transform:translateX(115%)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 14px 38px rgba(0,194,255,.12)}
+.btn:active{transform:translateY(0) scale(.985)}
+
+/* Section atmosphere */
+.section{position:relative;isolation:isolate}
+.section::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(circle at 8% 12%,rgba(0,194,255,.035),transparent 28%),radial-gradient(circle at 92% 80%,rgba(212,175,55,.025),transparent 25%)}
+.section-head h2{letter-spacing:-.025em}
+
+/* Arena / command / operation cards */
+.arena-card,.core-card,.leadership-feature,.operations-grid article,.contact-card{position:relative;overflow:hidden;transform:translateZ(0)}
+.arena-card::before,.core-card::before,.leadership-feature::before,.operations-grid article::before,.contact-card::before{content:"";position:absolute;inset:0;background:linear-gradient(125deg,rgba(0,194,255,.07),transparent 34%,transparent 66%,rgba(212,175,55,.045));opacity:0;transition:opacity .5s var(--st-ease);pointer-events:none}
+.arena-card::after,.core-card::after,.leadership-feature::after,.operations-grid article::after,.contact-card::after{content:"";position:absolute;top:0;left:0;width:42%;height:1px;background:linear-gradient(90deg,rgba(0,194,255,.75),transparent);transform:scaleX(0);transform-origin:left;transition:transform .55s var(--st-ease);pointer-events:none}
+.arena-card:hover,.core-card:hover,.leadership-feature:hover,.operations-grid article:hover,.contact-card:hover{transform:translateY(-6px)}
+.arena-card:hover::before,.core-card:hover::before,.leadership-feature:hover::before,.operations-grid article:hover::before,.contact-card:hover::before{opacity:1}
+.arena-card:hover::after,.core-card:hover::after,.leadership-feature:hover::after,.operations-grid article:hover::after,.contact-card:hover::after{transform:scaleX(1)}
+
+/* Hero depth */
+.tech-hero{isolation:isolate;overflow:hidden}
+.tech-hero::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.1),transparent 35%,transparent 65%,rgba(0,0,0,.16));z-index:0}
+.hero-content,.hero-visual{position:relative;z-index:2}
+.hero-content h1{text-shadow:0 0 38px rgba(0,194,255,.08)}
+.hero-meta span{transition:color .35s ease,transform .35s var(--st-ease)}
+.hero-meta span:hover{color:#fff;transform:translateY(-2px)}
+
+/* Loading */
+.preloader{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.loader-core{filter:drop-shadow(0 0 14px rgba(0,194,255,.35))}
+
+/* Focus accessibility */
+:focus-visible{outline:2px solid #00c2ff;outline-offset:4px}
+
+/* Mobile polish */
+@media(max-width:800px){
+  html{scroll-padding-top:72px}
+  .site-header{backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+  nav a::after{display:none}
+  .btn:hover{transform:none}
+  .arena-card:hover,.core-card:hover,.leadership-feature:hover,.operations-grid article:hover,.contact-card:hover{transform:none}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .btn::before,nav a::after,.arena-card::before,.core-card::before,.leadership-feature::before,.operations-grid article::before,.contact-card::before,.arena-card::after,.core-card::after,.leadership-feature::after,.operations-grid article::after,.contact-card::after{transition:none!important}
+}
+
+
+/* ===== source: production-plus.css ===== */
+
+/* APS Tinkering Lab Robokriti 2026 — advanced polish layer
+   Adds visual/interaction refinement only. No existing content is changed. */
+:root{
+  --st-cyan:#00c2ff;
+  --st-gold:#d4af37;
+  --st-bg:#050914;
+  --st-ease:cubic-bezier(.16,1,.3,1);
+}
+html{scroll-behavior:smooth}
+body{background-image:radial-gradient(circle at 50% -10%,rgba(0,194,255,.055),transparent 32%),linear-gradient(rgba(255,255,255,.012) 1px,transparent 1px);background-size:auto,100% 4px}
+body::before{content:"";position:fixed;inset:0;z-index:9997;pointer-events:none;opacity:.025;background-image:radial-gradient(rgba(255,255,255,.8) .6px,transparent .7px);background-size:5px 5px}
+#stProgress{position:fixed;left:0;top:0;width:100%;height:2px;z-index:10001;transform-origin:left;transform:scaleX(0);background:linear-gradient(90deg,var(--st-cyan),var(--st-gold));box-shadow:0 0 14px rgba(0,194,255,.7);pointer-events:none}
+#stCursor{position:fixed;width:24px;height:24px;border:1px solid rgba(0,194,255,.45);border-radius:50%;pointer-events:none;z-index:10000;transform:translate(-50%,-50%);opacity:0;transition:width .25s var(--st-ease),height .25s var(--st-ease),opacity .25s ease,border-color .25s ease;mix-blend-mode:screen}
+#stCursor::after{content:"";position:absolute;left:50%;top:50%;width:4px;height:4px;border-radius:50%;background:var(--st-cyan);transform:translate(-50%,-50%);box-shadow:0 0 12px var(--st-cyan)}
+body.st-pointer #stCursor{opacity:1}
+body.st-hover #stCursor{width:44px;height:44px;border-color:rgba(212,175,55,.75)}
+.hero-grid{opacity:.5}
+.tech-hero .hero-grid{transform:translate3d(calc(var(--mx,0px)*-.35),calc(var(--my,0px)*-.35),0);transition:transform .18s ease-out}
+.tech-hero .hero-visual{transform:translate3d(calc(var(--mx,0px)*.22),calc(var(--my,0px)*.22),0);transition:transform .25s ease-out}
+.tech-hero .hero-content{transform:translate3d(calc(var(--mx,0px)*.08),calc(var(--my,0px)*.08),0);transition:transform .25s ease-out}
+.hero-scan{opacity:.65;animation:stScan 7s linear infinite}
+@keyframes stScan{0%,100%{transform:translateY(-100%);opacity:0}15%{opacity:.35}50%{opacity:.7}85%{opacity:.35}100%{transform:translateY(100%);opacity:0}}
+.phase-strip>div{transition:transform .45s var(--st-ease),background .45s ease,border-color .45s ease;position:relative;overflow:hidden}
+.phase-strip>div::after{content:"";position:absolute;left:0;bottom:0;width:0;height:2px;background:linear-gradient(90deg,var(--st-cyan),var(--st-gold));transition:width .5s var(--st-ease)}
+.phase-strip>div:hover{transform:translateY(-4px);background:rgba(255,255,255,.045);border-color:rgba(0,194,255,.2)}
+.phase-strip>div:hover::after{width:100%}
+.arena-card{background-image:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.008))}
+.arena-card .arena-index,.core-card>span,.feature-index{transition:transform .45s var(--st-ease),text-shadow .45s ease}
+.arena-card:hover .arena-index,.core-card:hover>span,.leadership-feature:hover .feature-index{transform:translateX(5px);text-shadow:0 0 18px rgba(0,194,255,.35)}
+.arena-card .arena-link{transition:letter-spacing .4s var(--st-ease),color .3s ease}
+.arena-card:hover .arena-link{letter-spacing:.12em;color:#fff}
+.section-head{position:relative}
+.section-head::before{content:"";position:absolute;left:0;top:-18px;width:38px;height:1px;background:linear-gradient(90deg,var(--st-cyan),transparent);opacity:.8}
+.final-cta,.contact-card{box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 20px 70px rgba(0,0,0,.18)}
+.site-header{transition:transform .45s var(--st-ease),background .45s ease,box-shadow .45s ease}
+.site-header.st-hide{transform:translateY(-105%)}
+.menu-btn{transition:transform .3s var(--st-ease),background .3s ease,border-color .3s ease}
+.menu-btn:hover{transform:scale(1.04)}
+.menu-btn:active{transform:scale(.96)}
+.btn,.arena-card,.core-card,.leadership-feature,.operations-grid article,.contact-card{will-change:transform}
+.lux-visible{animation:stReveal .8s var(--st-ease) both;animation-delay:var(--reveal-delay,0ms)}
+@keyframes stReveal{from{opacity:0;transform:translateY(24px) scale(.985);filter:blur(4px)}to{opacity:1;transform:none;filter:none}}
+@media(max-width:800px){
+  body::before{opacity:.018}
+  #stCursor{display:none!important}
+  .phase-strip>div:hover{transform:none}
+  .section-head::before{top:-12px}
+  .tech-hero .hero-grid,.tech-hero .hero-visual,.tech-hero .hero-content{transform:none!important}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  #stProgress{transition:none}
+}
+
+
+/* ===== source: reference-theme.css ===== */
+
+/* RoboKriti 2026 — Reference colour system
+   Visual-only override: content, structure and functionality untouched. */
+:root{
+  --ref-bg:#05080d;
+  --ref-bg-2:#080d14;
+  --ref-panel:rgba(255,255,255,.035);
+  --ref-panel-strong:rgba(7,15,25,.92);
+  --ref-cyan:#00c8ff;
+  --ref-cyan-2:#0088ff;
+  --ref-text:#f2f7fa;
+  --ref-muted:#8b9aa8;
+  --ref-border:rgba(0,200,255,.16);
+  --ref-border-soft:rgba(255,255,255,.08);
+}
+html{scroll-behavior:smooth;background:var(--ref-bg)}
+body{background:var(--ref-bg)!important;color:var(--ref-text)!important}
+::selection{background:rgba(0,200,255,.24);color:#fff}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:#03060a}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--ref-cyan),var(--ref-cyan-2));border-radius:99px}
+
+/* Neutralise the old violet/gold accents without touching content. */
+[style*="#d4af37"],[style*="#D4AF37"],[style*="#e4c15a"],[style*="#E4C15A"]{color:var(--ref-cyan)!important}
+
+.site-header,.event-header{background:rgba(5,8,13,.84)!important;border-color:var(--ref-border-soft)!important;backdrop-filter:blur(18px) saturate(130%)}
+.brand small,.back,.section-tag,.section-head>span,.arena-index,.arena-link,.team-card small,.operations-grid article>span,.contact-card small,.event-no,.event-meta span,.side-card span,.footer a,.footer-status i{color:var(--ref-cyan)!important}
+
+.hero,.event-hero{background:
+ radial-gradient(circle at 75% 25%,rgba(0,200,255,.12),transparent 28%),
+ radial-gradient(circle at 20% 75%,rgba(0,136,255,.06),transparent 26%),
+ linear-gradient(135deg,var(--ref-bg),var(--ref-bg-2) 58%,var(--ref-bg))!important}
+.hero:before,.event-hero:before,.cta-grid{background-image:
+ linear-gradient(rgba(0,200,255,.045) 1px,transparent 1px),
+ linear-gradient(90deg,rgba(0,200,255,.045) 1px,transparent 1px)!important}
+
+.hero h1 b,.event-hero h1 b,.final-cta h2 b,.event-core-head h2 b,.feature-index,.arena-index{color:var(--ref-cyan)!important}
+.hero p,.arena-card p,.team-card p,.operations-grid p,.operations-grid li,.journey p,.contact-card p,.final-cta p,.event-hero p,.rule-card li,.side-card p{color:var(--ref-muted)!important}
+
+.arena-card,.team-card,.contact-card,.operations-grid article,.rule-card,.side-card,.final-cta,.mentor-message,.event-member{
+ background:linear-gradient(145deg,rgba(255,255,255,.04),rgba(255,255,255,.012))!important;
+ border-color:var(--ref-border-soft)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.025),0 24px 70px rgba(0,0,0,.24)!important;
+}
+.arena-card:hover,.team-card:hover{border-color:rgba(0,200,255,.36)!important;box-shadow:0 25px 70px rgba(0,0,0,.35),0 0 28px rgba(0,200,255,.055)!important}
+.arena-card:before,.team-card.leader,.final-cta{background-image:radial-gradient(circle at 90% 0,rgba(0,200,255,.08),transparent 34%)!important}
+
+.btn,.nav-register,.side-card a{background:var(--ref-cyan)!important;color:#031018!important;border-color:var(--ref-cyan)!important;box-shadow:0 0 22px rgba(0,200,255,.12)}
+.btn:hover,.nav-register:hover,.side-card a:hover{background:#36d4ff!important;box-shadow:0 0 30px rgba(0,200,255,.24)}
+a:hover{color:var(--ref-cyan)}
+
+.event-meta span{border-color:var(--ref-border)!important;color:#8fa0ae!important}
+.notice{border-left-color:var(--ref-cyan)!important;background:rgba(0,200,255,.045)!important}
+.rule-card li::marker{color:var(--ref-cyan)!important}
+.member-avatar{border-color:var(--ref-border)!important;color:var(--ref-cyan)!important;background:rgba(0,200,255,.045)!important}
+.event-member:before{background:linear-gradient(90deg,var(--ref-cyan),transparent)!important}
+
+.phase-strip:before,.feature-line{background:linear-gradient(90deg,transparent,var(--ref-cyan),transparent)!important;box-shadow:0 0 14px rgba(0,200,255,.28)!important}
+.journey b,.message-mark{color:var(--ref-cyan)!important}
+.footer{border-color:var(--ref-border-soft)!important}
+.footer-status i{background:var(--ref-cyan)!important;box-shadow:0 0 10px var(--ref-cyan)!important}
+
+/* Keep motion elegant rather than flashy. */
+.reveal,.event-member{will-change:transform,opacity}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}.reveal,.event-member{animation:none!important;transition:none!important}}
+
+/* =========================================================
+   ROBOKRITI FINAL VISUAL CALIBRATION
+   Inspired by the supplied APS Robotics reference screenshot.
+   Visual-only layer: no content, routes or functionality changed.
+========================================================= */
+:root{
+  --rk-bg:#020607;
+  --rk-bg-2:#050b10;
+  --rk-panel:#071322;
+  --rk-panel-2:#091727;
+  --rk-cyan:#00d9ff;
+  --rk-cyan-soft:#11b9d7;
+  --rk-lime:#dfff00;
+  --rk-white:#edf7fb;
+  --rk-muted:#8d9ba9;
+  --rk-border:rgba(0,217,255,.18);
+}
+
+html{background:var(--rk-bg)!important}
+body{
+  background:
+    radial-gradient(circle at 50% -10%,rgba(0,217,255,.055),transparent 30%),
+    var(--rk-bg)!important;
+  color:var(--rk-white)!important;
+}
+body:before{
+  opacity:.11!important;
+  background-image:
+    linear-gradient(rgba(0,217,255,.028) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,217,255,.028) 1px,transparent 1px)!important;
+  background-size:48px 48px!important;
+}
+
+.site-header,.event-header{
+  background:rgba(2,6,7,.88)!important;
+  border-bottom-color:rgba(0,217,255,.13)!important;
+  box-shadow:0 14px 55px rgba(0,0,0,.42),inset 0 -1px 0 rgba(0,217,255,.035)!important;
+}
+.brand b,.brand strong{color:var(--rk-white)!important}
+.brand small{color:var(--rk-cyan)!important}
+nav a{color:#91a0ad!important}
+nav a:hover,nav a.active{color:var(--rk-white)!important;background:rgba(0,217,255,.075)!important}
+
+.hero,.event-hero{
+  background:
+    radial-gradient(circle at 76% 27%,rgba(0,217,255,.115),transparent 27%),
+    radial-gradient(circle at 18% 82%,rgba(223,255,0,.025),transparent 24%),
+    linear-gradient(145deg,#020607,#050b10 58%,#020607)!important;
+}
+.hero-grid,.event-hero:before{
+  background-image:
+    linear-gradient(rgba(0,217,255,.038) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,217,255,.038) 1px,transparent 1px)!important;
+}
+.hero h1 span,.hero h1 b,.section-head h2 b,.final-cta h2 b,.event-hero h1 b,.event-core-head h2 b{
+  color:var(--rk-lime)!important;
+  text-shadow:0 0 28px rgba(223,255,0,.10)!important;
+}
+.phase-label,.phase-label,.hero-kicker,.section-head>span,.event-no,.event-meta span,
+.arena-index,.arena-link,.team-card small,.operations-grid article>span,.feature-index,
+.feature-line,.command-group-head>span,.event-core-head>span,.side-card>span{
+  color:var(--rk-cyan)!important;
+}
+.hero p,.section-head p,.arena-card p,.team-card p,.operations-grid p,.operations-grid li,
+.journey p,.contact-card p,.final-cta p,.event-hero p,.rule-card li,.side-card p,
+.core-card p,.leadership-feature p{color:var(--rk-muted)!important}
+
+.hero .btn.primary,.btn.primary,.nav-register,.side-card a:first-of-type{
+  background:var(--rk-cyan)!important;
+  border-color:var(--rk-cyan)!important;
+  color:#001015!important;
+  box-shadow:0 0 28px rgba(0,217,255,.16)!important;
+}
+.hero .btn.primary:hover,.btn.primary:hover,.nav-register:hover,.side-card a:first-of-type:hover{
+  background:#35e1ff!important;
+  box-shadow:0 0 42px rgba(0,217,255,.25)!important;
+}
+.btn.ghost,.btn.ghost:hover{
+  color:var(--rk-white)!important;
+  background:rgba(255,255,255,.025)!important;
+  border-color:rgba(255,255,255,.11)!important;
+}
+
+.phase-strip,.arenas-section,.team-section,.operations-section,.journey-section{
+  background:var(--rk-bg)!important;
+}
+.phase-strip>div{border-color:rgba(0,217,255,.08)!important}
+.phase-strip strong,.arena-card h3,.team-card h3,.operations-grid h3,
+.origin-grid h3,.leadership-feature h3,.core-card h3,.journey h3{color:var(--rk-white)!important}
+.phase-strip small{color:var(--rk-cyan)!important}
+
+.arena-card,.team-card,.core-card,.leadership-feature,.operations-grid article,
+.contact-card,.mentor-message,.rule-card,.side-card,.final-cta,.event-member{
+  background:
+    linear-gradient(145deg,rgba(7,19,34,.96),rgba(4,11,19,.97))!important;
+  border-color:rgba(0,217,255,.12)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 24px 70px rgba(0,0,0,.34)!important;
+}
+.arena-card:hover,.team-card:hover,.core-card:hover,.leadership-feature:hover,
+.operations-grid article:hover,.contact-card:hover{
+  border-color:rgba(0,217,255,.34)!important;
+  box-shadow:0 28px 85px rgba(0,0,0,.44),0 0 32px rgba(0,217,255,.055)!important;
+}
+.arena-card:before,.team-card.leader,.leadership-feature:before,.core-card:before,.final-cta{
+  background-image:linear-gradient(135deg,rgba(0,217,255,.075),transparent 48%)!important;
+}
+.mentor-feature:before{background:linear-gradient(135deg,rgba(223,255,0,.045),transparent 48%)!important}
+
+.origin-grid{border-top-color:rgba(0,217,255,.16)!important;border-bottom-color:rgba(0,217,255,.09)!important}
+.origin-number{color:rgba(0,217,255,.10)!important}
+.origin-points span{color:var(--rk-cyan)!important;border-color:rgba(0,217,255,.16)!important}
+.message-mark,.journey b{color:var(--rk-cyan)!important}
+.feature-line{background:linear-gradient(90deg,var(--rk-cyan),transparent)!important;box-shadow:0 0 15px rgba(0,217,255,.45)!important}
+
+.notice{background:rgba(0,217,255,.045)!important;border-left-color:var(--rk-cyan)!important}
+.rule-card li::marker{color:var(--rk-cyan)!important}
+.member-avatar{color:var(--rk-cyan)!important;border-color:rgba(0,217,255,.22)!important;background:rgba(0,217,255,.045)!important}
+.event-member:before{background:linear-gradient(90deg,var(--rk-cyan),transparent)!important}
+
+.hero-visual{border-color:rgba(0,217,255,.17)!important;box-shadow:0 0 100px rgba(0,217,255,.055),inset 0 0 60px rgba(0,217,255,.02)!important}
+.hero-visual:before{border-color:rgba(0,217,255,.18)!important}
+.hero-visual:after{border-color:rgba(223,255,0,.13)!important}
+.visual-core{border-color:var(--rk-cyan)!important;box-shadow:0 0 80px rgba(0,217,255,.10),inset 0 0 35px rgba(0,217,255,.045)!important}
+.visual-core span{color:var(--rk-cyan)!important;text-shadow:0 0 30px rgba(0,217,255,.35)!important}
+.visual-line{background:var(--rk-cyan)!important;box-shadow:0 0 10px var(--rk-cyan)!important}
+.lux-particles i{background:var(--rk-cyan)!important;box-shadow:0 0 12px var(--rk-cyan)!important}
+
+.loader-core{border-color:var(--rk-cyan)!important}
+.loader-core span{background:var(--rk-cyan)!important}
+.loader-sub{color:var(--rk-cyan)!important}
+
+.footer{border-color:rgba(0,217,255,.10)!important;background:#020607!important}
+.footer-status i{background:var(--rk-cyan)!important;box-shadow:0 0 10px var(--rk-cyan)!important}
+
+::selection{background:rgba(223,255,0,.24)!important;color:#fff!important}
+::-webkit-scrollbar-track{background:#020607!important}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--rk-cyan),#087fa8)!important}
+
+/* Small-screen refinement: preserve the screenshot's dense, premium feel. */
+@media(max-width:700px){
+  .site-header,.event-header{backdrop-filter:blur(16px)!important}
+  .hero{background:
+    radial-gradient(circle at 78% 18%,rgba(0,217,255,.09),transparent 32%),
+    #020607!important;
+  }
+}
+
+
+/* ===== source: ultra-ui.css ===== */
+
+
+/* =========================================================
+   ROBOKRITI 2026 — ULTRA UI LAYER
+   Same existing cyan/gold theme. Visual-only enhancement.
+   ========================================================= */
+:root{--rk-cyan:#19e6ff;--rk-gold:#d4af37;--rk-bg:#050914;--rk-panel:rgba(8,15,30,.72);--rk-line:rgba(25,230,255,.14);--rk-ease:cubic-bezier(.22,1,.36,1)}
+html{scroll-behavior:smooth;scroll-padding-top:92px;overscroll-behavior-y:none}
+body{background-color:var(--rk-bg);text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+/* cinematic ambient layers */
+body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(circle at 15% 20%,rgba(25,230,255,.035),transparent 28%),radial-gradient(circle at 85% 65%,rgba(212,175,55,.025),transparent 25%)}
+.site-header{box-shadow:0 10px 40px rgba(0,0,0,.14);transition:transform .65s var(--rk-ease),background .45s ease,border-color .45s ease,box-shadow .45s ease}
+.site-header.scrolled{background:rgba(3,7,18,.86);border-bottom-color:rgba(25,230,255,.13);box-shadow:0 14px 50px rgba(0,0,0,.28)}
+.brand img{filter:drop-shadow(0 0 12px rgba(25,230,255,.12));transition:transform .5s var(--rk-ease),filter .5s ease}.brand:hover img{transform:rotate(-3deg) scale(1.05);filter:drop-shadow(0 0 18px rgba(25,230,255,.3))}
+nav a{position:relative;overflow:hidden}nav a:after{content:"";position:absolute;left:12px;right:12px;bottom:5px;height:1px;background:var(--rk-cyan);transform:scaleX(0);transform-origin:left;transition:transform .45s var(--rk-ease);opacity:.8}nav a:hover:after,nav a.active:after{transform:scaleX(1)}nav .nav-register{box-shadow:0 0 0 rgba(25,230,255,0);transition:transform .35s var(--rk-ease),box-shadow .35s ease}nav .nav-register:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(25,230,255,.2)}
+.hero{isolation:isolate}.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,9,20,0) 0%,rgba(5,9,20,.02) 45%,rgba(5,9,20,.2) 100%);pointer-events:none;z-index:1}.hero-content,.hero-visual{will-change:transform}
+.hero-content{animation:rkHeroIn 1.05s var(--rk-ease) both}.hero-visual{animation:rkVisualIn 1.2s .12s var(--rk-ease) both}
+.hero h1{filter:drop-shadow(0 0 30px rgba(25,230,255,.03))}.hero h1 span{text-shadow:0 0 30px rgba(25,230,255,.16)}
+.btn{position:relative;overflow:hidden;isolation:isolate}.btn:before{content:"";position:absolute;inset:-2px;background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.18) 48%,transparent 70%);transform:translateX(-120%);transition:transform .8s var(--rk-ease);z-index:-1}.btn:hover:before{transform:translateX(120%)}
+.section{position:relative}.section:before{content:"";position:absolute;left:8%;right:8%;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--rk-line),transparent);opacity:.55}
+.section-head h2{max-width:900px}.section-head h2 b{color:var(--rk-cyan);text-shadow:0 0 25px rgba(25,230,255,.1)}
+.phase-strip{position:relative;z-index:4;box-shadow:0 -15px 60px rgba(0,0,0,.12),0 15px 60px rgba(0,0,0,.12)}
+.phase-strip>div{position:relative;overflow:hidden}.phase-strip>div:before{content:"";position:absolute;left:0;top:0;width:1px;height:100%;background:linear-gradient(transparent,var(--rk-cyan),transparent);transform:scaleY(0);transition:transform .6s var(--rk-ease)}.phase-strip>div:hover:before{transform:scaleY(1)}
+.arena-card,.core-card,.leadership-feature,.operations-grid article,.contact-card,.mentor-message,.journey>div{transition:transform .55s var(--rk-ease),border-color .45s ease,background .45s ease,box-shadow .55s ease}.arena-card:hover,.core-card:hover,.leadership-feature:hover,.operations-grid article:hover,.contact-card:hover,.journey>div:hover{box-shadow:0 22px 70px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.05)}
+.arena-card:after,.core-card:after,.leadership-feature:after,.contact-card:after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(125deg,rgba(25,230,255,.08),transparent 35%,transparent 65%,rgba(212,175,55,.04));opacity:0;transition:opacity .5s ease}.arena-card:hover:after,.core-card:hover:after,.leadership-feature:hover:after,.contact-card:hover:after{opacity:1}
+.journey{counter-reset:rkstep}.journey>div{position:relative;overflow:hidden}.journey>div:before{content:"";position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,var(--rk-cyan),transparent);transform:scaleX(0);transform-origin:left;transition:transform .6s var(--rk-ease)}.journey>div:hover:before{transform:scaleX(1)}
+.final-cta{position:relative;overflow:hidden}.final-cta:before{content:"";position:absolute;width:420px;height:420px;border:1px solid rgba(25,230,255,.08);border-radius:50%;right:-170px;top:50%;transform:translateY(-50%);animation:rkOrbit 16s linear infinite}.final-cta:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(25,230,255,.025),transparent);animation:rkSweep 7s ease-in-out infinite}
+/* silky anchor navigation */
+@media (prefers-reduced-motion:no-preference){a[href^="#"]{scroll-behavior:smooth}}
+@keyframes rkHeroIn{from{opacity:0;transform:translate3d(0,28px,0);filter:blur(8px)}to{opacity:1;transform:none;filter:none}}
+@keyframes rkVisualIn{from{opacity:0;transform:translate3d(40px,0,0) scale(.94)}to{opacity:1;transform:none}}
+@keyframes rkOrbit{to{transform:translateY(-50%) rotate(360deg)}}
+@keyframes rkSweep{0%,100%{transform:translateX(-100%)}50%{transform:translateX(100%)}}
+@media(max-width:900px){html{scroll-padding-top:78px}.hero{min-height:auto}.hero-content{animation-duration:.8s}.hero-visual{opacity:.22;right:-140px;transform:scale(.78);pointer-events:none}.section:before{left:5%;right:5%}}
+@media(max-width:600px){.hero{padding-top:130px}.hero h1{letter-spacing:-2px}.hero-actions{flex-direction:column;align-items:stretch}.btn{width:100%}.phase-strip{grid-template-columns:1fr 1fr}.phase-strip>div{min-height:130px}.final-cta:before{right:-270px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hero-content,.hero-visual{animation:none!important}.final-cta:before,.final-cta:after{animation:none!important}.btn:before{display:none}}
+
+
+/* ===== source: robokriti-perfection.css ===== */
+
+/* =========================================================
+   ROBOKRITI 2026 // PERFECT UI LAYER
+   Same cyan / gold / deep-navy palette. Content untouched.
+   Inspired by modern technical-festival storytelling: phases,
+   editorial spacing, numbered systems and restrained motion.
+========================================================= */
+:root{
+  --rk-cyan:#19e6ff;
+  --rk-gold:#d4af37;
+  --rk-bg:#050914;
+  --rk-panel:rgba(7,12,23,.72);
+  --rk-line:rgba(255,255,255,.085);
+  --rk-ease:cubic-bezier(.16,1,.3,1);
+}
+html{scroll-padding-top:96px;scroll-behavior:smooth}
+body{overscroll-behavior-x:none;scrollbar-gutter:stable;background:#050914}
+::selection{background:rgba(25,230,255,.22);color:#fff}
+
+/* Premium scrollbar, deliberately using the existing palette. */
+html{scrollbar-width:thin;scrollbar-color:rgba(25,230,255,.55) #030711}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:#030711}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#19e6ff,#d4af37);border-radius:99px;border:2px solid #030711}
+
+/* Scroll progress */
+.rk-progress{position:fixed;z-index:3000;top:0;left:0;height:2px;width:0;background:linear-gradient(90deg,var(--rk-cyan),var(--rk-gold));box-shadow:0 0 14px rgba(25,230,255,.7);pointer-events:none;transform-origin:left center}
+
+/* Header: calmer, more editorial and responsive. */
+.site-header{transition:height .55s var(--rk-ease),background .55s ease,box-shadow .55s ease,border-color .55s ease,transform .55s var(--rk-ease)}
+.site-header.rk-compact{height:66px;background:rgba(3,7,18,.88);box-shadow:0 12px 45px rgba(0,0,0,.28);border-bottom-color:rgba(25,230,255,.12)}
+.site-header.rk-hidden{transform:translateY(-105%)}
+.brand img{transition:transform .6s var(--rk-ease),filter .6s ease}
+.site-header:hover .brand img{transform:rotate(-3deg) scale(1.035);filter:drop-shadow(0 0 12px rgba(25,230,255,.2))}
+nav a{position:relative}
+nav a:not(.nav-register)::after{content:"";position:absolute;left:12px;right:12px;bottom:5px;height:1px;background:var(--rk-cyan);transform:scaleX(0);transform-origin:center;transition:transform .45s var(--rk-ease)}
+nav a:not(.nav-register):hover::after,nav a:not(.nav-register).active::after{transform:scaleX(1)}
+
+/* Hero depth */
+.hero{isolation:isolate}
+.hero:after{content:"";position:absolute;inset:auto 0 0;height:34%;z-index:1;background:linear-gradient(180deg,transparent,rgba(5,9,20,.92));pointer-events:none}
+.hero-content,.hero-visual{will-change:transform}
+.hero-content{animation:rkHeroIn 1.05s var(--rk-ease) both}
+.hero-visual{animation:rkVisualIn 1.35s var(--rk-ease) .08s both}
+.hero-grid{animation:rkGridDrift 18s linear infinite}
+.hero-scan{animation:rkScan 5.5s var(--rk-ease) infinite}
+.hero-orbit{will-change:transform}
+
+/* Add quiet HUD corner brackets to major sections without adding content. */
+.section-head{position:relative}
+.section-head:before{content:"";position:absolute;left:-18px;top:2px;width:7px;height:7px;border-left:1px solid var(--rk-cyan);border-top:1px solid var(--rk-cyan);opacity:.7}
+.section-head:after{content:"";position:absolute;left:-18px;top:2px;width:7px;height:7px;border-left:1px solid var(--rk-cyan);border-top:1px solid var(--rk-cyan);transform:translate(5px,5px);opacity:.18}
+
+/* Phase strip becomes a strong festival timeline. */
+.phase-strip{position:relative;overflow:hidden}
+.phase-strip:before{content:"";position:absolute;left:8%;right:8%;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--rk-cyan),transparent);opacity:.45}
+.phase-strip>div{min-height:108px;display:flex;flex-direction:column;justify-content:center;transition:transform .55s var(--rk-ease),background .55s ease,border-color .55s ease}
+.phase-strip>div:hover{transform:translateY(-4px);background:rgba(25,230,255,.025)}
+
+/* Arena cards: cinematic edge light. */
+.arena-card,.team-card,.leadership-feature,.core-card,.operations-grid article,.contact-card,.mentor-message,.final-cta{overflow:hidden}
+.arena-card:before,.team-card:before,.leadership-feature:before,.core-card:before,.operations-grid article:before,.contact-card:before,.mentor-message:before,.final-cta:before{pointer-events:none}
+.arena-card:after{box-shadow:0 0 0 0 rgba(25,230,255,0);transition:transform .9s var(--rk-ease),box-shadow .9s ease}
+.arena-card:hover:after{box-shadow:0 0 28px rgba(25,230,255,.08)}
+.arena-index,.feature-index{font-variant-numeric:tabular-nums}
+
+/* Team section gets a more premium command-board feel. */
+.leadership-feature,.core-card,.team-card{backdrop-filter:blur(10px)}
+.team-card{transition:transform .6s var(--rk-ease),border-color .45s ease,box-shadow .6s var(--rk-ease),background .45s ease}
+.team-card:hover{box-shadow:0 22px 55px rgba(0,0,0,.26)}
+.team-card h3{transition:transform .55s var(--rk-ease),color .4s ease}
+.team-card:hover h3{transform:translateX(3px);color:#fff}
+
+/* Scroll reveal uses only opacity/transform for smooth mobile GPU performance. */
+.rk-reveal{opacity:0;transform:translate3d(0,34px,0);will-change:opacity,transform}
+.rk-reveal.rk-visible{opacity:1;transform:none;transition:opacity .8s var(--rk-ease),transform .9s var(--rk-ease);transition-delay:var(--rk-delay,0ms)}
+
+/* Section separators: subtle cyan/gold signal lines. */
+.section:not(.hero) .section-head:after{background:linear-gradient(90deg,rgba(25,230,255,.45),rgba(212,175,55,.18),transparent);width:min(420px,70vw);height:1px;left:0;top:auto;bottom:-23px;transform:none;border:0;opacity:1}
+
+/* CTA illumination */
+.final-cta{position:relative}
+.final-cta:after{content:"";position:absolute;inset:auto 12% -65px;height:130px;background:radial-gradient(ellipse,rgba(25,230,255,.10),transparent 68%);pointer-events:none}
+
+/* Focus states */
+a:focus-visible,button:focus-visible,.btn:focus-visible{outline:2px solid var(--rk-cyan);outline-offset:4px}
+
+/* Mobile */
+@media(max-width:800px){
+  html{scroll-padding-top:78px}
+  .rk-progress{height:2px}
+  .section-head:before,.section-head:after{display:none}
+  .site-header.rk-compact{height:62px}
+  .phase-strip>div{min-height:92px}
+}
+@media(max-width:520px){
+  .phase-strip{grid-template-columns:1fr 1fr}
+  .phase-strip>div{padding:20px 16px}
+}
+
+@keyframes rkHeroIn{from{opacity:0;transform:translate3d(0,26px,0)}to{opacity:1;transform:none}}
+@keyframes rkVisualIn{from{opacity:0;transform:translate3d(25px,0,0) scale(.94)}to{opacity:1;transform:none}}
+@keyframes rkGridDrift{0%{transform:translate3d(0,0,0)}50%{transform:translate3d(28px,18px,0)}100%{transform:translate3d(0,0,0)}}
+@keyframes rkScan{0%,100%{transform:translateY(-34vh);opacity:0}15%{opacity:.18}50%{opacity:.34}85%{opacity:.18}100%{transform:translateY(34vh);opacity:0}}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .hero-content,.hero-visual,.hero-grid,.hero-scan{animation:none!important}
+  .rk-reveal{opacity:1!important;transform:none!important;transition:none!important}
+  .site-header{transition:none!important}
+}
+
+
+/* ===== source: smooth-motion.css ===== */
+
+
+/* =========================================================
+   ROBOKRITI 2026 — SMOOTH MOTION ENHANCEMENT
+   Visual-only enhancement. No content or functionality changes.
+========================================================= */
+
+@keyframes rkFadeUp {
+  from { opacity: 0; transform: translate3d(0, 22px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes rkFadeDown {
+  from { opacity: 0; transform: translate3d(0, -14px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes rkScaleIn {
+  from { opacity: 0; transform: scale(.97) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes rkGlowPulse {
+  0%,100% { opacity: .55; transform: scale(1); }
+  50% { opacity: .9; transform: scale(1.035); }
+}
+@keyframes rkShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Registration */
+.registration-header { animation: rkFadeDown .7s cubic-bezier(.2,.7,.2,1) both; }
+.registration-hero { animation: rkFadeUp .75s .08s cubic-bezier(.2,.7,.2,1) both; }
+.registration-form { animation: rkScaleIn .75s .16s cubic-bezier(.2,.7,.2,1) both; }
+.registration-form .form-section {
+  animation: rkFadeUp .65s both;
+  transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+.registration-form .form-section:nth-child(1) { animation-delay: .18s; }
+.registration-form .form-section:nth-child(2) { animation-delay: .25s; }
+.registration-form .form-section:nth-child(3) { animation-delay: .32s; }
+.registration-form .form-section:nth-child(4) { animation-delay: .39s; }
+.registration-form .form-section:nth-child(5) { animation-delay: .46s; }
+.registration-form .form-section:nth-child(6) { animation-delay: .53s; }
+.registration-form .form-section:hover {
+  transform: translateY(-2px);
+}
+.team-size-card, .event-option-card, .member-card, .field, .approval-note {
+  transition: transform .28s ease, border-color .28s ease, box-shadow .28s ease;
+}
+.team-size-card:hover, .event-option-card:hover, .member-card:hover {
+  transform: translateY(-4px);
+}
+.submit-registration {
+  transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
+}
+.submit-registration:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+}
+
+/* Help */
+.help-nav { animation: rkFadeDown .65s cubic-bezier(.2,.7,.2,1) both; }
+.help-hero { animation: rkFadeUp .75s .08s cubic-bezier(.2,.7,.2,1) both; }
+.help-card { animation: rkScaleIn .75s .18s cubic-bezier(.2,.7,.2,1) both; }
+.help-card.tracker-card { animation-delay: .26s; }
+.help-info { animation: rkFadeUp .7s .34s cubic-bezier(.2,.7,.2,1) both; }
+.help-card, .tracker-card, .field, .submit-btn {
+  transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+.help-card:hover, .tracker-card:hover { transform: translateY(-3px); }
+.submit-btn:hover { transform: translateY(-2px); }
+
+/* General rules page */
+.rules-grid article {
+  animation: rkFadeUp .65s both;
+  transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+.rules-grid article:nth-child(1) { animation-delay: .12s; }
+.rules-grid article:nth-child(2) { animation-delay: .19s; }
+.rules-grid article:nth-child(3) { animation-delay: .26s; }
+.rules-grid article:nth-child(4) { animation-delay: .33s; }
+.rules-grid article:nth-child(5) { animation-delay: .40s; }
+.rules-grid article:nth-child(6) { animation-delay: .47s; }
+.rules-grid article:hover {
+  transform: translateY(-4px);
+}
+.rules-note { animation: rkFadeUp .65s .54s both; }
+
+/* Individual event rules pages */
+.event-header { animation: rkFadeDown .65s cubic-bezier(.2,.7,.2,1) both; }
+.event-hero { animation: rkScaleIn .8s .06s cubic-bezier(.2,.7,.2,1) both; }
+.event-hero::before { animation: rkGlowPulse 7s ease-in-out infinite; }
+.event-meta span {
+  transition: transform .25s ease, border-color .25s ease, background .25s ease;
+}
+.event-meta span:hover { transform: translateY(-3px); }
+.rule-card, .side-card {
+  animation: rkFadeUp .65s both;
+  transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+.rule-card:nth-child(1) { animation-delay: .12s; }
+.rule-card:nth-child(2) { animation-delay: .19s; }
+.rule-card:nth-child(3) { animation-delay: .26s; }
+.rule-card:nth-child(4) { animation-delay: .33s; }
+.rule-card:nth-child(5) { animation-delay: .40s; }
+.rule-card:nth-child(6) { animation-delay: .47s; }
+.rule-card:hover, .side-card:hover { transform: translateY(-3px); }
+
+/* Smooth interactive links without altering layout */
+.back, .brand, .back-home, .help-nav nav a {
+  transition: color .25s ease, transform .25s ease, opacity .25s ease;
+}
+
+/* Respect accessibility preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+
+/* ===== source: rk-final.css ===== */
+
+
+/* =========================================================
+   ROBOKRITI 2026 — FINAL PRODUCTION FINISH
+   Visual polish only. Existing copy/content is untouched.
+========================================================= */
+:root{
+  --rk-final-cyan:#00eaff;
+  --rk-final-gold:#d4af37;
+  --rk-final-ease:cubic-bezier(.16,1,.3,1);
+}
+html{
+  -webkit-text-size-adjust:100%;
+  text-rendering:optimizeLegibility;
+  scroll-behavior:smooth;
+}
+body{
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+img,svg,video,canvas{max-width:100%}
+button,input,select,textarea{font:inherit}
+button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
+:where(a,button,input,select,textarea):focus-visible{
+  outline:2px solid var(--rk-final-cyan);
+  outline-offset:3px;
+}
+:where(input,select,textarea){
+  color-scheme:dark;
+}
+:where(input,select,textarea)::selection{
+  background:rgba(0,234,255,.25);
+}
+::placeholder{opacity:.62}
+
+/* Stable media and card rendering */
+.arena-card,.team-card,.core-card,.leadership-feature,
+.operations-grid article,.contact-card,.final-cta,.mentor-message{
+  isolation:isolate;
+}
+.arena-card > *, .team-card > *, .core-card > *,
+.leadership-feature > *, .operations-grid article > *,
+.contact-card > *, .final-cta > *, .mentor-message > *{
+  position:relative;
+  z-index:1;
+}
+
+/* Better touch targets on compact/mobile layouts */
+@media(max-width:800px){
+  nav a,.menu-btn,.btn{min-height:44px}
+  .menu-btn{touch-action:manipulation}
+  #mainNav{
+    max-height:calc(100vh - 88px);
+    overflow:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .section{overflow:clip}
+}
+@media(max-width:520px){
+  .btn{width:100%}
+  .hero-actions{width:100%}
+}
+
+/* Forms: polished without changing structure or labels */
+form input,form select,form textarea{
+  transition:border-color .25s var(--rk-final-ease),
+             box-shadow .25s var(--rk-final-ease),
+             background .25s ease;
+}
+form input:focus,form select:focus,form textarea:focus{
+  border-color:rgba(0,234,255,.55)!important;
+  box-shadow:0 0 0 3px rgba(0,234,255,.08),0 8px 30px rgba(0,0,0,.14);
+}
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus{
+  -webkit-text-fill-color:#fff;
+  transition:background-color 9999s ease-in-out 0s;
+}
+
+/* Tables / wide technical data remain usable on phones */
+.table-wrap,.table-container,.responsive-table,.rules-table{
+  max-width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* Avoid accidental horizontal overflow from decorative layers */
+.hero,.section,.phase-strip,.footer{max-width:100%;}
+
+/* Never allow the fixed visual effects to intercept interaction */
+body::before,body::after{pointer-events:none}
+
+/* Reduced motion remains fully functional */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{
+    animation-duration:.001ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.001ms!important;
+  }
+}
+
+
+/* ===== source: final-fixes.css ===== */
+
+/* APS Tinkering Lab RoboKriti 2026 — final visual/interaction calibration */
+:root{
+  --rk-bg:#020607;
+  --rk-bg-2:#050b10;
+  --rk-panel:#071322;
+  --rk-panel-2:#091727;
+  --rk-cyan:#00d9ff;
+  --rk-cyan-2:#008cff;
+  --rk-lime:#dfff00;
+  --rk-white:#edf7fb;
+  --rk-muted:#8d9ba9;
+  --rk-border:rgba(0,217,255,.18);
+  --rk-ease:cubic-bezier(.22,1,.36,1);
+}
+html{scroll-behavior:smooth;scroll-padding-top:86px;background:var(--rk-bg)!important}
+body{background:var(--rk-bg)!important;color:var(--rk-white)!important;overflow-x:hidden}
+body::before{opacity:.09!important;background-image:linear-gradient(rgba(0,217,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,217,255,.025) 1px,transparent 1px)!important;background-size:48px 48px!important}
+::selection{background:rgba(0,217,255,.25);color:#fff}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:#030607}::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--rk-cyan),var(--rk-cyan-2));border-radius:99px}
+.site-header,.event-header{background:rgba(2,6,7,.88)!important;border-color:rgba(0,217,255,.13)!important;box-shadow:0 14px 55px rgba(0,0,0,.42)!important;backdrop-filter:blur(18px) saturate(125%)}
+.site-header{transition:height .45s var(--rk-ease),transform .45s var(--rk-ease),background .35s ease,box-shadow .35s ease}
+.site-header.rk-compact{height:66px;background:rgba(2,6,7,.94)!important}
+.site-header.rk-hidden{transform:translateY(-105%)}
+.brand b,.brand strong{color:var(--rk-white)!important}.brand small,.back{color:var(--rk-cyan)!important}
+nav a{color:#91a0ad!important}nav a:hover,nav a.active{color:#fff!important;background:rgba(0,217,255,.075)!important}
+.hero,.event-hero{background:radial-gradient(circle at 76% 27%,rgba(0,217,255,.115),transparent 27%),radial-gradient(circle at 18% 82%,rgba(223,255,0,.025),transparent 24%),linear-gradient(145deg,#020607,#050b10 58%,#020607)!important}
+.hero-grid,.event-hero:before,.cta-grid{background-image:linear-gradient(rgba(0,217,255,.038) 1px,transparent 1px),linear-gradient(90deg,rgba(0,217,255,.038) 1px,transparent 1px)!important}
+.hero h1 span,.hero h1 b,.section-head h2 b,.final-cta h2 b,.event-hero h1 b,.event-core-head h2 b{color:var(--rk-lime)!important;text-shadow:0 0 28px rgba(223,255,0,.08)!important}
+.phase-label,.hero-kicker,.section-head>span,.event-no,.event-meta span,.arena-index,.arena-link,.team-card small,.operations-grid article>span,.feature-index,.feature-line,.command-group-head>span,.event-core-head>span,.side-card>span{color:var(--rk-cyan)!important}
+.hero p,.section-head p,.arena-card p,.team-card p,.operations-grid p,.operations-grid li,.journey p,.contact-card p,.final-cta p,.event-hero p,.rule-card li,.side-card p,.core-card p,.leadership-feature p{color:var(--rk-muted)!important}
+.arena-card,.team-card,.core-card,.leadership-feature,.operations-grid article,.contact-card,.mentor-message,.rule-card,.side-card,.final-cta,.event-member{background:linear-gradient(145deg,rgba(7,19,34,.96),rgba(4,11,19,.97))!important;border-color:rgba(0,217,255,.12)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 24px 70px rgba(0,0,0,.34)!important}
+.arena-card:hover,.team-card:hover,.core-card:hover,.leadership-feature:hover,.operations-grid article:hover,.contact-card:hover{border-color:rgba(0,217,255,.34)!important;box-shadow:0 28px 85px rgba(0,0,0,.44),0 0 32px rgba(0,217,255,.055)!important}
+.btn.primary,.nav-register,.side-card a:first-of-type{background:var(--rk-cyan)!important;border-color:var(--rk-cyan)!important;color:#001015!important;box-shadow:0 0 28px rgba(0,217,255,.16)!important}.btn.primary:hover,.nav-register:hover,.side-card a:first-of-type:hover{background:#35e1ff!important}
+.btn.ghost{color:var(--rk-white)!important;background:rgba(255,255,255,.025)!important;border-color:rgba(255,255,255,.11)!important}
+.phase-strip,.arenas-section,.team-section,.operations-section,.journey-section,.contact-section{background:var(--rk-bg)!important}
+.phase-strip small,.phase-strip strong,.arena-card h3,.team-card h3,.operations-grid h3,.origin-grid h3,.leadership-feature h3,.core-card h3,.journey h3{color:var(--rk-white)!important}.phase-strip small{color:var(--rk-cyan)!important}
+.origin-points span{color:var(--rk-cyan)!important;border-color:rgba(0,217,255,.16)!important}.message-mark,.journey b{color:var(--rk-cyan)!important}.notice{background:rgba(0,217,255,.045)!important;border-left-color:var(--rk-cyan)!important}.rule-card li::marker{color:var(--rk-cyan)!important}.member-avatar{color:var(--rk-cyan)!important;border-color:rgba(0,217,255,.22)!important;background:rgba(0,217,255,.045)!important}
+.footer-status i{background:var(--rk-cyan)!important;box-shadow:0 0 10px var(--rk-cyan)!important}.footer a{color:var(--rk-cyan)!important}
+.rk-progress{position:fixed;z-index:4000;top:0;left:0;width:0;height:2px;background:linear-gradient(90deg,var(--rk-cyan),var(--rk-lime));box-shadow:0 0 14px rgba(0,217,255,.55);pointer-events:none;transform-origin:left}
+.rk-reveal{opacity:0;transform:translate3d(0,26px,0);filter:blur(2px)}.rk-reveal.rk-visible{opacity:1;transform:none;filter:none;transition:opacity .7s var(--rk-ease),transform .8s var(--rk-ease),filter .7s ease;transition-delay:var(--rk-delay,0ms)}
+@media(max-width:800px){.site-header.rk-compact{height:70px}.rk-reveal{transform:translate3d(0,18px,0)}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}.site-header{transition:none}.rk-reveal,.rk-reveal.rk-visible{opacity:1;transform:none;filter:none;transition:none}.hero-grid,.hero-scan{animation:none!important}.rk-progress{display:none}}
+
+
+
+/* =========================================================
+   ROBOkriti 2026 — PRODUCTION POLISH OVERRIDES
+   Visual/content safe: no copy or data is changed.
+========================================================= */
+:root{
+  --rk-cyan:#00eaff;
+  --rk-cyan-soft:rgba(0,234,255,.12);
+  --rk-gold:#d4af37;
+  --rk-ink:#020607;
+  --rk-panel:rgba(8,16,20,.72);
+  --rk-border:rgba(130,220,235,.14);
+  --rk-ease:cubic-bezier(.16,1,.3,1);
+}
+html{scroll-padding-top:96px;-webkit-text-size-adjust:100%;}
+body{overflow-x:hidden;min-width:320px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+::selection{background:rgba(0,234,255,.22);color:#fff}
+:focus-visible{outline:2px solid var(--rk-cyan)!important;outline-offset:3px!important}
+
+/* Premium header: compact, glassy and readable over the hero. */
+.site-header{
+  backdrop-filter:blur(16px) saturate(125%);
+  -webkit-backdrop-filter:blur(16px) saturate(125%);
+  border-bottom:1px solid rgba(150,230,240,.08);
+}
+.site-header.scrolled,.site-header.rk-compact{
+  box-shadow:0 12px 40px rgba(0,0,0,.26);
+  background:rgba(2,8,10,.82);
+}
+.brand{min-width:0}
+.brand img{object-fit:contain}
+.brand small{letter-spacing:.18em}
+nav a{position:relative}
+nav a:not(.nav-register)::after{
+  content:"";position:absolute;left:50%;bottom:-7px;width:0;height:2px;
+  transform:translateX(-50%);background:var(--rk-cyan);box-shadow:0 0 12px rgba(0,234,255,.7);
+  transition:width .35s var(--rk-ease)
+}
+nav a:hover::after,nav a.active::after{width:60%}
+
+/* Hero depth without heavy paint effects. */
+.tech-hero{isolation:isolate}
+.tech-hero::after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:2;
+  background:radial-gradient(circle at 72% 44%,rgba(0,234,255,.09),transparent 28%),linear-gradient(90deg,rgba(2,6,7,.18),transparent 52%,rgba(0,234,255,.025));
+}
+.hero-content,.hero-visual{z-index:3}
+.hero-content h1{text-wrap:balance;letter-spacing:-.035em}
+.hero-content p{max-width:720px}
+.hero-actions{gap:14px}
+.btn{position:relative;overflow:hidden;isolation:isolate;will-change:transform}
+.btn::before{
+  content:"";position:absolute;inset:0;z-index:-1;transform:translateX(-105%);
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.14),transparent);
+  transition:transform .65s var(--rk-ease)
+}
+.btn:hover::before{transform:translateX(105%)}
+
+/* Section rhythm and cards: crisp borders, soft depth, no excessive glow. */
+.section{position:relative}
+.section-head h2{text-wrap:balance}
+.arena-card,.core-card,.leadership-feature,.contact-card,.operations-grid article,.journey>div{
+  border-color:var(--rk-border);
+  box-shadow:0 18px 55px rgba(0,0,0,.16);
+  transition:transform .55s var(--rk-ease),border-color .35s ease,box-shadow .55s var(--rk-ease),background .35s ease;
+}
+.arena-card:hover,.core-card:hover,.leadership-feature:hover,.contact-card:hover,.operations-grid article:hover,.journey>div:hover{
+  transform:translateY(-7px);
+  border-color:rgba(0,234,255,.28);
+  box-shadow:0 24px 70px rgba(0,0,0,.25),0 0 0 1px rgba(0,234,255,.04) inset;
+}
+.arena-card::after,.core-card::after,.leadership-feature::after{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at var(--px,50%) var(--py,50%),rgba(0,234,255,.12),transparent 30%);
+  transition:opacity .35s ease
+}
+.arena-card:hover::after,.core-card:hover::after,.leadership-feature:hover::after{opacity:1}
+
+/* Phase strip reads like a championship control rail. */
+.phase-strip{position:relative;z-index:4}
+.phase-strip>div{transition:transform .45s var(--rk-ease),background .35s ease}
+.phase-strip>div:hover{transform:translateY(-4px);background:rgba(0,234,255,.035)}
+
+/* Scroll progress */
+.rk-progress{position:fixed;left:0;top:0;width:0;height:2px;background:linear-gradient(90deg,var(--rk-cyan),#8af6ff,var(--rk-gold));box-shadow:0 0 14px rgba(0,234,255,.7);z-index:10001;pointer-events:none}
+
+/* Cleaner loader exit. */
+.preloader{transition:opacity .45s var(--rk-ease),visibility .45s var(--rk-ease)}
+.preloader.done{opacity:0;visibility:hidden;pointer-events:none}
+
+/* Mobile-first polish. */
+@media(max-width:900px){
+  html{scroll-padding-top:82px}
+  .site-header{padding-inline:18px}
+  .hero-content{max-width:100%}
+  .hero-visual{opacity:.55;transform:scale(.86)}
+}
+@media(max-width:700px){
+  html{scroll-padding-top:76px}
+  .site-header{min-height:68px}
+  .brand small{letter-spacing:.1em}
+  .hero{min-height:calc(100svh - 68px);padding-top:90px;padding-bottom:56px}
+  .hero-content h1{font-size:clamp(3rem,15vw,5.4rem);line-height:.9}
+  .hero-meta{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .hero-meta span{font-size:9px}
+  .phase-strip{grid-template-columns:1fr 1fr}
+  .phase-strip>div{min-height:118px}
+  .arena-card:hover,.core-card:hover,.leadership-feature:hover,.contact-card:hover,.operations-grid article:hover,.journey>div:hover{transform:none}
+}
+@media(max-width:520px){
+  .hero-actions{display:grid;grid-template-columns:1fr;width:100%}
+  .btn{width:100%;min-height:50px}
+  .phase-strip{grid-template-columns:1fr}
+  .hero-meta{grid-template-columns:1fr}
+  .section{padding-inline:18px}
+}
+
+/* Accessibility/performance guardrails. */
+img{max-width:100%;height:auto}
+button,a{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .rk-progress{display:none}
+}
+@media(hover:none){.silk-cursor,.stCursor{display:none!important}}
